@@ -1414,6 +1414,54 @@ const PAGE_TITLE = {'ledger':'计量器具台账','ledger_img':'计量器具台�
   'entry_grr':'GRR 台账','entry_kappa':'KAPPA 台账','entry_linear':'线性/偏移台账','entry_stability':'稳定性台账','entry_cgcgk':'Cg/Cgk 台账','data_grr':'GRR 录入数据','data_kappa':'KAPPA 录入数据','data_linear':'线性/偏移录入数据','data_stability':'稳定性录入数据','data_cgcgk':'Cg/Cgk 录入数据',
   'grr':'GRR 分析结果','kappa':'KAPPA 分析结果','anl_linear':'线性/偏移分析结果','anl_stability':'稳定性分析结果','anl_cgcgk':'Cg/Cgk 分析结果（VDA Type1）'};
 
+/* 页面使用说明（可折叠，面向有经验的业务人员：简短说明 + 关键操作点 + 台账权限 + MSA 计划状态标识） */
+const PAGE_GUIDE = {
+  instgroup:{label:'器具组维护', text:'维护测量器具组（测量器具）与人员组（IQC 检验组 / IPQC 巡检组 / FQC 终检组 / 动总 GPR）。器具组供「创建MSA计划-器具」选择，人员组供「创建MSA计划-人员」选择（仅 KAPPA）；组类型决定按器具还是按人员创建。', ops:'新增/修改均为列表行内编辑（点「编辑」进入编辑模式，直接改字段后「保存」）；点「新增器具组」在列表新增空行；「详情」查看组信息与执行记录。'},
+  char:{label:'被测参数维护', text:'维护质量特性（被测参数）主数据，一个特性可关联多种检验方法（GRR / KAPPA / 线性 / 稳定性 / Cg/Cgk），每种方法关联对应检验标准；检验标准在本页统一维护。', ops:'新增/修改均为列表行内编辑；检验方法、检验标准为下拉选择。'},
+  sampling:{label:'抽样方法维护', text:'维护分析方法（方法代码 / 名称 / 方法组合并配置）与取样参数（样品数 / 人数 / 次数 / 读数上下限）、判断规则与计算参数。', ops:'新增/修改为列表行内编辑；范围字段在编辑模式下拆为上下限两个输入框；判断规则、计算参数按页签维护。'},
+  samplelib:{label:'样本库管理', text:'管理标准件 / 生产件样本及其真值（参考值），供各台账选件分析使用。', ops:'新增/修改为列表行内编辑；「日志查询」在样本行上。'},
+  plan:{label:'MSA 计划', text:'创建 MSA 计划（按器具 / 按人员），计划下自动生成对应台账分析单；列表维度列跟踪各分析方法完成状态。', ops:'「创建MSA计划-器具」：选器具组 → 选器具 → 填计划信息 → 勾选分析方法；「创建MSA计划-人员」：选人员组（仅 KAPPA）。点维度列图标可跳转对应结果页；删除仅限待开始计划。', status:true},
+  ledger:{label:'计量器具台账', text:'维护计量器具主数据（页面已隐藏）。', ops:''},
+  ledger_img:{label:'计量器具台账（设计稿）', text:'展示外部系统计量台账设计稿。', ops:''},
+  entry:{label:'台账', text:'查看 / 管理对应分析方法的台账分析单，支持数据导入、录入、审核、确认与结果预览。', ops:'按钮板：导入 / 导出 / 确认；操作列：详情 / 预览 / 审核 / 录入数据 / 更多（最多显示 3 个，超出收进「更多」）；行首勾选可批量选择。', perm:true},
+  data:{label:'数据录入', text:'录入测量数据（手动逐格录入 / Excel 导入），只录入不做分析。', ops:'顶部按「录入人」页签切换（每人只看/只改本人数据）'},
+  anl:{label:'分析结果', text:'查看分析结果与判定结论，仅查看、无操作。', ops:''}
+};
+function PageGuide({page}){
+  let g = null, kind='';
+  if(page==='instgroup'||page==='char'||page==='sampling'||page==='samplelib') return null; /* 基础数据四页不显示说明 */
+  if(/^entry_/.test(page)){ g=PAGE_GUIDE.entry; kind='entry'; }
+  else if(/^data_/.test(page)){ g=PAGE_GUIDE.data; kind='data'; }
+  else if(page==='grr'||page==='kappa'||/^anl_/.test(page)){ g=PAGE_GUIDE.anl; kind='anl'; }
+  else g=PAGE_GUIDE[page];
+  if(!g) return null;
+  const body=[];
+  if(kind==='data'){ body.push(<div key="o"><b>关键操作：</b>{g.ops}</div>); }
+  else {
+  if(g.text) body.push(<div key="t" style={{marginBottom:6}}><b>页面说明：</b>{g.text}</div>);
+  if(g.ops) body.push(<div key="o" style={{marginBottom:6}}><b>关键操作：</b>{g.ops}</div>);
+  if(g.perm) body.push(<div key="p"><b>权限说明：</b>①「查看全部台账」权限：可查看所有分析人的全部台账记录；②「仅查看本人台账」权限：只能看到当前登录人自己负责的台账记录。</div>);
+  if(g.status) body.push(
+    <div key="s">
+      <b>维度列状态标识：</b>
+      <table style={{marginTop:4,borderCollapse:'collapse',fontSize:13}}>
+        <thead><tr>{['标识','含义'].map(h=><th key={h} style={{border:'1px solid #d9d9d9',padding:'4px 10px',background:'#fafafa',textAlign:'left'}}>{h}</th>)}</tr></thead>
+        <tbody>
+          <tr><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>不做（灰色横线）</td><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>该分析方法不在本计划创建时勾选的方法范围内，本计划无需开展</td></tr>
+          <tr><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>未做（灰色虚线圆圈）</td><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>属于计划范围，但尚未完成对应台账分析</td></tr>
+          <tr><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>通过（绿色对勾）</td><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>对应台账分析已完成，结论为可接受 / 有条件接受</td></tr>
+          <tr><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>不通过（红色叉）</td><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>对应台账分析已完成，结论为不可接受，需整改；多个分计划以最差结论为准</td></tr>
+        </tbody>
+      </table>
+      <div style={{marginTop:4,color:'#888'}}>通过 / 不通过 / 未做图标可点击，跳转对应结果查看页。</div>
+    </div>);
+  }
+  return <details style={{marginBottom:10,background:'#fffbe6',border:'1px solid #ffe58f',borderRadius:6,overflow:'hidden'}}>
+    <summary style={{cursor:'pointer',padding:'8px 14px',fontWeight:600,fontSize:13,color:'#1f2d3d',background:'#fff7e6',userSelect:'none'}}>页面说明</summary>
+    <div style={{lineHeight:1.9,fontSize:13,color:'#444',padding:'10px 14px 12px'}}>{body}</div>
+  </details>;
+}
+
 function PageHead({title, sub, extra}){
   return <div className="page-head">
     <div><h2>{title}</h2>{sub?<div className="sub">{sub}</div>:null}</div>
@@ -1534,7 +1582,7 @@ function App(){
             <span>{d.me.name} · {d.me.roleName}</span>
           </div>
         </Header>
-        <Content className="app-content">{renderPage()}</Content>
+        <Content className="app-content"><PageGuide page={page}/>{renderPage()}</Content>
       </Layout>
     </Layout>
   );
@@ -2690,9 +2738,6 @@ function PlanDetail({plan, onClose, onConvert}){
       <Table rowKey="id" size="small" dataSource={recs} columns={subPlanCols()} pagination={false} scroll={{x:960}}/>
     </div>
     {recs.filter(r=>r.reviewStatus==='待采集').length>0 && <Alert className="mt12" type="warning" showIcon message="存在待采集分计划，请点击「录入数据」完成样本采集并提交审核。" />}
-    {recs.map(r=> r.actions&&r.actions.length>0? <div key={'a'+r.id}><div className="grp-label">纠正措施 / 整改跟踪（{r.id}）</div>{r.actions.map((a,i)=><Alert key={i} type={a.status==='已完成'?'success':'warning'} showIcon style={{marginBottom:8}}
-      message={<Space><Tag color={a.status==='已完成'?'green':'orange'}>{a.status}</Tag><b>{a.type}</b></Space>}
-      description={<span>{a.content} ｜ 责任人：{a.owner} ｜ 计划完成：{a.planDate}</span>}/>)}</div> : null)}
   </Drawer>;
 }
 
