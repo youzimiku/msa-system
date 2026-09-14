@@ -1858,7 +1858,7 @@ function InstGroupPage(){
   const openAdd=()=>setModal({mode:'add',record:{}});
   const openEdit=(r)=>setModal({mode:'edit',record:r});
   const [editingId,setEditingId]=useState(null); const [draft,setDraft]=useState({}); const [addRow,setAddRow]=useState(false);
-  const POST_OPTS=[...new Map((d.personnel||[]).map(p=>[p.postCode,p])).values()].map(p=>({value:p.postCode,label:p.postCode+' '+p.postName}));
+  const POST_OPTS=[...new Map((d.personnel||[]).map(p=>[p.postCode,p])).values()].map(p=>({value:p.postCode,label:p.postName}));
   const startEdit=(r)=>{ setAddRow(false); setEditingId(r.id); setDraft({...r}); };
   const addRowStart=()=>{ setEditingId('__NEW__'); setDraft({id:'',name:'',type:'inst',calCycle:12,lastExec:'',nextPlanDate:'',remindAdvance:20,nextRemind:'',note:'',postCode:'',postName:''}); setAddRow(true); };
   const saveEdit=()=>{ if(!editingId) return; if(!draft.name||!draft.name.trim()){ toast.warn('请填写组名称'); return; } if((draft.type||'inst')==='person'&&!draft.postCode){ toast.warn('人员组请选择岗位'); return; } mut(s=>{ if(editingId==='__NEW__'){ const tp=draft.type||'inst'; const nid=(draft.id&&draft.id.trim())?draft.id.trim(): (tp==='person'? 'P-'+String(s.instGroups.filter(g=>g.id.startsWith('P-')).length+1).padStart(2,'0') : 'G-'+String(s.instGroups.filter(g=>g.id.startsWith('G-')).length+1).padStart(2,'0')); const rec={...draft, id:nid, type:tp, editor:s.me.name, editorDate:TODAY, records:[]}; s.instGroups.push(rec); logAction(s.me.name,'新增器具组',nid+' '+(draft.name||''),'行内新增器具组'); } else { const rec=s.instGroups.find(x=>x.id===editingId); if(rec) Object.assign(rec,draft); logAction(s.me.name,'编辑器具组',editingId,'行内编辑器具组 '+editingId+' '+(draft.name||'')); } }); setEditingId(null); setDraft({}); setAddRow(false); toast.ok('已保存'); };
@@ -1877,7 +1877,7 @@ function InstGroupPage(){
     {title:'岗位', width:170, render:(_,r)=>{ const isP=editingId===r.id?((draft.type||'inst')==='person'):((r.type||'inst')==='person');
       if(editingId===r.id && isP){ return <Select size="small" style={{width:150}} placeholder="选择岗位" defaultValue={r.postCode||undefined} options={POST_OPTS} onChange={x=>{ const po=(d.personnel||[]).find(p=>p.postCode===x); setDraft(d=>({...d,postCode:x,postName:po?po.postName:''})); }}/>; }
       if(editingId===r.id || !isP){ return <span className="tiny" style={{color:'#666666'}}>不适用</span>; }
-      const po=(d.personnel||[]).find(p=>p.postCode===r.postCode); return <span>{r.postCode||''}{po&&po.postName?(' · '+po.postName):(r.postName?(' · '+r.postName):'')}</span>; }},
+      const po=(d.personnel||[]).find(p=>p.postCode===r.postCode); return <span>{po&&po.postName?po.postName:(r.postName||'')}</span>; }},
     {title:'检验周期(月)', width:110, render:(_,r)=>editingId===r.id?<InputNumber size="small" min={1} defaultValue={r.calCycle||12} style={{width:92}} onChange={x=>setDraft(d=>({...d,calCycle:x}))}/>:<span className="mono">{r.calCycle||12}</span>},
     {title:'上次执行时间', dataIndex:'lastExec', width:115, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,lastExec:e.target.value}))}/>:<span className="mono tiny">{v||'暂无'}</span>},
     {title:'下次计划日期', dataIndex:'nextPlanDate', width:115, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,nextPlanDate:e.target.value}))}/>:<span className="mono tiny">{v||'暂无'}</span>},
