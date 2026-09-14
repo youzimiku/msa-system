@@ -4066,7 +4066,7 @@ function EntryPage({kind}){
     <Panel title="查询条件">
       <Space wrap>
         <Input.Search allowClear placeholder={CFG.idPref+'编号 / 关联计划 / 器具 / 测量对象'} style={{width:140}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待采集">待采集</Radio><Radio value="待分析">待分析</Radio><Radio value="待审核">待审核</Radio><Radio value="已批准">已批准</Radio><Radio value="需整改">需整改</Radio><Radio value="已闭环">已闭环</Radio><Radio value="已关闭">已关闭</Radio></Radio.Group>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Select size="small" allowClear style={{width:120}} placeholder="全部" value={fstatus||undefined} options={['待采集','待分析','待审核','已批准','需整改','已闭环','已关闭'].map(c=>({value:c,label:c}))} onChange={v=>setFstatus(v||undefined)}/>
         <Select allowClear placeholder="结论" style={{width:140}} value={fconcl} options={conclOpts.map(c=>({value:c,label:c}))} onChange={setFconcl}/>
         <Select allowClear placeholder="分析人" style={{width:140}} value={fanl} options={anlOpts.map(c=>({value:c,label:c}))} onChange={setFanl}/>
         <span className="tiny">共 {rows.length} 条</span>
