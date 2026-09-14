@@ -245,10 +245,10 @@ function buildSeed(){
     {id:'G-02', type:'inst', name:'装配力学组', memberIds:['JJQ-2024-007','JJQ-2024-005'], note:'装配扭矩 / 液压压力测量', editor:'计量室·刘工', editorDate:'2026-06-01', calCycle:6, lastExec:'2026-06-10', nextRemind:'2026-12-10', records:[{time:'2026-06-10', content:'装配力学组周期复评（GRR），%GRR 有条件区间，纠正措施进行中'}]},
     {id:'G-03', type:'inst', name:'实验室计量组', memberIds:['JJQ-2023-010','JJQ-2024-006','JJQ-2024-011'], note:'实验室参考测量（三坐标/天平/温度计）', editor:'计量室·张工', editorDate:'2026-06-01', calCycle:12, lastExec:'2026-03-18', nextRemind:'2027-03-18', records:[{time:'2026-03-18', content:'实验室计量组复评（线性/偏倚），结论非常理想可接受'}]},
     {id:'G-04', type:'inst', name:'目视/计数检验组', memberIds:['JJQ-2024-008','JJQ-2024-004'], note:'计数型检验（塞规/千分表），用于 KAPPA 分析', editor:'计量室·张工', editorDate:'2026-06-01', calCycle:6, lastExec:'2026-08-22', nextRemind:'2026-10-05', records:[{time:'2026-08-22', content:'目视/计数检验组二期 KAPPA 复评，误判偏高需整改'}]},
-    {id:'P-01', type:'person', postCode:'POST-IQC', name:'IQC 检验组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，选择岗位自动带出该岗位下人员（人员编号/姓名/部门/岗位）', editor:'计量室·张工', editorDate:'2026-08-25', calCycle:6, lastExec:'2026-08-22', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02', records:[{time:'2026-08-22', content:'IQC 检验组 KAPPA 一致性复评，人员组建立并纳入盲测'}]},
-    {id:'P-02', type:'person', postCode:'POST-IPQC', name:'IPQC 巡检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·张工', editorDate:'2026-08-25', calCycle:6, lastExec:'2026-08-22', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02', records:[]},
-    {id:'P-03', type:'person', postCode:'POST-FQC', name:'FQC 终检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01', calCycle:6, lastExec:'2026-09-01', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09', records:[]},
-    {id:'P-04', type:'person', postCode:'POST-GPR', name:'GPR 判定组', dept:'总装车间', note:'人员MSA组：以岗位编码为组标识（动总GPR/电控GPR），成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01', calCycle:6, lastExec:'2026-09-01', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09', records:[]}
+    {id:'P-01', type:'iqc', postCode:'POST-IQC', name:'IQC 检验组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，选择岗位自动带出该岗位下人员（人员编号/姓名/部门/岗位）', editor:'计量室·张工', editorDate:'2026-08-25', calCycle:6, lastExec:'2026-08-22', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02', records:[{time:'2026-08-22', content:'IQC 检验组 KAPPA 一致性复评，人员组建立并纳入盲测'}]},
+    {id:'P-02', type:'ipqc', postCode:'POST-IPQC', name:'IPQC 巡检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·张工', editorDate:'2026-08-25', calCycle:6, lastExec:'2026-08-22', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02', records:[]},
+    {id:'P-03', type:'fqc', postCode:'POST-FQC', name:'FQC 终检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01', calCycle:6, lastExec:'2026-09-01', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09', records:[]},
+    {id:'P-04', type:'gpr', postCode:'POST-GPR', name:'GPR 判定组', dept:'总装车间', note:'人员MSA组：以岗位编码为组标识（动总GPR/电控GPR），成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01', calCycle:6, lastExec:'2026-09-01', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09', records:[]}
   ];
 
   /* ---------------- 人员主数据（人员MSA数据源：岗位编码作为人员组标识） ---------------- */
@@ -643,6 +643,20 @@ function buildSeed(){
            instruments, calibrations, standards, plans, samples, sampleItems, grr, kappa, linear, stability, cgcgk, resolution, logs, extrapolations:[], instGroups, personnel, characteristics, anMethods, samplingRules, sampleLib, judgeRules, calParams, mesStations };
 }
 
+/* 器具组类型（固定5值）：测量器具组为器具组；IQC检验组/IPQC巡检组/FQC终检组/动总GPR 均为人员组（对应 MSA 计划按器具/按人员创建） */
+const GROUP_TYPE_OPTS=[
+  {value:'inst', label:'测量器具组'},
+  {value:'iqc', label:'IQC检验组'},
+  {value:'ipqc', label:'IPQC巡检组'},
+  {value:'fqc', label:'FQC终检组'},
+  {value:'gpr', label:'动总GPR'}
+];
+const GROUP_TYPE_MAP=Object.fromEntries(GROUP_TYPE_OPTS.map(o=>[o.value,o.label]));
+const isPersonGroupType=(t)=> !!t && t!=='inst';
+/* 人员组 → 岗位编码/岗位名称 自动推导（岗位由组类型决定，不再单独维护岗位字段） */
+const GROUP_POST={iqc:'POST-IQC', ipqc:'POST-IPQC', fqc:'POST-FQC', gpr:'POST-GPR'};
+const GROUP_POST_NAME={iqc:'IQC检验员', ipqc:'IPQC巡检', fqc:'FQC终检', gpr:'动总GPR'};
+
 /* 企业字段口径补全函数：对旧数据 / 新数据统一补齐新增字段默认值（本地已存数据加载时同样调用） */
 function applyFieldDefaults(d){
   const LINES=['1号线','2号线','3号线','4号线','5号线','6号线'];
@@ -810,11 +824,13 @@ function applyFieldDefaults(d){
   if((d.instGroups||[]).some(g=>(g.type||'inst')==='kappa')){
     d.instGroups = d.instGroups.filter(g=>(g.type||'inst')!=='kappa');
   }
+  /* 旧数据迁移：person 类型按岗位编码映射为具体人员组类型（iqc/ipqc/fqc/gpr） */
+  (d.instGroups||[]).forEach(g=>{ if(g.type==='person'){ g.type=(g.postCode==='POST-IPQC'?'ipqc':g.postCode==='POST-FQC'?'fqc':g.postCode==='POST-GPR'?'gpr':'iqc'); } });
   const PERSON_GROUPS=[
-    {id:'P-01', type:'person', postCode:'POST-IQC', name:'IQC 检验组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，选择岗位自动带出该岗位下人员（人员编号/姓名/部门/岗位）', editor:'计量室·张工', editorDate:'2026-08-25', calCycle:6, lastExec:'2026-08-22', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02', records:[{time:'2026-08-22', content:'IQC 检验组 KAPPA 一致性复评，人员组建立并纳入盲测'}], plant:'青岛工厂', subplant:'一分厂'},
-    {id:'P-02', type:'person', postCode:'POST-IPQC', name:'IPQC 巡检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·张工', editorDate:'2026-08-25', calCycle:6, lastExec:'2026-08-22', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02', records:[], plant:'青岛工厂', subplant:'一分厂'},
-    {id:'P-03', type:'person', postCode:'POST-FQC', name:'FQC 终检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01', calCycle:6, lastExec:'2026-09-01', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09', records:[], plant:'青岛工厂', subplant:'一分厂'},
-    {id:'P-04', type:'person', postCode:'POST-GPR', name:'GPR 判定组', dept:'总装车间', note:'人员MSA组：以岗位编码为组标识（动总GPR/电控GPR），成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01', calCycle:6, lastExec:'2026-09-01', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09', records:[], plant:'青岛工厂', subplant:'一分厂'}
+    {id:'P-01', type:'iqc', postCode:'POST-IQC', name:'IQC 检验组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，选择岗位自动带出该岗位下人员（人员编号/姓名/部门/岗位）', editor:'计量室·张工', editorDate:'2026-08-25', calCycle:6, lastExec:'2026-08-22', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02', records:[{time:'2026-08-22', content:'IQC 检验组 KAPPA 一致性复评，人员组建立并纳入盲测'}], plant:'青岛工厂', subplant:'一分厂'},
+    {id:'P-02', type:'ipqc', postCode:'POST-IPQC', name:'IPQC 巡检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·张工', editorDate:'2026-08-25', calCycle:6, lastExec:'2026-08-22', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02', records:[], plant:'青岛工厂', subplant:'一分厂'},
+    {id:'P-03', type:'fqc', postCode:'POST-FQC', name:'FQC 终检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01', calCycle:6, lastExec:'2026-09-01', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09', records:[], plant:'青岛工厂', subplant:'一分厂'},
+    {id:'P-04', type:'gpr', postCode:'POST-GPR', name:'GPR 判定组', dept:'总装车间', note:'人员MSA组：以岗位编码为组标识（动总GPR/电控GPR），成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01', calCycle:6, lastExec:'2026-09-01', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09', records:[], plant:'青岛工厂', subplant:'一分厂'}
   ];
   PERSON_GROUPS.forEach(g=>{ if(!d.instGroups.some(x=>x.id===g.id)) d.instGroups.push(g); });
   if(!(d.sampleLibLogs||[]).length){
@@ -1858,11 +1874,10 @@ function InstGroupPage(){
   const openAdd=()=>setModal({mode:'add',record:{}});
   const openEdit=(r)=>setModal({mode:'edit',record:r});
   const [editingId,setEditingId]=useState(null); const [draft,setDraft]=useState({}); const [addRow,setAddRow]=useState(false);
-  const POST_OPTS=[...new Map((d.personnel||[]).map(p=>[p.postCode,p])).values()].map(p=>({value:p.postCode,label:p.postName}));
   const startEdit=(r)=>{ setAddRow(false); setEditingId(r.id); setDraft({...r}); };
   const addRowStart=()=>{ setEditingId('__NEW__'); setDraft({id:'',name:'',type:'inst',calCycle:12,lastExec:'',nextPlanDate:'',remindAdvance:20,nextRemind:'',note:'',postCode:'',postName:''}); setAddRow(true); };
-  const saveEdit=()=>{ if(!editingId) return; if(!draft.name||!draft.name.trim()){ toast.warn('请填写组名称'); return; } if((draft.type||'inst')==='person'&&!draft.postCode){ toast.warn('人员组请选择岗位'); return; } mut(s=>{ if(editingId==='__NEW__'){ const tp=draft.type||'inst'; const nid=(draft.id&&draft.id.trim())?draft.id.trim(): (tp==='person'? 'P-'+String(s.instGroups.filter(g=>g.id.startsWith('P-')).length+1).padStart(2,'0') : 'G-'+String(s.instGroups.filter(g=>g.id.startsWith('G-')).length+1).padStart(2,'0')); const rec={...draft, id:nid, type:tp, editor:s.me.name, editorDate:TODAY, records:[]}; s.instGroups.push(rec); logAction(s.me.name,'新增器具组',nid+' '+(draft.name||''),'行内新增器具组'); } else { const rec=s.instGroups.find(x=>x.id===editingId); if(rec) Object.assign(rec,draft); logAction(s.me.name,'编辑器具组',editingId,'行内编辑器具组 '+editingId+' '+(draft.name||'')); } }); setEditingId(null); setDraft({}); setAddRow(false); toast.ok('已保存'); };
-  const memberText=(r)=>{ if((r.type||'inst')==='person'){ const pn=(d.personnel||[]).filter(x=>x.postCode===r.postCode).length; return <span className="tiny">{pn+' 人 · '+(r.postCode||'')}</span>; } const ms=(r.memberIds||[]).map(id=>d.instruments.find(i=>i.id===id)).filter(Boolean); return <span className="tiny">{ms.length} 台器具</span>; };
+  const saveEdit=()=>{ if(!editingId) return; if(!draft.name||!draft.name.trim()){ toast.warn('请填写组名称'); return; } const tp=draft.type||'inst'; const dc=isPersonGroupType(tp)?{postCode:GROUP_POST[tp],postName:GROUP_POST_NAME[tp]}:{}; mut(s=>{ if(editingId==='__NEW__'){ const nid=(draft.id&&draft.id.trim())?draft.id.trim(): (isPersonGroupType(tp)? 'P-'+String(s.instGroups.filter(g=>g.id.startsWith('P-')).length+1).padStart(2,'0') : 'G-'+String(s.instGroups.filter(g=>g.id.startsWith('G-')).length+1).padStart(2,'0')); const rec={...draft, ...dc, id:nid, type:tp, editor:s.me.name, editorDate:TODAY, records:[]}; s.instGroups.push(rec); logAction(s.me.name,'新增器具组',nid+' '+(draft.name||''),'行内新增器具组'); } else { const rec=s.instGroups.find(x=>x.id===editingId); if(rec) Object.assign(rec,draft,dc); logAction(s.me.name,'编辑器具组',editingId,'行内编辑器具组 '+editingId+' '+(draft.name||'')); } }); setEditingId(null); setDraft({}); setAddRow(false); toast.ok('已保存'); };
+  const memberText=(r)=>{ if(isPersonGroupType(r.type||'inst')){ const pc=r.postCode||GROUP_POST[r.type]; const pn=(d.personnel||[]).filter(x=>x.postCode===pc).length; return <span className="tiny">{pn+' 人 · '+(pc||'')}</span>; } const ms=(r.memberIds||[]).map(id=>d.instruments.find(i=>i.id===id)).filter(Boolean); return <span className="tiny">{ms.length} 台器具</span>; };
   const cols=[
     {title:'操作', width:180, fixed:'left', render:(_,r)=><Space size={0}>
       {editingId!=='__NEW__' && <Button size="small" type="link" onClick={()=>setDetail(r)}>详情</Button>}
@@ -1873,11 +1888,8 @@ function InstGroupPage(){
     </Space>},
     {title:'组编码', dataIndex:'id', width:110, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={editingId==='__NEW__'?(draft.id||''):v} placeholder="留空自动生成" onChange={e=>setDraft(d=>({...d,id:e.target.value}))}/>:<span className="row-link mono" onClick={()=>setDetail(r)}>{v}</span>},
     {title:'组名称', dataIndex:'name', width:180, ellipsis:true, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,name:e.target.value}))}/>:<span>{v}</span>},
-    {title:'组类型', width:130, render:(_,r)=>editingId===r.id?<Select size="small" defaultValue={r.type||'inst'} style={{width:120}} options={[{value:'inst',label:'测量器具组'},{value:'person',label:'人员组'}]} onChange={x=>setDraft(d=>({...d,type:x}))}/>:<Tag color={(r.type||'inst')==='person'?'purple':'blue'} style={{marginRight:0}}>{(r.type||'inst')==='person'?'人员组':'测量器具组'}</Tag>},
-    {title:'岗位', width:170, render:(_,r)=>{ const isP=editingId===r.id?((draft.type||'inst')==='person'):((r.type||'inst')==='person');
-      if(editingId===r.id && isP){ return <Select size="small" style={{width:150}} placeholder="选择岗位" defaultValue={r.postCode||undefined} options={POST_OPTS} onChange={x=>{ const po=(d.personnel||[]).find(p=>p.postCode===x); setDraft(d=>({...d,postCode:x,postName:po?po.postName:''})); }}/>; }
-      if(editingId===r.id || !isP){ return <span className="tiny" style={{color:'#666666'}}>不适用</span>; }
-      const po=(d.personnel||[]).find(p=>p.postCode===r.postCode); return <span>{po&&po.postName?po.postName:(r.postName||'')}</span>; }},
+    {title:'组类型', width:130, render:(_,r)=>editingId===r.id?<Select size="small" defaultValue={r.type||'inst'} style={{width:120}} options={GROUP_TYPE_OPTS} onChange={x=>setDraft(d=>({...d,type:x}))}/>:<Tag color={isPersonGroupType(r.type||'inst')?'purple':'blue'} style={{marginRight:0}}>{GROUP_TYPE_MAP[r.type]||'测量器具组'}</Tag>},
+
     {title:'检验周期(月)', width:110, render:(_,r)=>editingId===r.id?<InputNumber size="small" min={1} defaultValue={r.calCycle||12} style={{width:92}} onChange={x=>setDraft(d=>({...d,calCycle:x}))}/>:<span className="mono">{r.calCycle||12}</span>},
     {title:'上次执行时间', dataIndex:'lastExec', width:115, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,lastExec:e.target.value}))}/>:<span className="mono tiny">{v||'暂无'}</span>},
     {title:'下次计划日期', dataIndex:'nextPlanDate', width:115, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,nextPlanDate:e.target.value}))}/>:<span className="mono tiny">{v||'暂无'}</span>},
@@ -1893,7 +1905,7 @@ function InstGroupPage(){
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={kw} onChange={e=>setKw(e.target.value)}/>
-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>组类型</span><Select allowClear style={{width:140}} value={fType} options={[{value:'inst',label:'测量器具组'},{value:'person',label:'人员组'}]} onChange={setFType}/>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>组类型</span><Select allowClear style={{width:140}} value={fType} options={GROUP_TYPE_OPTS} onChange={setFType}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>检验周期(月)</span><Select allowClear style={{width:140}} value={fCycle} options={[6,12,24].map(v=>({value:String(v),label:v+' 个月'}))} onChange={setFCycle}/>
         <span className="tiny">共 {rows.length} 组</span>
       </Space>
@@ -1941,7 +1953,7 @@ function InstGroupModal({value,onClose}){
   };
   const onOk=async()=>{
     const vals=await form.validateFields();
-    if((vals.type||'inst')==='person' && !vals.postCode){ toast.warn('人员组请填写岗位编码（作为组标识）'); return; }
+    if(isPersonGroupType(vals.type||'inst')){ vals.postCode=GROUP_POST[vals.type]; vals.postName=GROUP_POST_NAME[vals.type]; }
     mut(s=>{
       if(isEdit){ const g=s.instGroups.find(x=>x.id===value.record.id); Object.assign(g,vals); g.editor=s.me.name; g.editorDate=TODAY; logAction(s.me.name,'编辑器具组',g.id+' '+g.name,'更新器具组信息'); }
       else { vals.editor=s.me.name; vals.editorDate=TODAY; vals.records=[]; s.instGroups.push(vals); logAction(s.me.name,'新增器具组',vals.id+' '+vals.name,'新建器具组'); }
@@ -1954,19 +1966,18 @@ function InstGroupModal({value,onClose}){
       <Row gutter={12}>
         <Col span={8}><Form.Item name="id" label="组编码" rules={[{required:true}]}><Input disabled={isEdit}/></Form.Item></Col>
         <Col span={16}><Form.Item name="name" label="组名称" rules={[{required:true}]}><Input/></Form.Item></Col>
-        <Col span={6}><Form.Item name="type" label="组类型" rules={[{required:true}]}><Select options={[{value:'inst',label:'测量器具组'},{value:'person',label:'人员组'}]} onChange={v=>setGType(v||'inst')}/></Form.Item></Col>
+        <Col span={6}><Form.Item name="type" label="组类型" rules={[{required:true}]}><Select options={GROUP_TYPE_OPTS} onChange={v=>setGType(v||'inst')}/></Form.Item></Col>
         <Col span={6}><Form.Item name="calCycle" label="检验周期(月)" rules={[{required:true}]}><Input type="number"/></Form.Item></Col>
         <Col span={6}><Form.Item name="lastExec" label="上次执行时间"><Input placeholder="YYYY-MM-DD"/></Form.Item></Col>
         <Col span={6}><Form.Item name="nextPlanDate" label="下次计划日期"><Input placeholder="YYYY-MM-DD"/></Form.Item></Col>
         <Col span={6}><Form.Item name="remindAdvance" label="提醒周期(天)"><Input type="number" placeholder="如 20"/></Form.Item></Col>
         <Col span={6}><Form.Item name="nextRemind" label="下次提醒时间"><Input placeholder="YYYY-MM-DD"/></Form.Item></Col>
       </Row>
-      {gType==='person'
+      {isPersonGroupType(gType)
         ? <Row gutter={12}>
-            <Col span={8}><Form.Item name="postCode" label="岗位编码" rules={[{required:true}]}><Input placeholder="如 POST-IQC"/></Form.Item></Col>
-            <Col span={16}><Form.Item name="postName" label="岗位名称" rules={[{required:true}]}><Input placeholder="如 IQC检验员"/></Form.Item></Col>
+            <Col span={8}><Form.Item label="岗位编码"><Input disabled value={GROUP_POST[gType]||''}/></Form.Item></Col>
+            <Col span={16}><Form.Item label="岗位名称"><Input disabled value={GROUP_POST_NAME[gType]||''}/></Form.Item></Col>
             <Col span={8}><Form.Item name="dept" label="部门"><Input placeholder="如 品质部"/></Form.Item></Col>
-            <Col span={24}><div className="tiny" style={{color:'#666666'}}>成员由人员主数据按岗位编码自动带出（人员编号 / 姓名 / 部门 / 岗位），无需手工维护成员。</div></Col>
           </Row>
         : null}
       <Form.Item name="note" label="说明"><Input.TextArea rows={2}/></Form.Item>
@@ -1976,7 +1987,7 @@ function InstGroupModal({value,onClose}){
 
 function InstGroupDetail({rec,onClose,onEdit}){
   const d=Store.get();
-  const isKappa=(rec.type||'inst')==='person';
+  const isKappa=isPersonGroupType(rec.type||'inst');
   const members=(rec.memberIds||[]).map(id=>d.instruments.find(i=>i.id===id)).filter(Boolean);
   const personMembers=(d.personnel||[]).filter(x=>x.postCode===rec.postCode).map((m,ix)=>({ix,...m}));
   const cols=[
@@ -1994,12 +2005,12 @@ function InstGroupDetail({rec,onClose,onEdit}){
     {title:'岗位', dataIndex:'postName', width:150, render:v=><Tag color="purple" style={{marginRight:0}}>{v||'暂无'}</Tag>}
   ];
   const kappaMembers=(d.personnel||[]).filter(x=>x.postCode===rec.postCode).map((m,ix)=>({ix,...m}));
-  return <Drawer title={<Space>{rec.id} {rec.name}<Tag color={(rec.type||'inst')==='person'?'purple':'blue'} style={{marginRight:0}}>{(rec.type||'inst')==='person'?'人员组':'测量器具组'}</Tag></Space>} width={980} open onClose={onClose}
+  return <Drawer title={<Space>{rec.id} {rec.name}<Tag color={isPersonGroupType(rec.type||'inst')?'purple':'blue'} style={{marginRight:0}}>{GROUP_TYPE_MAP[rec.type]||'测量器具组'}</Tag></Space>} width={980} open onClose={onClose}
     extra={<Space><Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>onEdit(rec)}>编辑</Button></Space>}>
     <Descriptions column={3} size="small" bordered items={[
       {key:'组编码', label:'组编码', children:<span className="mono">{rec.id}</span>},
       {key:'组名称', label:'组名称', children:rec.name},
-      {key:'组类型', label:'组类型', children:(rec.type||'inst')==='person'?'人员组':'测量器具组'},
+      {key:'组类型', label:'组类型', children:GROUP_TYPE_MAP[rec.type]||'测量器具组'},
       {key:'检验周期', label:'检验周期', children:rec.calCycle?rec.calCycle+' 个月':'12 个月'},
       {key:'上次执行时间', label:'上次执行时间', children:rec.lastExec||'暂无'},
       {key:'下次计划日期', label:'下次计划日期', children:rec.nextPlanDate||'暂无'},
@@ -2347,14 +2358,14 @@ function BatchPlanModal({value, onClose}){
     .filter(i=> !onlyAvail || i.selectable)
     .filter(i=>{ if(!dueSel) return true; const nr=i.nextReviewDate||''; if(!nr) return dueSel==='normal'; const dd=daysBetween(TODAY,nr); if(dueSel==='overdue') return dd<0; if(dueSel==='0-15') return dd>=0&&dd<=15; if(dueSel==='16-30') return dd>=16&&dd<=30; if(dueSel==='normal') return dd>30; return true; });
   const curGroupObj = curGroup? (d.instGroups||[]).find(g=>g.id===curGroup)||null : null;
-  const isPersonGroup = (mode==='person') || (curGroupObj? (curGroupObj.type||'inst')==='person' : false);
+  const isPersonGroup = (mode==='person') || (curGroupObj? isPersonGroupType(curGroupObj.type||'inst') : false);
   const groupInsts = curGroup? insts.filter(i=>curGroupObj&&(curGroupObj.memberIds||[]).indexOf(i.id)>=0) : [];
   const personInsts = curGroup&&isPersonGroup? (d.personnel||[]).filter(x=>x.postCode===curGroupObj.postCode) : [];
   const groupItems = (d.instGroups||[]).map(g=>{
-    const cnt=(g.type||'inst')==='person'? (d.personnel||[]).filter(x=>x.postCode===g.postCode).length : (g.memberIds||[]).length;
+    const cnt=isPersonGroupType(g.type||'inst')? (d.personnel||[]).filter(x=>x.postCode===(g.postCode||GROUP_POST[g.type])).length : (g.memberIds||[]).length;
     return {id:g.id, name:g.name, count:cnt, type:g.type||'inst'};
-  }).filter(g=> (mode==='person')===((g.type||'inst')==='person'))
-    .filter(g=>!groupKw || (g.name+' '+(g.type==='person'?'人员组':'测量器具组')).toLowerCase().includes(groupKw.toLowerCase()));
+  }).filter(g=> (mode==='person')===isPersonGroupType(g.type||'inst'))
+    .filter(g=>!groupKw || (g.name+' '+(isPersonGroupType(g.type||'inst')?'人员组':'测量器具组')).toLowerCase().includes(groupKw.toLowerCase()));
   /* 选择器具组：拉出该组可用器具，由用户批量勾选（不默认选中） */
   const pickGroup=(gid)=>{
     setCurGroup(gid);
@@ -2473,7 +2484,7 @@ function BatchPlanModal({value, onClose}){
           <div style={{flex:1, minHeight:0, border:'1px solid #e3eaf3', borderRadius:6, padding:'6px 4px', background:'#ffffff', overflow:'auto'}}>
             {groupItems.length===0 && <div style={{color:'#666666', fontSize:14, textAlign:'center', padding:'18px 0'}}>无匹配器具组</div>}
             {groupItems.map(g=>{
-              const active=curGroup===g.id; const isP=g.type==='person';
+              const active=curGroup===g.id; const isP=isPersonGroupType(g.type||'inst');
               return <div key={g.id} onClick={()=>pickGroup(active?'':g.id)} style={{border:'1px solid '+(active?'#1677ff':'#e3eaf3'), borderRadius:6, padding:'6px 9px', marginBottom:6, cursor:'pointer', fontSize:14, color:'#333333', background:active?'#e6f4ff':'#ffffff', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                 <div style={{flex:1, minWidth:0}}>
                   <div style={{overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{g.name}</div>
