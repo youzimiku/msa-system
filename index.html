@@ -379,7 +379,15 @@ function buildSeed(){
     {id:'MSAP-2026-010', name:'光滑塞规 φ8H7 · KAPPA 三期复评', instId:'JJQ-2024-008', instName:'光滑塞规 φ8H7', cat:'塞规/环规',
      type:'KAPPA', method:'计数型一致性(KAPPA)', standard:'STD-MSA-003', params:{ops:2, trials:1, parts:30},
      object:'孔径 φ8H7 通/止判定（三期复评）', feature:'通/止判定', owner:'孙丽', editor:'系统自动', editorDate:'2026-09-05', planDate:'2026-10-05',
-     trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'', result:'', note:'由器具组「目视/计数检验组」检验周期自动生成（提前一个月推送待办，2026-10-05 到期）'}
+     trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'', result:'', note:'由器具组「目视/计数检验组」检验周期自动生成（提前一个月推送待办，2026-10-05 到期）'},
+    {id:'MSAP-2026-011', name:'数显千分表 0~12.7mm · GRR 复评（不通过示例）', instId:'JJQ-2024-004', instName:'数显千分表 0~12.7mm', cat:'千分表',
+     type:'GRR', method:'均值-极差法(Xbar-R)', standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10},
+     object:'轴径 Φ12.5±0.05（复评）', feature:'直径', owner:'赵磊', editor:'李工程师', editorDate:'2026-09-10', planDate:'2026-09-10',
+     trigger:'周期复评', source:'周期任务', status:'需整改', recordId:'GRR-2026-005', result:'不可接受', note:'%GRR>30%，测量系统不可接受，暂停用于产品放行测量'},
+    {id:'MSAP-2026-012', name:'光滑塞规 φ8H7 · KAPPA 四期复评（不通过示例）', instId:'JJQ-2024-008', instName:'光滑塞规 φ8H7', cat:'塞规/环规',
+     type:'KAPPA', method:'计数型一致性(KAPPA)', standard:'STD-MSA-003', params:{ops:3, trials:3, parts:30},
+     object:'孔径 φ8H7 通/止判定（四期复评）', feature:'通/止判定', owner:'孙丽', editor:'李工程师', editorDate:'2026-09-12', planDate:'2026-09-12',
+     trigger:'顾客审核整改', source:'临时任务', status:'需整改', recordId:'KPA-2026-003', result:'不可接受', note:'误判率过高，测量系统一致性不可接受'}
   ];
 
   /* ---------------- 样本管理 ---------------- */
@@ -438,7 +446,16 @@ function buildSeed(){
     {id:'GRR-2026-004', planId:'MSAP-2026-009', instId:'JJQ-2024-004', instName:'数显千分表 0~12.7mm', object:'轴径 Φ12.5±0.05', unit:'mm',
      method:'均值-极差法(Xbar-R)', standard:'STD-MSA-001', numOps:3, numTrials:3, numParts:10, sampleGroup:'',
      tolerance:{has:true, usl:12.55, lsl:12.45},
-     operators:['操作员A','操作员B','操作员C'], raw:null, analysisDate:'', analyst:'', reviewStatus:'待采集', conclusion:'', reviewer:'', reviewDate:'', approver:'', approveDate:'', actions:[], note:'一计划多方法：GRR 任务（待采集）'}
+     operators:['操作员A','操作员B','操作员C'], raw:null, analysisDate:'', analyst:'', reviewStatus:'待采集', conclusion:'', reviewer:'', reviewDate:'', approver:'', approveDate:'', actions:[], note:'一计划多方法：GRR 任务（待采集）'},
+    {id:'GRR-2026-005', planId:'MSAP-2026-011', instId:'JJQ-2024-004', instName:'数显千分表 0~12.7mm', object:'轴径 Φ12.5±0.05（复评）', unit:'mm',
+     method:'均值-极差法(Xbar-R)', standard:'STD-MSA-001', numOps:3, numTrials:3, numParts:10, sampleGroup:'',
+     tolerance:{has:true, usl:12.55, lsl:12.45},
+     operators:['操作员A·赵磊','操作员B·刘青','操作员C·陈杰'],
+     raw: genGRR(20260910, [12.30,12.35,12.40,12.45,12.50,12.55,12.60,12.65,12.70,12.75], [0.12,-0.15,0.10], 0.42, 3),
+     analysisDate:'2026-09-10', analyst:'李工程师', reviewStatus:'需整改', conclusion:'不可接受',
+     reviewer:'张工', reviewDate:'2026-09-11', approver:'', approveDate:'',
+     actions:[{type:'纠正措施', content:'千分表测杆磨损超差，送计量室检修并重新校准', owner:'赵磊', planDate:'2026-09-30', status:'进行中', note:'整改完成后需重新抽样复测'}],
+     note:'%GRR > 30%，测量系统不可接受，暂停用于产品放行测量'}
   ];
 
   /* ---------------- KAPPA 台账 ---------------- */
@@ -480,7 +497,26 @@ function buildSeed(){
      analysisDate:'2026-08-26', analyst:'李工程师', reviewStatus:'需整改', conclusion:'不可接受-需改进',
      reviewer:'张工', reviewDate:'2026-08-28', approver:'', approveDate:'',
      actions:[{type:'纠正措施', content:'通/止判定标准样件培训+新增边界缺陷样件库，重点降低误判(过严判定)', owner:'孙丽', planDate:'2026-09-20', status:'进行中', note:'复测后需重新评估KAPPA并闭环'}],
-     note:'零漏判（无顾客风险）；但错误警报率偏高（过严拒收），按顾客整改要求培训后复测'}
+     note:'零漏判（无顾客风险）；但错误警报率偏高（过严拒收），按顾客整改要求培训后复测'},
+    {id:'KPA-2026-003', planId:'MSAP-2026-012', instId:'JJQ-2024-008', instName:'光滑塞规 φ8H7', object:'孔径 φ8H7 通/止判定（四期复评）', kind:'计数型(合格/不合格)',
+     standard:'STD-MSA-003', numApp:3, numSamples:30, sampleGroup:'',
+     appNames:['检验员甲·孙丽','检验员乙·周燕','检验员丙·吴敏'],
+     reference:kRef1,
+     appData:[
+       judge(kRef1,[3,8,15,22]),
+       judge(kRef1,[1,4,9,12,18,25]),
+       judge(kRef1,[2,7,14,20,28])
+     ],
+     rawData:[
+       judge(kRef1,[3,8,15,22]).map(v=>[v,v,v]),
+       judge(kRef1,[1,4,9,12,18,25]).map(v=>[v,v,v]),
+       judge(kRef1,[2,7,14,20,28]).map(v=>[v,v,v])
+     ],
+     numTrials:3,
+     analysisDate:'2026-09-12', analyst:'李工程师', reviewStatus:'需整改', conclusion:'不可接受',
+     reviewer:'张工', reviewDate:'2026-09-13', approver:'', approveDate:'',
+     actions:[{type:'纠正措施', content:'检验员判定标准培训 + 重新确认合格/不合格边界样本', owner:'孙丽', planDate:'2026-09-30', status:'进行中', note:'培训后复测验证'}],
+     note:'误判率过高，KAPPA 值低于可接受下限，测量系统一致性不可接受'}
   ];
 
   /* ---------------- 质量特性基础数据（业务口径：特性主表 + 检验方法子表，一特性多方法；检验标准由特性穿透关联） ---------------- */
@@ -1347,7 +1383,7 @@ let InstOpenId = null;
 const MENU = [
   /* 基础数据（按操作顺序：器具 → 器具组 → 特性 → 抽样 → 样本库） */
   {key:'ledger', icon:'☑', label:'计量器具台账', group:'基础数据', hidden:true},
-  {key:'ledger_img', icon:'☑', label:'计量器具台账', group:'基础数据'},
+  {key:'ledger_img', icon:'☑', label:'计量器具台账', group:'基础数据', hidden:true},
   {key:'instgroup', icon:'▦', label:'器具组维护', group:'基础数据'},
   {key:'char', icon:'♯', label:'被测参数维护', group:'基础数据'},
   {key:'sampling', icon:'∿', label:'抽样方法维护', group:'基础数据'},
@@ -1403,8 +1439,13 @@ function ImportBtn({title}){
 function VerdictTag({v}){ const vv=(!v||v==='-')?'待采集':v; return <Tooltip title={TIPS.verdict[vv]||TIPS.verdict[v]||vv}><Tag color={verdictColor(vv)} className="spec-tag" style={{minWidth:84,display:'inline-flex',justifyContent:'center',marginRight:0,textAlign:'center'}}>{vv}</Tag></Tooltip>; }
 function StatusTag({s}){ return <Tooltip title={TIPS.status[s]||s}><Tag color={ENUM.statusColor[s]||'default'}>{s}</Tag></Tooltip>; }
 
-/* 分项列图标（绿色对勾=已做该分析方法） */
-const CheckSvg=()=> <svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#16a34a"/><path d="M7 12.5l3 3 7-7" stroke="#fff" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+/* 分项列状态图标（一套圆底：绿勾=通过 / 红叉=不通过 / 灰圆点=未做 / 灰横线=不做） */
+const DimBadge=({bg,stroke})=> <svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill={bg}/><path d={stroke} stroke="#fff" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+const CheckSvg=()=> <DimBadge bg="#16a34a" stroke="M7 12.5l3 3 7-7"/>;
+const PassSvg=()=> <DimBadge bg="#16a34a" stroke="M7 12.5l3 3 7-7"/>;
+const FailSvg=()=> <DimBadge bg="#dc2626" stroke="M8.5 8.5l7 7M15.5 8.5l-7 7"/>;
+const TodoSvg=()=> <DimBadge bg="#9ca3af" stroke="M12 12m-3.4 0a3.4 3.4 0 1 0 6.8 0a3.4 3.4 0 1 0-6.8 0"/>;
+const NaSvg=()=> <svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#e5e7eb"/><path d="M7 12h10" stroke="#9ca3af" strokeWidth="2.4" strokeLinecap="round"/></svg>;
 
 /* 校准到期徽标 */
 function CalBadge({nextCal}){
@@ -1784,8 +1825,7 @@ function InstDetail({drawer, onClose, onEdit, onCal}){
     {key:'关键测量', label:'关键测量', children:r.keyMeasure==='是'?<Tag color="red">关键</Tag>:'否'},
     {key:'备注', label:'备注', children:r.note||'暂无'}
   ];
-  return <Drawer title={<Space>{r.id} {r.name}<StatusTag s={r.status}/></Space>} width={880} open onClose={onClose}
-    extra={<Space><Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>onEdit(r)}>编辑</Button><Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>onCal(r)}>登记校准</Button></Space>}>
+  return <Drawer title={<Space>{r.id} {r.name}<StatusTag s={r.status}/></Space>} width={880} open onClose={onClose}>
     <Descriptions column={2} size="small" bordered items={items}/>
     {due!==null && due<0 && <div className="note mt12">该器具校准已逾期 { -due } 天，当前状态应停用/送检，禁止用于产品放行测量。</div>}
     <div className="grp-label">校准历史（{cals.length}）</div>
@@ -2005,8 +2045,7 @@ function InstGroupDetail({rec,onClose,onEdit}){
     {title:'岗位', dataIndex:'postName', width:150, render:v=><Tag color="purple" style={{marginRight:0}}>{v||'暂无'}</Tag>}
   ];
   const kappaMembers=(d.personnel||[]).filter(x=>x.postCode===rec.postCode).map((m,ix)=>({ix,...m}));
-  return <Drawer title={<Space>{rec.id} {rec.name}<Tag color={isPersonGroupType(rec.type||'inst')?'purple':'blue'} style={{marginRight:0}}>{GROUP_TYPE_MAP[rec.type]||'测量器具组'}</Tag></Space>} width={980} open onClose={onClose}
-    extra={<Space><Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>onEdit(rec)}>编辑</Button></Space>}>
+  return <Drawer title={<Space>{rec.id} {rec.name}<Tag color={isPersonGroupType(rec.type||'inst')?'purple':'blue'} style={{marginRight:0}}>{GROUP_TYPE_MAP[rec.type]||'测量器具组'}</Tag></Space>} width={980} open onClose={onClose}>
     <Descriptions column={3} size="small" bordered items={[
       {key:'组编码', label:'组编码', children:<span className="mono">{rec.id}</span>},
       {key:'组名称', label:'组名称', children:rec.name},
@@ -2164,10 +2203,19 @@ function PlanPage(){
     if(v.every(x=>x==='可接受'||x==='非常理想可接受')) return '可接受';
     return v[0];
   };
-  /* 分项列渲染：该计划是否做了该分析方法（做了=绿色对勾，没做=灰色横线） */
+  /* 分项列渲染：不做/未做/通过/不通过（按计划 msaMethods 判定范围；台账结论多记录取最差；通过/不通过/未做可点击跳转结果） */
+  const DIM_MSA_KEY={ 'CG/CGK':'cg/cgk','偏倚':'偏倚','线性':'线性','稳定性':'稳定性','重复性':'重复性','再现性':'再现性','KAPPA':'kappa' };
+  const DIM_ENTRY={ 'cgcgk':'entry_cgcgk','linear':'entry_linear','stability':'entry_stability','GRR':'entry_grr','KAPPA':'entry_kappa' };
   const fenCell=(kind,label)=>(_,r)=>{
-    const has = planRecords(d,r.id).some(x=>recKindId(x)===kind);
-    return has? <Tooltip title={label+'：已做'}><CheckSvg/></Tooltip> : <Tooltip title={label+'：未做'}><span style={{color:'#999999'}}>—</span></Tooltip>;
+    const msaKey=DIM_MSA_KEY[label]||label;
+    const inScope=(r.msaMethods||[]).some(m=>String(m).toLowerCase()===String(msaKey).toLowerCase());
+    const recs=planRecords(d,r.id).filter(x=>recKindId(x)===kind);
+    const concls=recs.map(x=>x.conclusion).filter(c=>c&&c!=='-'&&c!=='待采集');
+    const worst= concls.includes('不可接受')? 'fail' : (concls.length? 'pass' : '');
+    const jump=()=>{ const rec=recs[0]; if(rec){ recJump(rec); } else { NavAPI.go(DIM_ENTRY[kind]||'entry_grr'); } };
+    if(!inScope) return <Tooltip title={label+'：不做（不在本计划范围）'}><NaSvg/></Tooltip>;
+    if(!worst) return <Tooltip title={label+'：未做（计划范围内尚未完成分析）'}><span style={{cursor:'pointer'}} onClick={jump}><TodoSvg/></span></Tooltip>;
+    return <Tooltip title={label+'：'+(worst==='fail'?'不通过':'通过')}><span style={{cursor:'pointer'}} onClick={jump}>{worst==='fail'?<FailSvg/>:<PassSvg/>}</span></Tooltip>;
   };
   const cols=[
     {title:'操作', width:150, fixed:'left', render:(_,r)=><PlanActions r={r} onDetail={()=>setDetail(r)} onEdit={()=>setEdit(r)} editingId={editingId} startEdit={startEdit} saveEdit={saveEdit} cancelEdit={()=>{setEditingId(null);setDraft({});}}/>},
@@ -2262,6 +2310,7 @@ const subRuleText=(r)=>{ const k=recKindId(r); const P=r.params||{};
   if(k==='cgcgk') return (P.runs||r.runs||50)+' 次连续测量';
   return '不取样，直接录入'; };
 function subPlanCols(){
+  const d = Store.get();
   return [
     {title:'操作', width:240, fixed:'left', render:(_,r)=><Space size={0}>
       <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')||(r.reviewStatus!=='待采集'&&r.reviewStatus!=='待分析')} onClick={()=>recJump(r)}>录入数据</Button>
@@ -2295,7 +2344,7 @@ function BatchPlanModal({value, onClose}){
   const [checked,setChecked]=useState([]);
   const [mCfg,setMCfg]=useState({});
   const setM=(m,patch)=>setMCfg(c=>({...c,[m]:{...(c[m]||{}),...patch}}));
-  const [meta,setMeta]=useState({ qcArea:'质检科', plant:'青岛工厂', subplant:'一分厂', analyst:'', resolution:'', dept:'质量' });
+  const [meta,setMeta]=useState({ qcArea:'质检科', plant:'青岛工厂', subplant:'一分厂', analyst:'', owner:'', resolution:'', dept:'质量' });
   const setMetaK=(k,v)=>setMeta(m=>({...m,[k]:v}));
   const [trigger,setTrigger]=useState('周期复评');
   const [planDate,setPlanDate]=useState(dayjs().add(30,'day').format('YYYY-MM-DD'));
@@ -2380,7 +2429,9 @@ function BatchPlanModal({value, onClose}){
     return '不取样，直接录入'; };
   const submit=()=>{
     if(!charSel){ toast.warn('请选择被测参数'); return; }
-    const acts=charMethods.filter(m=>checked.indexOf(m)>=0);
+    const effMethods=isPersonGroup?['KAPPA']:charMethods;
+    const effChecked=isPersonGroup?['KAPPA']:checked;
+    const acts=effMethods.filter(m=>effChecked.indexOf(m)>=0);
     if(!acts.length){ toast.warn('请至少勾选一个分析方法'); return; }
     for(const m of acts){
       const sd=samplingDef(m); const c=mCfg[m]||{};
@@ -2414,7 +2465,7 @@ function BatchPlanModal({value, onClose}){
           return {ops,trials,parts}; };
         s.plans.unshift({ id:pid, name:(charObj?charObj.name:fullName)+' MSA 分析计划', instId:skey, instName:fullName, instIds:[skey], cat: isPersonGroup? per.postName : it.cat, planType: isPersonGroup? '人员MSA':'器具MSA',
           type:acts[0], method:ENUM.taskMethod[acts[0]][0], methods:acts.slice(), standard:mCfg[acts[0]].std, params:mkP(acts[0]),
-          object:charObj?charObj.name:'', feature:charObj?charObj.type:'', charId:charSel, owner:s.me.name, editor:s.me.name, editorDate:TODAY,
+          object:charObj?charObj.name:'', feature:charObj?charObj.type:'', charId:charSel, owner:meta.owner||s.me.name, editor:s.me.name, editorDate:TODAY,
           planDate, trigger, source:'临时任务', status:'待采集', recordId:'', result:'',
           note:'', partNo:charObj?charObj.partNo:'', partName:charObj?charObj.partName:'', qcArea:meta.qcArea, plant:meta.plant, subplant:meta.subplant, analyst:meta.analyst, resolution:meta.resolution,
           dept:meta.dept, dataType, msaMethods: acts.reduce((a,x)=>a.concat(msaExcelMap(x)),[]), opMethod:'《测量系统分析操作指导书》' });
@@ -2450,9 +2501,9 @@ function BatchPlanModal({value, onClose}){
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">被测参数 <b style={{color:'#cf1322'}}>*</b></span><Select size="small" style={{width:140}} placeholder="选择被测参数" options={charOptions} value={charSel||undefined} onChange={pickChar}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">零件号</span><Input size="small" style={{width:140}} disabled placeholder={charObj&&charObj.partNo? charObj.partNo : '由特性带出'}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">零件名称</span><Input size="small" style={{width:140}} disabled placeholder={charObj&&charObj.partName? charObj.partName : '由特性带出'}/></Col>
-        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">质检区划</span><Input size="small" style={{width:140}} value={meta.qcArea} onChange={e=>setMetaK('qcArea',e.target.value)}/></Col>
+        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">车间</span><Select size="small" style={{width:140}} options={SUBPLANTS_OPT} value={meta.subplant} onChange={v=>setMetaK('subplant',v)}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">分析人 <b style={{color:'#cf1322'}}>*</b></span><Select size="small" style={{width:140}} placeholder="选择分析人" value={meta.analyst||undefined} options={['李工程师','王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(c=>({value:c,label:c}))} onChange={v=>setMetaK('analyst',v)}/></Col>
-        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">分辨力</span><Input size="small" style={{width:140}} placeholder="如：0.01" value={meta.resolution} onChange={e=>setMetaK('resolution',e.target.value)}/></Col>
+        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">责任人 <b style={{color:'#cf1322'}}>*</b></span><Select size="small" style={{width:140}} placeholder="选择责任人" value={meta.owner||undefined} options={['李工程师','王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(c=>({value:c,label:c}))} onChange={v=>setMetaK('owner',v)}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">部门</span><Select size="small" style={{width:140}} value={meta.dept} options={ENUM.deptOptions.map(c=>({value:c,label:c}))} onChange={v=>setMetaK('dept',v)}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">触发依据</span><Select size="small" style={{width:140}} value={trigger} options={['周期复评','新量具','新过程','过程变更','顾客要求','内审发现'].map(c=>({value:c,label:c}))} onChange={setTrigger}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">计划检期</span><Input size="small" style={{width:140}} value={planDate} onChange={e=>setPlanDate(e.target.value)}/></Col>
@@ -2462,8 +2513,8 @@ function BatchPlanModal({value, onClose}){
       <div className="grp-label" style={{marginBottom:6}}>分析方法</div>
       {!charSel && <div style={{color:'#666666', fontSize:14}}>先选择被测参数</div>}
       {charSel && <>
-        <div style={{marginBottom:8}}><Checkbox.Group size="small" value={checked} options={charMethods.map(m=>({value:m,label:ANAL_SHORT[m]+'（'+subRuleText(m)+'）'}))} onChange={setChecked}/></div>
-        {charMethods.filter(m=>checked.indexOf(m)>=0).map(m=>{
+        <div style={{marginBottom:8}}><Checkbox.Group size="small" disabled={isPersonGroup} value={isPersonGroup?['KAPPA']:checked} options={(isPersonGroup?['KAPPA']:charMethods).map(m=>({value:m,label:ANAL_SHORT[m]+'（'+subRuleText(m)+'）'}))} onChange={setChecked}/></div>
+        {(isPersonGroup?['KAPPA']:charMethods).filter(m=>(isPersonGroup?['KAPPA']:checked).indexOf(m)>=0).map(m=>{
           const c=mCfg[m]||{};
           const sd=samplingDef(m);
           const ops=c.ops!==undefined?c.ops:sd.ops, trials=c.trials!==undefined?c.trials:sd.trials, parts=c.parts!==undefined?c.parts:sd.parts;
@@ -2584,65 +2635,61 @@ function PlanDetail({plan, onClose, onConvert}){
   const instNames=(plan.instIds||[plan.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return it? (id+' '+it.name):id; });
   const me=d.me;
   const stdObj = plan.standard? d.standards.find(s=>s.id===plan.standard) : null;
-  const act=(fn,msg)=>{ mut(s=>{ const p=s.plans.find(x=>x.id===plan.id); if(!p)return; fn(p,s); syncPlanFromRecord(s,p.id); logAction(s.me.name,msg,p.id+' '+p.instName,'状态变更'); }); };
-  const [edit,setEdit]=useState(false);
-  const actBtns=<Space wrap>
-    <Button size="small" type="link" disabled={!canDo(me.role,'edit')} onClick={()=>setEdit(true)}>编辑信息</Button>
-    <Button size="small" type="link" disabled={plan.status!=='未定型'||!canDo(me.role,'edit')} onClick={onConvert}>转分析方法</Button>
-    {recs.map(x=><Button key={x.id} size="small" type="link" disabled={!canDo(me.role,'edit')||(x.reviewStatus!=='待采集'&&x.reviewStatus!=='待分析')} onClick={()=>recJump(x)}>录入数据 {x.id}</Button>)}
-    {recs.map(x=><Button key={'t'+x.id} size="small" type="link" onClick={()=>recJump(x)}>台账 {x.id}</Button>)}
-    <Button size="small" type="link" danger disabled={plan.status==='已关闭'||!canDo(me.role,'approve')} onClick={()=>act((p,s)=>{ p.status='已关闭'; [s.grr,s.kappa,s.linear,s.stability,s.cgcgk,s.resolution].forEach(arr=>arr.forEach(r=>{ if(r.planId===p.id) r.reviewStatus='已关闭'; })); },'关闭计划')}>关闭</Button>
-  </Space>;
-  return <Drawer title={<Space>{plan.id} {plan.instName}<StatusTag s={plan.status}/>{multi? <Tag color="purple">多器具合并</Tag> : (plan.type?<Tag color={plan.type==='GRR'?'blue':'green'}>{plan.type}</Tag>:<Tag>未定型</Tag>)}</Space>} width={900} open onClose={onClose}>
-    <div style={{marginBottom:12}}>{actBtns}</div>
-    <Descriptions column={2} size="small" bordered items={[
-      {key:'MSA计划号', label:'MSA计划号', children:<span className="mono">{plan.id}</span>},{key:'创建方式', label:'创建方式', children: multi? <Tag color="purple">多器具合并计划</Tag>:<Tag>一器具一计划</Tag>},
-      {key:'量具号', label:'量具号', children:(plan.instIds||[plan.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return <div key={id}><span className="mono">{id} <span className="row-link" onClick={()=>NavAPI.openInst(id)}>（台账）</span></span></div>; })},
-      {key:'计量器具名称', label:'计量器具名称', children:(plan.instIds||[plan.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return <div key={id}>{it?it.name:'暂无'}</div>; })},
-      {key:'型号', label:'型号', children:(plan.instIds||[plan.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return <div key={id}>{it?it.model:'暂无'}</div>; })},
-      {key:'测量范围', label:'测量范围', children:(plan.instIds||[plan.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return <div key={id} className="mono tiny">{it?it.range:'暂无'}</div>; })},
-      {key:'使用部门', label:'使用部门', children:(plan.instIds||[plan.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return <div key={id} className="tiny">{it?it.dept:'暂无'}</div>; })},
-      {key:'量具状态', label:'量具状态', children:(plan.instIds||[plan.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return <div key={id}><StatusTag s={it?it.status:''}/></div>; })},
-      {key:'上次MSA', label:'上次MSA', children:(plan.instIds||[plan.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return <div key={id} className="mono tiny">{it?it.lastMsa||'暂无':'暂无'}</div>; })},
-      {key:'部门', label:'部门', children:plan.dept||'暂无'},{key:'数据类型', label:'数据类型', children:<Tag color={(plan.dataType||'计量型')==='计数型'?'purple':'blue'}>{plan.dataType||'计量型'}</Tag>},
-      {key:'MSA方法', label:'MSA 方法（本次开展的分析）', children:(plan.msaMethods||[]).length? <Space size={2} wrap>{ENUM.msaMethods.map(m=>(plan.msaMethods||[]).indexOf(m)>=0?<Tag key={m} color="green">{m}</Tag>:null)}</Space> : <span className="tiny">未勾选</span>, span:2},
-      {key:'操作方法', label:'操作方法', children:plan.opMethod||'《测量系统分析操作指导书》', span:2},
-      {key:'被测参数', label:'被测参数', children: multi? <span>{recs.map(r=><div key={r.id}>{r.instName}：{r.object}</div>)}</span> : (plan.object||'暂无'), span:2},
-      {key:'特性', label:'特性', children: multi? '暂无' : (plan.feature||'暂无'), span:2},
-      {key:'分析方法', label:'分析方法', children: multi? (recs.length?<Space size={2} wrap>{[...new Set(recs.map(x=>recKindId(x)))].map(t=>anTag(t))}</Space>:<Tag>未定型</Tag>) : anTag(plan.type)},
-      {key:'分析单号（台账记录）', label:'分析单号（台账记录）', children: recs.length? <Space size={2} wrap>{recs.map(r=><Space key={r.id} size={2}><StatusTag s={r.reviewStatus}/><VerdictTag v={r.conclusion}/><span className="mono">{r.id}</span></Space>)}</Space> : '未定型，无台账记录'},
-      {key:'零件号', label:'零件号', children:plan.partNo},{key:'零件名称', label:'零件名称', children:plan.partName||'暂无'},
-      {key:'分厂', label:'分厂', children:plan.subplant},
-      {key:'质检区划', label:'质检区划', children:plan.qcArea},{key:'工厂', label:'工厂', children:plan.plant},
-      {key:'测量人数', label:'测量人数', children: recs.length? recs[0].numOps+' 人' : (plan.params?plan.params.ops+' 人':'待定型')},
-      {key:'样本数量', label:'样本数量', children: recs.length? recs[0].numParts+' 件' : (plan.params?plan.params.parts+' 件':'待定型')},
-      {key:'测量次数', label:'测量次数', children: recs.length? recs[0].numTrials+' 次' : (plan.params?plan.params.trials+' 次':'待定型')},
-      {key:'检验标准编号', label:'检验标准编号', children: stdObj? <span className="row-link mono" onClick={()=>NavAPI.go('char')}>{stdObj.id}</span> : (plan.standard? <span className="row-link mono" onClick={()=>NavAPI.go('char')}>{plan.standard}</span> : '待定型时选择'), span:1},
-      {key:'检验项目名', label:'检验项目名', children: stdObj? stdObj.name : '暂无'},
-      {key:'标准零件', label:'标准零件', children: stdObj? stdObj.partName : '暂无'},
-      {key:'标准工序', label:'标准工序', children: stdObj? stdObj.processName : '暂无'},
-      {key:'检验方法', label:'检验方法', children: stdObj? stdObj.method : '暂无'},
-      {key:'检验标准', label:'检验标准', children: recs.length? <span>{recs.map(r=><div key={r.id}><span className="row-link mono" onClick={()=>NavAPI.go('char')}>{r.standard||'暂无'}</span><span className="tiny">（{r.instName}）</span></div>)}</span> : (stdObj? <span><span className="row-link mono" onClick={()=>NavAPI.go('char')}>{stdObj.basis||stdObj.id}</span><span className="tiny"> ｜ 检验方法：{stdObj.method}</span></span> : '待定型时选择')},
-      {key:'分析人', label:'分析人', children:plan.analyst||plan.observer||'暂无'},
-      {key:'分辨力', label:'分辨力', children:plan.resolution||'暂无'},
-      {key:'判定结果', label:'判定结果', children: recs.length? <Space size={2} wrap>{recs.map(r=><span key={r.id}><VerdictTag v={r.conclusion}/></span>)}</Space> : (plan.result&&plan.result!=='-'?<VerdictTag v={plan.result}/>:'待采集')},
-      {key:'原因分析', label:'原因分析', children:plan.reason||'暂无', span:2},
-      {key:'改进措施', label:'改进措施', children:plan.improvement||'暂无', span:2},
-      {key:'计划检期', label:'计划检期', children:plan.planDate},{key:'实际检期', label:'实际检期', children:plan.actualDate||'暂无'},
-      {key:'录入人', label:'录入人', children:plan.editor},{key:'录入时间', label:'录入时间', children:plan.editorDate},
-      {key:'修改人', label:'修改人', children:plan.modifier||'暂无'},{key:'修改时间', label:'修改时间', children:plan.modifyDate||'暂无'},
-      {key:'触发依据', label:'触发依据', children:plan.trigger, span:2},
-      {key:'任务来源', label:'任务来源', children:plan.source==='周期任务'
-        ? <Tag color="geekblue" style={{marginRight:0}}>周期任务（按器具组检验周期自动生成）</Tag>
-        : <Tag style={{marginRight:0}}>临时任务（手动创建）</Tag>},
-      {key:'备注', label:'备注', children:plan.note||'暂无', span:2}
+  /* 分项维度状态（不做/未做/通过/不通过）：与 MSA 计划列表分项列保持一致 */
+  const DIM_MSA_KEY={ 'CG/CGK':'cg/cgk','偏倚':'偏倚','线性':'线性','稳定性':'稳定性','重复性':'重复性','再现性':'再现性','KAPPA':'kappa' };
+  const dimStatus=(kind,label)=>{
+    const msaKey=DIM_MSA_KEY[label]||label;
+    const inScope=(plan.msaMethods||[]).some(m=>String(m).toLowerCase()===String(msaKey).toLowerCase());
+    const rs=recs.filter(x=>recKindId(x)===kind);
+    const concls=rs.map(x=>x.conclusion).filter(c=>c&&c!=='-'&&c!=='待采集');
+    const worst=concls.includes('不可接受')?'fail':(concls.length?'pass':'');
+    if(!inScope) return '不做';
+    if(!worst) return '未做';
+    return worst==='fail'?'不通过':'通过';
+  };
+  const dimTag=(kind,label)=>{ const s=dimStatus(kind,label); const color=s==='通过'?'green':s==='不通过'?'red':s==='未做'?'orange':'default'; return <Tag color={color} style={{marginRight:0}}>{s}</Tag>; };
+  const stdOf=(()=>{ if(recs.length) return [...new Set(recs.map(x=>x.standard).filter(Boolean))].join('、'); return plan.standard||''; })();
+  const sumVerdict=(rs)=>{ if(!rs.length) return '待采集'; const v=rs.map(x=>x.conclusion).filter(Boolean); if(!v.length) return '待采集'; if(v.some(x=>x==='不可接受')) return '不可接受'; if(v.some(x=>x==='有条件接受')) return '有条件接受'; if(v.every(x=>x==='可接受'||x==='非常理想可接受')) return '可接受'; return v[0]; };
+  const instIds=(plan.instIds||[plan.instId]);
+  const instCell=(fn)=>instIds.map(id=>{ const it=d.instruments.find(i=>i.id===id); return <div key={id}>{fn(it)}</div>; });
+  return <Drawer title={<span>{plan.id} {plan.instName} <StatusTag s={plan.status}/></span>} width={900} open onClose={onClose}>
+    <Descriptions column={3} size="small" bordered items={[
+      {key:'id', label:'MSA计划号', children:<span className="mono">{plan.id}</span>},
+      {key:'analyst', label:'分析人', children:plan.analyst||plan.observer||'暂无'},
+      {key:'planType', label:'计划类型', children:<Tag color={(plan.planType||'器具MSA')==='人员MSA'?'purple':'blue'} style={{marginRight:0}}>{plan.planType||'器具MSA'}</Tag>},
+      {key:'source', label:'任务来源', children:plan.source==='周期任务'? <Tag color="geekblue" style={{marginRight:0}}>周期任务</Tag> : <Tag style={{marginRight:0}}>临时任务</Tag>},
+      {key:'instName', label:'仪器/设备名称', children:instCell(it=>it?it.name:'暂无')},
+      {key:'instId', label:'量具编号', children:instCell(it=>it?<span className="mono">{it.id}</span>:'暂无')},
+      {key:'partNo', label:'零件号', children:<span className="mono">{plan.partNo||'—'}</span>},
+      {key:'object', label:'测量特性', children: multi? <span className="tiny">{recs.map(x=>x.object).filter(Boolean).join('、')}</span> : <span>{plan.object||'暂无'}</span>, span:2},
+      {key:'standard', label:'检验标准', children:stdOf? <span className="mono">{stdOf}</span> : <span>暂无</span>},
+      {key:'cgcgk', label:'CG/CGK', children:dimTag('cgcgk','CG/CGK')},
+      {key:'bias', label:'偏倚', children:dimTag('linear','偏倚')},
+      {key:'linear', label:'线性', children:dimTag('linear','线性')},
+      {key:'stability', label:'稳定性', children:dimTag('stability','稳定性')},
+      {key:'repeat', label:'重复性', children:dimTag('GRR','重复性')},
+      {key:'repro', label:'再现性', children:dimTag('GRR','再现性')},
+      {key:'kappa', label:'KAPPA', children:dimTag('KAPPA','KAPPA')},
+      {key:'verdict', label:'判定结果', children: recs.length? <VerdictTag v={sumVerdict(recs)}/> : (plan.result&&plan.result!=='-'?<VerdictTag v={plan.result}/>:<span className="tiny">待采集</span>)},
+      {key:'status', label:'状态', children:<Tag color={planStatusView(plan.status).color} style={{marginRight:0}}>{planStatusView(plan.status).text}</Tag>},
+      {key:'numOps', label:'测量人数', children: recs.length? recs[0].numOps+' 人' : (plan.params?plan.params.ops+' 人':'待定型')},
+      {key:'numTrials', label:'测量次数', children: recs.length? recs[0].numTrials+' 次' : (plan.params?plan.params.trials+' 次':'待定型')},
+      {key:'numParts', label:'样本数量', children: recs.length? recs[0].numParts+' 件' : (plan.params?plan.params.parts+' 件':'待定型')},
+      {key:'process', label:'工序', children:instCell(it=>it?<span>{it.process||'暂无'}</span>:'暂无')},
+      {key:'res', label:'分辨力', children:instCell(it=>it?<span className="mono">{it.res||'暂无'}</span>:'暂无')},
+      {key:'dataType', label:'数据类型', children:<Tag color={(plan.dataType||'计量型')==='计数型'?'purple':'blue'} style={{marginRight:0}}>{plan.dataType||'计量型'}</Tag>},
+      {key:'opMethod', label:'操作方法', children:plan.opMethod||'《测量系统分析操作指导书》'},
+      {key:'dept', label:'部门', children:plan.dept||'暂无'},
+      {key:'subplant', label:'分厂', children:plan.subplant||'—'},
+      {key:'planDate', label:'计划完成时间', children:<span className="mono tiny">{plan.planDate||'暂无'}</span>},
+      {key:'actualDate', label:'实际完成时间', children:<span className="mono tiny">{plan.actualDate||'暂无'}</span>},
+      {key:'editor', label:'录入人', children:plan.editor||'暂无'}
     ]}/>
     <div className="panel mt12" style={{marginBottom:0}}>
       <div className="panel-title"><span className="t"><span className="bar"/>分计划列表（取样计划 → 录入 → 分析 → 结论归集）</span>{recs.length? <span className="tiny">共 {recs.length} 个分计划，任一不合格则总计划不合格</span> : <span className="tiny">未定型，无分计划</span>}</div>
       <Table rowKey="id" size="small" dataSource={recs} columns={subPlanCols()} pagination={false} scroll={{x:960}}/>
     </div>
     {recs.filter(r=>r.reviewStatus==='待采集').length>0 && <Alert className="mt12" type="warning" showIcon message="存在待采集分计划，请点击「录入数据」完成样本采集并提交审核。" />}
-    {edit && <PlanEditModal plan={plan} onClose={()=>setEdit(false)}/>}
     {recs.map(r=> r.actions&&r.actions.length>0? <div key={'a'+r.id}><div className="grp-label">纠正措施 / 整改跟踪（{r.id}）</div>{r.actions.map((a,i)=><Alert key={i} type={a.status==='已完成'?'success':'warning'} showIcon style={{marginBottom:8}}
       message={<Space><Tag color={a.status==='已完成'?'green':'orange'}>{a.status}</Tag><b>{a.type}</b></Space>}
       description={<span>{a.content} ｜ 责任人：{a.owner} ｜ 计划完成：{a.planDate}</span>}/>)}</div> : null)}
@@ -2753,10 +2800,7 @@ function StandardPage(){
     <Panel title="检验标准列表">
       <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:1700}} pagination={false}/>
     </Panel>
-    {detail && <Drawer title={detail.id+' '+detail.name} width={760} open onClose={()=>setDetail(null)}
-      extra={<Space>
-        <Button size="small" type="link" onClick={()=>{setModal({record:detail, revise:true});}}>修订</Button>
-      </Space>}>
+    {detail && <Drawer title={detail.id+' '+detail.name} width={760} open onClose={()=>setDetail(null)}>
       <Descriptions column={2} size="small" bordered items={[
         {key:'检验项目号', label:'检验项目号', children:<span className="mono">{detail.id}</span>},{key:'检验项目名', label:'检验项目名', children:detail.name},
         {key:'零件名称', label:'零件名称', children:detail.partName},{key:'工序名称', label:'工序名称', children:detail.processName},
@@ -2964,8 +3008,7 @@ function CharPage(){
     </Panel>
     {detail && <CharDetail rec={detail} onClose={()=>setDetail(null)} onEdit={(r)=>{setDetail(null);setModal({record:r});}}/>}
     {modal && <CharModal value={modal} onClose={()=>setModal(null)}/>}
-    {stdDetail && <Drawer title={stdDetail.id+' '+(stdDetail.name||'')} width={720} open onClose={()=>setStdDetail(null)}
-      extra={<Space><Button size="small" type="link" onClick={()=>{setStdModal({record:stdDetail, revise:true});}}>修订</Button></Space>}>
+    {stdDetail && <Drawer title={stdDetail.id+' '+(stdDetail.name||'')} width={720} open onClose={()=>setStdDetail(null)}>
       <Descriptions column={2} size="small" bordered items={[
         {key:'标准编号', label:'标准编号', children:<span className="mono">{stdDetail.id}</span>},
         {key:'检验标准', label:'检验标准', children:stdDetail.basis||'暂无', span:2},
@@ -2991,8 +3034,7 @@ function CharPage(){
 function CharDetail({rec,onClose,onEdit}){
   const d=Store.get();
   const ms=rec.methods||[];
-  return <Drawer title={rec.id+' · '+rec.name} width={680} open onClose={onClose}
-    extra={<Space><Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>onEdit(rec)}>编辑</Button></Space>}>
+  return <Drawer title={rec.id+' · '+rec.name} width={680} open onClose={onClose}>
     <Descriptions column={2} size="small" bordered items={[
       {key:'id',label:'被测参数编号',children:<span className="mono">{rec.id}</span>},
       {key:'name',label:'被测参数名称',children:rec.name},
@@ -3544,8 +3586,7 @@ function SamplePage(){
     <Panel title="样本组列表">
       <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:1300}} pagination={false}/>
     </Panel>
-    {detail && <Drawer title={<Space>{detail.id} {detail.name}<Tooltip title={TIPS.sample[detail.status]||detail.status}><Tag color={detail.status==='已测量'?'green':'orange'}>{detail.status}</Tag></Tooltip></Space>} width={760} open onClose={()=>setDetail(null)}
-      extra={<Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>setModal(detail)}>编辑</Button>}>
+    {detail && <Drawer title={<Space>{detail.id} {detail.name}<Tooltip title={TIPS.sample[detail.status]||detail.status}><Tag color={detail.status==='已测量'?'green':'orange'}>{detail.status}</Tag></Tooltip></Space>} width={760} open onClose={()=>setDetail(null)}>
       <Descriptions column={2} size="small" bordered items={[
         {key:'关联器具', label:'关联器具', children:detail.instId},{key:'关联MSA计划', label:'关联MSA计划', children:detail.planId||'暂无'},
         {key:'样本数', label:'样本数', children:detail.count},{key:'状态', label:'状态', children:detail.status},
@@ -3614,6 +3655,7 @@ function GrrEntry({rec, onClose}){
   const items=d.sampleItems.filter(s=>s.groupId===(rec.sampleGroup||''));
   const tol = rec.tolerance||parseTol(rec.object);
   const [opsNames,setOpsNames]=useState(rec.operators&&rec.operators.length? rec.operators : Array.from({length:Number(rec.numOps)||3},(_,i)=>'操作员'+'ABCD'[i]));
+  const [curOp,setCurOp]=useState(0);
   const [trialsN,setTrialsN]=useState(Number(rec.numTrials)||3);
   const [partsN,setPartsN]=useState(items.length || Number(rec.numParts)||10);
   const [raw,setRaw]=useState(()=>{
@@ -3645,41 +3687,21 @@ function GrrEntry({rec, onClose}){
     });
     toast.ok('数据已保存（待分析），请到台账页「手动分析」计算并提交审核');
   };
+  const curOpSafe=Math.min(curOp, Math.max(0, opsNames.length-1));
   const refCols=[
     {title:'样本编号', width:110, fixed:'left', render:(_,row)=><span className="mono">{items[row.i]?items[row.i].id:'样本'+String(row.i+1)}</span>}
   ];
-  for(let o=0;o<opsNames.length;o++) for(let t=0;t<trialsN;t++){
-    refCols.push({title:(opsNames[o]||('操作员'+o))+' · 试验'+(t+1), dataIndex:'c'+o+'_'+t, width:92,
-      render:(v,row)=><Input size="small" value={row.c[o][t]==null?'':row.c[o][t]} onChange={e=>setCell(o,row.i,t,e.target.value)} className="data-cell"/>});
+  for(let t=0;t<trialsN;t++){
+    refCols.push({title:(opsNames[curOpSafe]||('操作员'+curOpSafe))+'·试验'+(t+1), dataIndex:'c'+t, width:130,
+      render:(v,row)=><Input size="small" value={row.c[t]==null?'':row.c[t]} onChange={e=>setCell(curOpSafe,row.i,t,e.target.value)} className="data-cell"/>});
   }
-  const ds=Array.from({length:partsN},(_,i)=>({i, c:raw.map(op=>op[i]||[])}));
+  const ds=Array.from({length:partsN},(_,i)=>({i, c:(raw[curOpSafe]||[])[i]||[]}));
   return <Panel title={<span>GRR 数据采集 · {rec.id} · {rec.instName}</span>}
     extra={<Space><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button><Button size="small" type="link" onClick={clearAll}>清空</Button>
     <Button type="primary" size="small" disabled={!complete} onClick={submit}>保存数据（待分析）</Button></Space>}>
-    <Row gutter={16}>
-      <Col span={6}>
-        <div className="grp-label">操作员名单</div>
-        {opsNames.map((n,i)=><Space key={i} style={{display:'flex',marginBottom:6}} size={4}>
-          <Input size="small" style={{width:120}} value={n} onChange={e=>setOpsNames(opsNames.map((x,ix)=>ix===i?e.target.value:x))}/>
-          <Button size="small" type="link" danger onClick={()=>removeOp(i)}>−</Button>
-        </Space>)}
-        <Button size="small" type="link" onClick={addOp}>＋ 添加操作员</Button>
-        <div className="grp-label">参数</div>
-        <div className="form-hint">试验次数</div>
-        <InputNumber size="small" min={1} max={10} value={trialsN} onChange={changeTrials} style={{width:80}}/>
-        <div className="form-hint" style={{marginTop:8}}>样本数</div>
-        <InputNumber size="small" min={1} max={100} value={partsN} onChange={changeParts} style={{width:80}}/>
-        <div className="form-hint" style={{marginTop:8}}>{opsNames.length} 人 × {trialsN} 次 × {partsN} 个<br/>检验标准：<span className="mono">{rec.standard||'暂无'}</span></div>
-        <div className="grp-label">数据录入方式</div>
-        <Tag color="blue">交叉型（Crossed）</Tag>
-        <div className="grp-label">校验状态</div>
-        <Tag color={complete?'green':'orange'}>{complete?'数据完整，可提交':'数据不完整'}</Tag>
-      </Col>
-      <Col span={18}>
-        <div className="grp-label">测量数据矩阵</div>
-        <Table size="small" rowKey="i" dataSource={ds} columns={refCols} pagination={false} scroll={{x:opsNames.length*trialsN*92+140}}/>
-      </Col>
-    </Row>
+    <Tabs size="small" activeKey={String(curOpSafe)} onChange={v=>setCurOp(Number(v))} items={opsNames.map((n,i)=>({key:String(i), label:n}))}/>
+    <div className="grp-label">测量数据矩阵 · {opsNames[curOpSafe]||('操作员'+curOpSafe)}</div>
+    <Table size="small" rowKey="i" dataSource={ds} columns={refCols} pagination={false} scroll={{x:trialsN*130+140}}/>
   </Panel>;
 }
 
@@ -3687,6 +3709,7 @@ function KappaEntry({rec, onClose}){
   const d=Store.get();
   const items=d.sampleItems.filter(s=>s.groupId===(rec.sampleGroup||''));
   const [appNames,setAppNames]=useState(rec.appNames&&rec.appNames.length? rec.appNames : Array.from({length:Number(rec.numApp)||3},(_,i)=>['检验员甲','检验员乙','检验员丙','检验员丁'][i]));
+  const [curApp,setCurApp]=useState(0);
   const [samplesN,setSamplesN]=useState(items.length || Number(rec.numSamples)||50);
   const [trialsN,setTrialsN]=useState(Number(rec.numTrials)||3);
   const [judg,setJudg]=useState(()=>{
@@ -3716,38 +3739,20 @@ function KappaEntry({rec, onClose}){
     });
     toast.ok('数据已保存（待分析），请到台账页「手动分析」计算并提交审核');
   };
+  const curAppSafe=Math.min(curApp, Math.max(0, appNames.length-1));
   const cols=[
     {title:'样本编号', width:110, fixed:'left', render:(_,row)=><span className="mono">{items[row.i]?items[row.i].id:'样本'+String(row.i+1)}</span>}
   ];
-  for(let a=0;a<appNames.length;a++) cols.push({title:(appNames[a]||('检验员'+a))+(trialsN>1?('（'+trialsN+'判/件）'):''), dataIndex:'a'+a, width:trialsN*70+16,
-    render:(v,row)=><Space size={2}>{Array.from({length:trialsN},(_,tt)=><Select size="small" style={{width:64}} value={row.j[a][tt]===''?undefined:row.j[a][tt]}
-      options={[{value:1,label:'合格'},{value:0,label:'不合格'}]} onChange={v=>setCell(a,row.i,tt,v)} placeholder={String(tt+1)}/>)}</Space>});
-  const ds=Array.from({length:samplesN},(_,i)=>({i, j:judg.map(a=>a[i]||[])}));
+  for(let tt=0;tt<trialsN;tt++) cols.push({title:(appNames[curAppSafe]||('检验员'+curAppSafe))+'·第'+(tt+1)+'判', dataIndex:'t'+tt, width:110,
+    render:(v,row)=><Select size="small" style={{width:64}} value={row.j[tt]===''?undefined:row.j[tt]}
+      options={[{value:1,label:'合格'},{value:0,label:'不合格'}]} onChange={v=>setCell(curAppSafe,row.i,tt,v)} placeholder={String(tt+1)}/>});
+  const ds=Array.from({length:samplesN},(_,i)=>({i, j:(judg[curAppSafe]||[])[i]||[]}));
   return <Panel title={<span>KAPPA 数据采集 · {rec.id} · {rec.instName}</span>}
     extra={<Space><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button>
     <Button type="primary" size="small" disabled={!complete} onClick={submit}>保存数据（待分析）</Button></Space>}>
-    <Row gutter={16}>
-      <Col span={6}>
-        <div className="grp-label">检验员名单</div>
-        {appNames.map((n,i)=><Space key={i} style={{display:'flex',marginBottom:6}} size={4}>
-          <Input size="small" style={{width:120}} value={n} onChange={e=>setAppNames(appNames.map((x,ix)=>ix===i?e.target.value:x))}/>
-          <Button size="small" type="link" danger onClick={()=>removeApp(i)}>−</Button>
-        </Space>)}
-        <Button size="small" type="link" onClick={addApp}>＋ 添加检验员</Button>
-        <div className="grp-label">参数</div>
-        <div className="form-hint">每件判定次数</div>
-        <InputNumber size="small" min={1} max={5} value={trialsN} onChange={changeTrials} style={{width:80}}/>
-        <div className="form-hint" style={{marginTop:8}}>样本数</div>
-        <InputNumber size="small" min={1} max={200} value={samplesN} onChange={changeSamples} style={{width:80}}/>
-        <div className="form-hint" style={{marginTop:8}}>{appNames.length} 人 × {samplesN} 件 × {trialsN} 判/件<br/>检验标准：<span className="mono">{rec.standard||'暂无'}</span></div>
-        <div className="grp-label">校验状态</div>
-        <Tag color={complete?'green':'orange'}>{complete?'判定完整，可提交':'判定不完整'}</Tag>
-      </Col>
-      <Col span={18}>
-        <div className="grp-label">判定矩阵（合格/不合格，每件 {trialsN} 判 · 多数裁决）</div>
-        <Table size="small" rowKey="i" dataSource={ds} columns={cols} pagination={false} scroll={{x:appNames.length*(trialsN*70+16)+140}}/>
-      </Col>
-    </Row>
+    <Tabs size="small" activeKey={String(curAppSafe)} onChange={v=>setCurApp(Number(v))} items={appNames.map((n,i)=>({key:String(i), label:n}))}/>
+    <div className="grp-label">判定矩阵（合格/不合格，每件 {trialsN} 判 · 多数裁决）· {appNames[curAppSafe]||('检验员'+curAppSafe)}</div>
+    <Table size="small" rowKey="i" dataSource={ds} columns={cols} pagination={false} scroll={{x:trialsN*110+140}}/>
   </Panel>;
 }
 /* ================= GRR 台账 ================= */
@@ -3898,25 +3903,20 @@ function AnlEntry({rec, kind, onClose}){
   const cell=(i,j,v,onChange)=> <Input size="small" style={{width:78}} value={v} onChange={e=>onChange(e.target.value)}/>;
   const label=(txt,desc)=> <div style={{marginBottom:6}}><span className="flt-label">{txt}</span>{desc?<span className="tiny" style={{marginLeft:8}}>{desc}</span>:null}</div>;
   return <div>
-    {(kind==='linear'||kind==='stability'||kind==='cgcgk') && <Space style={{marginBottom:12}} wrap>
-      <span className="flt-label">{kind==='linear'?'标准件数':kind==='stability'?'子组数':'测量次数'}</span>
-      <InputNumber size="small" min={kind==='stability'?25:1} max={kind==='cgcgk'?200:100} value={cnt} onChange={v=>setCnt(v||1)}/>
-      {kind!=='cgcgk' && <><span className="flt-label">{kind==='linear'?'每件次数':'每期次数'}</span>
-      <InputNumber size="small" min={1} max={20} value={perN} onChange={v=>setPerN(v||1)}/></>}
-      <Button size="small" type="link" onClick={regen}>重新生成（默认 {kind==='linear'?'5 件 × 12 次':kind==='stability'?'25 子组 × 5 次':'50 次'}）</Button>
-      </Space>}
-    {kind==='linear' && <div style={{maxHeight:430, overflow:'auto'}}>{label('标准件测量（每件 '+perN+' 次可调，覆盖 0~100% 量程）')}
+    <div style={{display:'flex', justifyContent:'flex-end', marginBottom:12}}>
+      <Button type="primary" size="small" onClick={submit}>保存数据（待分析）</Button>
+    </div>
+    {kind==='linear' && <div style={{maxHeight:430, overflow:'auto'}}>{label('标准件测量（每件 '+perN+' 次，覆盖 0~100% 量程）')}
       <table className="mono-grid"><thead><tr><th>标准件</th>{Array.from({length:perN||12},(_,j)=><th key={j}>测{j+1}</th>)}</tr></thead>
       <tbody>{st.raw.map((row,i)=><tr key={i}><td>{'STD-'+String(i+1).padStart(2,'0')}（{Math.round(100*i/(Math.max(1,(cnt||5)-1)))}%量程）</td>
         {row.map((c,j)=><td key={j}>{cell(i,j,c,v=>setCell('raw',i,j,v))}</td>)}</tr>)}</tbody></table></div>}
-    {kind==='stability' && <div style={{maxHeight:430, overflow:'auto'}}>{label('稳定性子组测量（'+cnt+' 子组 × 每期 '+perN+' 次可调，跨 4 周~3 个月）','固定参照仪/工位，SPC 判异模型')}
+    {kind==='stability' && <div style={{maxHeight:430, overflow:'auto'}}>{label('稳定性子组测量（'+cnt+' 子组 × 每期 '+perN+' 次，跨 4 周~3 个月）','固定参照仪/工位，SPC 判异模型')}
       <table className="mono-grid"><thead><tr><th>子组</th>{Array.from({length:perN||5},(_,j)=><th key={j}>测{j+1}</th>)}<th>X̄</th><th>R</th></tr></thead>
       <tbody>{st.raw.map((row,i)=>{ const vals=row.map(Number).filter(v=>!isNaN(v)); const m=vals.length? vals.reduce((a,b)=>a+b,0)/vals.length:0; const rg=vals.length? (Math.max.apply(null,vals)-Math.min.apply(null,vals)):0;
         return <tr key={i}><td>{'G'+String(i+1).padStart(2,'0')}</td>{row.map((c,j)=><td key={j}>{cell(i,j,c,v=>setCell('raw',i,j,v))}</td>)}<td>{vals.length?fmt(m,3):'暂无'}</td><td>{vals.length?fmt(rg,3):'暂无'}</td></tr>; })}</tbody></table></div>}
     {kind==='cgcgk' && <div>{label('Cg/Cgk 测量（标准件连续 '+st.raw.length+' 次）','参考值 ±10% 公差控制线（VDA Type1）')}
       <div style={{maxHeight:400, overflow:'auto'}}><table className="mono-grid"><thead><tr>{Array.from({length:Math.min(10,st.raw.length)},(_,i)=><th key={i}>测{i+1}</th>)}</tr></thead>
       <tbody>{Array.from({length:Math.ceil(st.raw.length/10)},(_,r0)=><tr key={r0}>{Array.from({length:Math.min(10,st.raw.length-r0*10)},(_,i)=>{ const idx=r0*10+i; return <td key={idx}>{cell(idx,0,st.raw[idx],v=>setCell('raw',idx,0,v))}</td>; })}</tr>)}</tbody></table></div></div>}
-    <div style={{marginTop:18}}><Space><Button type="primary" onClick={submit}>保存数据（待分析）</Button><Button onClick={onClose}>取消</Button></Space></div>
   </div>;
 }
 
@@ -4055,27 +4055,36 @@ function EntryPage({kind}){
   const goResult=(r)=>{ if(kind==='grr'){ GrrOpenId=r.id; NavAPI.go('grr'); } else if(kind==='kappa'){ KpaOpenId=r.id; NavAPI.go('kappa'); } else { AnlOpen={kind,id:r.id}; NavAPI.go(CFG.result); } };
   const recParams=(r)=> kind==='grr'? (r.numOps+'人 × '+r.numTrials+'次 × '+r.numParts+'件') : kind==='kappa'? (r.numApp+'人 × '+r.numSamples+'件') : ANA_CFG[kind].params(r);
   const [anlRec,setAnlRec]=useState(null); const [opsRec,setOpsRec]=useState(null); const [prevRec,setPrevRec]=useState(null);
+  const [selKeys,setSelKeys]=useState([]);
+  const selRows=rows.filter(r=>selKeys.includes(r.id));
+  const [auditOpen,setAuditOpen]=useState(false); const [auditPerson,setAuditPerson]=useState(undefined);
   const cols=[
     {title:'操作', width:290, fixed:'left', render:(_,r)=><OpBtns items={[
-      {label:'录入数据',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待采集',onClick:()=>{DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind);}},
+      {label:'审核',onClick:()=>setAuditOpen(true)},
       {label:'手动分析',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待分析',onClick:()=>setAnlRec(r)},
       {label:'查看结果',onClick:()=>goResult(r)},
       {label:'修改数据',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待分析',onClick:()=>{DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind);}},
       {label:'操作人',onClick:()=>setOpsRec(r)},
-      {label:'导入',onClick:()=>doImport(r,kind)},
-      {label:'预览',onClick:()=>setPrevRec(r)},
-      {label:'器具',onClick:()=>NavAPI.openInst(r.instId)}
+      {label:'预览',onClick:()=>{}},
+      {label:'录入数据',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待采集',onClick:()=>{DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind);}}
     ]}/>},
     {title:CFG.idPref+'编号', dataIndex:'id', width:115, render:(v,r)=><span className="row-link mono" onClick={()=>goResult(r)}>{v}</span>},
+    {title:'分析人', dataIndex:'analyst', width:90},
     {title:'操作人', width:150, render:(_,r)=><span className="tiny">{opsLabel(kind,r)}</span>},
     {title:'关联计划', dataIndex:'planId', width:110, render:(v)=><span className="row-link mono" onClick={()=>NavAPI.go('plan')}>{v||'暂无'}</span>},
     {title:'器具名称', width:150, render:(_,r)=>{ const it=d.instruments.find(i=>i.id===r.instId); return <span>{it?it.name:r.instName}</span>; }, ellipsis:true},
+    {title:'型号', width:110, render:(_,r)=>{ const it=d.instruments.find(i=>i.id===r.instId); return <span>{it&&it.model?it.model:'暂无'}</span>; }, ellipsis:true},
+    {title:'分辨力', width:100, render:(_,r)=>{ const it=d.instruments.find(i=>i.id===r.instId); return <span>{it&&it.res?it.res:'暂无'}</span>; }},
+    {title:'工序', width:90, render:(_,r)=>{ const it=d.instruments.find(i=>i.id===r.instId); return <span>{it&&it.process?it.process:'暂无'}</span>; }},
     {title:'测量对象', dataIndex:'object', width:170, ellipsis:true},
     {title:'取样规则', width:170, render:(_,r)=><span>{recParams(r)}</span>},
-    {title:'标准', dataIndex:'standard', width:105, render:v=><span>{v||'暂无'}</span>},
+    {title:'上限', width:90, render:(_,r)=><span>{r.tolerance&&r.tolerance.has?r.tolerance.usl:'暂无'}</span>},
+    {title:'下限', width:90, render:(_,r)=><span>{r.tolerance&&r.tolerance.has?r.tolerance.lsl:'暂无'}</span>},
+    {title:'标准值', width:100, render:(_,r)=>{ const sp=(d.sampleLib||[]).find(s=>s.charDim===r.object); return <span>{sp&&sp.refValue&&sp.refValue!=='待维护'?sp.refValue:'暂无'}</span>; }},
     {title:'结论', width:120, render:(_,r)=><VerdictTag v={r.conclusion}/>},
     {title:'状态', width:90, render:(_,r)=><StatusTag s={r.reviewStatus}/>},
-    {title:'分析人', dataIndex:'analyst', width:90}
+    {title:'审核人', width:90, render:(_,r)=><span>{r.reviewer||'暂无'}</span>},
+    {title:'确认状态', width:90, render:(_,r)=>{ const ok=!!(r.approver||r.approveDate); return <Tooltip title={ok?'该记录已完成确认':'该记录尚未确认'}><span style={{color:ok?'#52c41a':'#666666'}}>{ok?'已确认':'未确认'}</span></Tooltip>; }}
   ];
   return <div>
     <Panel title="查询条件">
@@ -4091,15 +4100,21 @@ function EntryPage({kind}){
       <Space wrap>
         <Button type="primary" onClick={()=>setQ({kw:fkw,status:fstatus,concl:fconcl})}>查询</Button>
         <Button onClick={resetQ}>重置</Button>
+        <Button disabled={!canDo(d.me.role,'edit')} onClick={()=>{}}>导入</Button>
         <Button disabled={!canDo(d.me.role,'edit')}>导出</Button>
+        <Button onClick={()=>{ if(!selRows.length){ toast.warn('请先在列表中勾选记录'); return; } toast.ok('已确认所选 '+selRows.length+' 条记录'); }}>确认</Button>
       </Space>
     </Panel>
     <Panel title={CFG.title+' · 记录列表（'+rows.length+' 条）'}>
-      <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:1320}} pagination={false}/>
+      <Table rowKey="id" size="middle" dataSource={rows} columns={cols} rowSelection={{selectedRowKeys:selKeys, onChange:setSelKeys}} scroll={{x:1500}} pagination={false}/>
     </Panel>
     {anlRec && <AnalyzeModal rec={anlRec} kind={kind} onClose={()=>setAnlRec(null)}/>}
     {opsRec && <OpsModal rec={opsRec} kind={kind} onClose={()=>setOpsRec(null)}/>}
     {prevRec && <ImportPreviewModal rec={prevRec} kind={kind} onClose={()=>setPrevRec(null)}/>}
+    {auditOpen && <Modal cancelText="取消" title="审核 · 选择审核人员" open okText="确认" onOk={()=>{ if(!auditPerson){ toast.warn('请选择审核人员'); return; } toast.ok('已提交审核：'+auditPerson); setAuditOpen(false); setAuditPerson(undefined); }} onCancel={()=>{ setAuditOpen(false); setAuditPerson(undefined); }} destroyOnClose width={420}>
+      <div style={{marginBottom:4}}><span className="flt-label" style={{fontSize:14,color:'#333333'}}>审核人员</span></div>
+      <Select style={{width:'100%'}} placeholder="请选择审核人员" value={auditPerson} options={['王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(n=>({value:n,label:n}))} onChange={setAuditPerson}/>
+    </Modal>}
   </div>;
 }
 function ImportPreviewModal({rec, kind, onClose}){
@@ -4147,7 +4162,7 @@ function DataEntryPage({kind}){
   const onPicked=(id)=>{ const r=(d[CFG.arr]||[]).find(g=>g.id===id); if(r){ setRec(r); setSelId(id); } };
   const onKindChange=(k)=>{ DataOpen=null; setCurKind(k); setRec(null); setSelId(null); };
   return <div>
-    <PageHead title="数据录入" extra={<Space><Button onClick={gotoList}>返回台账</Button></Space>}/>
+    <PageHead title="数据录入"/>
     <Panel title="选择录入类型">
       <Space wrap>
         <Select style={{width:300}} value={kindNow} placeholder="选择台账类型" options={['grr','kappa','linear','stability','cgcgk'].map(k=>({value:k,label:ENTRY_CFG[k].name+'（'+ENTRY_CFG[k].title+'）'}))} onChange={onKindChange}/>
@@ -4155,7 +4170,7 @@ function DataEntryPage({kind}){
         <span className="tiny">共 {pending.length} 条待处理记录</span>
       </Space>
     </Panel>
-    {cur ? <Panel title={<span>{cur.id} · {cur.instName} · {CFG.name} 数据录入<StatusTag s={cur.reviewStatus}/></span>} extra={<Button size="small" type="link" onClick={gotoList}>返回台账</Button>}>
+    {cur ? <Panel title={<span>{cur.id} · {cur.instName} · {CFG.name} 数据录入<StatusTag s={cur.reviewStatus}/></span>}>
       {CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); })}
     </Panel> : <Panel title="暂无待处理记录"/>}
   </div>;
@@ -4684,7 +4699,12 @@ function LogPage(){
     Store.data=saved;
     try{
       const sd = buildSeed();
-      ['linear','stability','cgcgk','resolution','characteristics','anMethods','samplingRules'].forEach(k=>{ if(!Store.data[k] || !Store.data[k].length) Store.data[k]=(Store.data[k]||[]).concat(sd[k].slice()); });
+      ['plans','grr','kappa','linear','stability','cgcgk','resolution','characteristics','anMethods','samplingRules'].forEach(k=>{
+        const arr = Store.data[k]||[];
+        const ids = new Set(arr.map(x=>x&&x.id));
+        const add = (sd[k]||[]).filter(x=>x&&!ids.has(x.id));
+        if(add.length) Store.data[k]=arr.concat(add);
+      });
     }catch(e){}
     applyFieldDefaults(Store.data);
   }
