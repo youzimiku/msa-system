@@ -1,0 +1,86 @@
+--- index_备份_20260916_180304_零件号联动下拉前.html
++++ index.html
+@@ -162,7 +162,7 @@
+  * ==========================================================================*/
+ const { useState, useEffect, useMemo, useRef, useReducer } = React;
+ const { Table, Card, Tag, Badge, Button, Space, Input, InputNumber, Select, Form, Modal, Drawer,
+-        Descriptions, Tabs, Steps, Alert, Tooltip, Popconfirm, Progress, Timeline,
++        Descriptions, Tabs, Steps, Alert, Tooltip, Popconfirm, Popover, Progress, Timeline,
+         Result, Empty, Row, Col, Divider, List, Avatar, Dropdown, Breadcrumb, Statistic,
+         Menu, Layout, message, Pagination, Radio, Segmented, Checkbox, Switch, DatePicker } = antd;
+ const { Sider, Header, Content, Footer } = Layout;
+@@ -718,6 +718,7 @@
+   const PRODS=['压铸线','机加线','装配线','冲压线','热处理线','注塑线'];
+   const PROCESSES=['下料','粗加工','精加工','装配','检验','包装'];
+   const PLANTS=['青岛工厂','烟台工厂']; const SUBPLANTS=['一分厂','二分厂'];
++  const PARTNAME_MAP={'PN-1000':'轴类件','PN-1001':'孔类件','PN-1002':'标准件','PN-1003':'轴端盖','PN-1004':'壳体','PN-1005':'齿轮轴','PN-1006':'轴类件','PN-1007':'孔类件','PN-2001':'标准件','PN-3001':'轴端盖','PN-4001':'壳体','PN-5001':'齿轮轴'};
+   if(!d.extrapolations) d.extrapolations=[];
+   if(!d.instGroups) d.instGroups=[];
+   if(!d.linear) d.linear=[]; if(!d.stability) d.stability=[]; if(!d.cgcgk) d.cgcgk=[]; if(!d.resolution) d.resolution=[]; // 新增分析方法台账（线性/偏移、稳定性、Cg/Cgk、分辨力）
+@@ -861,6 +862,8 @@
+     if(!s.partName) s.partName=({ 'PN-1001':'轴类件','PN-1002':'轴类件','PN-1003':'扭矩杆件','PN-2001':'壳体件','PN-2002':'外观件' })[s.partNo]||'—';
+   });
+   if(!d.sampleLibLogs) d.sampleLibLogs=[];
++  /* 零件号↔零件名称：历史数据按映射补齐零件名称（与 PartSelect 联动同一映射） */
++  (['plans','characteristics','sampleLib']).forEach(k=>{ (d[k]||[]).forEach(o=>{ if(o.partNo&&(!o.partName||o.partName==='—')){ const pn=PARTNAME_MAP[o.partNo]; if(pn) o.partName=pn; } }); });
+   /* 新种子补录：旧数据（localStorage）不含本轮新增种子时补入，保证各页面有完整示例 */
+   /* 人员主数据 + 人员组（主方案：以岗位编码为组标识，成员按岗位自动带出；旧 kappa 人员组迁移为人员组） */
+   if(!d.personnel || !d.personnel.length){
+@@ -979,6 +982,24 @@
+ /* 模拟数据下拉选项（前端演示用，非业务主数据） */
+ const PARTNO_OPT = ['PN-1000','PN-1001','PN-1002','PN-1003','PN-1004','PN-1005','PN-1006','PN-1007','PN-2001','PN-3001','PN-4001','PN-5001'].map(v=>({value:v,label:v}));
+ const PARTNAME_OPT = ['轴类件','孔类件','标准件','轴端盖','壳体','齿轮轴'].map(v=>({value:v,label:v}));
++/* 零件号↔零件名称 模拟映射（样本库/被测参数/MSA计划 联动选择共用） */
++const PART_PAIRS=['PN-1000','PN-1001','PN-1002','PN-1003','PN-1004','PN-1005','PN-1006','PN-1007','PN-2001','PN-3001','PN-4001','PN-5001'].map((no,i)=>({no, name:['轴类件','孔类件','标准件','轴端盖','壳体','齿轮轴','轴类件','孔类件','标准件','轴端盖','壳体','齿轮轴'][i]}));
++/* 零件号选择控件：下拉选项显示「零件号-零件名称」，可搜索零件号/名称；选中后只显示零件号并联动零件名称 */
++function PartSelect({value, onChange, width}){
++  const [open,setOpen]=useState(false);
++  const [kw,setKw]=useState('');
++  const list=PART_PAIRS.filter(p=>!kw||(p.no+p.name).toLowerCase().includes(kw.toLowerCase()));
++  return <Popover trigger="click" open={open} onOpenChange={o=>{setOpen(o); if(o) setKw('');}} placement="bottomLeft" content={<div style={{width:240}}>
++    <Input size="small" autoFocus allowClear placeholder="搜索零件号 / 零件名称" value={kw} onChange={e=>setKw(e.target.value)}/>
++    <div style={{maxHeight:200,overflow:'auto',marginTop:4}}>
++      {list.length===0? <div style={{padding:'6px 8px',color:'#999',fontSize:12}}>无匹配零件</div> : list.map(p=>(
++        <div key={p.no} onClick={()=>{onChange(p.no,p.name); setOpen(false);}} style={{padding:'5px 8px',cursor:'pointer',borderRadius:4,fontSize:13,whiteSpace:'nowrap'}} onMouseEnter={e=>e.currentTarget.style.background='#f5f5f5'} onMouseLeave={e=>e.currentTarget.style.background=''}>{p.no}-{p.name}</div>
++      ))}
++    </div>
++  </div>}>
++    <Input size="small" readOnly value={value||''} placeholder="选择零件号" style={{width}} suffix={<span style={{fontSize:10,color:'#999'}}>▾</span>}/>
++  </Popover>;
++}
+ const PROCESS_OPT = ['精加工','检验','装配','机加工','终检','总装'].map(v=>({value:v,label:v}));
+ const UNIT_OPT = ['mm','μm','N','N·m','kg','g','°C','MPa','件'].map(v=>({value:v,label:v}));
+ const DEPT_OPT = ['品质部','总装车间','电控车间','计量室','实验室','质量'].map(v=>({value:v,label:v}));
+@@ -2296,8 +2317,8 @@
+     {title:'任务来源', width:100, render:(_,r)=><span>{r.source==='周期任务'?'周期任务':'临时任务'}</span>},
+     {title:'仪器/设备名称', width:160, render:(_,r)=>instCell(r,it=>it?it.name:'')},
+     {title:'量具编号', width:110, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.id}</span>:'')},
+-    {title:'零件号', width:110, dataIndex:'partNo', render:(_,r)=><Select size="small" value={r.partNo||undefined} style={{width:100}} options={PARTNO_OPT} onChange={x=>setF(r,'partNo',x)}/>},
+-    {title:'零件名称', width:120, dataIndex:'partName', render:(_,r)=><Select size="small" value={(r.partName&&r.partName!=='—')?r.partName:undefined} style={{width:110}} options={PARTNAME_OPT} onChange={x=>setF(r,'partName',x)}/>},
++    {title:'零件号', width:110, dataIndex:'partNo', render:(_,r)=><PartSelect value={r.partNo} width={100} onChange={(no,name)=>{setF(r,'partNo',no); setF(r,'partName',name);}}/>},
++    {title:'零件名称', width:120, dataIndex:'partName', render:(_,r)=><span>{r.partName||'—'}</span>},
+     {title:'被测参数', width:190, ellipsis:true, render:(_,r)=>{ const recs=planRecords(d,r.id); const cur=(r.instIds||[]).length>1? recs.map(x=>x.object).filter(Boolean).join('、') : (r.object||''); return <span>{cur||'—'}</span>; }},
+     {title:'检验标准号', width:120, render:(_,r)=>{ const st=(d.standards||[]).find(x=>x.id===r.standard); return <span className="mono">{st?st.id:'—'}</span>; }},
+     {title:'检验标准', width:200, ellipsis:true, render:(_,r)=>{ const st=(d.standards||[]).find(x=>x.id===r.standard); return <span>{st?(st.basis||st.name||''):'—'}</span>; }},
+@@ -3000,8 +3021,8 @@
+     {title:'被测参数编号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
+     {title:'被测参数名称', dataIndex:'name', width:170, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
+     {title:'特性类型', dataIndex:'type', width:110, render:(_,r)=><Select size="small" value={r.type||'普通'} style={{width:100}} options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]} onChange={x=>setF(r,'type',x)}/>},
+-    {title:'零件号', dataIndex:'partNo', width:110, render:(_,r)=><Select size="small" value={r.partNo||undefined} style={{width:100}} options={PARTNO_OPT} onChange={x=>setF(r,'partNo',x)}/>},
+-    {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><Select size="small" value={r.partName||undefined} style={{width:110}} options={PARTNAME_OPT} onChange={x=>setF(r,'partName',x)}/>},
++    {title:'零件号', dataIndex:'partNo', width:110, render:(_,r)=><PartSelect value={r.partNo} width={100} onChange={(no,name)=>{setF(r,'partNo',no); setF(r,'partName',name);}}/>},
++    {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><span>{r.partName||'—'}</span>},
+     {title:'工序', dataIndex:'processName', width:100, render:(_,r)=><Select size="small" value={r.processName||undefined} style={{width:90}} options={PROCESS_OPT} onChange={x=>setF(r,'processName',x)}/>},
+     {title:'数据类型', dataIndex:'category', width:104, render:(_,r)=><Select size="small" value={r.category||'计量型'} style={{width:94}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setF(r,'category',x)}/>},
+     {title:'检验方法', width:230, render:(_,r)=><Select size="small" className="msa-method-select" mode="multiple" value={(r.methods||[]).map(m=>String(m.method).toUpperCase())} style={{width:220}} options={(d.anMethods||[]).map(m=>({value:m.code,label:METHOD_NAME(m.code)}))} tagRender={(p)=><span>{p.label}</span>} onChange={x=>setF(r,'methods',x.map(v=>({method:v})))}/>},
+@@ -3495,8 +3516,8 @@
+     {title:'样本编号', dataIndex:'id', width:110, render:v=><span className="mono">{v}</span>},
+     {title:'样本名称', dataIndex:'name', width:190, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
+     {title:'样本类型', dataIndex:'type', width:104, render:(_,r)=><Select size="small" value={r.type||'标准件'} style={{width:92}} options={[{value:'标准件',label:'标准件'},{value:'生产件',label:'生产件'}]} onChange={x=>setF(r,'type',x)}/>},
+-    {title:'零件号', dataIndex:'partNo', width:110, render:(_,r)=><Select size="small" value={r.partNo||undefined} style={{width:100}} options={PARTNO_OPT} onChange={x=>setF(r,'partNo',x)}/>},
+-    {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><Select size="small" value={r.partName||undefined} style={{width:110}} options={PARTNAME_OPT} onChange={x=>setF(r,'partName',x)}/>},
++    {title:'零件号', dataIndex:'partNo', width:110, render:(_,r)=><PartSelect value={r.partNo} width={100} onChange={(no,name)=>{setF(r,'partNo',no); setF(r,'partName',name);}}/>},
++    {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><span>{r.partName||'—'}</span>},
+     {title:'被测参数', dataIndex:'charDim', width:170, render:(_,r)=><Select size="small" showSearch value={r.charDim||undefined} style={{width:160}} options={(d.characteristics||[]).map(c=>({value:c.name,label:c.name}))} onChange={x=>setF(r,'charDim',x)}/>},
+     {title:'标准值', dataIndex:'nominal', width:100, render:(_,r)=><Input size="small" className="mono" value={(r.nominal&&r.nominal!=='—')?r.nominal:''} placeholder="待维护" onChange={e=>setF(r,'nominal',e.target.value)}/>},
+     {title:'真值', dataIndex:'refValue', width:110, render:(_,r)=><Input size="small" className="mono" value={(r.refValue&&r.refValue!=='—')?r.refValue:''} placeholder="待维护" onChange={e=>setF(r,'refValue',e.target.value)}/>},
