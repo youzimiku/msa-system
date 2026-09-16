@@ -1,0 +1,219 @@
+diff --git "a/C:\\Users\\youzi\\Doubao\\chats\\2026-09-03\\new-chat\\MSA\347\263\273\347\273\237\\index_\345\244\207\344\273\275_20260916_140021_\345\233\233\346\235\241\350\260\203\346\225\264\345\211\215.html" "b/C:\\Users\\youzi\\Doubao\\chats\\2026-09-03\\new-chat\\MSA\347\263\273\347\273\237\\index.html"
+index 357f0da..69e8e41 100644
+--- "a/C:\\Users\\youzi\\Doubao\\chats\\2026-09-03\\new-chat\\MSA\347\263\273\347\273\237\\index_\345\244\207\344\273\275_20260916_140021_\345\233\233\346\235\241\350\260\203\346\225\264\345\211\215.html"
++++ "b/C:\\Users\\youzi\\Doubao\\chats\\2026-09-03\\new-chat\\MSA\347\263\273\347\273\237\\index.html"
+@@ -144,6 +144,10 @@ body{font-size:14px;color:#333333}
+ a{color:#333333}
+ .row-link{color:#333333!important;text-decoration:none}
+ .row-link:hover{color:#1677ff}
++
++/* 检验方法多选：已选项用；分隔的纯文本展示 */
++.msa-method-select .ant-select-selection-item{background:transparent!important;border:none!important;padding:0!important;margin-inline-end:0!important;border-radius:0!important;height:auto!important;line-height:22px!important;font-size:13px;color:#333333}
++.msa-method-select .ant-select-selection-item + .ant-select-selection-item::before{content:'；';margin-right:2px}
+ </style>
+ </head>
+ <body>
+@@ -159,12 +163,18 @@ const { useState, useEffect, useMemo, useRef, useReducer } = React;
+ const { Table, Card, Tag, Badge, Button, Space, Input, InputNumber, Select, Form, Modal, Drawer,
+         Descriptions, Tabs, Steps, Alert, Tooltip, Popconfirm, Progress, Timeline,
+         Result, Empty, Row, Col, Divider, List, Avatar, Dropdown, Breadcrumb, Statistic,
+-        Menu, Layout, message, Pagination, Radio, Segmented, Checkbox, Switch } = antd;
++        Menu, Layout, message, Pagination, Radio, Segmented, Checkbox, Switch, DatePicker } = antd;
+ const { Sider, Header, Content, Footer } = Layout;
+ 
+ const TODAY = (window.dayjs && dayjs().format('YYYY-MM-DD')) || '2026-09-03';
+ const NOW = (window.dayjs && dayjs().format('YYYY-MM-DD HH:mm:ss')) || TODAY+' 09:00:00';
+ 
++/* 日期/日期时间输入控件：内部完成 dayjs<->字符串转换（Form 与行内编辑均存字符串） */
++const _toD = v => (v && v!=='—' && v!=='暂无' && v!=='待维护' && v!=='-' && dayjs(v).isValid()) ? dayjs(v) : null;
++function FDate({value,onChange,showTime,format,...rest}){
++  return <DatePicker {...rest} showTime={showTime} format={format||(showTime?'YYYY-MM-DD HH:mm:ss':'YYYY-MM-DD')} value={_toD(value)} onChange={(d)=>onChange(d ? (showTime? d.format('YYYY-MM-DD HH:mm:ss') : d.format('YYYY-MM-DD')) : '')}/>;
++}
++
+ /* ---------- 通用小工具 ---------- */
+ function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+ function gauss(rnd){let u=0,v=0;while(u===0)u=rnd();while(v===0)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+@@ -1791,16 +1801,16 @@ function InstrumentModal({value, onClose}){
+         <Col span={6}><Form.Item name="plant" label="工厂"><Select options={PLANTS_OPT}/></Form.Item></Col>
+         <Col span={6}><Form.Item name="subplant" label="车间"><Select options={SUBPLANTS_OPT}/></Form.Item></Col>
+         <Col span={6}><Form.Item name="groupIds" label="量具组（可多选）"><Select mode="multiple" allowClear options={d.instGroups.map(g=>({value:g.id,label:g.name+'（'+g.id+'）'}))}/></Form.Item></Col>
+-        <Col span={6}><Form.Item name="buy" label="购置年月日"><Input placeholder="YYYY-MM-DD"/></Form.Item></Col>
+-        <Col span={6}><Form.Item name="ledgerDate" label="入账时间"><Input placeholder="YYYY-MM-DD 或 YYYY-MM-DD HH:mm"/></Form.Item></Col>
+-        <Col span={6}><Form.Item name="ymd" label="年月日"><Input placeholder="YYYY-MM-DD"/></Form.Item></Col>
++        <Col span={6}><Form.Item name="buy" label="购置年月日"><FDate style={{width:'100%'}}/></Form.Item></Col>
++        <Col span={6}><Form.Item name="ledgerDate" label="入账时间"><FDate showTime style={{width:'100%'}}/></Form.Item></Col>
++        <Col span={6}><Form.Item name="ymd" label="年月日"><FDate style={{width:'100%'}}/></Form.Item></Col>
+         <Col span={6}><Form.Item name="calMode" label="校准方式"><Select options={ENUM.calMode.map(c=>({value:c,label:c}))}/></Form.Item></Col>
+         <Col span={6}><Form.Item name="calOrg" label="校准机构"><Input/></Form.Item></Col>
+         <Col span={6}><Form.Item name="period" label="校准周期(月数)" rules={[{required:true}]}><Input type="number"/></Form.Item></Col>
+         <Col span={6}><Form.Item name="cycleValue" label="周期值"><Input type="number"/></Form.Item></Col>
+         <Col span={6}><Form.Item name="cycle" label="周期"><Input placeholder="如 12个月"/></Form.Item></Col>
+-        <Col span={6}><Form.Item name="lastCal" label="校准时间"><Input placeholder="上次校准 YYYY-MM-DD"/></Form.Item></Col>
+-        <Col span={6}><Form.Item name="nextCal" label="下次校准日期"><Input placeholder="自动=上次+周期"/></Form.Item></Col>
++        <Col span={6}><Form.Item name="lastCal" label="校准时间"><FDate style={{width:'100%'}}/></Form.Item></Col>
++        <Col span={6}><Form.Item name="nextCal" label="下次校准日期"><FDate style={{width:'100%'}}/></Form.Item></Col>
+         <Col span={6}><Form.Item name="cert" label="报告编号"><Input/></Form.Item></Col>
+         <Col span={6}><Form.Item name="calResult" label="最近校准结果"><Select options={ENUM.calResult.map(c=>({value:c,label:c}))}/></Form.Item></Col>
+         <Col span={6}><Form.Item name="interimCheck" label="是否期间核查"><Select options={[{value:'是',label:'是'},{value:'否',label:'否'}]}/></Form.Item></Col>
+@@ -1932,7 +1942,7 @@ function CalibModal({inst, onClose, preset}){
+       <Row gutter={12}>
+         <Col span={12}><Form.Item name="instId" label="器具" rules={[{required:true}]}><Select showSearch optionFilterProp="label"
+           options={d.instruments.map(i=>({value:i.id,label:i.id+' '+i.name}))}/></Form.Item></Col>
+-        <Col span={12}><Form.Item name="calDate" label="校准日期" rules={[{required:true}]}><Input placeholder="YYYY-MM-DD"/></Form.Item></Col>
++        <Col span={12}><Form.Item name="calDate" label="校准日期" rules={[{required:true}]}><FDate style={{width:'100%'}}/></Form.Item></Col>
+         <Col span={12}><Form.Item name="calOrg" label="校准机构"><Input/></Form.Item></Col>
+         <Col span={12}><Form.Item name="certNo" label="证书编号"><Input/></Form.Item></Col>
+         <Col span={12}><Form.Item name="basis" label="校准依据（JJG/JJF规程）"><Input placeholder="如 JJG 30-2012 通用卡尺"/></Form.Item></Col>
+@@ -1978,10 +1988,10 @@ function InstGroupPage(){
+     {title:'组名称', dataIndex:'name', width:190, ellipsis:true, render:(v,r)=>isNew(r)?<Input size="small" value={draft.name||''} onChange={e=>setDraft(d=>({...d,name:e.target.value}))}/>:<Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
+     {title:'组类型', width:140, render:(_,r)=>isNew(r)?<Select size="small" value={draft.type||'inst'} style={{width:130}} options={GROUP_TYPE_OPTS} onChange={x=>setDraft(d=>({...d,type:x}))}/>:<Select size="small" value={r.type||'inst'} style={{width:130}} options={GROUP_TYPE_OPTS} onChange={x=>setF(r,'type',x)}/>},
+     {title:'检验周期(月)', width:110, render:(_,r)=>isNew(r)?<InputNumber size="small" min={1} value={draft.calCycle||12} style={{width:92}} onChange={x=>setDraft(d=>({...d,calCycle:x}))}/>:<InputNumber size="small" min={1} value={gv(r,'calCycle',12)} style={{width:92}} onChange={x=>setF(r,'calCycle',x)}/>},
+-    {title:'上次执行时间', dataIndex:'lastExec', width:120, render:(v,r)=>isNew(r)?<Input size="small" value={draft.lastExec||''} placeholder="YYYY-MM-DD" onChange={e=>setDraft(d=>({...d,lastExec:e.target.value}))}/>:<Input size="small" value={r.lastExec||''} placeholder="YYYY-MM-DD" onChange={e=>setF(r,'lastExec',e.target.value)}/>},
+-    {title:'下次计划日期', dataIndex:'nextPlanDate', width:120, render:(v,r)=>isNew(r)?<Input size="small" value={draft.nextPlanDate||''} placeholder="YYYY-MM-DD" onChange={e=>setDraft(d=>({...d,nextPlanDate:e.target.value}))}/>:<Input size="small" value={r.nextPlanDate||''} placeholder="YYYY-MM-DD" onChange={e=>setF(r,'nextPlanDate',e.target.value)}/>},
++    {title:'上次执行时间', dataIndex:'lastExec', width:120, render:(v,r)=>isNew(r)?<FDate size="small" style={{width:110}} value={draft.lastExec||''} onChange={x=>setDraft(d=>({...d,lastExec:x}))}/>:<FDate size="small" style={{width:110}} value={r.lastExec||''} onChange={x=>setF(r,'lastExec',x)}/>},
++    {title:'下次计划日期', dataIndex:'nextPlanDate', width:120, render:(v,r)=>isNew(r)?<FDate size="small" style={{width:110}} value={draft.nextPlanDate||''} onChange={x=>setDraft(d=>({...d,nextPlanDate:x}))}/>:<FDate size="small" style={{width:110}} value={r.nextPlanDate||''} onChange={x=>setF(r,'nextPlanDate',x)}/>},
+     {title:'提醒周期(天)', width:115, render:(_,r)=>isNew(r)?<InputNumber size="small" min={0} value={draft.remindAdvance||20} style={{width:96}} onChange={x=>setDraft(d=>({...d,remindAdvance:x}))}/>:<InputNumber size="small" min={0} value={gv(r,'remindAdvance',20)} style={{width:96}} onChange={x=>setF(r,'remindAdvance',x)}/>},
+-    {title:'下次提醒时间', dataIndex:'nextRemind', width:120, render:(v,r)=>isNew(r)?<Input size="small" value={draft.nextRemind||''} placeholder="YYYY-MM-DD" onChange={e=>setDraft(d=>({...d,nextRemind:e.target.value}))}/>:<Input size="small" value={r.nextRemind||''} placeholder="YYYY-MM-DD" onChange={e=>setF(r,'nextRemind',e.target.value)}/>},
++    {title:'下次提醒时间', dataIndex:'nextRemind', width:120, render:(v,r)=>isNew(r)?<FDate size="small" style={{width:110}} value={draft.nextRemind||''} onChange={x=>setDraft(d=>({...d,nextRemind:x}))}/>:<FDate size="small" style={{width:110}} value={r.nextRemind||''} onChange={x=>setF(r,'nextRemind',x)}/>},
+     {title:'说明', dataIndex:'note', ellipsis:true, render:(v,r)=>isNew(r)?<Input size="small" value={draft.note||''} onChange={e=>setDraft(d=>({...d,note:e.target.value}))}/>:<Input size="small" value={r.note||''} onChange={e=>setF(r,'note',e.target.value)}/>},
+     {title:'维护人', dataIndex:'editor', width:100, render:v=><span>{v||'—'}</span>},
+     {title:'维护时间', dataIndex:'editorDate', width:105, render:v=><span>{v||'—'}</span>}
+@@ -2054,10 +2064,10 @@ function InstGroupModal({value,onClose}){
+         <Col span={16}><Form.Item name="name" label="组名称" rules={[{required:true}]}><Input/></Form.Item></Col>
+         <Col span={6}><Form.Item name="type" label="组类型" rules={[{required:true}]}><Select options={GROUP_TYPE_OPTS} onChange={v=>setGType(v||'inst')}/></Form.Item></Col>
+         <Col span={6}><Form.Item name="calCycle" label="检验周期(月)" rules={[{required:true}]}><Input type="number"/></Form.Item></Col>
+-        <Col span={6}><Form.Item name="lastExec" label="上次执行时间"><Input placeholder="YYYY-MM-DD"/></Form.Item></Col>
+-        <Col span={6}><Form.Item name="nextPlanDate" label="下次计划日期"><Input placeholder="YYYY-MM-DD"/></Form.Item></Col>
++        <Col span={6}><Form.Item name="lastExec" label="上次执行时间"><FDate style={{width:'100%'}}/></Form.Item></Col>
++        <Col span={6}><Form.Item name="nextPlanDate" label="下次计划日期"><FDate style={{width:'100%'}}/></Form.Item></Col>
+         <Col span={6}><Form.Item name="remindAdvance" label="提醒周期(天)"><Input type="number" placeholder="如 20"/></Form.Item></Col>
+-        <Col span={6}><Form.Item name="nextRemind" label="下次提醒时间"><Input placeholder="YYYY-MM-DD"/></Form.Item></Col>
++        <Col span={6}><Form.Item name="nextRemind" label="下次提醒时间"><FDate style={{width:'100%'}}/></Form.Item></Col>
+       </Row>
+       {isPersonGroupType(gType)
+         ? <Row gutter={12}>
+@@ -2659,7 +2669,7 @@ function ConvertModal({plan, onClose}){
+         <Col span={6}><Form.Item name="ops" label="操作员/检验员数"><Input type="number"/></Form.Item></Col>
+         <Col span={6}><Form.Item name="trials" label="试验/重复次数"><Input type="number"/></Form.Item></Col>
+         <Col span={6}><Form.Item name="parts" label="样本数"><Input type="number"/></Form.Item></Col>
+-        <Col span={6}><Form.Item name="planDate" label="计划完成日期"><Input/></Form.Item></Col>
++        <Col span={6}><Form.Item name="planDate" label="计划完成日期"><FDate style={{width:'100%'}}/></Form.Item></Col>
+         <Col span={12}><Form.Item name="object" label="测量对象" rules={[{required:true}]}><Input/></Form.Item></Col>
+         <Col span={6}><Form.Item name="owner" label="责任人"><Input/></Form.Item></Col>
+         <Col span={6}><Form.Item name="trigger" label="触发依据"><Select options={['周期复评','新量具','新过程','过程变更','顾客要求','内审发现'].map(c=>({value:c,label:c}))}/></Form.Item></Col>
+@@ -2761,7 +2771,7 @@ function PlanEditModal({plan, onClose}){
+         <Col span={8}><Form.Item name="analyst" label="分析人"><Input/></Form.Item></Col>
+         <Col span={8}><Form.Item name="resolution" label="分辨力"><Input placeholder="如：0.01"/></Form.Item></Col>
+         <Col span={8}><Form.Item name="planDate" label="计划检期"><Input/></Form.Item></Col>
+-        <Col span={8}><Form.Item name="actualDate" label="实际检期"><Input placeholder="实际完成分析日期 YYYY-MM-DD"/></Form.Item></Col>
++        <Col span={8}><Form.Item name="actualDate" label="实际检期"><FDate style={{width:'100%'}}/></Form.Item></Col>
+         <Col span={8}><Form.Item name="trigger" label="触发依据"><Select options={['周期复评','新量具','新过程','过程变更','顾客要求','内审发现'].map(c=>({value:c,label:c}))}/></Form.Item></Col>
+         <Col span={8}><Form.Item name="dept" label="部门"><Select options={ENUM.deptOptions.map(c=>({value:c,label:c}))}/></Form.Item></Col>
+         <Col span={8}><Form.Item name="dataType" label="数据类型"><Select options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]}/></Form.Item></Col>
+@@ -2924,7 +2934,7 @@ function StandardModal({value, onClose}){
+         <Col span={8}><Form.Item name="subplant" label="分厂"><Input/></Form.Item></Col>
+         <Col span={24}><Form.Item name="groupIds" label="绑定器具组"><Select mode="multiple" allowClear options={(d.instGroups||[]).map(g=>({value:g.id,label:g.id+' '+g.name}))}/></Form.Item></Col>
+         <Col span={24}><Form.Item name="charIds" label="关联被测参数"><Select mode="multiple" allowClear options={(d.characteristics||[]).map(c=>({value:c.id,label:c.name+'（'+c.type+'）'}))}/></Form.Item></Col>
+-        <Col span={8}><Form.Item name="effDate" label="生效日期"><Input placeholder="YYYY-MM-DD"/></Form.Item></Col>
++        <Col span={8}><Form.Item name="effDate" label="生效日期"><FDate style={{width:'100%'}}/></Form.Item></Col>
+         <Col span={8}><Form.Item name="status" label="状态"><Select options={[{value:'启用',label:'启用'},{value:'停用',label:'停用'}]}/></Form.Item></Col>
+         <Col span={8}><Form.Item name="editor" label="录入人"><Input/></Form.Item></Col>
+         <Col span={24}><Form.Item name="changeLog" label="变更说明（修订时必填）"><Input.TextArea rows={2} placeholder="本次修订内容说明"/></Form.Item></Col>
+@@ -2977,7 +2987,7 @@ function CharPage(){
+     {title:'零件编号', dataIndex:'partNo', width:100, ellipsis:true, render:(_,r)=><Input size="small" className="mono" value={r.partNo||''} onChange={e=>setF(r,'partNo',e.target.value)}/>},
+     {title:'工序', dataIndex:'processName', width:90, ellipsis:true, render:(_,r)=><Input size="small" value={r.processName||''} onChange={e=>setF(r,'processName',e.target.value)}/>},
+     {title:'特性类别', dataIndex:'category', width:100, render:(_,r)=><Input size="small" value={r.category||''} onChange={e=>setF(r,'category',e.target.value)}/>},
+-    {title:'检验方法', width:210, render:(_,r)=><Select size="small" mode="multiple" value={(r.methods||[]).map(m=>m.method)} style={{width:200}} options={(d.anMethods||[]).map(m=>({value:m.code,label:METHOD_NAME(m.code)}))} onChange={x=>setF(r,'methods',x.map(v=>({method:v})))}/>},
++    {title:'检验方法', width:230, render:(_,r)=><Select size="small" className="msa-method-select" mode="multiple" value={(r.methods||[]).map(m=>m.method)} style={{width:220}} options={(d.anMethods||[]).map(m=>({value:m.code,label:METHOD_NAME(m.code)}))} tagRender={(p)=><span>{p.label}</span>} onChange={x=>setF(r,'methods',x.map(v=>({method:v})))}/>},
+     {title:'单位', dataIndex:'unit', width:70, render:(_,r)=><Input size="small" className="mono" value={r.unit||''} onChange={e=>setF(r,'unit',e.target.value)}/>},
+     {title:'标准值', dataIndex:'target', width:90, render:(_,r)=><Input size="small" className="mono" value={r.target||''} onChange={e=>setF(r,'target',e.target.value)}/>},
+     {title:'上限USL', dataIndex:'usl', width:90, render:(_,r)=><Input size="small" className="mono" value={r.usl||''} onChange={e=>setF(r,'usl',e.target.value)}/>},
+@@ -3201,7 +3211,6 @@ function SamplingPage(){
+     {title:'方法代码', dataIndex:'code', width:110, render:v=><span className="mono">{v}</span>},
+     {title:'方法名称', dataIndex:'name', width:190, render:(_,r)=><Input size="small" value={STRIP_PAREN(r.name)} onChange={e=>setMF(r,'name',e.target.value)}/>},
+     {title:'是否需要取样', dataIndex:'needSample', width:104, render:(_,r)=><Select size="small" value={r.needSample||'是'} style={{width:92}} options={[{value:'是',label:'是'},{value:'否',label:'否'}]} onChange={x=>setMF(r,'needSample',x)}/>},
+-    {title:'可否合并取样', dataIndex:'canMerge', width:104, render:(_,r)=><Select size="small" value={r.canMerge||'否'} style={{width:92}} options={[{value:'是',label:'是'},{value:'否',label:'否'}]} onChange={x=>setMF(r,'canMerge',x)}/>},
+     {title:'方法组', dataIndex:'mergeWith', width:120, render:(_,r)=><Input size="small" placeholder="如：尺寸类合并组" value={r.mergeWith||''} onChange={e=>setMF(r,'mergeWith',e.target.value)}/>},
+     {title:'默认适用', dataIndex:'defaultType', width:100, render:(_,r)=><Input size="small" value={r.defaultType||''} onChange={e=>setMF(r,'defaultType',e.target.value)}/>},
+     {title:'状态', dataIndex:'status', width:86, render:(_,r)=><Switch size="small" checked={r.status==='启用'} onChange={x=>setMF(r,'status',x?'启用':'停用')}/>},
+@@ -3212,8 +3221,6 @@ function SamplingPage(){
+     {title:'人数范围', width:132, render:(_,r)=><Space size={2}><InputNumber size="small" min={0} value={r.rule?r.rule.opsMin:''} style={{width:54}} onChange={x=>setRF(r,'opsMin',x)}/><span style={{color:'#999999'}}>~</span><InputNumber size="small" min={0} value={r.rule?r.rule.opsMax:''} style={{width:54}} onChange={x=>setRF(r,'opsMax',x)}/></Space>},
+     {title:'次数范围', width:132, render:(_,r)=><Space size={2}><InputNumber size="small" min={0} value={r.rule?r.rule.trialsMin:''} style={{width:54}} onChange={x=>setRF(r,'trialsMin',x)}/><span style={{color:'#999999'}}>~</span><InputNumber size="small" min={0} value={r.rule?r.rule.trialsMax:''} style={{width:54}} onChange={x=>setRF(r,'trialsMax',x)}/></Space>},
+     {title:'工厂', width:92, render:(_,r)=><Select size="small" value={r.rule?r.rule.plant:''} style={{width:82}} options={PLANTS_OPT} onChange={x=>setRF(r,'plant',x)}/>},
+-    {title:'车间', width:86, render:(_,r)=><Select size="small" value={r.rule?r.rule.subplant:''} style={{width:76}} options={SUBPLANTS_OPT} onChange={x=>setRF(r,'subplant',x)}/>},
+-    {title:'取样策略说明', width:220, ellipsis:true, render:(_,r)=><Input size="small" value={r.rule?r.rule.note:''} onChange={e=>setRF(r,'note',e.target.value)}/>},
+     {title:'方法备注', dataIndex:'note', width:180, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setMF(r,'note',e.target.value)}/>}
+   ];
+   const jRows=(d.judgeRules||[]).filter(r=>(!kw || (r.id+r.method+r.verdict).toLowerCase().includes(kw.toLowerCase())))
+@@ -3449,8 +3456,7 @@ function SampleLibPage(){
+   const d=Store.get();
+   const [fkw,setFkw]=useState(''); const [ftype,setFtype]=useState(); const [fst,setFst]=useState();
+   const [fPlant,setFPlant]=useState(); const [fSub,setFSub]=useState();
+-  const [fStd,setFStd]=useState();
+-  const [q,setQ]=useState({kw:'',type:undefined,st:undefined,std:undefined,plant:undefined,sub:undefined});
++  const [q,setQ]=useState({kw:'',type:undefined,st:undefined,plant:undefined,sub:undefined});
+   const [modal,setModal]=useState(null);
+   const [logOpen,setLogOpen]=useState(null);
+   /* 行内字段即时写 store；保存常驻操作列；启用/停用用 Switch；日志按钮保留在行上 */
+@@ -3460,9 +3466,8 @@ function SampleLibPage(){
+   const delRow=(r)=>{ Modal.confirm({title:'删除样本 — '+(r.name||r.id), content:'确认删除该样本？删除后不可恢复。', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.sampleLib=s.sampleLib.filter(x=>x.id!==r.id); logAction(s.me.name,'删除样本',r.id,'删除 '+(r.name||'')); }); toast.ok('已删除'); } }); };
+   const rows=(d.sampleLib||[]).filter(r=>(!q.kw||(r.id+r.name+(r.partNo||'')+(r.charDim||'')).toLowerCase().includes(q.kw.toLowerCase())))
+     .filter(r=>!q.type||r.type===q.type).filter(r=>!q.st||r.status===q.st)
+-    .filter(r=>!q.std||r.standardId===q.std)
+     .filter(r=>!q.plant||r.plant===q.plant).filter(r=>!q.sub||r.subplant===q.sub);
+-  const resetQ=()=>{ setFkw('');setFtype();setFst();setFStd();setFPlant();setFSub(); setQ({kw:'',type:undefined,st:undefined,std:undefined,plant:undefined,sub:undefined}); };
++  const resetQ=()=>{ setFkw('');setFtype();setFst();setFPlant();setFSub(); setQ({kw:'',type:undefined,st:undefined,plant:undefined,sub:undefined}); };
+   const cols=[
+     {title:'操作', width:160, fixed:'left', render:(_,r)=><Space size={0}>
+       <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
+@@ -3478,7 +3483,7 @@ function SampleLibPage(){
+     {title:'标准值', dataIndex:'nominal', width:100, render:(_,r)=><Input size="small" className="mono" value={(r.nominal&&r.nominal!=='—')?r.nominal:''} placeholder="待维护" onChange={e=>setF(r,'nominal',e.target.value)}/>},
+     {title:'真值', dataIndex:'refValue', width:110, render:(_,r)=><Input size="small" className="mono" value={(r.refValue&&r.refValue!=='—')?r.refValue:''} placeholder="待维护" onChange={e=>setF(r,'refValue',e.target.value)}/>},
+     {title:'单位', dataIndex:'unit', width:70, render:(_,r)=><Input size="small" className="mono" value={r.unit||''} onChange={e=>setF(r,'unit',e.target.value)}/>},
+-    {title:'有效期至', dataIndex:'expireDate', width:110, render:(_,r)=><Input size="small" className="mono" value={r.expireDate||''} onChange={e=>setF(r,'expireDate',e.target.value)}/>},
++    {title:'有效期至', dataIndex:'expireDate', width:110, render:(_,r)=><FDate size="small" className="mono" style={{width:104}} value={r.expireDate||''} onChange={x=>setF(r,'expireDate',x)}/>},
+     {title:'工厂', dataIndex:'plant', width:110, render:(_,r)=><Select size="small" value={r.plant||''} style={{width:100}} options={PLANTS_OPT} onChange={x=>setF(r,'plant',x)}/>},
+     {title:'车间', dataIndex:'subplant', width:100, render:(_,r)=><Select size="small" value={r.subplant||''} style={{width:90}} options={SUBPLANTS_OPT} onChange={x=>setF(r,'subplant',x)}/>},
+     {title:'状态', dataIndex:'status', width:86, render:(_,r)=><Switch size="small" checked={r.status==='启用'} onChange={x=>setF(r,'status',x?'启用':'停用')}/>},
+@@ -3492,13 +3497,12 @@ function SampleLibPage(){
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>样本类型</span><Select allowClear style={{width:140}} options={[{value:'标准件',label:'标准件'},{value:'生产件',label:'生产件'}]} value={ftype} onChange={setFtype}/>
+-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>检验标准</span><Select allowClear style={{width:140}} options={(d.standards||[]).map(s=>({value:s.id,label:s.id}))} value={fStd} onChange={setFStd}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fst||''} onChange={e=>setFst(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="启用">启用</Radio><Radio value="停用">停用</Radio></Radio.Group>
+       </Space>
+     </Panel>
+     <Panel title="操作">
+       <Space wrap>
+-        <Button type="primary" onClick={()=>setQ({kw:fkw,type:ftype,st:fst,std:fStd,plant:fPlant,sub:fSub})}>查询</Button>
++        <Button type="primary" onClick={()=>setQ({kw:fkw,type:ftype,st:fst,plant:fPlant,sub:fSub})}>查询</Button>
+         <Button onClick={resetQ}>重置</Button>
+         <Button type="primary" onClick={addRow}>新增样本</Button>
+         <ImportBtn title="样本库管理"/>
+@@ -3568,7 +3572,7 @@ function SampleLibModal({value,onClose}){
+         <Col span={12}><Form.Item name="standardId" label="关联检验标准"><Select allowClear showSearch optionFilterProp="label" options={(d.standards||[]).map(s=>({value:s.id,label:s.id+' '+s.name}))}/></Form.Item></Col>
+         <Col span={6}><Form.Item name="plant" label="工厂"><Select options={PLANTS_OPT}/></Form.Item></Col>
+         <Col span={6}><Form.Item name="subplant" label="车间"><Select options={SUBPLANTS_OPT}/></Form.Item></Col>
+-        <Col span={6}><Form.Item name="expireDate" label="有效期至"><Input placeholder="YYYY-MM-DD"/></Form.Item></Col>
++        <Col span={6}><Form.Item name="expireDate" label="有效期至"><FDate style={{width:'100%'}}/></Form.Item></Col>
+         <Col span={6}><Form.Item name="source" label="来源"><Input/></Form.Item></Col>
+         <Col span={24}><Form.Item name="note" label="说明"><Input.TextArea rows={2}/></Form.Item></Col>
+       </Row>
+@@ -3672,7 +3676,7 @@ function SampleModal({value,onClose}){
+         <Col span={12}><Form.Item name="planId" label="关联MSA计划"><Select allowClear showSearch optionFilterProp="label" options={d.plans.map(p=>({value:p.id,label:p.id+' '+p.instName}))}/></Form.Item></Col>
+         <Col span={24}><Form.Item name="refSource" label="参考值来源（溯源要求：更高等级设备/标准件）"><Input placeholder="如：三坐标测量机(JJQ-2023-010) 实测"/></Form.Item></Col>
+         <Col span={12}><Form.Item name="picker" label="选取人"><Input/></Form.Item></Col>
+-        <Col span={12}><Form.Item name="pickDate" label="选取日期"><Input placeholder="YYYY-MM-DD"/></Form.Item></Col>
++        <Col span={12}><Form.Item name="pickDate" label="选取日期"><FDate style={{width:'100%'}}/></Form.Item></Col>
+         <Col span={12}><Form.Item name="store" label="存放位置"><Input/></Form.Item></Col>
+         <Col span={6}><Form.Item name="valid" label="有效期"><Input/></Form.Item></Col>
+         <Col span={6}><Form.Item name="status" label="状态"><Select options={[{value:'待测量',label:'待测量'},{value:'已测量',label:'已测量'},{value:'已作废',label:'已作废'}]}/></Form.Item></Col>
+@@ -4374,7 +4378,7 @@ function ActionForm({onSubmit}){
+     <Form.Item name="content" label="措施内容" rules={[{required:true}]}><Input.TextArea rows={3} placeholder="如：操作员读数培训 + 量具复校"/></Form.Item>
+     <Row gutter={12}>
+       <Col span={12}><Form.Item name="owner" label="责任人" initialValue={d.me.name}><Input/></Form.Item></Col>
+-      <Col span={12}><Form.Item name="planDate" label="计划完成日期" initialValue={TODAY}><Input placeholder="YYYY-MM-DD"/></Form.Item></Col>
++      <Col span={12}><Form.Item name="planDate" label="计划完成日期" initialValue={TODAY}><FDate style={{width:'100%'}}/></Form.Item></Col>
+     </Row>
+     <Space><Button type="primary" htmlType="submit">登记</Button><Button onClick={()=>form.resetFields()}>重置</Button></Space>
+   </Form>;
