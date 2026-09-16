@@ -1,0 +1,11 @@
+--- index_备份_方法组归一前.html
++++ index.html
+@@ -769,6 +769,8 @@
+   /* 迁移：分辨力不再作为分析方法（2026-09-10 口径），清理旧数据中的分辨力取样规则与台账记录 */
+   d.samplingRules=(d.samplingRules||[]).filter(r=>r.method!=='resolution');
+   d.resolution=[];
++  /* 迁移：线性/偏倚方法组统一为 LIN_BIAS（2026-09-16 口径，兼容旧本地数据） */
++  (d.anMethods||[]).forEach(m=>{ if(m.code==='LINEAR'||m.code==='BIAS'){ if(m.canMerge==='是'||m.mergeWith){ m.mergeWith='LIN_BIAS'; } } });
+   /* 台账操作人/对象字段回填（2026-09-10 口径：GRR/KAPPA 选人；线性/CGK 选件；稳定性 选标准件+人+工位） */
+   const OBJ_BY={ '轴径 φ50±0.05':'轴径 φ50 标准件', '轴径 φ10±0.02':'轴径 φ10 标准件', '螺栓拧紧力矩 25N·m':'扭矩标准杆 25N·m' };
+   (d.linear||[]).forEach(r=>{ if(r.conclusion&&!r.parts&&!r.opsNames){ r.parts=[OBJ_BY[r.object]||'轴径 φ50 标准件']; r.opsNames=['王强','刘青']; } });
