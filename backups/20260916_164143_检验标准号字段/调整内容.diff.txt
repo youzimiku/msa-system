@@ -1,0 +1,21 @@
+--- index_备份_20260916_164143_检验标准号字段前.html
++++ index.html
+@@ -2291,6 +2291,8 @@
+     {title:'零件号', width:110, dataIndex:'partNo', render:(_,r)=><Select size="small" value={r.partNo||undefined} style={{width:100}} options={PARTNO_OPT} onChange={x=>setF(r,'partNo',x)}/>},
+     {title:'零件名称', width:120, dataIndex:'partName', render:(_,r)=><Select size="small" value={(r.partName&&r.partName!=='—')?r.partName:undefined} style={{width:110}} options={PARTNAME_OPT} onChange={x=>setF(r,'partName',x)}/>},
+     {title:'被测参数', width:190, ellipsis:true, render:(_,r)=>{ const recs=planRecords(d,r.id); const cur=(r.instIds||[]).length>1? recs.map(x=>x.object).filter(Boolean).join('、') : (r.object||''); return <span>{cur||'—'}</span>; }},
++    {title:'检验标准号', width:120, render:(_,r)=>{ const st=(d.standards||[]).find(x=>x.id===r.standard); return <span className="mono">{st?st.id:'—'}</span>; }},
++    {title:'检验标准', width:200, ellipsis:true, render:(_,r)=>{ const st=(d.standards||[]).find(x=>x.id===r.standard); return <span>{st?(st.basis||st.name||''):'—'}</span>; }},
+     {title:'CG/CGK', width:68, align:'center', render:fenCell('cgcgk','CG/CGK')},
+     {title:'偏倚', width:68, align:'center', render:fenCell('linear','偏倚')},
+     {title:'线性', width:68, align:'center', render:fenCell('linear','线性')},
+@@ -3013,7 +3015,8 @@
+       <Button size="small" type="link" onClick={()=>saveStdRow(r)}>保存</Button>
+       <Button size="small" type="link" danger disabled={stdRef(r)} onClick={()=>delStd(r)}>删除</Button>
+     </Space>},
+-    {title:'检验标准', dataIndex:'basis', width:200, ellipsis:true, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" style={{width:190}} placeholder="选择检验标准" value={r.basis||undefined} options={(d.standards||[]).map(s=>({value:s.id,label:(s.basis||s.name||s.id)}))} onChange={id=>{const st=(d.standards||[]).find(s=>s.id===id); setStdF(r,'basis',st?st.basis:id);}}/>},
++    {title:'检验标准号', dataIndex:'id', width:120, render:v=><span className="mono">{v}</span>},
++    {title:'检验标准', dataIndex:'basis', width:220, ellipsis:true, render:(_,r)=><Input size="small" value={r.basis||''} onChange={e=>setStdF(r,'basis',e.target.value)}/>},
+     {title:'检验方法', dataIndex:'method', width:150, ellipsis:true, render:(_,r)=><Input size="small" value={r.method||''} onChange={e=>setStdF(r,'method',e.target.value)}/>},
+     {title:'测量人数', dataIndex:'numOps', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numOps||''} style={{width:70}} onChange={x=>setStdF(r,'numOps',x)}/>},
+     {title:'测量次数', dataIndex:'numTrials', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numTrials||''} style={{width:70}} onChange={x=>setStdF(r,'numTrials',x)}/>},
