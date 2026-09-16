@@ -806,7 +806,7 @@ function applyFieldDefaults(d){
       actualDate:p.actualDate||'', modifier:p.modifier||'—', modifyDate:p.modifyDate||'',
       dept:p.dept||'质量', dataType:p.dataType||(p.type==='KAPPA'?'计数型':'计量型'), // 部门/数据类型（业务口径）
       msaMethods:p.msaMethods||(p.type==='KAPPA'?['kappa']:(p.type==='GRR'?['重复性','再现性']:[])), // 勾选的 MSA 方法
-      analyst:p.analyst||p.observer||'李工程师', resolution:p.resolution||'', // 责任人（观察员改责任人）/ 分辨力（文本录入，非分析方法）
+      analyst:p.analyst||p.observer||'李工程师', resolution:p.resolution||'', // 分析人（观察员改分析人）/ 分辨力（文本录入，非分析方法）
       opMethod:p.opMethod||'《测量系统分析操作指导书》' // 操作方法
     });
     // 种子计划任务来源对齐（旧数据缺 source 时按种子口径回填：周期复评/新过程为周期任务，顾客整改/手动为临时任务）
@@ -1459,7 +1459,7 @@ function PageGuide({page}){
   else {
   if(g.text) body.push(<div key="t" style={{marginBottom:6}}><b>页面说明：</b>{g.text}</div>);
   if(g.ops) body.push(<div key="o" style={{marginBottom:6}}><b>关键操作：</b>{g.ops}</div>);
-  if(g.perm) body.push(<div key="p"><b>权限说明：</b>①「查看全部台账」权限：可查看所有责任人的全部台账记录；②「仅查看本人台账」权限：只能看到当前登录人自己负责的台账记录。</div>);
+  if(g.perm) body.push(<div key="p"><b>权限说明：</b>①「查看全部台账」权限：可查看所有分析人的全部台账记录；②「仅查看本人台账」权限：只能看到当前登录人自己负责的台账记录。</div>);
   if(g.status) body.push(
     <div key="s">
       <b>维度列状态标识：</b>
@@ -2283,7 +2283,7 @@ function PlanPage(){
   const cols=[
     {title:'操作', width:150, fixed:'left', render:(_,r)=><PlanActions r={r} onDetail={()=>setDetail(r)} onSave={()=>saveRow(r)}/>},
     {title:'MSA计划号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
-    {title:'责任人', width:116, render:(_,r)=><Select size="small" value={r.analyst||r.observer||undefined} style={{width:106}} options={ANALYST_OPT} onChange={x=>setF(r,'analyst',x)}/>},
+    {title:'分析人', width:116, render:(_,r)=><Select size="small" value={r.analyst||r.observer||undefined} style={{width:106}} options={ANALYST_OPT} onChange={x=>setF(r,'analyst',x)}/>},
     {title:'计划类型', width:100, render:(_,r)=><span>{r.planType||'器具MSA'}</span>},
     {title:'任务来源', width:100, render:(_,r)=><span>{r.source==='周期任务'?'周期任务':'临时任务'}</span>},
     {title:'仪器/设备名称', width:160, render:(_,r)=>instCell(r,it=>it?it.name:'')},
@@ -2299,13 +2299,14 @@ function PlanPage(){
     {title:'再现性', width:68, align:'center', render:fenCell('GRR','再现性')},
     {title:'KAPPA', width:68, align:'center', render:fenCell('KAPPA','KAPPA')},
     {title:'判定结果', width:110, render:(_,r)=>{ const recs=planRecords(d,r.id); const sv=sumVerdict(recs); return recs.length? <VerdictTag v={sv}/> : (r.result&&r.result!=='-'?<VerdictTag v={r.result}/>:<span className="tiny">待采集</span>); }},
-    {title:'状态', width:112, render:(_,r)=>{ const v=planStatusView(r.status); return <Tag color={v.color} style={{marginRight:0}}>{v.text}</Tag>; }},
+    {title:'状态', width:112, render:(_,r)=>{ const v=planStatusView(r.status); return <Select size="small" style={{width:98}} value={v.text} options={['待开始','进行中','已完成'].map(c=>({value:c,label:c}))} onChange={x=>{ const cand=STATUS_BACK[x]||[]; const cur=r.status; setF(r,'status', cand.indexOf(cur)>=0? cur : (x==='待开始'?'未定型':x==='已完成'?'已闭环':'待分析')); }}/>; }},
     {title:'测量人数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <span className="mono">{String(recs.length? recs[0].numOps : (r.params&&r.params.ops!==undefined? r.params.ops : ''))}</span>; }},
     {title:'测量次数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <span className="mono">{String(recs.length? recs[0].numTrials : (r.params&&r.params.trials!==undefined? r.params.trials : ''))}</span>; }},
     {title:'样本数量', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <span className="mono">{String(recs.length? recs[0].numParts : (r.params&&r.params.parts!==undefined? r.params.parts : ''))}</span>; }},
     {title:'工序', width:84, render:(_,r)=>instCell(r,it=>it?<span>{it.process||'暂无'}</span>:'')},
     {title:'分辨力', width:86, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.res||'暂无'}</span>:'')},
     {title:'数据类型', width:102, render:(_,r)=><Select size="small" value={r.dataType||'计量型'} style={{width:92}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setF(r,'dataType',x)}/>},
+    {title:'操作方法', width:170, render:(_,r)=><Input size="small" value={r.opMethod||'《测量系统分析操作指导书》'} onChange={e=>setF(r,'opMethod',e.target.value)}/>},
     {title:'部门', dataIndex:'dept', width:104, render:(_,r)=><Select size="small" value={r.dept||undefined} style={{width:94}} options={DEPT_OPT} onChange={x=>setF(r,'dept',x)}/>},
     {title:'工厂', width:100, dataIndex:'plant', render:(_,r)=><Select size="small" value={r.plant||undefined} style={{width:90}} options={PLANTS_OPT} onChange={x=>setF(r,'plant',x)}/>},
     {title:'计划完成时间', dataIndex:'planDate', width:120, render:(_,r)=><Input size="small" className="mono" value={r.planDate||''} onChange={e=>setF(r,'planDate',e.target.value)}/>},
@@ -2559,7 +2560,8 @@ function BatchPlanModal({value, onClose}){
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">零件号</span><Input size="small" style={{width:140}} disabled placeholder={charObj&&charObj.partNo? charObj.partNo : '由特性带出'}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">零件名称</span><Input size="small" style={{width:140}} disabled placeholder={charObj&&charObj.partName? charObj.partName : '由特性带出'}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">车间</span><Select size="small" style={{width:140}} options={SUBPLANTS_OPT} value={meta.subplant} onChange={v=>setMetaK('subplant',v)}/></Col>
-        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">责任人 <b style={{color:'#cf1322'}}>*</b></span><Select size="small" style={{width:140}} placeholder="选择责任人" value={meta.analyst||undefined} options={['李工程师','王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(c=>({value:c,label:c}))} onChange={v=>setMetaK('analyst',v)}/></Col>
+        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">分析人 <b style={{color:'#cf1322'}}>*</b></span><Select size="small" style={{width:140}} placeholder="选择分析人" value={meta.analyst||undefined} options={['李工程师','王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(c=>({value:c,label:c}))} onChange={v=>setMetaK('analyst',v)}/></Col>
+        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">责任人 <b style={{color:'#cf1322'}}>*</b></span><Select size="small" style={{width:140}} placeholder="选择责任人" value={meta.owner||undefined} options={['李工程师','王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(c=>({value:c,label:c}))} onChange={v=>setMetaK('owner',v)}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">部门</span><Select size="small" style={{width:140}} value={meta.dept} options={ENUM.deptOptions.map(c=>({value:c,label:c}))} onChange={v=>setMetaK('dept',v)}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">触发依据</span><Select size="small" style={{width:140}} value={trigger} options={['周期复评','新量具','新过程','过程变更','顾客要求','内审发现'].map(c=>({value:c,label:c}))} onChange={setTrigger}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">计划检期</span><Input size="small" style={{width:140}} value={planDate} onChange={e=>setPlanDate(e.target.value)}/></Col>
@@ -2711,7 +2713,7 @@ function PlanDetail({plan, onClose, onConvert}){
   return <Drawer title={<span>{plan.id} {plan.instName} <StatusTag s={plan.status}/></span>} width={900} open onClose={onClose}>
     <Descriptions column={3} size="small" bordered items={[
       {key:'id', label:'MSA计划号', children:<span className="mono">{plan.id}</span>},
-      {key:'analyst', label:'责任人', children:plan.analyst||plan.observer||'暂无'},
+      {key:'analyst', label:'分析人', children:plan.analyst||plan.observer||'暂无'},
       {key:'planType', label:'计划类型', children:<Tag color={(plan.planType||'器具MSA')==='人员MSA'?'purple':'blue'} style={{marginRight:0}}>{plan.planType||'器具MSA'}</Tag>},
       {key:'source', label:'任务来源', children:plan.source==='周期任务'? <Tag color="geekblue" style={{marginRight:0}}>周期任务</Tag> : <Tag style={{marginRight:0}}>临时任务</Tag>},
       {key:'instName', label:'仪器/设备名称', children:instCell(it=>it?it.name:'暂无')},
@@ -2774,7 +2776,7 @@ function PlanEditModal({plan, onClose}){
         <Col span={8}><Form.Item name="qcArea" label="质检区划"><Input/></Form.Item></Col>
         <Col span={8}><Form.Item name="plant" label="工厂"><Input/></Form.Item></Col>
         <Col span={8}><Form.Item name="subplant" label="分厂"><Select options={['一分厂','二分厂'].map(c=>({value:c,label:c}))}/></Form.Item></Col>
-        <Col span={8}><Form.Item name="analyst" label="责任人"><Input/></Form.Item></Col>
+        <Col span={8}><Form.Item name="analyst" label="分析人"><Input/></Form.Item></Col>
         <Col span={8}><Form.Item name="resolution" label="分辨力"><Input placeholder="如：0.01"/></Form.Item></Col>
         <Col span={8}><Form.Item name="planDate" label="计划检期"><Input/></Form.Item></Col>
         <Col span={8}><Form.Item name="actualDate" label="实际检期"><FDate style={{width:'100%'}}/></Form.Item></Col>
@@ -3849,7 +3851,7 @@ function AnlPage({kind}){
     {title:'标准', dataIndex:'standard', width:105, render:v=><span className="mono tiny">{v||'暂无'}</span>},
     {title:'结论', width:130, render:(_,r)=>{ const c=recCalc(r); return <VerdictTag v={c?c.verdict:r.conclusion}/>; }},
     {title:'状态', width:90, render:(_,r)=><StatusTag s={r.reviewStatus}/>},
-    {title:'责任人', dataIndex:'analyst', width:90},
+    {title:'分析人', dataIndex:'analyst', width:90},
     {title:'分析日期', dataIndex:'analysisDate', width:105}
   ];
   if(detail) return <AnlDetail rec={detail} kind={kind} onBack={()=>setDetail(null)}/>;
@@ -3910,7 +3912,7 @@ function AnlDetail({rec, kind, onBack}){
       {key:'检验标准', label:'检验标准', children:<span className="mono">{rec.standard||'暂无'}</span>},
       {key:'公差下限', label:'公差下限', children: rec.tolerance&&rec.tolerance.has? rec.tolerance.lsl:'暂无'},
       {key:'公差上限', label:'公差上限', children: rec.tolerance&&rec.tolerance.has? rec.tolerance.usl:'暂无'},
-      {key:'责任人', label:'责任人', children:rec.analyst||'暂无'},
+      {key:'分析人', label:'分析人', children:rec.analyst||'暂无'},
       {key:'分析日期', label:'分析日期', children:rec.analysisDate||'暂无'},
       {key:'单位', label:'单位', children:rec.unit||'暂无'}
     ]}/>
@@ -4114,7 +4116,7 @@ function EntryPage({kind}){
       {label:'录入数据',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待采集',onClick:()=>{DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind);}}
     ]}/>},
     {title:CFG.idPref+'编号', dataIndex:'id', width:115, render:(v,r)=><span className="row-link mono" onClick={()=>goResult(r)}>{v}</span>},
-    {title:'责任人', dataIndex:'analyst', width:90},
+    {title:'分析人', dataIndex:'analyst', width:90},
     {title:'操作人', width:150, render:(_,r)=><span className="tiny">{opsLabel(kind,r)}</span>},
     {title:'关联计划', dataIndex:'planId', width:110, render:(v)=><span className="row-link mono" onClick={()=>NavAPI.go('plan')}>{v||'暂无'}</span>},
     {title:'器具名称', width:150, render:(_,r)=>{ const it=d.instruments.find(i=>i.id===r.instId); return <span>{it?it.name:r.instName}</span>; }, ellipsis:true},
@@ -4137,7 +4139,7 @@ function EntryPage({kind}){
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Select allowClear style={{width:140}} value={fstatus||undefined} options={['待采集','待分析','待审核','已批准','需整改','已闭环','已关闭'].map(c=>({value:c,label:c}))} onChange={v=>setFstatus(v||undefined)}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>结论</span><Select allowClear style={{width:140}} value={fconcl} options={conclOpts.map(c=>({value:c,label:c}))} onChange={setFconcl}/>
-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>责任人</span><Select allowClear style={{width:140}} value={fanl} options={anlOpts.map(c=>({value:c,label:c}))} onChange={setFanl}/>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>分析人</span><Select allowClear style={{width:140}} value={fanl} options={anlOpts.map(c=>({value:c,label:c}))} onChange={setFanl}/>
         <span className="tiny">共 {rows.length} 条</span>
       </Space>
     </Panel>
@@ -4268,7 +4270,7 @@ function GrrPage(){
     {title:'公差%GRR', width:90, render:(_,r)=>{const c=calcGRR(r);return c&&c.pctGrrTol!=null?fmt(c.pctGrrTol,1)+'%':'暂无'}},
     {title:'结论', width:130, render:(_,r)=>{const c=calcGRR(r); return <VerdictTag v={c?c.verdict:r.conclusion}/>}},
     {title:'状态', width:90, render:(_,r)=><StatusTag s={r.reviewStatus}/>},
-    {title:'责任人', dataIndex:'analyst', width:90},
+    {title:'分析人', dataIndex:'analyst', width:90},
     {title:'分析日期', dataIndex:'analysisDate', width:105}
   ];
   if(detail) return <GrrDetail rec={detail} onBack={()=>setDetail(null)}/>;
@@ -4329,7 +4331,7 @@ function GrrDetail({rec,onBack}){
       {key:'检验标准', label:'检验标准', children:<span className="mono">{rec.standard||'暂无'}</span>},
       {key:'公差下限', label:'公差下限', children: rec.tolerance&&rec.tolerance.has? rec.tolerance.lsl:'暂无'},
       {key:'公差上限', label:'公差上限', children: rec.tolerance&&rec.tolerance.has? rec.tolerance.usl:'暂无'},
-      {key:'责任人', label:'责任人', children:rec.analyst||'暂无'},
+      {key:'分析人', label:'分析人', children:rec.analyst||'暂无'},
       {key:'分析日期', label:'分析日期', children:rec.analysisDate||'暂无'},
       {key:'单位', label:'单位', children:rec.unit||'暂无'}
     ]}/>
@@ -4575,7 +4577,7 @@ function KappaDetail({rec,onBack}){
       {key:'次数', label:'次数', children:(rec.numTrials||3)+' 次/件'},
       {key:'检验员', label:'检验员', children:(rec.appNames||[]).join('、')},
       {key:'测量者A·B·C', label:'测量者A·B·C', children:(rec.appNames||[]).map((n,i)=>(i>0?' / ':'')+n)},
-      {key:'责任人', label:'责任人', children:rec.analyst||'暂无'},
+      {key:'分析人', label:'分析人', children:rec.analyst||'暂无'},
       {key:'分析日期', label:'分析日期', children:rec.analysisDate||'暂无'}
     ]}/>
     <div className="panel mt12" style={{marginBottom:0}}>

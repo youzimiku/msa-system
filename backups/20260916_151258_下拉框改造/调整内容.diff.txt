@@ -1,0 +1,136 @@
+--- index_备份_20260916_150700_下拉框改造前.html
++++ index.html
+@@ -968,6 +968,13 @@
+ /* 工厂 / 车间 基础选项（全局，基础数据页查询与录入共用） */
+ const PLANTS_OPT = ['青岛工厂','烟台工厂'].map(v=>({value:v,label:v}));
+ const SUBPLANTS_OPT = ['一分厂','二分厂'].map(v=>({value:v,label:v}));
++/* 模拟数据下拉选项（前端演示用，非业务主数据） */
++const PARTNO_OPT = ['PN-1000','PN-1001','PN-1002','PN-1003','PN-1004','PN-1005','PN-1006','PN-1007','PN-2001','PN-3001','PN-4001','PN-5001'].map(v=>({value:v,label:v}));
++const PARTNAME_OPT = ['轴类件','孔类件','标准件','轴端盖','壳体','齿轮轴'].map(v=>({value:v,label:v}));
++const PROCESS_OPT = ['精加工','检验','装配','机加工','终检','总装'].map(v=>({value:v,label:v}));
++const UNIT_OPT = ['mm','μm','N','N·m','kg','g','°C','MPa','件'].map(v=>({value:v,label:v}));
++const DEPT_OPT = ['品质部','总装车间','电控车间','计量室','实验室','质量'].map(v=>({value:v,label:v}));
++const ANALYST_OPT = ['王强','刘青','张伟','孙丽','赵磊','周敏','吴刚','郑芳','冯强','何静','李工程师','陈杰','吴芳','周军'].map(v=>({value:v,label:v}));
+ const TIPS = {
+   status: {'待采集':'台账记录已生成，等待录入样本/测量数据','待分析':'样本已录入/导入，等待手动执行分析','待审核':'数据已提交，等待审核员审核','已批准':'审核通过，结论生效并回写计划/器具','需整改':'审核退回，需添加纠正措施并复测','已闭环':'纠正措施完成、复测通过，已归档','已关闭':'人工关闭归档','在用':'可正常使用','待校准':'已到/即将到校准周期','送检中':'正在送检','封存':'封存保管，暂停使用','停用':'暂停使用，需整改后启用','报废':'已报废'},
+   verdict: {'可接受':'测量系统能力合格，可用于日常检验与量产判定','有条件接受':'能力处于边缘，需结合过程能力/公差评估后批准','不可接受':'能力不足，必须整改后重新分析','待采集':'样本未录完，尚无分析结论','优秀(可接受)':'各项指标显著优于阈值，可接受','良好(有条件接受)':'处于边缘档，需评估后批准','优秀':'测量系统能力合格','良好':'处于边缘，需评估后批准'},
+@@ -1397,7 +1404,7 @@
+   {key:'ledger', icon:'☑', label:'计量器具台账', group:'基础数据', hidden:true},
+   {key:'ledger_img', icon:'☑', label:'计量器具台账', group:'基础数据', hidden:true},
+   {key:'instgroup', icon:'▦', label:'器具组维护', group:'基础数据'},
+-  {key:'char', icon:'♯', label:'被测项目维护', group:'基础数据'},
++  {key:'char', icon:'♯', label:'被测参数维护', group:'基础数据'},
+   {key:'sampling', icon:'∿', label:'抽样方法维护', group:'基础数据'},
+   {key:'samplelib', icon:'▣', label:'样本库管理', group:'基础数据'},
+   /* 计划：创建 → 定型 → 自动生成台账 */
+@@ -1422,14 +1429,14 @@
+   {key:'anl_cgcgk', icon:'⊞', label:'Cg/Cgk 分析结果', group:'分析执行', hidden:true}
+ ];
+ const PAGE_TITLE = {'ledger':'计量器具台账','ledger_img':'计量器具台账','instgroup':'器具组维护','plan':'MSA 计划',
+-  'char':'被测项目维护','sampling':'抽样方法维护','samplelib':'样本库管理',
++  'char':'被测参数维护','sampling':'抽样方法维护','samplelib':'样本库管理',
+   'entry_grr':'GRR 台账','entry_kappa':'KAPPA 台账','entry_linear':'线性/偏移台账','entry_stability':'稳定性台账','entry_cgcgk':'Cg/Cgk 台账','data_grr':'GRR 录入数据','data_kappa':'KAPPA 录入数据','data_linear':'线性/偏移录入数据','data_stability':'稳定性录入数据','data_cgcgk':'Cg/Cgk 录入数据',
+   'grr':'GRR 分析结果','kappa':'KAPPA 分析结果','anl_linear':'线性/偏移分析结果','anl_stability':'稳定性分析结果','anl_cgcgk':'Cg/Cgk 分析结果（VDA Type1）'};
+ 
+ /* 页面使用说明（可折叠，面向有经验的业务人员：简短说明 + 关键操作点 + 台账权限 + MSA 计划状态标识） */
+ const PAGE_GUIDE = {
+   instgroup:{label:'器具组维护', text:'维护测量器具组（测量器具）与人员组（IQC 检验组 / IPQC 巡检组 / FQC 终检组 / 动总 GPR）。器具组供「创建MSA计划-器具」选择，人员组供「创建MSA计划-人员」选择（仅 KAPPA）；组类型决定按器具还是按人员创建。', ops:'新增/修改均为列表行内编辑（点「编辑」进入编辑模式，直接改字段后「保存」）；点「新增器具组」在列表新增空行；「详情」查看组信息与执行记录。'},
+-  char:{label:'被测项目维护', text:'维护质量特性（被测项目）主数据，一个项目可关联多种检验方法（GRR / KAPPA / 线性 / 稳定性 / Cg/Cgk），每种方法关联对应检验标准；检验标准在本页统一维护。', ops:'新增/修改均为列表行内编辑；检验方法、检验标准为下拉选择。'},
++  char:{label:'被测参数维护', text:'维护质量特性（被测项目）主数据，一个项目可关联多种检验方法（GRR / KAPPA / 线性 / 稳定性 / Cg/Cgk），每种方法关联对应检验标准；检验标准在本页统一维护。', ops:'新增/修改均为列表行内编辑；检验方法、检验标准为下拉选择。'},
+   sampling:{label:'抽样方法维护', text:'维护分析方法（方法代码 / 名称 / 方法组合并配置）与取样参数（样品数 / 人数 / 次数 / 读数上下限）、判断规则与计算参数。', ops:'新增/修改为列表行内编辑；范围字段在编辑模式下拆为上下限两个输入框；判断规则、计算参数按页签维护。'},
+   samplelib:{label:'样本库管理', text:'管理标准件 / 生产件样本及其真值（参考值），供各台账选件分析使用。', ops:'新增/修改为列表行内编辑；「日志查询」在样本行上。'},
+   plan:{label:'MSA 计划', text:'创建 MSA 计划（按器具 / 按人员），计划下自动生成对应台账分析单；列表维度列跟踪各分析方法完成状态。', ops:'「创建MSA计划-器具」：选器具组 → 选器具 → 填计划信息 → 勾选分析方法；「创建MSA计划-人员」：选人员组（仅 KAPPA）。点维度列图标可跳转对应结果页；删除仅限待开始计划。', status:true},
+@@ -2276,14 +2283,14 @@
+   const cols=[
+     {title:'操作', width:150, fixed:'left', render:(_,r)=><PlanActions r={r} onDetail={()=>setDetail(r)} onSave={()=>saveRow(r)}/>},
+     {title:'MSA计划号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
+-    {title:'分析人', width:110, render:(_,r)=><Input size="small" value={r.analyst||r.observer||''} onChange={e=>setF(r,'analyst',e.target.value)}/>},
++    {title:'分析人', width:116, render:(_,r)=><Select size="small" value={r.analyst||r.observer||undefined} style={{width:106}} options={ANALYST_OPT} onChange={x=>setF(r,'analyst',x)}/>},
+     {title:'计划类型', width:100, render:(_,r)=><span>{r.planType||'器具MSA'}</span>},
+     {title:'任务来源', width:100, render:(_,r)=><span>{r.source==='周期任务'?'周期任务':'临时任务'}</span>},
+     {title:'仪器/设备名称', width:160, render:(_,r)=>instCell(r,it=>it?it.name:'')},
+     {title:'量具编号', width:110, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.id}</span>:'')},
+-    {title:'零件号', width:100, dataIndex:'partNo', render:(_,r)=><Input size="small" className="mono" value={r.partNo||''} onChange={e=>setF(r,'partNo',e.target.value)}/>},
+-    {title:'测量特性', width:170, ellipsis:true, render:(_,r)=>{ const recs=planRecords(d,r.id); const cur=(r.instIds||[]).length>1? recs.map(x=>x.object).filter(Boolean).join('、') : (r.object||''); return <Input size="small" value={cur} onChange={e=>setF(r,'object',e.target.value)}/>; }},
+-    {title:'检验标准', width:110, render:(_,r,idx)=>{ if(stdSame) return idx===0? <span className="mono">{stdAll[0]}</span> : <span>—</span>; const v=stdOf(r); return <span className="mono">{v}</span>; }},
++    {title:'零件号', width:110, dataIndex:'partNo', render:(_,r)=><Select size="small" value={r.partNo||undefined} style={{width:100}} options={PARTNO_OPT} onChange={x=>setF(r,'partNo',x)}/>},
++    {title:'零件名称', width:120, dataIndex:'partName', render:(_,r)=><Select size="small" value={(r.partName&&r.partName!=='—')?r.partName:undefined} style={{width:110}} options={PARTNAME_OPT} onChange={x=>setF(r,'partName',x)}/>},
++    {title:'被测参数', width:190, ellipsis:true, render:(_,r)=>{ const recs=planRecords(d,r.id); const cur=(r.instIds||[]).length>1? recs.map(x=>x.object).filter(Boolean).join('、') : (r.object||''); return <span>{cur||'—'}</span>; }},
+     {title:'CG/CGK', width:68, align:'center', render:fenCell('cgcgk','CG/CGK')},
+     {title:'偏倚', width:68, align:'center', render:fenCell('linear','偏倚')},
+     {title:'线性', width:68, align:'center', render:fenCell('linear','线性')},
+@@ -2300,8 +2307,8 @@
+     {title:'分辨力', width:86, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.res||'暂无'}</span>:'')},
+     {title:'数据类型', width:102, render:(_,r)=><Select size="small" value={r.dataType||'计量型'} style={{width:92}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setF(r,'dataType',x)}/>},
+     {title:'操作方法', width:170, render:(_,r)=><Input size="small" value={r.opMethod||'《测量系统分析操作指导书》'} onChange={e=>setF(r,'opMethod',e.target.value)}/>},
+-    {title:'部门', dataIndex:'dept', width:100, render:(_,r)=><Input size="small" value={r.dept||''} onChange={e=>setF(r,'dept',e.target.value)}/>},
+-    {title:'分厂', width:90, dataIndex:'subplant', render:(_,r)=><Input size="small" value={r.subplant||''} onChange={e=>setF(r,'subplant',e.target.value)}/>},
++    {title:'部门', dataIndex:'dept', width:104, render:(_,r)=><Select size="small" value={r.dept||undefined} style={{width:94}} options={DEPT_OPT} onChange={x=>setF(r,'dept',x)}/>},
++    {title:'工厂', width:100, dataIndex:'plant', render:(_,r)=><Select size="small" value={r.plant||undefined} style={{width:90}} options={PLANTS_OPT} onChange={x=>setF(r,'plant',x)}/>},
+     {title:'计划完成时间', dataIndex:'planDate', width:120, render:(_,r)=><Input size="small" className="mono" value={r.planDate||''} onChange={e=>setF(r,'planDate',e.target.value)}/>},
+     {title:'实际完成时间', dataIndex:'actualDate', width:116, render:v=><span className="mono">{v||'—'}</span>},
+     {title:'录入人', dataIndex:'editor', width:100, ellipsis:true, render:v=><span>{v||'—'}</span>}
+@@ -2984,12 +2991,12 @@
+     {title:'被测参数编号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
+     {title:'被测参数名称', dataIndex:'name', width:170, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
+     {title:'特性类型', dataIndex:'type', width:110, render:(_,r)=><Select size="small" value={r.type||'普通'} style={{width:100}} options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]} onChange={x=>setF(r,'type',x)}/>},
+-    {title:'零件名称', dataIndex:'partName', width:110, ellipsis:true, render:(_,r)=><Input size="small" value={r.partName||''} onChange={e=>setF(r,'partName',e.target.value)}/>},
+-    {title:'零件编号', dataIndex:'partNo', width:100, ellipsis:true, render:(_,r)=><Input size="small" className="mono" value={r.partNo||''} onChange={e=>setF(r,'partNo',e.target.value)}/>},
+-    {title:'工序', dataIndex:'processName', width:90, ellipsis:true, render:(_,r)=><Input size="small" value={r.processName||''} onChange={e=>setF(r,'processName',e.target.value)}/>},
+-    {title:'特性类别', dataIndex:'category', width:100, render:(_,r)=><Input size="small" value={r.category||''} onChange={e=>setF(r,'category',e.target.value)}/>},
++    {title:'零件号', dataIndex:'partNo', width:110, render:(_,r)=><Select size="small" value={r.partNo||undefined} style={{width:100}} options={PARTNO_OPT} onChange={x=>setF(r,'partNo',x)}/>},
++    {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><Select size="small" value={r.partName||undefined} style={{width:110}} options={PARTNAME_OPT} onChange={x=>setF(r,'partName',x)}/>},
++    {title:'工序', dataIndex:'processName', width:100, render:(_,r)=><Select size="small" value={r.processName||undefined} style={{width:90}} options={PROCESS_OPT} onChange={x=>setF(r,'processName',x)}/>},
++    {title:'数据类型', dataIndex:'category', width:104, render:(_,r)=><Select size="small" value={r.category||'计量型'} style={{width:94}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setF(r,'category',x)}/>},
+     {title:'检验方法', width:230, render:(_,r)=><Select size="small" className="msa-method-select" mode="multiple" value={(r.methods||[]).map(m=>String(m.method).toUpperCase())} style={{width:220}} options={(d.anMethods||[]).map(m=>({value:m.code,label:METHOD_NAME(m.code)}))} tagRender={(p)=><span>{p.label}</span>} onChange={x=>setF(r,'methods',x.map(v=>({method:v})))}/>},
+-    {title:'单位', dataIndex:'unit', width:70, render:(_,r)=><Input size="small" className="mono" value={r.unit||''} onChange={e=>setF(r,'unit',e.target.value)}/>},
++    {title:'单位', dataIndex:'unit', width:86, render:(_,r)=><Select size="small" value={r.unit||undefined} style={{width:76}} options={UNIT_OPT} onChange={x=>setF(r,'unit',x)}/>},
+     {title:'标准值', dataIndex:'target', width:90, render:(_,r)=><Input size="small" className="mono" value={r.target||''} onChange={e=>setF(r,'target',e.target.value)}/>},
+     {title:'上限USL', dataIndex:'usl', width:90, render:(_,r)=><Input size="small" className="mono" value={r.usl||''} onChange={e=>setF(r,'usl',e.target.value)}/>},
+     {title:'下限LSL', dataIndex:'lsl', width:90, render:(_,r)=><Input size="small" className="mono" value={r.lsl||''} onChange={e=>setF(r,'lsl',e.target.value)}/>},
+@@ -3019,7 +3026,7 @@
+     {title:'备注', dataIndex:'note', width:160, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setStdF(r,'note',e.target.value)}/>}
+   ];
+   return <div>
+-    <PageHead title="被测项目维护"/>
++    <PageHead title="被测参数维护"/>
+     <Panel title="查询条件">
+       <Space wrap size={10}>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
+@@ -3036,7 +3043,7 @@
+         <Button type="primary" onClick={doQuery}>查询</Button>
+         <Button onClick={doReset}>重置</Button>
+         <Button type="primary" onClick={addCharRow}>新增特性</Button>
+-        <ImportBtn title="被测项目维护"/>
++        <ImportBtn title="被测参数维护"/>
+         <Button>导出</Button>
+       </Space>
+     </Panel>
+@@ -3212,8 +3219,8 @@
+     {title:'方法代码', dataIndex:'code', width:110, render:v=><span className="mono">{v}</span>},
+     {title:'方法名称', dataIndex:'name', width:190, render:(_,r)=><Input size="small" value={STRIP_PAREN(r.name)} onChange={e=>setMF(r,'name',e.target.value)}/>},
+     {title:'是否需要取样', dataIndex:'needSample', width:104, render:(_,r)=><Select size="small" value={r.needSample||'是'} style={{width:92}} options={[{value:'是',label:'是'},{value:'否',label:'否'}]} onChange={x=>setMF(r,'needSample',x)}/>},
+-    {title:'方法组', dataIndex:'mergeWith', width:120, render:(_,r)=><Input size="small" placeholder="如：尺寸类合并组" value={r.mergeWith||''} onChange={e=>setMF(r,'mergeWith',e.target.value)}/>},
+-    {title:'默认适用', dataIndex:'defaultType', width:100, render:(_,r)=><Input size="small" value={r.defaultType||''} onChange={e=>setMF(r,'defaultType',e.target.value)}/>},
++    {title:'方法组', dataIndex:'mergeWith', width:120, render:(_,r)=><Input size="small" value={r.mergeWith||''} onChange={e=>setMF(r,'mergeWith',e.target.value)}/>},
++    {title:'数据类型', dataIndex:'defaultType', width:108, render:(_,r)=><Select size="small" value={r.defaultType||'计量型'} style={{width:98}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setMF(r,'defaultType',x)}/>},
+     {title:'状态', dataIndex:'status', width:86, render:(_,r)=><Switch size="small" checked={r.status==='启用'} onChange={x=>setMF(r,'status',x?'启用':'停用')}/>},
+     {title:'默认样品数', width:92, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.sampleDefault:''} style={{width:82}} onChange={x=>setRF(r,'sampleDefault',x)}/>},
+     {title:'默认人数', width:84, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.opsDefault:''} style={{width:74}} onChange={x=>setRF(r,'opsDefault',x)}/>},
+@@ -3478,12 +3485,12 @@
+     {title:'样本编号', dataIndex:'id', width:110, render:v=><span className="mono">{v}</span>},
+     {title:'样本名称', dataIndex:'name', width:190, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
+     {title:'样本类型', dataIndex:'type', width:104, render:(_,r)=><Select size="small" value={r.type||'标准件'} style={{width:92}} options={[{value:'标准件',label:'标准件'},{value:'生产件',label:'生产件'}]} onChange={x=>setF(r,'type',x)}/>},
+-    {title:'零件号', dataIndex:'partNo', width:100, render:(_,r)=><Input size="small" className="mono" value={r.partNo||''} onChange={e=>setF(r,'partNo',e.target.value)}/>},
+-    {title:'零件名称', dataIndex:'partName', width:110, ellipsis:true, render:(_,r)=><Input size="small" value={r.partName||''} onChange={e=>setF(r,'partName',e.target.value)}/>},
+-    {title:'对应被测项目', dataIndex:'charDim', width:150, ellipsis:true, render:(_,r)=><Input size="small" value={r.charDim||''} onChange={e=>setF(r,'charDim',e.target.value)}/>},
++    {title:'零件号', dataIndex:'partNo', width:110, render:(_,r)=><Select size="small" value={r.partNo||undefined} style={{width:100}} options={PARTNO_OPT} onChange={x=>setF(r,'partNo',x)}/>},
++    {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><Select size="small" value={r.partName||undefined} style={{width:110}} options={PARTNAME_OPT} onChange={x=>setF(r,'partName',x)}/>},
++    {title:'被测参数', dataIndex:'charDim', width:170, render:(_,r)=><Select size="small" showSearch value={r.charDim||undefined} style={{width:160}} options={(d.characteristics||[]).map(c=>({value:c.name,label:c.name}))} onChange={x=>setF(r,'charDim',x)}/>},
+     {title:'标准值', dataIndex:'nominal', width:100, render:(_,r)=><Input size="small" className="mono" value={(r.nominal&&r.nominal!=='—')?r.nominal:''} placeholder="待维护" onChange={e=>setF(r,'nominal',e.target.value)}/>},
+     {title:'真值', dataIndex:'refValue', width:110, render:(_,r)=><Input size="small" className="mono" value={(r.refValue&&r.refValue!=='—')?r.refValue:''} placeholder="待维护" onChange={e=>setF(r,'refValue',e.target.value)}/>},
+-    {title:'单位', dataIndex:'unit', width:70, render:(_,r)=><Input size="small" className="mono" value={r.unit||''} onChange={e=>setF(r,'unit',e.target.value)}/>},
++    {title:'单位', dataIndex:'unit', width:86, render:(_,r)=><Select size="small" value={r.unit||undefined} style={{width:76}} options={UNIT_OPT} onChange={x=>setF(r,'unit',x)}/>},
+     {title:'有效期至', dataIndex:'expireDate', width:110, render:(_,r)=><FDate size="small" className="mono" style={{width:104}} value={r.expireDate||''} onChange={x=>setF(r,'expireDate',x)}/>},
+     {title:'工厂', dataIndex:'plant', width:110, render:(_,r)=><Select size="small" value={r.plant||''} style={{width:100}} options={PLANTS_OPT} onChange={x=>setF(r,'plant',x)}/>},
+     {title:'车间', dataIndex:'subplant', width:100, render:(_,r)=><Select size="small" value={r.subplant||''} style={{width:90}} options={SUBPLANTS_OPT} onChange={x=>setF(r,'subplant',x)}/>},

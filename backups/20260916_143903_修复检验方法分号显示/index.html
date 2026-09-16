@@ -806,7 +806,7 @@ function applyFieldDefaults(d){
       actualDate:p.actualDate||'', modifier:p.modifier||'—', modifyDate:p.modifyDate||'',
       dept:p.dept||'质量', dataType:p.dataType||(p.type==='KAPPA'?'计数型':'计量型'), // 部门/数据类型（业务口径）
       msaMethods:p.msaMethods||(p.type==='KAPPA'?['kappa']:(p.type==='GRR'?['重复性','再现性']:[])), // 勾选的 MSA 方法
-      analyst:p.analyst||p.observer||'李工程师', resolution:p.resolution||'', // 责任人（观察员改责任人）/ 分辨力（文本录入，非分析方法）
+      analyst:p.analyst||p.observer||'李工程师', resolution:p.resolution||'', // 分析人（观察员改分析人）/ 分辨力（文本录入，非分析方法）
       opMethod:p.opMethod||'《测量系统分析操作指导书》' // 操作方法
     });
     // 种子计划任务来源对齐（旧数据缺 source 时按种子口径回填：周期复评/新过程为周期任务，顾客整改/手动为临时任务）
@@ -968,13 +968,6 @@ const ENUM = {
 /* 工厂 / 车间 基础选项（全局，基础数据页查询与录入共用） */
 const PLANTS_OPT = ['青岛工厂','烟台工厂'].map(v=>({value:v,label:v}));
 const SUBPLANTS_OPT = ['一分厂','二分厂'].map(v=>({value:v,label:v}));
-/* 模拟数据下拉选项（前端演示用，非业务主数据） */
-const PARTNO_OPT = ['PN-1000','PN-1001','PN-1002','PN-1003','PN-1004','PN-1005','PN-1006','PN-1007','PN-2001','PN-3001','PN-4001','PN-5001'].map(v=>({value:v,label:v}));
-const PARTNAME_OPT = ['轴类件','孔类件','标准件','轴端盖','壳体','齿轮轴'].map(v=>({value:v,label:v}));
-const PROCESS_OPT = ['精加工','检验','装配','机加工','终检','总装'].map(v=>({value:v,label:v}));
-const UNIT_OPT = ['mm','μm','N','N·m','kg','g','°C','MPa','件'].map(v=>({value:v,label:v}));
-const DEPT_OPT = ['品质部','总装车间','电控车间','计量室','实验室','质量'].map(v=>({value:v,label:v}));
-const ANALYST_OPT = ['王强','刘青','张伟','孙丽','赵磊','周敏','吴刚','郑芳','冯强','何静','李工程师','陈杰','吴芳','周军'].map(v=>({value:v,label:v}));
 const TIPS = {
   status: {'待采集':'台账记录已生成，等待录入样本/测量数据','待分析':'样本已录入/导入，等待手动执行分析','待审核':'数据已提交，等待审核员审核','已批准':'审核通过，结论生效并回写计划/器具','需整改':'审核退回，需添加纠正措施并复测','已闭环':'纠正措施完成、复测通过，已归档','已关闭':'人工关闭归档','在用':'可正常使用','待校准':'已到/即将到校准周期','送检中':'正在送检','封存':'封存保管，暂停使用','停用':'暂停使用，需整改后启用','报废':'已报废'},
   verdict: {'可接受':'测量系统能力合格，可用于日常检验与量产判定','有条件接受':'能力处于边缘，需结合过程能力/公差评估后批准','不可接受':'能力不足，必须整改后重新分析','待采集':'样本未录完，尚无分析结论','优秀(可接受)':'各项指标显著优于阈值，可接受','良好(有条件接受)':'处于边缘档，需评估后批准','优秀':'测量系统能力合格','良好':'处于边缘，需评估后批准'},
@@ -1404,7 +1397,7 @@ const MENU = [
   {key:'ledger', icon:'☑', label:'计量器具台账', group:'基础数据', hidden:true},
   {key:'ledger_img', icon:'☑', label:'计量器具台账', group:'基础数据', hidden:true},
   {key:'instgroup', icon:'▦', label:'器具组维护', group:'基础数据'},
-  {key:'char', icon:'♯', label:'被测参数维护', group:'基础数据'},
+  {key:'char', icon:'♯', label:'被测项目维护', group:'基础数据'},
   {key:'sampling', icon:'∿', label:'抽样方法维护', group:'基础数据'},
   {key:'samplelib', icon:'▣', label:'样本库管理', group:'基础数据'},
   /* 计划：创建 → 定型 → 自动生成台账 */
@@ -1429,14 +1422,14 @@ const MENU = [
   {key:'anl_cgcgk', icon:'⊞', label:'Cg/Cgk 分析结果', group:'分析执行', hidden:true}
 ];
 const PAGE_TITLE = {'ledger':'计量器具台账','ledger_img':'计量器具台账','instgroup':'器具组维护','plan':'MSA 计划',
-  'char':'被测参数维护','sampling':'抽样方法维护','samplelib':'样本库管理',
+  'char':'被测项目维护','sampling':'抽样方法维护','samplelib':'样本库管理',
   'entry_grr':'GRR 台账','entry_kappa':'KAPPA 台账','entry_linear':'线性/偏移台账','entry_stability':'稳定性台账','entry_cgcgk':'Cg/Cgk 台账','data_grr':'GRR 录入数据','data_kappa':'KAPPA 录入数据','data_linear':'线性/偏移录入数据','data_stability':'稳定性录入数据','data_cgcgk':'Cg/Cgk 录入数据',
   'grr':'GRR 分析结果','kappa':'KAPPA 分析结果','anl_linear':'线性/偏移分析结果','anl_stability':'稳定性分析结果','anl_cgcgk':'Cg/Cgk 分析结果（VDA Type1）'};
 
 /* 页面使用说明（可折叠，面向有经验的业务人员：简短说明 + 关键操作点 + 台账权限 + MSA 计划状态标识） */
 const PAGE_GUIDE = {
   instgroup:{label:'器具组维护', text:'维护测量器具组（测量器具）与人员组（IQC 检验组 / IPQC 巡检组 / FQC 终检组 / 动总 GPR）。器具组供「创建MSA计划-器具」选择，人员组供「创建MSA计划-人员」选择（仅 KAPPA）；组类型决定按器具还是按人员创建。', ops:'新增/修改均为列表行内编辑（点「编辑」进入编辑模式，直接改字段后「保存」）；点「新增器具组」在列表新增空行；「详情」查看组信息与执行记录。'},
-  char:{label:'被测参数维护', text:'维护质量特性（被测项目）主数据，一个项目可关联多种检验方法（GRR / KAPPA / 线性 / 稳定性 / Cg/Cgk），每种方法关联对应检验标准；检验标准在本页统一维护。', ops:'新增/修改均为列表行内编辑；检验方法、检验标准为下拉选择。'},
+  char:{label:'被测项目维护', text:'维护质量特性（被测项目）主数据，一个项目可关联多种检验方法（GRR / KAPPA / 线性 / 稳定性 / Cg/Cgk），每种方法关联对应检验标准；检验标准在本页统一维护。', ops:'新增/修改均为列表行内编辑；检验方法、检验标准为下拉选择。'},
   sampling:{label:'抽样方法维护', text:'维护分析方法（方法代码 / 名称 / 方法组合并配置）与取样参数（样品数 / 人数 / 次数 / 读数上下限）、判断规则与计算参数。', ops:'新增/修改为列表行内编辑；范围字段在编辑模式下拆为上下限两个输入框；判断规则、计算参数按页签维护。'},
   samplelib:{label:'样本库管理', text:'管理标准件 / 生产件样本及其真值（参考值），供各台账选件分析使用。', ops:'新增/修改为列表行内编辑；「日志查询」在样本行上。'},
   plan:{label:'MSA 计划', text:'创建 MSA 计划（按器具 / 按人员），计划下自动生成对应台账分析单；列表维度列跟踪各分析方法完成状态。', ops:'「创建MSA计划-器具」：选器具组 → 选器具 → 填计划信息 → 勾选分析方法；「创建MSA计划-人员」：选人员组（仅 KAPPA）。点维度列图标可跳转对应结果页；删除仅限待开始计划。', status:true},
@@ -1459,7 +1452,7 @@ function PageGuide({page}){
   else {
   if(g.text) body.push(<div key="t" style={{marginBottom:6}}><b>页面说明：</b>{g.text}</div>);
   if(g.ops) body.push(<div key="o" style={{marginBottom:6}}><b>关键操作：</b>{g.ops}</div>);
-  if(g.perm) body.push(<div key="p"><b>权限说明：</b>①「查看全部台账」权限：可查看所有责任人的全部台账记录；②「仅查看本人台账」权限：只能看到当前登录人自己负责的台账记录。</div>);
+  if(g.perm) body.push(<div key="p"><b>权限说明：</b>①「查看全部台账」权限：可查看所有分析人的全部台账记录；②「仅查看本人台账」权限：只能看到当前登录人自己负责的台账记录。</div>);
   if(g.status) body.push(
     <div key="s">
       <b>维度列状态标识：</b>
@@ -2283,14 +2276,14 @@ function PlanPage(){
   const cols=[
     {title:'操作', width:150, fixed:'left', render:(_,r)=><PlanActions r={r} onDetail={()=>setDetail(r)} onSave={()=>saveRow(r)}/>},
     {title:'MSA计划号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
-    {title:'责任人', width:116, render:(_,r)=><Select size="small" value={r.analyst||r.observer||undefined} style={{width:106}} options={ANALYST_OPT} onChange={x=>setF(r,'analyst',x)}/>},
+    {title:'分析人', width:110, render:(_,r)=><Input size="small" value={r.analyst||r.observer||''} onChange={e=>setF(r,'analyst',e.target.value)}/>},
     {title:'计划类型', width:100, render:(_,r)=><span>{r.planType||'器具MSA'}</span>},
     {title:'任务来源', width:100, render:(_,r)=><span>{r.source==='周期任务'?'周期任务':'临时任务'}</span>},
     {title:'仪器/设备名称', width:160, render:(_,r)=>instCell(r,it=>it?it.name:'')},
     {title:'量具编号', width:110, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.id}</span>:'')},
-    {title:'零件号', width:110, dataIndex:'partNo', render:(_,r)=><Select size="small" value={r.partNo||undefined} style={{width:100}} options={PARTNO_OPT} onChange={x=>setF(r,'partNo',x)}/>},
-    {title:'零件名称', width:120, dataIndex:'partName', render:(_,r)=><Select size="small" value={(r.partName&&r.partName!=='—')?r.partName:undefined} style={{width:110}} options={PARTNAME_OPT} onChange={x=>setF(r,'partName',x)}/>},
-    {title:'被测参数', width:190, ellipsis:true, render:(_,r)=>{ const recs=planRecords(d,r.id); const cur=(r.instIds||[]).length>1? recs.map(x=>x.object).filter(Boolean).join('、') : (r.object||''); return <span>{cur||'—'}</span>; }},
+    {title:'零件号', width:100, dataIndex:'partNo', render:(_,r)=><Input size="small" className="mono" value={r.partNo||''} onChange={e=>setF(r,'partNo',e.target.value)}/>},
+    {title:'测量特性', width:170, ellipsis:true, render:(_,r)=>{ const recs=planRecords(d,r.id); const cur=(r.instIds||[]).length>1? recs.map(x=>x.object).filter(Boolean).join('、') : (r.object||''); return <Input size="small" value={cur} onChange={e=>setF(r,'object',e.target.value)}/>; }},
+    {title:'检验标准', width:110, render:(_,r,idx)=>{ if(stdSame) return idx===0? <span className="mono">{stdAll[0]}</span> : <span>—</span>; const v=stdOf(r); return <span className="mono">{v}</span>; }},
     {title:'CG/CGK', width:68, align:'center', render:fenCell('cgcgk','CG/CGK')},
     {title:'偏倚', width:68, align:'center', render:fenCell('linear','偏倚')},
     {title:'线性', width:68, align:'center', render:fenCell('linear','线性')},
@@ -2299,15 +2292,16 @@ function PlanPage(){
     {title:'再现性', width:68, align:'center', render:fenCell('GRR','再现性')},
     {title:'KAPPA', width:68, align:'center', render:fenCell('KAPPA','KAPPA')},
     {title:'判定结果', width:110, render:(_,r)=>{ const recs=planRecords(d,r.id); const sv=sumVerdict(recs); return recs.length? <VerdictTag v={sv}/> : (r.result&&r.result!=='-'?<VerdictTag v={r.result}/>:<span className="tiny">待采集</span>); }},
-    {title:'状态', width:112, render:(_,r)=>{ const v=planStatusView(r.status); return <Tag color={v.color} style={{marginRight:0}}>{v.text}</Tag>; }},
+    {title:'状态', width:112, render:(_,r)=>{ const v=planStatusView(r.status); return <Select size="small" style={{width:98}} value={v.text} options={['待开始','进行中','已完成'].map(c=>({value:c,label:c}))} onChange={x=>{ const cand=STATUS_BACK[x]||[]; const cur=r.status; setF(r,'status', cand.indexOf(cur)>=0? cur : (x==='待开始'?'未定型':x==='已完成'?'已闭环':'待分析')); }}/>; }},
     {title:'测量人数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <span className="mono">{String(recs.length? recs[0].numOps : (r.params&&r.params.ops!==undefined? r.params.ops : ''))}</span>; }},
     {title:'测量次数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <span className="mono">{String(recs.length? recs[0].numTrials : (r.params&&r.params.trials!==undefined? r.params.trials : ''))}</span>; }},
     {title:'样本数量', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <span className="mono">{String(recs.length? recs[0].numParts : (r.params&&r.params.parts!==undefined? r.params.parts : ''))}</span>; }},
     {title:'工序', width:84, render:(_,r)=>instCell(r,it=>it?<span>{it.process||'暂无'}</span>:'')},
     {title:'分辨力', width:86, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.res||'暂无'}</span>:'')},
     {title:'数据类型', width:102, render:(_,r)=><Select size="small" value={r.dataType||'计量型'} style={{width:92}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setF(r,'dataType',x)}/>},
-    {title:'部门', dataIndex:'dept', width:104, render:(_,r)=><Select size="small" value={r.dept||undefined} style={{width:94}} options={DEPT_OPT} onChange={x=>setF(r,'dept',x)}/>},
-    {title:'工厂', width:100, dataIndex:'plant', render:(_,r)=><Select size="small" value={r.plant||undefined} style={{width:90}} options={PLANTS_OPT} onChange={x=>setF(r,'plant',x)}/>},
+    {title:'操作方法', width:170, render:(_,r)=><Input size="small" value={r.opMethod||'《测量系统分析操作指导书》'} onChange={e=>setF(r,'opMethod',e.target.value)}/>},
+    {title:'部门', dataIndex:'dept', width:100, render:(_,r)=><Input size="small" value={r.dept||''} onChange={e=>setF(r,'dept',e.target.value)}/>},
+    {title:'分厂', width:90, dataIndex:'subplant', render:(_,r)=><Input size="small" value={r.subplant||''} onChange={e=>setF(r,'subplant',e.target.value)}/>},
     {title:'计划完成时间', dataIndex:'planDate', width:120, render:(_,r)=><Input size="small" className="mono" value={r.planDate||''} onChange={e=>setF(r,'planDate',e.target.value)}/>},
     {title:'实际完成时间', dataIndex:'actualDate', width:116, render:v=><span className="mono">{v||'—'}</span>},
     {title:'录入人', dataIndex:'editor', width:100, ellipsis:true, render:v=><span>{v||'—'}</span>}
@@ -2559,7 +2553,8 @@ function BatchPlanModal({value, onClose}){
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">零件号</span><Input size="small" style={{width:140}} disabled placeholder={charObj&&charObj.partNo? charObj.partNo : '由特性带出'}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">零件名称</span><Input size="small" style={{width:140}} disabled placeholder={charObj&&charObj.partName? charObj.partName : '由特性带出'}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">车间</span><Select size="small" style={{width:140}} options={SUBPLANTS_OPT} value={meta.subplant} onChange={v=>setMetaK('subplant',v)}/></Col>
-        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">责任人 <b style={{color:'#cf1322'}}>*</b></span><Select size="small" style={{width:140}} placeholder="选择责任人" value={meta.analyst||undefined} options={['李工程师','王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(c=>({value:c,label:c}))} onChange={v=>setMetaK('analyst',v)}/></Col>
+        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">分析人 <b style={{color:'#cf1322'}}>*</b></span><Select size="small" style={{width:140}} placeholder="选择分析人" value={meta.analyst||undefined} options={['李工程师','王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(c=>({value:c,label:c}))} onChange={v=>setMetaK('analyst',v)}/></Col>
+        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">责任人 <b style={{color:'#cf1322'}}>*</b></span><Select size="small" style={{width:140}} placeholder="选择责任人" value={meta.owner||undefined} options={['李工程师','王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(c=>({value:c,label:c}))} onChange={v=>setMetaK('owner',v)}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">部门</span><Select size="small" style={{width:140}} value={meta.dept} options={ENUM.deptOptions.map(c=>({value:c,label:c}))} onChange={v=>setMetaK('dept',v)}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">触发依据</span><Select size="small" style={{width:140}} value={trigger} options={['周期复评','新量具','新过程','过程变更','顾客要求','内审发现'].map(c=>({value:c,label:c}))} onChange={setTrigger}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">计划检期</span><Input size="small" style={{width:140}} value={planDate} onChange={e=>setPlanDate(e.target.value)}/></Col>
@@ -2711,7 +2706,7 @@ function PlanDetail({plan, onClose, onConvert}){
   return <Drawer title={<span>{plan.id} {plan.instName} <StatusTag s={plan.status}/></span>} width={900} open onClose={onClose}>
     <Descriptions column={3} size="small" bordered items={[
       {key:'id', label:'MSA计划号', children:<span className="mono">{plan.id}</span>},
-      {key:'analyst', label:'责任人', children:plan.analyst||plan.observer||'暂无'},
+      {key:'analyst', label:'分析人', children:plan.analyst||plan.observer||'暂无'},
       {key:'planType', label:'计划类型', children:<Tag color={(plan.planType||'器具MSA')==='人员MSA'?'purple':'blue'} style={{marginRight:0}}>{plan.planType||'器具MSA'}</Tag>},
       {key:'source', label:'任务来源', children:plan.source==='周期任务'? <Tag color="geekblue" style={{marginRight:0}}>周期任务</Tag> : <Tag style={{marginRight:0}}>临时任务</Tag>},
       {key:'instName', label:'仪器/设备名称', children:instCell(it=>it?it.name:'暂无')},
@@ -2774,7 +2769,7 @@ function PlanEditModal({plan, onClose}){
         <Col span={8}><Form.Item name="qcArea" label="质检区划"><Input/></Form.Item></Col>
         <Col span={8}><Form.Item name="plant" label="工厂"><Input/></Form.Item></Col>
         <Col span={8}><Form.Item name="subplant" label="分厂"><Select options={['一分厂','二分厂'].map(c=>({value:c,label:c}))}/></Form.Item></Col>
-        <Col span={8}><Form.Item name="analyst" label="责任人"><Input/></Form.Item></Col>
+        <Col span={8}><Form.Item name="analyst" label="分析人"><Input/></Form.Item></Col>
         <Col span={8}><Form.Item name="resolution" label="分辨力"><Input placeholder="如：0.01"/></Form.Item></Col>
         <Col span={8}><Form.Item name="planDate" label="计划检期"><Input/></Form.Item></Col>
         <Col span={8}><Form.Item name="actualDate" label="实际检期"><FDate style={{width:'100%'}}/></Form.Item></Col>
@@ -2989,12 +2984,12 @@ function CharPage(){
     {title:'被测参数编号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
     {title:'被测参数名称', dataIndex:'name', width:170, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
     {title:'特性类型', dataIndex:'type', width:110, render:(_,r)=><Select size="small" value={r.type||'普通'} style={{width:100}} options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]} onChange={x=>setF(r,'type',x)}/>},
-    {title:'零件号', dataIndex:'partNo', width:110, render:(_,r)=><Select size="small" value={r.partNo||undefined} style={{width:100}} options={PARTNO_OPT} onChange={x=>setF(r,'partNo',x)}/>},
-    {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><Select size="small" value={r.partName||undefined} style={{width:110}} options={PARTNAME_OPT} onChange={x=>setF(r,'partName',x)}/>},
-    {title:'工序', dataIndex:'processName', width:100, render:(_,r)=><Select size="small" value={r.processName||undefined} style={{width:90}} options={PROCESS_OPT} onChange={x=>setF(r,'processName',x)}/>},
-    {title:'数据类型', dataIndex:'category', width:104, render:(_,r)=><Select size="small" value={r.category||'计量型'} style={{width:94}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setF(r,'category',x)}/>},
+    {title:'零件名称', dataIndex:'partName', width:110, ellipsis:true, render:(_,r)=><Input size="small" value={r.partName||''} onChange={e=>setF(r,'partName',e.target.value)}/>},
+    {title:'零件编号', dataIndex:'partNo', width:100, ellipsis:true, render:(_,r)=><Input size="small" className="mono" value={r.partNo||''} onChange={e=>setF(r,'partNo',e.target.value)}/>},
+    {title:'工序', dataIndex:'processName', width:90, ellipsis:true, render:(_,r)=><Input size="small" value={r.processName||''} onChange={e=>setF(r,'processName',e.target.value)}/>},
+    {title:'特性类别', dataIndex:'category', width:100, render:(_,r)=><Input size="small" value={r.category||''} onChange={e=>setF(r,'category',e.target.value)}/>},
     {title:'检验方法', width:230, render:(_,r)=><Select size="small" className="msa-method-select" mode="multiple" value={(r.methods||[]).map(m=>String(m.method).toUpperCase())} style={{width:220}} options={(d.anMethods||[]).map(m=>({value:m.code,label:METHOD_NAME(m.code)}))} tagRender={(p)=><span>{p.label}</span>} onChange={x=>setF(r,'methods',x.map(v=>({method:v})))}/>},
-    {title:'单位', dataIndex:'unit', width:86, render:(_,r)=><Select size="small" value={r.unit||undefined} style={{width:76}} options={UNIT_OPT} onChange={x=>setF(r,'unit',x)}/>},
+    {title:'单位', dataIndex:'unit', width:70, render:(_,r)=><Input size="small" className="mono" value={r.unit||''} onChange={e=>setF(r,'unit',e.target.value)}/>},
     {title:'标准值', dataIndex:'target', width:90, render:(_,r)=><Input size="small" className="mono" value={r.target||''} onChange={e=>setF(r,'target',e.target.value)}/>},
     {title:'上限USL', dataIndex:'usl', width:90, render:(_,r)=><Input size="small" className="mono" value={r.usl||''} onChange={e=>setF(r,'usl',e.target.value)}/>},
     {title:'下限LSL', dataIndex:'lsl', width:90, render:(_,r)=><Input size="small" className="mono" value={r.lsl||''} onChange={e=>setF(r,'lsl',e.target.value)}/>},
@@ -3024,7 +3019,7 @@ function CharPage(){
     {title:'备注', dataIndex:'note', width:160, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setStdF(r,'note',e.target.value)}/>}
   ];
   return <div>
-    <PageHead title="被测参数维护"/>
+    <PageHead title="被测项目维护"/>
     <Panel title="查询条件">
       <Space wrap size={10}>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
@@ -3041,7 +3036,7 @@ function CharPage(){
         <Button type="primary" onClick={doQuery}>查询</Button>
         <Button onClick={doReset}>重置</Button>
         <Button type="primary" onClick={addCharRow}>新增特性</Button>
-        <ImportBtn title="被测参数维护"/>
+        <ImportBtn title="被测项目维护"/>
         <Button>导出</Button>
       </Space>
     </Panel>
@@ -3217,8 +3212,8 @@ function SamplingPage(){
     {title:'方法代码', dataIndex:'code', width:110, render:v=><span className="mono">{v}</span>},
     {title:'方法名称', dataIndex:'name', width:190, render:(_,r)=><Input size="small" value={STRIP_PAREN(r.name)} onChange={e=>setMF(r,'name',e.target.value)}/>},
     {title:'是否需要取样', dataIndex:'needSample', width:104, render:(_,r)=><Select size="small" value={r.needSample||'是'} style={{width:92}} options={[{value:'是',label:'是'},{value:'否',label:'否'}]} onChange={x=>setMF(r,'needSample',x)}/>},
-    {title:'方法组', dataIndex:'mergeWith', width:120, render:(_,r)=><Input size="small" value={r.mergeWith||''} onChange={e=>setMF(r,'mergeWith',e.target.value)}/>},
-    {title:'数据类型', dataIndex:'defaultType', width:108, render:(_,r)=><Select size="small" value={r.defaultType||'计量型'} style={{width:98}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setMF(r,'defaultType',x)}/>},
+    {title:'方法组', dataIndex:'mergeWith', width:120, render:(_,r)=><Input size="small" placeholder="如：尺寸类合并组" value={r.mergeWith||''} onChange={e=>setMF(r,'mergeWith',e.target.value)}/>},
+    {title:'默认适用', dataIndex:'defaultType', width:100, render:(_,r)=><Input size="small" value={r.defaultType||''} onChange={e=>setMF(r,'defaultType',e.target.value)}/>},
     {title:'状态', dataIndex:'status', width:86, render:(_,r)=><Switch size="small" checked={r.status==='启用'} onChange={x=>setMF(r,'status',x?'启用':'停用')}/>},
     {title:'默认样品数', width:92, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.sampleDefault:''} style={{width:82}} onChange={x=>setRF(r,'sampleDefault',x)}/>},
     {title:'默认人数', width:84, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.opsDefault:''} style={{width:74}} onChange={x=>setRF(r,'opsDefault',x)}/>},
@@ -3483,12 +3478,12 @@ function SampleLibPage(){
     {title:'样本编号', dataIndex:'id', width:110, render:v=><span className="mono">{v}</span>},
     {title:'样本名称', dataIndex:'name', width:190, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
     {title:'样本类型', dataIndex:'type', width:104, render:(_,r)=><Select size="small" value={r.type||'标准件'} style={{width:92}} options={[{value:'标准件',label:'标准件'},{value:'生产件',label:'生产件'}]} onChange={x=>setF(r,'type',x)}/>},
-    {title:'零件号', dataIndex:'partNo', width:110, render:(_,r)=><Select size="small" value={r.partNo||undefined} style={{width:100}} options={PARTNO_OPT} onChange={x=>setF(r,'partNo',x)}/>},
-    {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><Select size="small" value={r.partName||undefined} style={{width:110}} options={PARTNAME_OPT} onChange={x=>setF(r,'partName',x)}/>},
-    {title:'被测参数', dataIndex:'charDim', width:170, render:(_,r)=><Select size="small" showSearch value={r.charDim||undefined} style={{width:160}} options={(d.characteristics||[]).map(c=>({value:c.name,label:c.name}))} onChange={x=>setF(r,'charDim',x)}/>},
+    {title:'零件号', dataIndex:'partNo', width:100, render:(_,r)=><Input size="small" className="mono" value={r.partNo||''} onChange={e=>setF(r,'partNo',e.target.value)}/>},
+    {title:'零件名称', dataIndex:'partName', width:110, ellipsis:true, render:(_,r)=><Input size="small" value={r.partName||''} onChange={e=>setF(r,'partName',e.target.value)}/>},
+    {title:'对应被测项目', dataIndex:'charDim', width:150, ellipsis:true, render:(_,r)=><Input size="small" value={r.charDim||''} onChange={e=>setF(r,'charDim',e.target.value)}/>},
     {title:'标准值', dataIndex:'nominal', width:100, render:(_,r)=><Input size="small" className="mono" value={(r.nominal&&r.nominal!=='—')?r.nominal:''} placeholder="待维护" onChange={e=>setF(r,'nominal',e.target.value)}/>},
     {title:'真值', dataIndex:'refValue', width:110, render:(_,r)=><Input size="small" className="mono" value={(r.refValue&&r.refValue!=='—')?r.refValue:''} placeholder="待维护" onChange={e=>setF(r,'refValue',e.target.value)}/>},
-    {title:'单位', dataIndex:'unit', width:86, render:(_,r)=><Select size="small" value={r.unit||undefined} style={{width:76}} options={UNIT_OPT} onChange={x=>setF(r,'unit',x)}/>},
+    {title:'单位', dataIndex:'unit', width:70, render:(_,r)=><Input size="small" className="mono" value={r.unit||''} onChange={e=>setF(r,'unit',e.target.value)}/>},
     {title:'有效期至', dataIndex:'expireDate', width:110, render:(_,r)=><FDate size="small" className="mono" style={{width:104}} value={r.expireDate||''} onChange={x=>setF(r,'expireDate',x)}/>},
     {title:'工厂', dataIndex:'plant', width:110, render:(_,r)=><Select size="small" value={r.plant||''} style={{width:100}} options={PLANTS_OPT} onChange={x=>setF(r,'plant',x)}/>},
     {title:'车间', dataIndex:'subplant', width:100, render:(_,r)=><Select size="small" value={r.subplant||''} style={{width:90}} options={SUBPLANTS_OPT} onChange={x=>setF(r,'subplant',x)}/>},
@@ -3849,7 +3844,7 @@ function AnlPage({kind}){
     {title:'标准', dataIndex:'standard', width:105, render:v=><span className="mono tiny">{v||'暂无'}</span>},
     {title:'结论', width:130, render:(_,r)=>{ const c=recCalc(r); return <VerdictTag v={c?c.verdict:r.conclusion}/>; }},
     {title:'状态', width:90, render:(_,r)=><StatusTag s={r.reviewStatus}/>},
-    {title:'责任人', dataIndex:'analyst', width:90},
+    {title:'分析人', dataIndex:'analyst', width:90},
     {title:'分析日期', dataIndex:'analysisDate', width:105}
   ];
   if(detail) return <AnlDetail rec={detail} kind={kind} onBack={()=>setDetail(null)}/>;
@@ -3910,7 +3905,7 @@ function AnlDetail({rec, kind, onBack}){
       {key:'检验标准', label:'检验标准', children:<span className="mono">{rec.standard||'暂无'}</span>},
       {key:'公差下限', label:'公差下限', children: rec.tolerance&&rec.tolerance.has? rec.tolerance.lsl:'暂无'},
       {key:'公差上限', label:'公差上限', children: rec.tolerance&&rec.tolerance.has? rec.tolerance.usl:'暂无'},
-      {key:'责任人', label:'责任人', children:rec.analyst||'暂无'},
+      {key:'分析人', label:'分析人', children:rec.analyst||'暂无'},
       {key:'分析日期', label:'分析日期', children:rec.analysisDate||'暂无'},
       {key:'单位', label:'单位', children:rec.unit||'暂无'}
     ]}/>
@@ -4114,7 +4109,7 @@ function EntryPage({kind}){
       {label:'录入数据',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待采集',onClick:()=>{DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind);}}
     ]}/>},
     {title:CFG.idPref+'编号', dataIndex:'id', width:115, render:(v,r)=><span className="row-link mono" onClick={()=>goResult(r)}>{v}</span>},
-    {title:'责任人', dataIndex:'analyst', width:90},
+    {title:'分析人', dataIndex:'analyst', width:90},
     {title:'操作人', width:150, render:(_,r)=><span className="tiny">{opsLabel(kind,r)}</span>},
     {title:'关联计划', dataIndex:'planId', width:110, render:(v)=><span className="row-link mono" onClick={()=>NavAPI.go('plan')}>{v||'暂无'}</span>},
     {title:'器具名称', width:150, render:(_,r)=>{ const it=d.instruments.find(i=>i.id===r.instId); return <span>{it?it.name:r.instName}</span>; }, ellipsis:true},
@@ -4137,7 +4132,7 @@ function EntryPage({kind}){
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Select allowClear style={{width:140}} value={fstatus||undefined} options={['待采集','待分析','待审核','已批准','需整改','已闭环','已关闭'].map(c=>({value:c,label:c}))} onChange={v=>setFstatus(v||undefined)}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>结论</span><Select allowClear style={{width:140}} value={fconcl} options={conclOpts.map(c=>({value:c,label:c}))} onChange={setFconcl}/>
-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>责任人</span><Select allowClear style={{width:140}} value={fanl} options={anlOpts.map(c=>({value:c,label:c}))} onChange={setFanl}/>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>分析人</span><Select allowClear style={{width:140}} value={fanl} options={anlOpts.map(c=>({value:c,label:c}))} onChange={setFanl}/>
         <span className="tiny">共 {rows.length} 条</span>
       </Space>
     </Panel>
@@ -4268,7 +4263,7 @@ function GrrPage(){
     {title:'公差%GRR', width:90, render:(_,r)=>{const c=calcGRR(r);return c&&c.pctGrrTol!=null?fmt(c.pctGrrTol,1)+'%':'暂无'}},
     {title:'结论', width:130, render:(_,r)=>{const c=calcGRR(r); return <VerdictTag v={c?c.verdict:r.conclusion}/>}},
     {title:'状态', width:90, render:(_,r)=><StatusTag s={r.reviewStatus}/>},
-    {title:'责任人', dataIndex:'analyst', width:90},
+    {title:'分析人', dataIndex:'analyst', width:90},
     {title:'分析日期', dataIndex:'analysisDate', width:105}
   ];
   if(detail) return <GrrDetail rec={detail} onBack={()=>setDetail(null)}/>;
@@ -4329,7 +4324,7 @@ function GrrDetail({rec,onBack}){
       {key:'检验标准', label:'检验标准', children:<span className="mono">{rec.standard||'暂无'}</span>},
       {key:'公差下限', label:'公差下限', children: rec.tolerance&&rec.tolerance.has? rec.tolerance.lsl:'暂无'},
       {key:'公差上限', label:'公差上限', children: rec.tolerance&&rec.tolerance.has? rec.tolerance.usl:'暂无'},
-      {key:'责任人', label:'责任人', children:rec.analyst||'暂无'},
+      {key:'分析人', label:'分析人', children:rec.analyst||'暂无'},
       {key:'分析日期', label:'分析日期', children:rec.analysisDate||'暂无'},
       {key:'单位', label:'单位', children:rec.unit||'暂无'}
     ]}/>
@@ -4575,7 +4570,7 @@ function KappaDetail({rec,onBack}){
       {key:'次数', label:'次数', children:(rec.numTrials||3)+' 次/件'},
       {key:'检验员', label:'检验员', children:(rec.appNames||[]).join('、')},
       {key:'测量者A·B·C', label:'测量者A·B·C', children:(rec.appNames||[]).map((n,i)=>(i>0?' / ':'')+n)},
-      {key:'责任人', label:'责任人', children:rec.analyst||'暂无'},
+      {key:'分析人', label:'分析人', children:rec.analyst||'暂无'},
       {key:'分析日期', label:'分析日期', children:rec.analysisDate||'暂无'}
     ]}/>
     <div className="panel mt12" style={{marginBottom:0}}>
