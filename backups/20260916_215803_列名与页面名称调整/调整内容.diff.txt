@@ -1,0 +1,65 @@
+--- index_备份_名称方法组调整前.html
++++ index.html
+@@ -547,8 +547,8 @@
+   const anMethods = [
+     {code:'GRR', name:'GRR（重复性+再现性）', needSample:'是', canMerge:'是', mergeWith:'', defaultType:'计量型', status:'启用', note:'10 件×3 人×3 次'},
+     {code:'KAPPA', name:'KAPPA（计数型一致性）', needSample:'是', canMerge:'否', mergeWith:'', defaultType:'计数型', status:'启用', note:'50 件×3 人×3 次'},
+-    {code:'LINEAR', name:'线性', needSample:'是', canMerge:'是', mergeWith:'BIAS', defaultType:'计量型', status:'启用', note:'5 标准件×12 次，覆盖量程'},
+-    {code:'BIAS', name:'偏倚性', needSample:'是', canMerge:'是', mergeWith:'LINEAR', defaultType:'计量型', status:'启用', note:'1 标准件×15 次'},
++    {code:'LINEAR', name:'线性', needSample:'是', canMerge:'是', mergeWith:'LIN_BIAS', defaultType:'计量型', status:'启用', note:'5 标准件×12 次，覆盖量程'},
++    {code:'BIAS', name:'偏倚性', needSample:'是', canMerge:'是', mergeWith:'LIN_BIAS', defaultType:'计量型', status:'启用', note:'1 标准件×15 次'},
+     {code:'STABILITY', name:'稳定性', needSample:'是', canMerge:'否', mergeWith:'', defaultType:'计量型', status:'启用', note:'25 子组×5 次，跨 4 周~3 个月'},
+     {code:'CGCGK', name:'Cg/Cgk（Type1）', needSample:'是', canMerge:'否', mergeWith:'', defaultType:'计量型', status:'启用', note:'标准件 50 次'},
+     {code:'RES', name:'分辨力', needSample:'否', canMerge:'否', mergeWith:'', defaultType:'计量型', status:'启用', note:'不取样，直接录入'}
+@@ -1441,13 +1441,13 @@
+   /* 台账：定型后设置操作人/对象 */
+   {key:'entry_grr', icon:'⌗', label:'GRR 台账', group:'台账'},
+   {key:'entry_kappa', icon:'⌗', label:'KAPPA 台账', group:'台账'},
+-  {key:'entry_linear', icon:'⌗', label:'线性/偏移台账', group:'台账'},
++  {key:'entry_linear', icon:'⌗', label:'线性/偏倚台账', group:'台账'},
+   {key:'entry_stability', icon:'⌗', label:'稳定性台账', group:'台账'},
+   {key:'entry_cgcgk', icon:'⌗', label:'Cg/Cgk 台账', group:'台账'},
+   /* 数据录入：手动矩阵 / Excel 导入 */
+   {key:'data_grr', icon:'⌗', label:'GRR 录入数据', group:'数据录入'},
+   {key:'data_kappa', icon:'⌗', label:'KAPPA 录入数据', group:'数据录入'},
+-  {key:'data_linear', icon:'⌗', label:'线性/偏移录入数据', group:'数据录入'},
++  {key:'data_linear', icon:'⌗', label:'线性/偏倚录入数据', group:'数据录入'},
+   {key:'data_stability', icon:'⌗', label:'稳定性录入数据', group:'数据录入'},
+   {key:'data_cgcgk', icon:'⌗', label:'Cg/Cgk 录入数据', group:'数据录入'},
+   /* 分析执行：手动分析 → 审核闭环（菜单隐藏，功能保留） */
+@@ -1459,7 +1459,7 @@
+ ];
+ const PAGE_TITLE = {'ledger':'计量器具台账','ledger_img':'计量器具台账','instgroup':'器具组维护','plan':'MSA 计划',
+   'char':'被测参数维护','sampling':'抽样方法维护','samplelib':'样本库管理',
+-  'entry_grr':'GRR 台账','entry_kappa':'KAPPA 台账','entry_linear':'线性/偏移台账','entry_stability':'稳定性台账','entry_cgcgk':'Cg/Cgk 台账','data_grr':'GRR 录入数据','data_kappa':'KAPPA 录入数据','data_linear':'线性/偏移录入数据','data_stability':'稳定性录入数据','data_cgcgk':'Cg/Cgk 录入数据',
++  'entry_grr':'GRR 台账','entry_kappa':'KAPPA 台账','entry_linear':'线性/偏倚台账','entry_stability':'稳定性台账','entry_cgcgk':'Cg/Cgk 台账','data_grr':'GRR 录入数据','data_kappa':'KAPPA 录入数据','data_linear':'线性/偏倚录入数据','data_stability':'稳定性录入数据','data_cgcgk':'Cg/Cgk 录入数据',
+   'grr':'GRR 分析结果','kappa':'KAPPA 分析结果','anl_linear':'线性/偏移分析结果','anl_stability':'稳定性分析结果','anl_cgcgk':'Cg/Cgk 分析结果（VDA Type1）'};
+ 
+ /* 页面使用说明（可折叠，面向有经验的业务人员：简短说明 + 关键操作点 + 台账权限 + MSA 计划状态标识） */
+@@ -3025,7 +3025,7 @@
+     {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><span>{r.partName||'—'}</span>},
+     {title:'工序', dataIndex:'processName', width:100, render:(_,r)=><Select size="small" value={r.processName||undefined} style={{width:90}} options={PROCESS_OPT} onChange={x=>setF(r,'processName',x)}/>},
+     {title:'数据类型', dataIndex:'category', width:104, render:(_,r)=><Select size="small" value={r.category||'计量型'} style={{width:94}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setF(r,'category',x)}/>},
+-    {title:'检验方法', width:230, render:(_,r)=><Select size="small" className="msa-method-select" mode="multiple" value={(r.methods||[]).map(m=>String(m.method).toUpperCase())} style={{width:220}} options={(d.anMethods||[]).map(m=>({value:m.code,label:METHOD_NAME(m.code)}))} tagRender={(p)=><span>{p.label}</span>} onChange={x=>setF(r,'methods',x.map(v=>({method:v})))}/>},
++    {title:'分析方法', width:230, render:(_,r)=><Select size="small" className="msa-method-select" mode="multiple" value={(r.methods||[]).map(m=>String(m.method).toUpperCase())} style={{width:220}} options={(d.anMethods||[]).map(m=>({value:m.code,label:METHOD_NAME(m.code)}))} tagRender={(p)=><span>{p.label}</span>} onChange={x=>setF(r,'methods',x.map(v=>({method:v})))}/>},
+     {title:'单位', dataIndex:'unit', width:86, render:(_,r)=><Select size="small" value={r.unit||undefined} style={{width:76}} options={UNIT_OPT} onChange={x=>setF(r,'unit',x)}/>},
+     {title:'标准值', dataIndex:'target', width:90, render:(_,r)=><Input size="small" className="mono" value={r.target||''} onChange={e=>setF(r,'target',e.target.value)}/>},
+     {title:'上限USL', dataIndex:'usl', width:90, render:(_,r)=><Input size="small" className="mono" value={r.usl||''} onChange={e=>setF(r,'usl',e.target.value)}/>},
+@@ -4053,7 +4053,7 @@
+   const [parts,setParts]=useState((rec.parts||rec.sampleNames||[]).slice());
+   const [stdPart,setStdPart]=useState(((rec.sampleNames||[])[0])||'');
+   const [st,setSt]=useState(((rec.stations||[])[0])||'');
+-  const kindTitle={grr:'GRR 台账',kappa:'KAPPA 台账',linear:'线性/偏移台账',stability:'稳定性台账',cgcgk:'Cg/Cgk 台账'}[kind]||kind;
++  const kindTitle={grr:'GRR 台账',kappa:'KAPPA 台账',linear:'线性/偏倚台账',stability:'稳定性台账',cgcgk:'Cg/Cgk 台账'}[kind]||kind;
+   const sel=(label,val,set,opts,ph)=><div style={{marginBottom:12}}><div className="flt-label" style={{marginBottom:4}}>{label}</div><Select mode="multiple" style={{width:'100%'}} placeholder={ph} value={val} onChange={set} options={opts}/></div>;
+   const selOne=(label,val,set,opts,ph)=><div style={{marginBottom:12}}><div className="flt-label" style={{marginBottom:4}}>{label}</div><Select showSearch style={{width:'100%'}} placeholder={ph} value={val||undefined} onChange={v=>set(v)} options={opts}/></div>;
+   const save=()=>{
+@@ -4303,7 +4303,7 @@
+ const ENTRY_CFG = {
+   grr:{arr:'grr', idPref:'GRR', name:'GRR', title:'GRR 台账', desc:'交叉型矩阵：操作员 × 样本 × 试验', entry:(r,c)=><GrrEntry rec={r} onClose={c}/>, result:'grr'},
+   kappa:{arr:'kappa', idPref:'KAPPA', name:'KAPPA', title:'KAPPA 台账', desc:'检验员判定矩阵（合格/不合格，盲测）', entry:(r,c)=><KappaEntry rec={r} onClose={c}/>, result:'kappa'},
+-  linear:{arr:'linear', idPref:'LIN', name:'线性/偏移', title:'线性/偏移台账', desc:'标准件测量（覆盖量程 0/25/50/75/100%）', entry:(r,c)=><AnlEntry rec={r} kind="linear" onClose={c}/>, result:'anl_linear'},
++  linear:{arr:'linear', idPref:'LIN', name:'线性/偏倚', title:'线性/偏倚台账', desc:'标准件测量（覆盖量程 0/25/50/75/100%）', entry:(r,c)=><AnlEntry rec={r} kind="linear" onClose={c}/>, result:'anl_linear'},
+   stability:{arr:'stability', idPref:'STB', name:'稳定性', title:'稳定性台账', desc:'子组测量（跨 4 周~3 个月，SPC 判异）', entry:(r,c)=><AnlEntry rec={r} kind="stability" onClose={c}/>, result:'anl_stability'},
+   cgcgk:{arr:'cgcgk', idPref:'CG', name:'Cg/Cgk', title:'Cg/Cgk 台账', desc:'标准件连续测量（VDA Type1）', entry:(r,c)=><AnlEntry rec={r} kind="cgcgk" onClose={c}/>, result:'anl_cgcgk'},
+ };
