@@ -1438,7 +1438,7 @@ const PAGE_GUIDE = {
   instgroup:{label:'器具组维护', text:'维护测量器具组（测量器具）与人员组（IQC 检验组 / IPQC 巡检组 / FQC 终检组 / 动总 GPR）。器具组供「创建MSA计划-器具」选择，人员组供「创建MSA计划-人员」选择（仅 KAPPA）；组类型决定按器具还是按人员创建。', ops:'新增/修改均为列表行内编辑（点「编辑」进入编辑模式，直接改字段后「保存」）；点「新增器具组」在列表新增空行；「详情」查看组信息与执行记录。'},
   char:{label:'被测参数维护', text:'维护质量特性（被测项目）主数据，一个项目可关联多种检验方法（GRR / KAPPA / 线性 / 稳定性 / Cg/Cgk），每种方法关联对应检验标准；检验标准在本页统一维护。', ops:'新增/修改均为列表行内编辑；检验方法、检验标准为下拉选择。'},
   sampling:{label:'抽样方法维护', text:'维护分析方法（方法代码 / 名称 / 方法组合并配置）与取样参数（样品数 / 人数 / 次数 / 读数上下限）、判断规则与计算参数。', ops:'新增/修改为列表行内编辑；范围字段在编辑模式下拆为上下限两个输入框；判断规则、计算参数按页签维护。'},
-  samplelib:{label:'样本库管理', text:'管理标准件 / 生产件样本及其真值（参考值），供各台账选件分析使用。', ops:'新增/修改为列表行内编辑；「日志查询」在样本行上。'},
+  samplelib:{label:'样本库管理', text:'样本新增时，触发打印事件，打印样本编号二维码，支持补打。', ops:''},
   plan:{label:'MSA 计划', text:'创建 MSA 计划（按器具 / 按人员），计划下自动生成对应台账分析单；列表维度列跟踪各分析方法完成状态。', ops:'「创建MSA计划-器具」：选器具组 → 选器具 → 填计划信息 → 勾选分析方法；「创建MSA计划-人员」：选人员组（仅 KAPPA）。点维度列图标可跳转对应结果页；删除仅限待开始计划。', status:true},
   ledger:{label:'计量器具台账', text:'维护计量器具主数据（页面已隐藏）。', ops:''},
   ledger_img:{label:'计量器具台账（设计稿）', text:'展示外部系统计量台账设计稿。', ops:''},
@@ -1448,7 +1448,7 @@ const PAGE_GUIDE = {
 };
 function PageGuide({page}){
   let g = null, kind='';
-  if(page==='instgroup'||page==='char'||page==='sampling'||page==='samplelib') return null; /* 基础数据四页不显示说明 */
+  if(page==='instgroup'||page==='char'||page==='sampling') return null; /* 基础数据（样本库除外）不显示说明 */
   if(/^entry_/.test(page)){ g=PAGE_GUIDE.entry; kind='entry'; }
   else if(/^data_/.test(page)){ g=PAGE_GUIDE.data; kind='data'; }
   else if(page==='grr'||page==='kappa'||/^anl_/.test(page)){ g=PAGE_GUIDE.anl; kind='anl'; }
@@ -3475,11 +3475,12 @@ function SampleLibPage(){
     .filter(r=>!q.plant||r.plant===q.plant).filter(r=>!q.sub||r.subplant===q.sub);
   const resetQ=()=>{ setFkw('');setFtype();setFst();setFPlant();setFSub(); setQ({kw:'',type:undefined,st:undefined,plant:undefined,sub:undefined}); };
   const cols=[
-    {title:'操作', width:160, fixed:'left', render:(_,r)=><Space size={0}>
-      <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
-      <Button size="small" type="link" onClick={()=>setLogOpen(r.id)}>日志</Button>
-      <Button size="small" type="link" danger onClick={()=>delRow(r)}>删除</Button>
-    </Space>},
+    {title:'操作', width:180, fixed:'left', render:(_,r)=><OpBtns items={[
+      {label:'保存', onClick:()=>saveRow(r)},
+      {label:'日志', onClick:()=>setLogOpen(r.id)},
+      {label:'删除', danger:true, onClick:()=>delRow(r)},
+      {label:'补打', onClick:()=>{}}
+    ]}/>},
     {title:'样本编号', dataIndex:'id', width:110, render:v=><span className="mono">{v}</span>},
     {title:'样本名称', dataIndex:'name', width:190, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
     {title:'样本类型', dataIndex:'type', width:104, render:(_,r)=><Select size="small" value={r.type||'标准件'} style={{width:92}} options={[{value:'标准件',label:'标准件'},{value:'生产件',label:'生产件'}]} onChange={x=>setF(r,'type',x)}/>},
