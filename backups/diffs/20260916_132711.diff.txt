@@ -1,0 +1,642 @@
+diff --git a/index.html b/index.html
+index f8d47eb..357f0da 100644
+--- a/index.html
++++ b/index.html
+@@ -163,6 +163,7 @@ const { Table, Card, Tag, Badge, Button, Space, Input, InputNumber, Select, Form
+ const { Sider, Header, Content, Footer } = Layout;
+ 
+ const TODAY = (window.dayjs && dayjs().format('YYYY-MM-DD')) || '2026-09-03';
++const NOW = (window.dayjs && dayjs().format('YYYY-MM-DD HH:mm:ss')) || TODAY+' 09:00:00';
+ 
+ /* ---------- 通用小工具 ---------- */
+ function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+@@ -219,36 +220,36 @@ function logAction(actor, action, target, detail){
+ function mut(fn){
+   if(!Store.data) return;
+   fn(Store.data);
+-  try{ localStorage.setItem('msa_demo_data', JSON.stringify(Store.data)); }catch(e){}
++  try{ localStorage.setItem('msa_demo_data_v20260916', JSON.stringify(Store.data)); }catch(e){}
+   Store.emit();
+ }
+ let G_SEED_CHARS=[];
+ function buildSeed(){
+   /* ---------------- 计量器具台账 ---------------- */
+   const instruments = [
+-    {id:'JJQ-2023-010', name:'三坐标测量机(参考标准)', model:'CMM-Global 575', serial:'G575-2019-088', cat:'三坐标测量机', mcat:'长度', range:'0~500mm', res:'0.001mm', acc:'MPE: ±(1.8+L/350)μm', unit:'mm', vendor:'海克斯康', asset:'ZC-2019-0101', buy:'2019-06-12', dept:'计量室', owner:'计量室·刘工', loc:'计量室-恒温区', calMode:'外校', calOrg:'省计量科学研究院', period:12, lastCal:'2026-03-02', nextCal:'2027-03-02', cert:'JX-2026-0302', calResult:'合格', status:'在用', keyMeasure:'是', note:'用于关键样本参考值测定（溯源至国家基准）'},
+-    {id:'JJQ-2024-001', name:'数显卡尺', model:'CD-6\"CX', serial:'240315-018', cat:'卡尺', mcat:'长度', range:'0~150mm', res:'0.01mm', acc:'MPE: ±0.02mm', unit:'mm', vendor:'三丰(Mitutoyo)', asset:'ZC-2024-0121', buy:'2024-03-15', dept:'装配一车间', owner:'王强', loc:'装配一车间-工具柜A3', calMode:'外校', calOrg:'市计量测试所', period:6, lastCal:'2026-05-10', nextCal:'2026-11-10', cert:'CS-2026-0510', calResult:'合格', status:'在用', keyMeasure:'是', calCycle:12, calAdvance:20, note:'测量轴径 φ50±0.05，用于GRR分析'},
+-    {id:'JJQ-2024-002', name:'外径千分尺', model:'MDC-25', serial:'241102-066', cat:'千分尺', mcat:'长度', range:'0~25mm', res:'0.001mm', acc:'MPE: ±0.004mm', unit:'mm', vendor:'成量', asset:'ZC-2024-0130', buy:'2024-04-02', dept:'金加工车间', owner:'赵磊', loc:'金加工车间-量具柜', calMode:'内校', calOrg:'计量室(内校)', period:12, lastCal:'2026-01-15', nextCal:'2027-01-15', cert:'NX-2026-0115', calResult:'合格', status:'在用', keyMeasure:'是', note:''},
+-    {id:'JJQ-2024-003', name:'百分表', model:'0.01×10', serial:'240521-031', cat:'指示表', mcat:'长度', range:'0~10mm', res:'0.01mm', acc:'MPE: ±0.02mm', unit:'mm', vendor:'哈量', asset:'ZC-2024-0141', buy:'2024-05-21', dept:'金加工车间', owner:'赵磊', loc:'金加工车间-量具柜', calMode:'内校', calOrg:'计量室(内校)', period:6, lastCal:'2026-07-02', nextCal:'2027-01-02', cert:'NX-2026-0702', calResult:'合格', status:'在用', keyMeasure:'否', note:''},
+-    {id:'JJQ-2024-004', name:'数显千分表', model:'ID-S112E', serial:'240812-047', cat:'指示表', mcat:'长度', range:'0~12.7mm', res:'0.001mm', acc:'MPE: ±0.003mm', unit:'mm', vendor:'三丰(Mitutoyo)', asset:'ZC-2024-0155', buy:'2024-06-30', dept:'装配二车间', owner:'孙丽', loc:'装配二车间-检验台', calMode:'外校', calOrg:'市计量测试所', period:6, lastCal:'2025-09-15', nextCal:'2026-03-15', cert:'CS-2025-0915', calResult:'合格', status:'停用', keyMeasure:'否', note:'校准逾期未送检，已停用待安排外校（2026-09-01 由计量管理员标记）'},
+-    {id:'JJQ-2024-005', name:'精密压力表', model:'Y-150B', serial:'240905-112', cat:'压力表', mcat:'力学', range:'0~1.6MPa', res:'0.02MPa', acc:'1.6级', unit:'MPa', vendor:'红旗仪表', asset:'ZC-2024-0162', buy:'2024-09-05', dept:'液压车间', owner:'周军', loc:'液压车间-试验台', calMode:'外校', calOrg:'省计量科学研究院', period:6, lastCal:'2026-03-20', nextCal:'2026-09-20', cert:'JX-2026-0320', calResult:'合格', status:'在用', keyMeasure:'是', note:'30天内到期'},
+-    {id:'JJQ-2024-006', name:'电子天平', model:'FA3004', serial:'241101-023', cat:'天平', mcat:'力学', range:'0~300g', res:'0.01g', acc:'Ⅲ级', unit:'g', vendor:'梅特勒-托利多', asset:'ZC-2024-0170', buy:'2024-11-01', dept:'实验室', owner:'吴芳', loc:'实验室-天平室', calMode:'外校', calOrg:'省计量科学研究院', period:12, lastCal:'2025-11-11', nextCal:'2026-11-11', cert:'JX-2025-1111', calResult:'合格', status:'在用', keyMeasure:'是', note:'配合稳定性分析'},
+-    {id:'JJQ-2024-007', name:'数显扭力扳手', model:'DTC-60', serial:'241212-078', cat:'扭力扳手', mcat:'力学', range:'5~50N·m', res:'0.1N·m', acc:'±3%', unit:'N·m', vendor:'世达(SATA)', asset:'ZC-2024-0177', buy:'2024-12-12', dept:'装配一车间', owner:'王强', loc:'装配一车间-防错工具柜', calMode:'外校', calOrg:'市计量测试所', period:12, lastCal:'2025-12-05', nextCal:'2026-12-05', cert:'CS-2025-1205', calResult:'合格', status:'在用', keyMeasure:'是', calCycle:6, calAdvance:15, note:'GRR需整改复测'},
+-    {id:'JJQ-2024-008', name:'光滑塞规(通止规)', model:'φ8H7', serial:'240226-015', cat:'塞规/环规', mcat:'长度', range:'φ8H7', res:'计数型', acc:'通端/止端', unit:'', vendor:'上工量具', asset:'ZC-2024-0180', buy:'2024-02-26', dept:'装配二车间', owner:'孙丽', loc:'装配二车间-检验台', calMode:'内校', calOrg:'计量室(内校)', period:12, lastCal:'2026-02-18', nextCal:'2027-02-18', cert:'NX-2026-0218', calResult:'合格', status:'在用', keyMeasure:'是', calCycle:12, calAdvance:30, note:'计数型检具，用于KAPPA分析'},
+-    {id:'JJQ-2024-009', name:'深度游标卡尺', model:'0-200', serial:'240401-092', cat:'卡尺', mcat:'长度', range:'0~200mm', res:'0.02mm', acc:'MPE: ±0.03mm', unit:'mm', vendor:'广陆', asset:'ZC-2024-0188', buy:'2024-04-01', dept:'金加工车间', owner:'赵磊', loc:'金加工车间-量具柜', calMode:'内校', calOrg:'计量室(内校)', period:12, lastCal:'2026-04-01', nextCal:'2027-04-01', cert:'NX-2026-0401', calResult:'合格', status:'封存', keyMeasure:'否', note:'近期无使用计划，封存管理'},
+-    {id:'JJQ-2024-011', name:'数字温度计', model:'TES-1310', serial:'240606-055', cat:'温度计', mcat:'热学', range:'-50~200℃', res:'0.1℃', acc:'±0.5℃', unit:'℃', vendor:'泰仕(TES)', asset:'ZC-2024-0190', buy:'2024-06-06', dept:'实验室', owner:'吴芳', loc:'实验室-烘箱区', calMode:'外校', calOrg:'省计量科学研究院', period:12, lastCal:'2026-03-01', nextCal:'2027-03-01', cert:'JX-2026-0301', calResult:'合格', status:'在用', keyMeasure:'否', note:''}
++    {id:'JJQ-2023-010', name:'三坐标测量机(参考标准)', model:'CMM-Global 575', serial:'G575-2019-088', cat:'三坐标测量机', mcat:'长度', range:'0~500mm', res:'0.001mm', acc:'MPE: ±(1.8+L/350)μm', unit:'mm', vendor:'海克斯康', asset:'ZC-2019-0101', buy:'2019-06-12', dept:'计量室', owner:'计量室·刘工', loc:'计量室-恒温区', calMode:'外校', calOrg:'省计量科学研究院', period:12, lastCal:'2026-03-02 10:30:00', nextCal:'2027-03-02', cert:'JX-2026-0302', calResult:'合格', status:'在用', keyMeasure:'是', note:'用于关键样本参考值测定（溯源至国家基准）'},
++    {id:'JJQ-2024-001', name:'数显卡尺', model:'CD-6\"CX', serial:'240315-018', cat:'卡尺', mcat:'长度', range:'0~150mm', res:'0.01mm', acc:'MPE: ±0.02mm', unit:'mm', vendor:'三丰(Mitutoyo)', asset:'ZC-2024-0121', buy:'2024-03-15', dept:'装配一车间', owner:'王强', loc:'装配一车间-工具柜A3', calMode:'外校', calOrg:'市计量测试所', period:6, lastCal:'2026-05-10 09:15:00', nextCal:'2026-11-10', cert:'CS-2026-0510', calResult:'合格', status:'在用', keyMeasure:'是', calCycle:12, calAdvance:20, note:'测量轴径 φ50±0.05，用于GRR分析'},
++    {id:'JJQ-2024-002', name:'外径千分尺', model:'MDC-25', serial:'241102-066', cat:'千分尺', mcat:'长度', range:'0~25mm', res:'0.001mm', acc:'MPE: ±0.004mm', unit:'mm', vendor:'成量', asset:'ZC-2024-0130', buy:'2024-04-02', dept:'金加工车间', owner:'赵磊', loc:'金加工车间-量具柜', calMode:'内校', calOrg:'计量室(内校)', period:12, lastCal:'2026-01-15 14:00:00', nextCal:'2027-01-15', cert:'NX-2026-0115', calResult:'合格', status:'在用', keyMeasure:'是', note:''},
++    {id:'JJQ-2024-003', name:'百分表', model:'0.01×10', serial:'240521-031', cat:'指示表', mcat:'长度', range:'0~10mm', res:'0.01mm', acc:'MPE: ±0.02mm', unit:'mm', vendor:'哈量', asset:'ZC-2024-0141', buy:'2024-05-21', dept:'金加工车间', owner:'赵磊', loc:'金加工车间-量具柜', calMode:'内校', calOrg:'计量室(内校)', period:6, lastCal:'2026-07-02 11:20:00', nextCal:'2027-01-02', cert:'NX-2026-0702', calResult:'合格', status:'在用', keyMeasure:'否', note:''},
++    {id:'JJQ-2024-004', name:'数显千分表', model:'ID-S112E', serial:'240812-047', cat:'指示表', mcat:'长度', range:'0~12.7mm', res:'0.001mm', acc:'MPE: ±0.003mm', unit:'mm', vendor:'三丰(Mitutoyo)', asset:'ZC-2024-0155', buy:'2024-06-30', dept:'装配二车间', owner:'孙丽', loc:'装配二车间-检验台', calMode:'外校', calOrg:'市计量测试所', period:6, lastCal:'2025-09-15 15:40:00', nextCal:'2026-03-15', cert:'CS-2025-0915', calResult:'合格', status:'停用', keyMeasure:'否', note:'校准逾期未送检，已停用待安排外校（2026-09-01 由计量管理员标记）'},
++    {id:'JJQ-2024-005', name:'精密压力表', model:'Y-150B', serial:'240905-112', cat:'压力表', mcat:'力学', range:'0~1.6MPa', res:'0.02MPa', acc:'1.6级', unit:'MPa', vendor:'红旗仪表', asset:'ZC-2024-0162', buy:'2024-09-05', dept:'液压车间', owner:'周军', loc:'液压车间-试验台', calMode:'外校', calOrg:'省计量科学研究院', period:6, lastCal:'2026-03-20 10:05:00', nextCal:'2026-09-20', cert:'JX-2026-0320', calResult:'合格', status:'在用', keyMeasure:'是', note:'30天内到期'},
++    {id:'JJQ-2024-006', name:'电子天平', model:'FA3004', serial:'241101-023', cat:'天平', mcat:'力学', range:'0~300g', res:'0.01g', acc:'Ⅲ级', unit:'g', vendor:'梅特勒-托利多', asset:'ZC-2024-0170', buy:'2024-11-01', dept:'实验室', owner:'吴芳', loc:'实验室-天平室', calMode:'外校', calOrg:'省计量科学研究院', period:12, lastCal:'2025-11-11 16:30:00', nextCal:'2026-11-11', cert:'JX-2025-1111', calResult:'合格', status:'在用', keyMeasure:'是', note:'配合稳定性分析'},
++    {id:'JJQ-2024-007', name:'数显扭力扳手', model:'DTC-60', serial:'241212-078', cat:'扭力扳手', mcat:'力学', range:'5~50N·m', res:'0.1N·m', acc:'±3%', unit:'N·m', vendor:'世达(SATA)', asset:'ZC-2024-0177', buy:'2024-12-12', dept:'装配一车间', owner:'王强', loc:'装配一车间-防错工具柜', calMode:'外校', calOrg:'市计量测试所', period:12, lastCal:'2025-12-05 09:45:00', nextCal:'2026-12-05', cert:'CS-2025-1205', calResult:'合格', status:'在用', keyMeasure:'是', calCycle:6, calAdvance:15, note:'GRR需整改复测'},
++    {id:'JJQ-2024-008', name:'光滑塞规(通止规)', model:'φ8H7', serial:'240226-015', cat:'塞规/环规', mcat:'长度', range:'φ8H7', res:'计数型', acc:'通端/止端', unit:'', vendor:'上工量具', asset:'ZC-2024-0180', buy:'2024-02-26', dept:'装配二车间', owner:'孙丽', loc:'装配二车间-检验台', calMode:'内校', calOrg:'计量室(内校)', period:12, lastCal:'2026-02-18 13:30:00', nextCal:'2027-02-18', cert:'NX-2026-0218', calResult:'合格', status:'在用', keyMeasure:'是', calCycle:12, calAdvance:30, note:'计数型检具，用于KAPPA分析'},
++    {id:'JJQ-2024-009', name:'深度游标卡尺', model:'0-200', serial:'240401-092', cat:'卡尺', mcat:'长度', range:'0~200mm', res:'0.02mm', acc:'MPE: ±0.03mm', unit:'mm', vendor:'广陆', asset:'ZC-2024-0188', buy:'2024-04-01', dept:'金加工车间', owner:'赵磊', loc:'金加工车间-量具柜', calMode:'内校', calOrg:'计量室(内校)', period:12, lastCal:'2026-04-01 10:25:00', nextCal:'2027-04-01', cert:'NX-2026-0401', calResult:'合格', status:'封存', keyMeasure:'否', note:'近期无使用计划，封存管理'},
++    {id:'JJQ-2024-011', name:'数字温度计', model:'TES-1310', serial:'240606-055', cat:'温度计', mcat:'热学', range:'-50~200℃', res:'0.1℃', acc:'±0.5℃', unit:'℃', vendor:'泰仕(TES)', asset:'ZC-2024-0190', buy:'2024-06-06', dept:'实验室', owner:'吴芳', loc:'实验室-烘箱区', calMode:'外校', calOrg:'省计量科学研究院', period:12, lastCal:'2026-03-01 14:10:00', nextCal:'2027-03-01', cert:'JX-2026-0301', calResult:'合格', status:'在用', keyMeasure:'否', note:''}
+   ];
+ 
+   /* ---------------- 器具组（独立维护：组编码/名称、检验周期、上次执行、下次提醒、执行记录） ---------------- */
+   const instGroups = [
+-    {id:'G-01', type:'inst', name:'轴类关键尺寸组', memberIds:['JJQ-2024-001','JJQ-2024-002','JJQ-2024-003','JJQ-2024-009'], note:'精加工工序轴类关键尺寸测量（卡尺/千分尺/百分表/深度尺）', editor:'计量室·刘工', editorDate:'2026-06-01', calCycle:12, lastExec:'2026-03-15', nextRemind:'2027-03-15', records:[{time:'2026-03-15', content:'轴类关键尺寸组周期复评（GRR），结论可接受，归档'}]},
+-    {id:'G-02', type:'inst', name:'装配力学组', memberIds:['JJQ-2024-007','JJQ-2024-005'], note:'装配扭矩 / 液压压力测量', editor:'计量室·刘工', editorDate:'2026-06-01', calCycle:6, lastExec:'2026-06-10', nextRemind:'2026-12-10', records:[{time:'2026-06-10', content:'装配力学组周期复评（GRR），%GRR 有条件区间，纠正措施进行中'}]},
+-    {id:'G-03', type:'inst', name:'实验室计量组', memberIds:['JJQ-2023-010','JJQ-2024-006','JJQ-2024-011'], note:'实验室参考测量（三坐标/天平/温度计）', editor:'计量室·张工', editorDate:'2026-06-01', calCycle:12, lastExec:'2026-03-18', nextRemind:'2027-03-18', records:[{time:'2026-03-18', content:'实验室计量组复评（线性/偏倚），结论非常理想可接受'}]},
+-    {id:'G-04', type:'inst', name:'目视/计数检验组', memberIds:['JJQ-2024-008','JJQ-2024-004'], note:'计数型检验（塞规/千分表），用于 KAPPA 分析', editor:'计量室·张工', editorDate:'2026-06-01', calCycle:6, lastExec:'2026-08-22', nextRemind:'2026-10-05', records:[{time:'2026-08-22', content:'目视/计数检验组二期 KAPPA 复评，误判偏高需整改'}]},
+-    {id:'P-01', type:'iqc', postCode:'POST-IQC', name:'IQC 检验组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，选择岗位自动带出该岗位下人员（人员编号/姓名/部门/岗位）', editor:'计量室·张工', editorDate:'2026-08-25', calCycle:6, lastExec:'2026-08-22', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02', records:[{time:'2026-08-22', content:'IQC 检验组 KAPPA 一致性复评，人员组建立并纳入盲测'}]},
+-    {id:'P-02', type:'ipqc', postCode:'POST-IPQC', name:'IPQC 巡检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·张工', editorDate:'2026-08-25', calCycle:6, lastExec:'2026-08-22', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02', records:[]},
+-    {id:'P-03', type:'fqc', postCode:'POST-FQC', name:'FQC 终检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01', calCycle:6, lastExec:'2026-09-01', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09', records:[]},
+-    {id:'P-04', type:'gpr', postCode:'POST-GPR', name:'GPR 判定组', dept:'总装车间', note:'人员MSA组：以岗位编码为组标识（动总GPR/电控GPR），成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01', calCycle:6, lastExec:'2026-09-01', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09', records:[]}
++    {id:'G-01', type:'inst', name:'轴类关键尺寸组', memberIds:['JJQ-2024-001','JJQ-2024-002','JJQ-2024-003','JJQ-2024-009'], note:'精加工工序轴类关键尺寸测量（卡尺/千分尺/百分表/深度尺）', editor:'计量室·刘工', editorDate:'2026-06-01 14:20:00', calCycle:12, lastExec:'2026-03-15 10:30:00', nextRemind:'2027-03-15 08:00:00', records:[{time:'2026-03-15 10:30:00', content:'轴类关键尺寸组周期复评（GRR），结论可接受，归档'}]},
++    {id:'G-02', type:'inst', name:'装配力学组', memberIds:['JJQ-2024-007','JJQ-2024-005'], note:'装配扭矩 / 液压压力测量', editor:'计量室·刘工', editorDate:'2026-06-01 14:35:00', calCycle:6, lastExec:'2026-06-10 09:20:00', nextRemind:'2026-12-10 08:00:00', records:[{time:'2026-06-10 09:20:00', content:'装配力学组周期复评（GRR），%GRR 有条件区间，纠正措施进行中'}]},
++    {id:'G-03', type:'inst', name:'实验室计量组', memberIds:['JJQ-2023-010','JJQ-2024-006','JJQ-2024-011'], note:'实验室参考测量（三坐标/天平/温度计）', editor:'计量室·张工', editorDate:'2026-06-01 15:00:00', calCycle:12, lastExec:'2026-03-18 11:00:00', nextRemind:'2027-03-18 08:00:00', records:[{time:'2026-03-18 11:00:00', content:'实验室计量组复评（线性/偏倚），结论非常理想可接受'}]},
++    {id:'G-04', type:'inst', name:'目视/计数检验组', memberIds:['JJQ-2024-008','JJQ-2024-004'], note:'计数型检验（塞规/千分表），用于 KAPPA 分析', editor:'计量室·张工', editorDate:'2026-06-01 15:30:00', calCycle:6, lastExec:'2026-08-22 10:10:00', nextRemind:'2026-10-05 08:00:00', records:[{time:'2026-08-22 10:10:00', content:'目视/计数检验组二期 KAPPA 复评，误判偏高需整改'}]},
++    {id:'P-01', type:'iqc', postCode:'POST-IQC', name:'IQC 检验组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，选择岗位自动带出该岗位下人员（人员编号/姓名/部门/岗位）', editor:'计量室·张工', editorDate:'2026-08-25 09:40:00', calCycle:6, lastExec:'2026-08-22 10:10:00', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02 08:00:00', records:[{time:'2026-08-22 10:10:00', content:'IQC 检验组 KAPPA 一致性复评，人员组建立并纳入盲测'}]},
++    {id:'P-02', type:'ipqc', postCode:'POST-IPQC', name:'IPQC 巡检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·张工', editorDate:'2026-08-25 09:55:00', calCycle:6, lastExec:'2026-08-22 10:10:00', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02 08:00:00', records:[]},
++    {id:'P-03', type:'fqc', postCode:'POST-FQC', name:'FQC 终检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01 10:05:00', calCycle:6, lastExec:'2026-09-01 10:05:00', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09 08:00:00', records:[]},
++    {id:'P-04', type:'gpr', postCode:'POST-GPR', name:'GPR 判定组', dept:'总装车间', note:'人员MSA组：以岗位编码为组标识（动总GPR/电控GPR），成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01 10:20:00', calCycle:6, lastExec:'2026-09-01 10:20:00', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09 08:00:00', records:[]}
+   ];
+ 
+   /* ---------------- 人员主数据（人员MSA数据源：岗位编码作为人员组标识） ---------------- */
+@@ -277,7 +278,7 @@ function buildSeed(){
+ 
+   /* ---------------- MSA 检验标准维护 ---------------- */
+   const standards = [
+-    {id:'STD-MSA-001', name:'计量型变差分析(GRR)判定准则', type:'GRR判定', version:'V3.0', effDate:'2026-01-01', status:'启用',
++    {id:'STD-MSA-001', name:'计量型变差分析(GRR)判定准则', type:'GRR判定', version:'V3.0', effDate:'2026-01-01', editorDate:'2026-01-01 09:30:00', status:'启用',
+      instIds:['JJQ-2023-010','JJQ-2024-001','JJQ-2024-002','JJQ-2024-003','JJQ-2024-005','JJQ-2024-006','JJQ-2024-007','JJQ-2024-011'],
+      basis:'AIAG MSA 参考手册第4版 §4.2；IATF 16949 7.1.5.1.1',
+      criteria:[
+@@ -286,7 +287,7 @@ function buildSeed(){
+        {cond:'%GRR > 30%', verdict:'不可接受（必须整改后重新分析）'}
+      ],
+      owner:'质量部', editor:'李工程师', auditor:'张工', approver:'王经理', changeLog:'V3.0：按AIAG第4版修订，新增公差%GRR补充判定', charIds:['CHAR-2026-001','CHAR-2026-002','CHAR-2026-004','CHAR-2026-007']},
+-    {id:'STD-MSA-002', name:'可区分类别数(NDC)判定准则', type:'NDC判定', version:'V2.0', effDate:'2025-07-01', status:'启用',
++    {id:'STD-MSA-002', name:'可区分类别数(NDC)判定准则', type:'NDC判定', version:'V2.0', effDate:'2025-07-01', editorDate:'2025-07-01 09:30:00', status:'启用',
+      instIds:['JJQ-2023-010','JJQ-2024-001','JJQ-2024-002','JJQ-2024-003','JJQ-2024-005','JJQ-2024-006','JJQ-2024-007','JJQ-2024-011'],
+      basis:'AIAG MSA 参考手册第4版；NDC=1.41×(PV/GRR)',
+      criteria:[
+@@ -295,7 +296,7 @@ function buildSeed(){
+        {cond:'NDC < 2', verdict:'不可接受'}
+      ],
+      owner:'质量部', editor:'李工程师', auditor:'张工', approver:'王经理', changeLog:'V2.0：明确2~4档需过程能力佐证', charIds:['CHAR-2026-001','CHAR-2026-002']},
+-    {id:'STD-MSA-003', name:'计数型测量系统一致性(KAPPA)判定准则', type:'KAPPA判定', version:'V2.0', effDate:'2025-07-01', status:'启用',
++    {id:'STD-MSA-003', name:'计数型测量系统一致性(KAPPA)判定准则', type:'KAPPA判定', version:'V2.0', effDate:'2025-07-01', editorDate:'2025-07-01 10:15:00', status:'启用',
+      instIds:['JJQ-2024-008'],
+      basis:'AIAG MSA 参考手册第4版 §9；行业惯例（KAPPA>0.75为优秀）',
+      criteria:[
+@@ -304,7 +305,7 @@ function buildSeed(){
+        {cond:'KAPPA < 0.40', verdict:'不可接受（必须重新培训/更换判定标准后复测）'}
+      ],
+      owner:'质量部', editor:'李工程师', auditor:'张工', approver:'王经理', changeLog:'V2.0：阈值与客户SPEC对齐', charIds:['CHAR-2026-003']},
+-    {id:'STD-MSA-004', name:'计数型三档判定准则', type:'有效性判定', version:'V2.0', effDate:'2025-07-01', status:'启用',
++    {id:'STD-MSA-004', name:'计数型三档判定准则', type:'有效性判定', version:'V2.0', effDate:'2025-07-01', editorDate:'2025-07-01 11:00:00', status:'启用',
+      instIds:['JJQ-2024-008'],
+      basis:'AIAG MSA 第4版 §9；业务《计数型测量系统分析》三档判定表',
+      criteria:[
+@@ -313,7 +314,7 @@ function buildSeed(){
+        {cond:'Kappa<0.40 或 有效性<80% 或 错误率>5% 或 错误警报率>10%', verdict:'不可接受-需改进（结论取最差档）'}
+      ],
+      owner:'质量部', editor:'李工程师', auditor:'张工', approver:'王经理', changeLog:'V2.0：按业务三档判定表对齐（有效性=正确决定次数/总决定次数）', charIds:['CHAR-2026-003']},
+-    {id:'STD-MSA-005', name:'偏倚与线性判定准则', type:'偏倚/线性判定', version:'V2.0', effDate:'2025-01-01', status:'启用',
++    {id:'STD-MSA-005', name:'偏倚与线性判定准则', type:'偏倚/线性判定', version:'V2.0', effDate:'2025-01-01', editorDate:'2025-01-01 09:30:00', status:'启用',
+      instIds:[],
+      basis:'AIAG MSA 第4版 §3、§4；业务判定准则（"0"水平线 vs 95% 置信区间）',
+      criteria:[
+@@ -325,7 +326,7 @@ function buildSeed(){
+        {cond:'> 10%', verdict:'不可接受，需校准/补偿'}
+      ],
+      owner:'质量部', editor:'李工程师', auditor:'张工', approver:'王经理', changeLog:'V1.0 初始版本', charIds:['CHAR-2026-004','CHAR-2026-007']},
+-    {id:'STD-MSA-006', name:'测量系统稳定性判定准则', type:'稳定性判定', version:'V1.0', effDate:'2025-01-01', status:'启用',
++    {id:'STD-MSA-006', name:'测量系统稳定性判定准则', type:'稳定性判定', version:'V1.0', effDate:'2025-01-01', editorDate:'2025-01-01 10:00:00', status:'启用',
+      instIds:[],
+      basis:'AIAG MSA 第4版 §4.5；SPC控制图理论',
+      criteria:[
+@@ -342,51 +343,51 @@ function buildSeed(){
+   const plans = [
+     {id:'MSAP-2026-001', name:'数显卡尺 0~150mm · GRR 分析', instId:'JJQ-2024-001', instName:'数显卡尺 0~150mm', cat:'卡尺',
+      type:'GRR', method:'均值-极差法(Xbar-R)', standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10},
+-     object:'轴径 φ50±0.05', feature:'直径', owner:'王强', editor:'李工程师', editorDate:'2026-03-15', planDate:'2026-03-15',
++     object:'轴径 φ50±0.05', feature:'直径', owner:'王强', editor:'李工程师', editorDate:'2026-03-15 09:00:00', planDate:'2026-03-15 17:30:00',
+      trigger:'周期复评', source:'周期任务', status:'已闭环', recordId:'GRR-2026-001', result:'可接受', note:'年度复评，测量系统可接受，归档'},
+     {id:'MSAP-2026-002', name:'光滑塞规 φ8H7 · KAPPA 分析', instId:'JJQ-2024-008', instName:'光滑塞规 φ8H7', cat:'塞规/环规',
+      type:'KAPPA', method:'计数型一致性(KAPPA)', standard:'STD-MSA-003', params:{ops:3, trials:1, parts:30},
+-     object:'孔径 φ8H7 通/止判定', feature:'通/止判定', owner:'孙丽', editor:'李工程师', editorDate:'2026-04-20', planDate:'2026-04-20',
++     object:'孔径 φ8H7 通/止判定', feature:'通/止判定', owner:'孙丽', editor:'李工程师', editorDate:'2026-04-20 09:00:00', planDate:'2026-04-20 17:00:00',
+      trigger:'周期复评', source:'周期任务', status:'已闭环', recordId:'KPA-2026-001', result:'优秀(可接受)', note:'首期一致性分析，优秀，归档'},
+     {id:'MSAP-2026-003', name:'数显扭力扳手 5~50N·m · GRR 分析', instId:'JJQ-2024-007', instName:'数显扭力扳手 5~50N·m', cat:'扭力扳手',
+      type:'GRR', method:'方差分析法(ANOVA)', standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10},
+-     object:'螺栓拧紧力矩 25N·m', feature:'扭矩', owner:'王强', editor:'李工程师', editorDate:'2026-06-10', planDate:'2026-06-10',
++     object:'螺栓拧紧力矩 25N·m', feature:'扭矩', owner:'王强', editor:'李工程师', editorDate:'2026-06-10 09:00:00', planDate:'2026-06-10 16:40:00',
+      trigger:'周期复评', source:'周期任务', status:'需整改', recordId:'GRR-2026-002', result:'有条件接受', note:'%GRR 处于有条件区间，纠正措施进行中，复测验证后闭环'},
+     {id:'MSAP-2026-004', name:'外径千分尺 0~25mm · GRR 分析', instId:'JJQ-2024-002', instName:'外径千分尺 0~25mm', cat:'千分尺',
+      type:'GRR', method:'均值-极差法(Xbar-R)', standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10},
+-     object:'轴径 φ10±0.02', feature:'直径', owner:'赵磊', editor:'李工程师', editorDate:'2026-08-20', planDate:'2026-09-20',
++     object:'轴径 φ10±0.02', feature:'直径', owner:'赵磊', editor:'李工程师', editorDate:'2026-08-20 09:00:00', planDate:'2026-09-20 17:00:00',
+      trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'GRR-2026-003', result:'', note:'样本组已就绪（SMP-2026-004），请在 GRR 台账内录入数据'},
+     {id:'MSAP-2026-005', name:'光滑塞规 φ8H7 · KAPPA 二期复评', instId:'JJQ-2024-008', instName:'光滑塞规 φ8H7', cat:'塞规/环规',
+      type:'KAPPA', method:'计数型一致性(KAPPA)', standard:'STD-MSA-003', params:{ops:2, trials:1, parts:30},
+-     object:'孔径 φ8H7 通/止判定（二期复评）', feature:'通/止判定', owner:'孙丽', editor:'李工程师', editorDate:'2026-08-22', planDate:'2026-09-20',
++     object:'孔径 φ8H7 通/止判定（二期复评）', feature:'通/止判定', owner:'孙丽', editor:'李工程师', editorDate:'2026-08-22 09:00:00', planDate:'2026-09-20 17:00:00',
+      trigger:'顾客审核整改', source:'临时任务', status:'需整改', recordId:'KPA-2026-002', result:'良好(有条件接受)', note:'顾客审核整改项：误判偏高，培训后复测验证'},
+     {id:'MSAP-2026-006', name:'电子天平 300g · MSA 分析', instId:'JJQ-2024-006', instName:'电子天平 300g', cat:'天平',
+      type:'', method:'', standard:'', params:{ops:3, trials:3, parts:10},
+-     object:'称量 100g', feature:'质量', owner:'吴芳', editor:'李工程师', editorDate:'2026-08-25', planDate:'2026-09-30',
++     object:'称量 100g', feature:'质量', owner:'吴芳', editor:'李工程师', editorDate:'2026-08-25 09:00:00', planDate:'2026-09-30 17:00:00',
+      trigger:'新过程', source:'临时任务', status:'未定型', recordId:'', result:'', note:'待定型为 GRR / KAPPA 后开展分析'},
+     {id:'MSAP-2026-007', name:'数字温度计 · MSA 分析', instId:'JJQ-2024-011', instName:'数字温度计', cat:'温度计',
+      type:'', method:'', standard:'', params:{ops:3, trials:3, parts:10},
+-     object:'烘箱温度 120℃', feature:'温度', owner:'吴芳', editor:'李工程师', editorDate:'2026-08-25', planDate:'2026-10-15',
++     object:'烘箱温度 120℃', feature:'温度', owner:'吴芳', editor:'李工程师', editorDate:'2026-08-25 10:00:00', planDate:'2026-10-15 17:00:00',
+      trigger:'周期复评', source:'周期任务', status:'未定型', recordId:'', result:'', note:'待定型'},
+     {id:'MSAP-2026-008', name:'精密压力表 1.6MPa · MSA 分析', instId:'JJQ-2024-005', instName:'精密压力表 1.6MPa', cat:'压力表',
+      type:'', method:'', standard:'', params:{ops:3, trials:3, parts:10},
+-     object:'液压试验压力 1.0MPa', feature:'压力', owner:'周军', editor:'李工程师', editorDate:'2026-08-26', planDate:'2026-09-25',
++     object:'液压试验压力 1.0MPa', feature:'压力', owner:'周军', editor:'李工程师', editorDate:'2026-08-26 09:00:00', planDate:'2026-09-25 17:00:00',
+      trigger:'顾客审核整改', source:'临时任务', status:'未定型', recordId:'', result:'', note:'待定型'},
+     {id:'MSAP-2026-009', name:'数显千分表 0~12.7mm · GRR/稳定性/Cg-Cgk', instId:'JJQ-2024-004', instName:'数显千分表 0~12.7mm', cat:'千分表',
+      type:'GRR', method:'均值-极差法(Xbar-R)', methods:['GRR','stability','cgcgk'], standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10},
+-     object:'轴径 Φ12.5±0.05', feature:'直径', owner:'李工程师', editor:'李工程师', editorDate:'2026-09-08', planDate:'2026-10-15',
++     object:'轴径 Φ12.5±0.05', feature:'直径', owner:'李工程师', editor:'李工程师', editorDate:'2026-09-08 09:00:00', planDate:'2026-10-15 17:00:00',
+      trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'', result:'', note:'一计划多方法：GRR + 稳定性 + Cg/Cgk（一个计划可触发多个分析任务）'},
+     {id:'MSAP-2026-010', name:'光滑塞规 φ8H7 · KAPPA 三期复评', instId:'JJQ-2024-008', instName:'光滑塞规 φ8H7', cat:'塞规/环规',
+      type:'KAPPA', method:'计数型一致性(KAPPA)', standard:'STD-MSA-003', params:{ops:2, trials:1, parts:30},
+-     object:'孔径 φ8H7 通/止判定（三期复评）', feature:'通/止判定', owner:'孙丽', editor:'系统自动', editorDate:'2026-09-05', planDate:'2026-10-05',
++     object:'孔径 φ8H7 通/止判定（三期复评）', feature:'通/止判定', owner:'孙丽', editor:'系统自动', editorDate:'2026-09-05 09:00:00', planDate:'2026-10-05 17:00:00',
+      trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'', result:'', note:'由器具组「目视/计数检验组」检验周期自动生成（提前一个月推送待办，2026-10-05 到期）'},
+     {id:'MSAP-2026-011', name:'数显千分表 0~12.7mm · GRR 复评（不通过示例）', instId:'JJQ-2024-004', instName:'数显千分表 0~12.7mm', cat:'千分表',
+      type:'GRR', method:'均值-极差法(Xbar-R)', standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10},
+-     object:'轴径 Φ12.5±0.05（复评）', feature:'直径', owner:'赵磊', editor:'李工程师', editorDate:'2026-09-10', planDate:'2026-09-10',
++     object:'轴径 Φ12.5±0.05（复评）', feature:'直径', owner:'赵磊', editor:'李工程师', editorDate:'2026-09-10 09:00:00', planDate:'2026-09-10 16:30:00',
+      trigger:'周期复评', source:'周期任务', status:'需整改', recordId:'GRR-2026-005', result:'不可接受', note:'%GRR>30%，测量系统不可接受，暂停用于产品放行测量'},
+     {id:'MSAP-2026-012', name:'光滑塞规 φ8H7 · KAPPA 四期复评（不通过示例）', instId:'JJQ-2024-008', instName:'光滑塞规 φ8H7', cat:'塞规/环规',
+      type:'KAPPA', method:'计数型一致性(KAPPA)', standard:'STD-MSA-003', params:{ops:3, trials:3, parts:30},
+-     object:'孔径 φ8H7 通/止判定（四期复评）', feature:'通/止判定', owner:'孙丽', editor:'李工程师', editorDate:'2026-09-12', planDate:'2026-09-12',
++     object:'孔径 φ8H7 通/止判定（四期复评）', feature:'通/止判定', owner:'孙丽', editor:'李工程师', editorDate:'2026-09-12 09:00:00', planDate:'2026-09-12 16:20:00',
+      trigger:'顾客审核整改', source:'临时任务', status:'需整改', recordId:'KPA-2026-003', result:'不可接受', note:'误判率过高，测量系统一致性不可接受'}
+   ];
+ 
+@@ -521,13 +522,13 @@ function buildSeed(){
+ 
+   /* ---------------- 质量特性基础数据（业务口径：特性主表 + 检验方法子表，一特性多方法；检验标准由特性穿透关联） ---------------- */
+   const characteristics = [
+-    {id:'CHAR-2026-001', name:'轴径 φ50±0.05', type:'SC', partName:'轴类件', partNo:'PN-1001', processName:'精加工', category:'计量型', unit:'mm', target:'50', usl:'50.05', lsl:'49.95', source:'CP-轴类控制计划', methods:[{method:'GRR', standardId:'STD-MSA-001'},{method:'linear', standardId:'STD-MSA-005'},{method:'cgcgk', standardId:'STD-MSA-001'}], plant:'青岛工厂', subplant:'一分厂', status:'启用', note:'关键尺寸，配数显卡尺，GRR+线性+Cg/Cgk', editor:'李工程师', editorDate:'2026-09-09'},
+-    {id:'CHAR-2026-002', name:'轴径 φ10±0.02', type:'CC', partName:'轴类件', partNo:'PN-1002', processName:'精加工', category:'计量型', unit:'mm', target:'10', usl:'10.02', lsl:'9.98', source:'CP-轴类控制计划', methods:[{method:'GRR', standardId:'STD-MSA-001'},{method:'stability', standardId:'STD-MSA-006'}], plant:'青岛工厂', subplant:'一分厂', status:'启用', note:'外径千分尺测量，稳定性分析', editor:'李工程师', editorDate:'2026-09-09'},
+-    {id:'CHAR-2026-003', name:'孔径 φ8H7 通/止', type:'CC', partName:'孔类件', partNo:'PN-1003', processName:'检验', category:'计数型', unit:'', target:'', usl:'', lsl:'', source:'CP-孔类控制计划', methods:[{method:'KAPPA', standardId:'STD-MSA-003'}], plant:'青岛工厂', subplant:'一分厂', status:'启用', note:'光滑塞规通止判定，KAPPA 分析', editor:'李工程师', editorDate:'2026-09-09'},
+-    {id:'CHAR-2026-004', name:'螺栓拧紧力矩 25N·m', type:'SC', partName:'轴类件', partNo:'PN-1004', processName:'装配', category:'计量型', unit:'N·m', target:'25', usl:'27.5', lsl:'22.5', source:'CP-装配控制计划', methods:[{method:'GRR', standardId:'STD-MSA-001'},{method:'linear', standardId:'STD-MSA-005'}], plant:'青岛工厂', subplant:'二分厂', status:'启用', note:'安全相关扭矩，GRR+偏倚', editor:'李工程师', editorDate:'2026-09-09'},
+-    {id:'CHAR-2026-005', name:'称量 100g', type:'普通', partName:'标准件', partNo:'PN-1005', processName:'检验', category:'计量型', unit:'g', target:'100', usl:'100.1', lsl:'99.9', source:'CP-实验室控制计划', methods:[{method:'GRR', standardId:'STD-MSA-001'}], plant:'烟台工厂', subplant:'一分厂', status:'启用', note:'电子天平', editor:'李工程师', editorDate:'2026-09-09'},
+-    {id:'CHAR-2026-006', name:'烘箱温度 120℃', type:'普通', partName:'标准件', partNo:'PN-1006', processName:'检验', category:'计量型', unit:'℃', target:'120', usl:'122', lsl:'118', source:'CP-实验室控制计划', methods:[{method:'stability', standardId:'STD-MSA-006'}], plant:'烟台工厂', subplant:'一分厂', status:'启用', note:'数字温度计', editor:'李工程师', editorDate:'2026-09-09'},
+-    {id:'CHAR-2026-007', name:'液压试验压力 1.0MPa', type:'SC', partName:'轴类件', partNo:'PN-1007', processName:'检验', category:'计量型', unit:'MPa', target:'1.0', usl:'1.05', lsl:'0.95', source:'CP-液压控制计划', methods:[{method:'cgcgk', standardId:'STD-MSA-001'}], plant:'青岛工厂', subplant:'二分厂', status:'启用', note:'精密压力表，Cg/Cgk', editor:'李工程师', editorDate:'2026-09-09'}
++    {id:'CHAR-2026-001', name:'轴径 φ50±0.05', type:'SC', partName:'轴类件', partNo:'PN-1001', processName:'精加工', category:'计量型', unit:'mm', target:'50', usl:'50.05', lsl:'49.95', source:'CP-轴类控制计划', methods:[{method:'GRR', standardId:'STD-MSA-001'},{method:'linear', standardId:'STD-MSA-005'},{method:'cgcgk', standardId:'STD-MSA-001'}], plant:'青岛工厂', subplant:'一分厂', status:'启用', note:'关键尺寸，配数显卡尺，GRR+线性+Cg/Cgk', editor:'李工程师', editorDate:'2026-09-09 10:24:00'},
++    {id:'CHAR-2026-002', name:'轴径 φ10±0.02', type:'CC', partName:'轴类件', partNo:'PN-1002', processName:'精加工', category:'计量型', unit:'mm', target:'10', usl:'10.02', lsl:'9.98', source:'CP-轴类控制计划', methods:[{method:'GRR', standardId:'STD-MSA-001'},{method:'stability', standardId:'STD-MSA-006'}], plant:'青岛工厂', subplant:'一分厂', status:'启用', note:'外径千分尺测量，稳定性分析', editor:'李工程师', editorDate:'2026-09-09 10:26:00'},
++    {id:'CHAR-2026-003', name:'孔径 φ8H7 通/止', type:'CC', partName:'孔类件', partNo:'PN-1003', processName:'检验', category:'计数型', unit:'', target:'', usl:'', lsl:'', source:'CP-孔类控制计划', methods:[{method:'KAPPA', standardId:'STD-MSA-003'}], plant:'青岛工厂', subplant:'一分厂', status:'启用', note:'光滑塞规通止判定，KAPPA 分析', editor:'李工程师', editorDate:'2026-09-09 10:28:00'},
++    {id:'CHAR-2026-004', name:'螺栓拧紧力矩 25N·m', type:'SC', partName:'轴类件', partNo:'PN-1004', processName:'装配', category:'计量型', unit:'N·m', target:'25', usl:'27.5', lsl:'22.5', source:'CP-装配控制计划', methods:[{method:'GRR', standardId:'STD-MSA-001'},{method:'linear', standardId:'STD-MSA-005'}], plant:'青岛工厂', subplant:'二分厂', status:'启用', note:'安全相关扭矩，GRR+偏倚', editor:'李工程师', editorDate:'2026-09-09 10:30:00'},
++    {id:'CHAR-2026-005', name:'称量 100g', type:'普通', partName:'标准件', partNo:'PN-1005', processName:'检验', category:'计量型', unit:'g', target:'100', usl:'100.1', lsl:'99.9', source:'CP-实验室控制计划', methods:[{method:'GRR', standardId:'STD-MSA-001'}], plant:'烟台工厂', subplant:'一分厂', status:'启用', note:'电子天平', editor:'李工程师', editorDate:'2026-09-09 10:32:00'},
++    {id:'CHAR-2026-006', name:'烘箱温度 120℃', type:'普通', partName:'标准件', partNo:'PN-1006', processName:'检验', category:'计量型', unit:'℃', target:'120', usl:'122', lsl:'118', source:'CP-实验室控制计划', methods:[{method:'stability', standardId:'STD-MSA-006'}], plant:'烟台工厂', subplant:'一分厂', status:'启用', note:'数字温度计', editor:'李工程师', editorDate:'2026-09-09 10:34:00'},
++    {id:'CHAR-2026-007', name:'液压试验压力 1.0MPa', type:'SC', partName:'轴类件', partNo:'PN-1007', processName:'检验', category:'计量型', unit:'MPa', target:'1.0', usl:'1.05', lsl:'0.95', source:'CP-液压控制计划', methods:[{method:'cgcgk', standardId:'STD-MSA-001'}], plant:'青岛工厂', subplant:'二分厂', status:'启用', note:'精密压力表，Cg/Cgk', editor:'李工程师', editorDate:'2026-09-09 10:36:00'}
+   ];
+   G_SEED_CHARS=characteristics;
+ 
+@@ -628,9 +629,9 @@ function buildSeed(){
+   ];
+   /* 样本库变更日志（真值 / 有效期变更自动留痕：操作人 / 时间 / 变更前后值） */
+   const sampleLibLogs = [
+-    {id:'LG-SPL-001', sampleId:'SPL-001', field:'参考值（真值）', before:'50.010', after:'50.000', actor:'李工程师', time:'2026-08-30 14:22', note:'标准件重新检定后更新真值（溯源至国家基准）'},
+-    {id:'LG-SPL-002', sampleId:'SPL-003', field:'有效期至', before:'2026-10-31', after:'2027-01-31', actor:'李工程师', time:'2026-09-01 09:15', note:'第三方检定合格，有效期顺延'},
+-    {id:'LG-SPL-003', sampleId:'SPL-002', field:'参考值（真值）', before:'10.005', after:'10.000', actor:'张工', time:'2026-09-05 16:40', note:'计量校准中心复测后校准真值'}
++    {id:'LG-SPL-001', sampleId:'SPL-001', field:'参考值（真值）', before:'50.010', after:'50.000', actor:'李工程师', time:'2026-08-30 14:22:33', note:'标准件重新检定后更新真值（溯源至国家基准）'},
++    {id:'LG-SPL-002', sampleId:'SPL-003', field:'有效期至', before:'2026-10-31', after:'2027-01-31', actor:'李工程师', time:'2026-09-01 09:15:47', note:'第三方检定合格，有效期顺延'},
++    {id:'LG-SPL-003', sampleId:'SPL-002', field:'参考值（真值）', before:'10.005', after:'10.000', actor:'张工', time:'2026-09-05 16:40:21', note:'计量校准中心复测后校准真值'}
+   ];
+ 
+   /* MES 工位主数据（稳定性台账工位下拉来源；MES 无数据时手填兜底） */
+@@ -759,8 +760,8 @@ function applyFieldDefaults(d){
+     Object.assign(i,{
+       line:i.line||LINES[ix%LINES.length], minTolBand:i.minTolBand||'±0.01mm', prodLine:i.prodLine||PRODS[ix%PRODS.length],
+       interimCheck:i.interimCheck||'是', meteringTime:i.meteringTime||'0.5h', lifeSpan:i.lifeSpan||'5年',
+-      ymd:i.ymd||(i.lastCal||TODAY), satisfy110:i.satisfy110||'是', process:i.process||PROCESSES[ix%PROCESSES.length],
+-      inspectItem:i.inspectItem||'暂无', ledgerDate:i.ledgerDate||(i.buy||TODAY), warranty:i.warranty||'1年',
++      ymd:i.ymd||((i.lastCal||TODAY)+'').slice(0,10), satisfy110:i.satisfy110||'是', process:i.process||PROCESSES[ix%PROCESSES.length],
++      inspectItem:i.inspectItem||'暂无', ledgerDate:i.ledgerDate||((i.buy||TODAY)+' 09:30:00'), warranty:i.warranty||'1年',
+       spec:i.spec||(i.range&&i.range!=='-'?i.range:'暂无'),
+       doMsa:i.doMsa||'是', cycleValue:i.cycleValue||i.period, cycle:i.cycle||(i.period+'个月'),
+       plant:i.plant||PLANTS[ix%2], subplant:i.subplant||SUBPLANTS[ix%2], qcArea:i.qcArea||'质检科',
+@@ -863,31 +864,31 @@ function applyFieldDefaults(d){
+   /* 旧数据迁移：person 类型按岗位编码映射为具体人员组类型（iqc/ipqc/fqc/gpr） */
+   (d.instGroups||[]).forEach(g=>{ if(g.type==='person'){ g.type=(g.postCode==='POST-IPQC'?'ipqc':g.postCode==='POST-FQC'?'fqc':g.postCode==='POST-GPR'?'gpr':'iqc'); } });
+   const PERSON_GROUPS=[
+-    {id:'P-01', type:'iqc', postCode:'POST-IQC', name:'IQC 检验组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，选择岗位自动带出该岗位下人员（人员编号/姓名/部门/岗位）', editor:'计量室·张工', editorDate:'2026-08-25', calCycle:6, lastExec:'2026-08-22', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02', records:[{time:'2026-08-22', content:'IQC 检验组 KAPPA 一致性复评，人员组建立并纳入盲测'}], plant:'青岛工厂', subplant:'一分厂'},
+-    {id:'P-02', type:'ipqc', postCode:'POST-IPQC', name:'IPQC 巡检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·张工', editorDate:'2026-08-25', calCycle:6, lastExec:'2026-08-22', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02', records:[], plant:'青岛工厂', subplant:'一分厂'},
+-    {id:'P-03', type:'fqc', postCode:'POST-FQC', name:'FQC 终检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01', calCycle:6, lastExec:'2026-09-01', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09', records:[], plant:'青岛工厂', subplant:'一分厂'},
+-    {id:'P-04', type:'gpr', postCode:'POST-GPR', name:'GPR 判定组', dept:'总装车间', note:'人员MSA组：以岗位编码为组标识（动总GPR/电控GPR），成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01', calCycle:6, lastExec:'2026-09-01', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09', records:[], plant:'青岛工厂', subplant:'一分厂'}
++    {id:'P-01', type:'iqc', postCode:'POST-IQC', name:'IQC 检验组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，选择岗位自动带出该岗位下人员（人员编号/姓名/部门/岗位）', editor:'计量室·张工', editorDate:'2026-08-25 09:40:00', calCycle:6, lastExec:'2026-08-22 10:10:00', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02 08:00:00', records:[{time:'2026-08-22 10:10:00', content:'IQC 检验组 KAPPA 一致性复评，人员组建立并纳入盲测'}], plant:'青岛工厂', subplant:'一分厂'},
++    {id:'P-02', type:'ipqc', postCode:'POST-IPQC', name:'IPQC 巡检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·张工', editorDate:'2026-08-25 09:55:00', calCycle:6, lastExec:'2026-08-22 10:10:00', nextPlanDate:'2027-02-22', remindAdvance:20, nextRemind:'2027-02-02 08:00:00', records:[], plant:'青岛工厂', subplant:'一分厂'},
++    {id:'P-03', type:'fqc', postCode:'POST-FQC', name:'FQC 终检组', dept:'品质部', note:'人员MSA组：以岗位编码为组标识，成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01 10:05:00', calCycle:6, lastExec:'2026-09-01 10:05:00', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09 08:00:00', records:[], plant:'青岛工厂', subplant:'一分厂'},
++    {id:'P-04', type:'gpr', postCode:'POST-GPR', name:'GPR 判定组', dept:'总装车间', note:'人员MSA组：以岗位编码为组标识（动总GPR/电控GPR），成员由人员主数据按岗位自动带出', editor:'计量室·刘工', editorDate:'2026-09-01 10:20:00', calCycle:6, lastExec:'2026-09-01 10:20:00', nextPlanDate:'2027-03-01', remindAdvance:20, nextRemind:'2027-02-09 08:00:00', records:[], plant:'青岛工厂', subplant:'一分厂'}
+   ];
+   PERSON_GROUPS.forEach(g=>{ if(!d.instGroups.some(x=>x.id===g.id)) d.instGroups.push(g); });
+   if(!(d.sampleLibLogs||[]).length){
+-    d.sampleLibLogs.push({id:'LG-SPL-001', sampleId:'SPL-001', field:'参考值（真值）', before:'50.010', after:'50.000', actor:'李工程师', time:'2026-08-30 14:22', note:'标准件重新检定后更新真值（溯源至国家基准）'});
+-    d.sampleLibLogs.push({id:'LG-SPL-002', sampleId:'SPL-003', field:'有效期至', before:'2026-10-31', after:'2027-01-31', actor:'李工程师', time:'2026-09-01 09:15', note:'第三方检定合格，有效期顺延'});
+-    d.sampleLibLogs.push({id:'LG-SPL-003', sampleId:'SPL-002', field:'参考值（真值）', before:'10.005', after:'10.000', actor:'张工', time:'2026-09-05 16:40', note:'计量校准中心复测后校准真值'});
++    d.sampleLibLogs.push({id:'LG-SPL-001', sampleId:'SPL-001', field:'参考值（真值）', before:'50.010', after:'50.000', actor:'李工程师', time:'2026-08-30 14:22:33', note:'标准件重新检定后更新真值（溯源至国家基准）'});
++    d.sampleLibLogs.push({id:'LG-SPL-002', sampleId:'SPL-003', field:'有效期至', before:'2026-10-31', after:'2027-01-31', actor:'李工程师', time:'2026-09-01 09:15:47', note:'第三方检定合格，有效期顺延'});
++    d.sampleLibLogs.push({id:'LG-SPL-003', sampleId:'SPL-002', field:'参考值（真值）', before:'10.005', after:'10.000', actor:'张工', time:'2026-09-05 16:40:21', note:'计量校准中心复测后校准真值'});
+   }
+   if(!(d.plans||[]).some(p=>p.id==='MSAP-2026-010')){
+-    d.plans.push({id:'MSAP-2026-010', name:'光滑塞规 φ8H7 · KAPPA 三期复评', instId:'JJQ-2024-008', instName:'光滑塞规 φ8H7', cat:'塞规/环规', type:'KAPPA', method:'计数型一致性(KAPPA)', standard:'STD-MSA-003', params:{ops:2, trials:1, parts:30}, object:'孔径 φ8H7 通/止判定（三期复评）', feature:'通/止判定', owner:'孙丽', editor:'系统自动', editorDate:'2026-09-05', planDate:'2026-10-05', trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'', result:'', note:'由器具组「目视/计数检验组」检验周期自动生成（提前一个月推送待办，2026-10-05 到期）'});
++    d.plans.push({id:'MSAP-2026-010', name:'光滑塞规 φ8H7 · KAPPA 三期复评', instId:'JJQ-2024-008', instName:'光滑塞规 φ8H7', cat:'塞规/环规', type:'KAPPA', method:'计数型一致性(KAPPA)', standard:'STD-MSA-003', params:{ops:2, trials:1, parts:30}, object:'孔径 φ8H7 通/止判定（三期复评）', feature:'通/止判定', owner:'孙丽', editor:'系统自动', editorDate:'2026-09-05 09:00:00', planDate:'2026-10-05 17:00:00', trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'', result:'', note:'由器具组「目视/计数检验组」检验周期自动生成（提前一个月推送待办，2026-10-05 到期）'});
+   }
+   if(!(d.plans||[]).some(p=>p.id==='MSAP-2026-004')){
+-    d.plans.push({id:'MSAP-2026-004', name:'外径千分尺 0~25mm · GRR 分析', instId:'JJQ-2024-002', instName:'外径千分尺 0~25mm', cat:'千分尺', type:'GRR', method:'均值-极差法(Xbar-R)', standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10}, object:'轴径 φ10±0.02', feature:'直径', owner:'赵磊', editor:'李工程师', editorDate:'2026-08-20', planDate:'2026-09-20', trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'GRR-2026-003', result:'', note:'样本组已就绪（SMP-2026-004），请在 GRR 台账内录入数据'});
++    d.plans.push({id:'MSAP-2026-004', name:'外径千分尺 0~25mm · GRR 分析', instId:'JJQ-2024-002', instName:'外径千分尺 0~25mm', cat:'千分尺', type:'GRR', method:'均值-极差法(Xbar-R)', standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10}, object:'轴径 φ10±0.02', feature:'直径', owner:'赵磊', editor:'李工程师', editorDate:'2026-08-20 09:00:00', planDate:'2026-09-20 17:00:00', trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'GRR-2026-003', result:'', note:'样本组已就绪（SMP-2026-004），请在 GRR 台账内录入数据'});
+   }
+   if(!(d.plans||[]).some(p=>p.id==='MSAP-2026-007')){
+-    d.plans.push({id:'MSAP-2026-007', name:'数字温度计 · MSA 分析', instId:'JJQ-2024-011', instName:'数字温度计', cat:'温度计', type:'', method:'', standard:'', params:{ops:3, trials:3, parts:10}, object:'烘箱温度 120℃', feature:'温度', owner:'吴芳', editor:'李工程师', editorDate:'2026-08-25', planDate:'2026-10-15', trigger:'周期复评', source:'周期任务', status:'未定型', recordId:'', result:'', note:'待定型'});
++    d.plans.push({id:'MSAP-2026-007', name:'数字温度计 · MSA 分析', instId:'JJQ-2024-011', instName:'数字温度计', cat:'温度计', type:'', method:'', standard:'', params:{ops:3, trials:3, parts:10}, object:'烘箱温度 120℃', feature:'温度', owner:'吴芳', editor:'李工程师', editorDate:'2026-08-25 10:00:00', planDate:'2026-10-15 17:00:00', trigger:'周期复评', source:'周期任务', status:'未定型', recordId:'', result:'', note:'待定型'});
+   }
+   if(!(d.plans||[]).some(p=>p.id==='MSAP-2026-008')){
+-    d.plans.push({id:'MSAP-2026-008', name:'精密压力表 1.6MPa · MSA 分析', instId:'JJQ-2024-005', instName:'精密压力表 1.6MPa', cat:'压力表', type:'', method:'', standard:'', params:{ops:3, trials:3, parts:10}, object:'液压试验压力 1.0MPa', feature:'压力', owner:'周军', editor:'李工程师', editorDate:'2026-08-26', planDate:'2026-09-25', trigger:'顾客审核整改', source:'临时任务', status:'未定型', recordId:'', result:'', note:'待定型'});
++    d.plans.push({id:'MSAP-2026-008', name:'精密压力表 1.6MPa · MSA 分析', instId:'JJQ-2024-005', instName:'精密压力表 1.6MPa', cat:'压力表', type:'', method:'', standard:'', params:{ops:3, trials:3, parts:10}, object:'液压试验压力 1.0MPa', feature:'压力', owner:'周军', editor:'李工程师', editorDate:'2026-08-26 09:00:00', planDate:'2026-09-25 17:00:00', trigger:'顾客审核整改', source:'临时任务', status:'未定型', recordId:'', result:'', note:'待定型'});
+   }
+   if(!(d.plans||[]).some(p=>p.id==='MSAP-2026-009')){
+-    d.plans.push({id:'MSAP-2026-009', name:'数显千分表 0~12.7mm · GRR/稳定性/Cg-Cgk', instId:'JJQ-2024-004', instName:'数显千分表 0~12.7mm', cat:'千分表', type:'GRR', method:'均值-极差法(Xbar-R)', methods:['GRR','stability','cgcgk'], standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10}, object:'轴径 Φ12.5±0.05', feature:'直径', owner:'李工程师', editor:'李工程师', editorDate:'2026-09-08', planDate:'2026-10-15', trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'', result:'', note:'一计划多方法：GRR + 稳定性 + Cg/Cgk（一个计划可触发多个分析任务）'});
++    d.plans.push({id:'MSAP-2026-009', name:'数显千分表 0~12.7mm · GRR/稳定性/Cg-Cgk', instId:'JJQ-2024-004', instName:'数显千分表 0~12.7mm', cat:'千分表', type:'GRR', method:'均值-极差法(Xbar-R)', methods:['GRR','stability','cgcgk'], standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10}, object:'轴径 Φ12.5±0.05', feature:'直径', owner:'李工程师', editor:'李工程师', editorDate:'2026-09-08 09:00:00', planDate:'2026-10-15 17:00:00', trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'', result:'', note:'一计划多方法：GRR + 稳定性 + Cg/Cgk（一个计划可触发多个分析任务）'});
+   }
+   /* 台账种子权威重建（演示数据一致性）：按种子 id 集合过滤旧数据残留、去重、锚定基础字段与状态/结论，保证台账与计划跨页面一致 */
+   const SEED_IDS={'grr':['GRR-2026-001','GRR-2026-002','GRR-2026-003','GRR-2026-004'],'kappa':['KPA-2026-001','KPA-2026-002'],'linear':['LIN-2026-001','LIN-2026-002'],'stability':['STB-2026-001','STB-2026-002','STB-2026-003'],'cgcgk':['CG-2026-001','CG-2026-002','CG-2026-003','CG-2026-004']};
+@@ -1385,7 +1386,7 @@ const MENU = [
+   {key:'ledger', icon:'☑', label:'计量器具台账', group:'基础数据', hidden:true},
+   {key:'ledger_img', icon:'☑', label:'计量器具台账', group:'基础数据', hidden:true},
+   {key:'instgroup', icon:'▦', label:'器具组维护', group:'基础数据'},
+-  {key:'char', icon:'♯', label:'被测参数维护', group:'基础数据'},
++  {key:'char', icon:'♯', label:'被测项目维护', group:'基础数据'},
+   {key:'sampling', icon:'∿', label:'抽样方法维护', group:'基础数据'},
+   {key:'samplelib', icon:'▣', label:'样本库管理', group:'基础数据'},
+   /* 计划：创建 → 定型 → 自动生成台账 */
+@@ -1410,14 +1411,14 @@ const MENU = [
+   {key:'anl_cgcgk', icon:'⊞', label:'Cg/Cgk 分析结果', group:'分析执行', hidden:true}
+ ];
+ const PAGE_TITLE = {'ledger':'计量器具台账','ledger_img':'计量器具台账','instgroup':'器具组维护','plan':'MSA 计划',
+-  'char':'被测参数维护','sampling':'抽样方法维护','samplelib':'样本库管理',
++  'char':'被测项目维护','sampling':'抽样方法维护','samplelib':'样本库管理',
+   'entry_grr':'GRR 台账','entry_kappa':'KAPPA 台账','entry_linear':'线性/偏移台账','entry_stability':'稳定性台账','entry_cgcgk':'Cg/Cgk 台账','data_grr':'GRR 录入数据','data_kappa':'KAPPA 录入数据','data_linear':'线性/偏移录入数据','data_stability':'稳定性录入数据','data_cgcgk':'Cg/Cgk 录入数据',
+   'grr':'GRR 分析结果','kappa':'KAPPA 分析结果','anl_linear':'线性/偏移分析结果','anl_stability':'稳定性分析结果','anl_cgcgk':'Cg/Cgk 分析结果（VDA Type1）'};
+ 
+ /* 页面使用说明（可折叠，面向有经验的业务人员：简短说明 + 关键操作点 + 台账权限 + MSA 计划状态标识） */
+ const PAGE_GUIDE = {
+   instgroup:{label:'器具组维护', text:'维护测量器具组（测量器具）与人员组（IQC 检验组 / IPQC 巡检组 / FQC 终检组 / 动总 GPR）。器具组供「创建MSA计划-器具」选择，人员组供「创建MSA计划-人员」选择（仅 KAPPA）；组类型决定按器具还是按人员创建。', ops:'新增/修改均为列表行内编辑（点「编辑」进入编辑模式，直接改字段后「保存」）；点「新增器具组」在列表新增空行；「详情」查看组信息与执行记录。'},
+-  char:{label:'被测参数维护', text:'维护质量特性（被测参数）主数据，一个特性可关联多种检验方法（GRR / KAPPA / 线性 / 稳定性 / Cg/Cgk），每种方法关联对应检验标准；检验标准在本页统一维护。', ops:'新增/修改均为列表行内编辑；检验方法、检验标准为下拉选择。'},
++  char:{label:'被测项目维护', text:'维护质量特性（被测项目）主数据，一个项目可关联多种检验方法（GRR / KAPPA / 线性 / 稳定性 / Cg/Cgk），每种方法关联对应检验标准；检验标准在本页统一维护。', ops:'新增/修改均为列表行内编辑；检验方法、检验标准为下拉选择。'},
+   sampling:{label:'抽样方法维护', text:'维护分析方法（方法代码 / 名称 / 方法组合并配置）与取样参数（样品数 / 人数 / 次数 / 读数上下限）、判断规则与计算参数。', ops:'新增/修改为列表行内编辑；范围字段在编辑模式下拆为上下限两个输入框；判断规则、计算参数按页签维护。'},
+   samplelib:{label:'样本库管理', text:'管理标准件 / 生产件样本及其真值（参考值），供各台账选件分析使用。', ops:'新增/修改为列表行内编辑；「日志查询」在样本行上。'},
+   plan:{label:'MSA 计划', text:'创建 MSA 计划（按器具 / 按人员），计划下自动生成对应台账分析单；列表维度列跟踪各分析方法完成状态。', ops:'「创建MSA计划-器具」：选器具组 → 选器具 → 填计划信息 → 勾选分析方法；「创建MSA计划-人员」：选人员组（仅 KAPPA）。点维度列图标可跳转对应结果页；删除仅限待开始计划。', status:true},
+@@ -1742,7 +1743,7 @@ function InstrumentModal({value, onClose}){
+     } else {
+       const n = d.instruments.filter(i=>i.id.startsWith('JJQ-2026')).length+1;
+       form.setFieldsValue({id:'JJQ-2026-'+String(n).padStart(3,'0'), calMode:'外校', period:12, status:'在用', keyMeasure:'否',
+-        line:'—', interimCheck:'否', satisfy110:'是', doMsa:'是', mcat:'长度', cycleValue:12, cycle:'12个月', ledgerDate:TODAY, ymd:TODAY, calCycle:12, calAdvance:20});
++        line:'—', interimCheck:'否', satisfy110:'是', doMsa:'是', mcat:'长度', cycleValue:12, cycle:'12个月', ledgerDate:NOW, ymd:TODAY, calCycle:12, calAdvance:20});
+     }
+   },[]);
+   const onOk = async ()=>{
+@@ -1753,10 +1754,10 @@ function InstrumentModal({value, onClose}){
+       if(isEdit){
+         const it=s.instruments.find(x=>x.id===value.record.id);
+         Object.assign(it, vals);
+-        it.modifyDate=TODAY;
++        it.modifyDate=NOW;
+         logAction(s.me.name,'编辑器具',it.id+' '+it.name,'更新台账信息');
+       }else{
+-        vals.modifyDate=TODAY;
++        vals.modifyDate=NOW;
+         s.instruments.unshift(vals);
+         logAction(s.me.name,'新增器具',vals.id+' '+vals.name,'新建台账建档');
+       }
+@@ -1962,9 +1963,9 @@ function InstGroupPage(){
+   const addRowStart=()=>{ setDraft({id:'',name:'',type:'inst',calCycle:12,lastExec:'',nextPlanDate:'',remindAdvance:20,nextRemind:'',note:''}); setAddRow(true); };
+   const isNew=(r)=>r.id==='__NEW__';
+   const gv=(o,k,dv)=>(o&&o[k]!==undefined&&o[k]!==null)?o[k]:dv;
+-  const saveNew=()=>{ if(!draft.name||!draft.name.trim()){ toast.warn('请填写组名称'); return; } const tp=draft.type||'inst'; const dc=isPersonGroupType(tp)?{postCode:GROUP_POST[tp],postName:GROUP_POST_NAME[tp]}:{}; mut(s=>{ const nid=(draft.id&&draft.id.trim())?draft.id.trim(): (isPersonGroupType(tp)? 'P-'+String(s.instGroups.filter(g=>g.id.startsWith('P-')).length+1).padStart(2,'0') : 'G-'+String(s.instGroups.filter(g=>g.id.startsWith('G-')).length+1).padStart(2,'0')); const rec={...draft, ...dc, id:nid, type:tp, editor:s.me.name, editorDate:TODAY, records:[]}; s.instGroups.push(rec); logAction(s.me.name,'新增器具组',nid+' '+(draft.name||''),'行内新增器具组'); }); setAddRow(false); setDraft({}); toast.ok('已保存'); };
++  const saveNew=()=>{ if(!draft.name||!draft.name.trim()){ toast.warn('请填写组名称'); return; } const tp=draft.type||'inst'; const dc=isPersonGroupType(tp)?{postCode:GROUP_POST[tp],postName:GROUP_POST_NAME[tp]}:{}; mut(s=>{ const nid=(draft.id&&draft.id.trim())?draft.id.trim(): (isPersonGroupType(tp)? 'P-'+String(s.instGroups.filter(g=>g.id.startsWith('P-')).length+1).padStart(2,'0') : 'G-'+String(s.instGroups.filter(g=>g.id.startsWith('G-')).length+1).padStart(2,'0')); const rec={...draft, ...dc, id:nid, type:tp, editor:s.me.name, editorDate:NOW, records:[]}; s.instGroups.push(rec); logAction(s.me.name,'新增器具组',nid+' '+(draft.name||''),'行内新增器具组'); }); setAddRow(false); setDraft({}); toast.ok('已保存'); };
+   const setF=(r,k,v)=>{ mut(s=>{ const g=s.instGroups.find(x=>x.id===r.id); if(g) g[k]=v; }); };
+-  const saveRow=(r)=>{ mut(s=>{ const g=s.instGroups.find(x=>x.id===r.id); if(g){ g.editor=s.me.name; g.editorDate=TODAY; } logAction(s.me.name,'编辑器具组',r.id,'行内编辑器具组 '+r.id+' '+(r.name||'')); }); toast.ok('已保存'); };
++  const saveRow=(r)=>{ mut(s=>{ const g=s.instGroups.find(x=>x.id===r.id); if(g){ g.editor=s.me.name; g.editorDate=NOW; } logAction(s.me.name,'编辑器具组',r.id,'行内编辑器具组 '+r.id+' '+(r.name||'')); }); toast.ok('已保存'); };
+   const referenced=(r)=>(d.plans||[]).some(p=> (r.memberIds||[]).some(mid=>(p.instIds||[]).indexOf(mid)>=0));
+   const delRow=(r)=>{ if(isNew(r)){ setAddRow(false); setDraft({}); return; } Modal.confirm({title:'删除器具组 — '+r.name, content:'删除后组内器具保留在台账中，仅解除分组关系。确认删除？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.instGroups=s.instGroups.filter(g=>g.id!==r.id); logAction(s.me.name,'删除器具组',r.id,'删除器具组 '+r.name); }); toast.ok('已删除器具组 '+r.id); } }); };
+   const cols=[
+@@ -1973,7 +1974,7 @@ function InstGroupPage(){
+       <Button size="small" type="link" onClick={isNew(r)?saveNew:()=>saveRow(r)}>保存</Button>
+       <Button size="small" type="link" danger disabled={!isNew(r)&&referenced(r)} onClick={()=>delRow(r)}>删除</Button>
+     </Space>},
+-    {title:'组编码', dataIndex:'id', width:110, render:(v,r)=>isNew(r)?<Input size="small" value={draft.id||''} placeholder="留空自动生成" onChange={e=>setDraft(d=>({...d,id:e.target.value}))}/>:<Input size="small" value={v} disabled/>},
++    {title:'组编码', dataIndex:'id', width:110, render:(v,r)=>isNew(r)?<Input size="small" value={draft.id||''} placeholder="留空自动生成" onChange={e=>setDraft(d=>({...d,id:e.target.value}))}/>:<span className="mono">{v}</span>},
+     {title:'组名称', dataIndex:'name', width:190, ellipsis:true, render:(v,r)=>isNew(r)?<Input size="small" value={draft.name||''} onChange={e=>setDraft(d=>({...d,name:e.target.value}))}/>:<Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
+     {title:'组类型', width:140, render:(_,r)=>isNew(r)?<Select size="small" value={draft.type||'inst'} style={{width:130}} options={GROUP_TYPE_OPTS} onChange={x=>setDraft(d=>({...d,type:x}))}/>:<Select size="small" value={r.type||'inst'} style={{width:130}} options={GROUP_TYPE_OPTS} onChange={x=>setF(r,'type',x)}/>},
+     {title:'检验周期(月)', width:110, render:(_,r)=>isNew(r)?<InputNumber size="small" min={1} value={draft.calCycle||12} style={{width:92}} onChange={x=>setDraft(d=>({...d,calCycle:x}))}/>:<InputNumber size="small" min={1} value={gv(r,'calCycle',12)} style={{width:92}} onChange={x=>setF(r,'calCycle',x)}/>},
+@@ -1982,8 +1983,8 @@ function InstGroupPage(){
+     {title:'提醒周期(天)', width:115, render:(_,r)=>isNew(r)?<InputNumber size="small" min={0} value={draft.remindAdvance||20} style={{width:96}} onChange={x=>setDraft(d=>({...d,remindAdvance:x}))}/>:<InputNumber size="small" min={0} value={gv(r,'remindAdvance',20)} style={{width:96}} onChange={x=>setF(r,'remindAdvance',x)}/>},
+     {title:'下次提醒时间', dataIndex:'nextRemind', width:120, render:(v,r)=>isNew(r)?<Input size="small" value={draft.nextRemind||''} placeholder="YYYY-MM-DD" onChange={e=>setDraft(d=>({...d,nextRemind:e.target.value}))}/>:<Input size="small" value={r.nextRemind||''} placeholder="YYYY-MM-DD" onChange={e=>setF(r,'nextRemind',e.target.value)}/>},
+     {title:'说明', dataIndex:'note', ellipsis:true, render:(v,r)=>isNew(r)?<Input size="small" value={draft.note||''} onChange={e=>setDraft(d=>({...d,note:e.target.value}))}/>:<Input size="small" value={r.note||''} onChange={e=>setF(r,'note',e.target.value)}/>},
+-    {title:'维护人', dataIndex:'editor', width:100, render:v=><Input size="small" value={v||''} disabled/>},
+-    {title:'维护时间', dataIndex:'editorDate', width:105, render:v=><Input size="small" value={v||''} disabled/>}
++    {title:'维护人', dataIndex:'editor', width:100, render:v=><span>{v||'—'}</span>},
++    {title:'维护时间', dataIndex:'editorDate', width:105, render:v=><span>{v||'—'}</span>}
+   ];
+   return <div>
+     <Panel title="查询条件">
+@@ -2040,8 +2041,8 @@ function InstGroupModal({value,onClose}){
+     const vals=await form.validateFields();
+     if(isPersonGroupType(vals.type||'inst')){ vals.postCode=GROUP_POST[vals.type]; vals.postName=GROUP_POST_NAME[vals.type]; }
+     mut(s=>{
+-      if(isEdit){ const g=s.instGroups.find(x=>x.id===value.record.id); Object.assign(g,vals); g.editor=s.me.name; g.editorDate=TODAY; logAction(s.me.name,'编辑器具组',g.id+' '+g.name,'更新器具组信息'); }
+-      else { vals.editor=s.me.name; vals.editorDate=TODAY; vals.records=[]; s.instGroups.push(vals); logAction(s.me.name,'新增器具组',vals.id+' '+vals.name,'新建器具组'); }
++      if(isEdit){ const g=s.instGroups.find(x=>x.id===value.record.id); Object.assign(g,vals); g.editor=s.me.name; g.editorDate=NOW; logAction(s.me.name,'编辑器具组',g.id+' '+g.name,'更新器具组信息'); }
++      else { vals.editor=s.me.name; vals.editorDate=NOW; vals.records=[]; s.instGroups.push(vals); logAction(s.me.name,'新增器具组',vals.id+' '+vals.name,'新建器具组'); }
+     });
+     toast.ok(isEdit?'已保存修改':'已新增器具组');
+     onClose();
+@@ -2259,19 +2260,19 @@ function PlanPage(){
+   };
+   /* 行内字段即时写 store；只读字段渲染为禁用控件；保存常驻操作列 */
+   const setF=(r,k,v)=>{ mut(s=>{ const p=s.plans.find(x=>x.id===r.id); if(p) p[k]=v; }); };
+-  const saveRow=(r)=>{ mut(s=>{ const p=s.plans.find(x=>x.id===r.id); if(p){ p.editor=s.me.name; p.editorDate=TODAY; } logAction(s.me.name,'编辑MSA计划',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
++  const saveRow=(r)=>{ mut(s=>{ const p=s.plans.find(x=>x.id===r.id); if(p){ p.editor=s.me.name; p.editorDate=NOW; } logAction(s.me.name,'编辑MSA计划',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
+   const STATUS_BACK={'待开始':['未定型','待采集'],'进行中':['待分析','已批准','需整改'],'已完成':['已闭环','已关闭']};
+   const cols=[
+     {title:'操作', width:150, fixed:'left', render:(_,r)=><PlanActions r={r} onDetail={()=>setDetail(r)} onSave={()=>saveRow(r)}/>},
+-    {title:'MSA计划号', dataIndex:'id', width:130, render:v=><Input size="small" className="mono" value={v} disabled/>},
++    {title:'MSA计划号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
+     {title:'分析人', width:110, render:(_,r)=><Input size="small" value={r.analyst||r.observer||''} onChange={e=>setF(r,'analyst',e.target.value)}/>},
+-    {title:'计划类型', width:100, render:(_,r)=><Input size="small" value={r.planType||'器具MSA'} disabled/>},
+-    {title:'任务来源', width:100, render:(_,r)=><Input size="small" value={r.source==='周期任务'?'周期任务':'临时任务'} disabled/>},
++    {title:'计划类型', width:100, render:(_,r)=><span>{r.planType||'器具MSA'}</span>},
++    {title:'任务来源', width:100, render:(_,r)=><span>{r.source==='周期任务'?'周期任务':'临时任务'}</span>},
+     {title:'仪器/设备名称', width:160, render:(_,r)=>instCell(r,it=>it?it.name:'')},
+     {title:'量具编号', width:110, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.id}</span>:'')},
+     {title:'零件号', width:100, dataIndex:'partNo', render:(_,r)=><Input size="small" className="mono" value={r.partNo||''} onChange={e=>setF(r,'partNo',e.target.value)}/>},
+     {title:'测量特性', width:170, ellipsis:true, render:(_,r)=>{ const recs=planRecords(d,r.id); const cur=(r.instIds||[]).length>1? recs.map(x=>x.object).filter(Boolean).join('、') : (r.object||''); return <Input size="small" value={cur} onChange={e=>setF(r,'object',e.target.value)}/>; }},
+-    {title:'检验标准', width:110, render:(_,r,idx)=>{ if(stdSame) return idx===0? <Input size="small" className="mono" value={stdAll[0]} disabled/> : <span>—</span>; const v=stdOf(r); return <Input size="small" className="mono" value={v} disabled/>; }},
++    {title:'检验标准', width:110, render:(_,r,idx)=>{ if(stdSame) return idx===0? <span className="mono">{stdAll[0]}</span> : <span>—</span>; const v=stdOf(r); return <span className="mono">{v}</span>; }},
+     {title:'CG/CGK', width:68, align:'center', render:fenCell('cgcgk','CG/CGK')},
+     {title:'偏倚', width:68, align:'center', render:fenCell('linear','偏倚')},
+     {title:'线性', width:68, align:'center', render:fenCell('linear','线性')},
+@@ -2281,9 +2282,9 @@ function PlanPage(){
+     {title:'KAPPA', width:68, align:'center', render:fenCell('KAPPA','KAPPA')},
+     {title:'判定结果', width:110, render:(_,r)=>{ const recs=planRecords(d,r.id); const sv=sumVerdict(recs); return recs.length? <VerdictTag v={sv}/> : (r.result&&r.result!=='-'?<VerdictTag v={r.result}/>:<span className="tiny">待采集</span>); }},
+     {title:'状态', width:112, render:(_,r)=>{ const v=planStatusView(r.status); return <Select size="small" style={{width:98}} value={v.text} options={['待开始','进行中','已完成'].map(c=>({value:c,label:c}))} onChange={x=>{ const cand=STATUS_BACK[x]||[]; const cur=r.status; setF(r,'status', cand.indexOf(cur)>=0? cur : (x==='待开始'?'未定型':x==='已完成'?'已闭环':'待分析')); }}/>; }},
+-    {title:'测量人数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <Input size="small" className="mono" value={String(recs.length? recs[0].numOps : (r.params&&r.params.ops!==undefined? r.params.ops : ''))} disabled/>; }},
+-    {title:'测量次数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <Input size="small" className="mono" value={String(recs.length? recs[0].numTrials : (r.params&&r.params.trials!==undefined? r.params.trials : ''))} disabled/>; }},
+-    {title:'样本数量', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <Input size="small" className="mono" value={String(recs.length? recs[0].numParts : (r.params&&r.params.parts!==undefined? r.params.parts : ''))} disabled/>; }},
++    {title:'测量人数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <span className="mono">{String(recs.length? recs[0].numOps : (r.params&&r.params.ops!==undefined? r.params.ops : ''))}</span>; }},
++    {title:'测量次数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <span className="mono">{String(recs.length? recs[0].numTrials : (r.params&&r.params.trials!==undefined? r.params.trials : ''))}</span>; }},
++    {title:'样本数量', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <span className="mono">{String(recs.length? recs[0].numParts : (r.params&&r.params.parts!==undefined? r.params.parts : ''))}</span>; }},
+     {title:'工序', width:84, render:(_,r)=>instCell(r,it=>it?<span>{it.process||'暂无'}</span>:'')},
+     {title:'分辨力', width:86, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.res||'暂无'}</span>:'')},
+     {title:'数据类型', width:102, render:(_,r)=><Select size="small" value={r.dataType||'计量型'} style={{width:92}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setF(r,'dataType',x)}/>},
+@@ -2291,8 +2292,8 @@ function PlanPage(){
+     {title:'部门', dataIndex:'dept', width:100, render:(_,r)=><Input size="small" value={r.dept||''} onChange={e=>setF(r,'dept',e.target.value)}/>},
+     {title:'分厂', width:90, dataIndex:'subplant', render:(_,r)=><Input size="small" value={r.subplant||''} onChange={e=>setF(r,'subplant',e.target.value)}/>},
+     {title:'计划完成时间', dataIndex:'planDate', width:120, render:(_,r)=><Input size="small" className="mono" value={r.planDate||''} onChange={e=>setF(r,'planDate',e.target.value)}/>},
+-    {title:'实际完成时间', dataIndex:'actualDate', width:116, render:v=><Input size="small" className="mono" value={v||''} disabled/>},
+-    {title:'录入人', dataIndex:'editor', width:100, ellipsis:true, render:v=><Input size="small" value={v||''} disabled/>}
++    {title:'实际完成时间', dataIndex:'actualDate', width:116, render:v=><span className="mono">{v||'—'}</span>},
++    {title:'录入人', dataIndex:'editor', width:100, ellipsis:true, render:v=><span>{v||'—'}</span>}
+   ];
+ 
+   return <div>
+@@ -2504,7 +2505,7 @@ function BatchPlanModal({value, onClose}){
+           return {ops,trials,parts}; };
+         s.plans.unshift({ id:pid, name:(charObj?charObj.name:fullName)+' MSA 分析计划', instId:skey, instName:fullName, instIds:[skey], cat: isPersonGroup? per.postName : it.cat, planType: isPersonGroup? '人员MSA':'器具MSA',
+           type:acts[0], method:ENUM.taskMethod[acts[0]][0], methods:acts.slice(), standard:mCfg[acts[0]].std, params:mkP(acts[0]),
+-          object:charObj?charObj.name:'', feature:charObj?charObj.type:'', charId:charSel, owner:meta.owner||s.me.name, editor:s.me.name, editorDate:TODAY,
++          object:charObj?charObj.name:'', feature:charObj?charObj.type:'', charId:charSel, owner:meta.owner||s.me.name, editor:s.me.name, editorDate:NOW,
+           planDate, trigger, source:'临时任务', status:'待采集', recordId:'', result:'',
+           note:'', partNo:charObj?charObj.partNo:'', partName:charObj?charObj.partName:'', qcArea:meta.qcArea, plant:meta.plant, subplant:meta.subplant, analyst:meta.analyst, resolution:meta.resolution,
+           dept:meta.dept, dataType, msaMethods: acts.reduce((a,x)=>a.concat(msaExcelMap(x)),[]), opMethod:'《测量系统分析操作指导书》' });
+@@ -2746,7 +2747,7 @@ function PlanEditModal({plan, onClose}){
+       Object.assign(p,{ partNo:v.partNo, qcArea:v.qcArea, plant:v.plant, subplant:v.subplant, analyst:v.analyst,
+         resolution:v.resolution, reason:v.reason, improvement:v.improvement, actualDate:v.actualDate, note:v.note,
+         planDate:v.planDate, trigger:v.trigger, dept:v.dept, dataType:v.dataType, msaMethods:v.msaMethods, opMethod:v.opMethod,
+-        modifier:s.me.name, modifyDate:TODAY });
++        modifier:s.me.name, modifyDate:NOW });
+       logAction(s.me.name,'计划信息编辑',p.id,'更新计划业务信息'); });
+     toast.ok('已保存计划信息'); onClose();
+   };
+@@ -2808,11 +2809,11 @@ function StandardPage(){
+     {title:'目标上限值', dataIndex:'usl', width:90, render:v=><span className="mono tiny">{v||'暂无'}</span>},
+     {title:'目标下限值', dataIndex:'lsl', width:90, render:v=><span className="mono tiny">{v||'暂无'}</span>},
+     {title:'分析类型', width:84, render:(_,r)=><Tag color="blue">{r.type}</Tag>},
++    {title:'状态', dataIndex:'status', width:90, render:s=><StatusTag s={s}/>},
+     {title:'关联被测参数', width:180, render:(_,r)=>{ const cs=(r.charIds||[]).map(cid=>(d.characteristics||[]).find(c=>c.id===cid)).filter(Boolean); return cs.length? <span className="tiny">{cs.map(c=>c.name).join('、')}</span> : <span className="tiny">暂无</span>; }},
+     {title:'绑定器具组', width:130, render:(_,r)=>{ const gs=(r.groupIds||[]).map(gid=>(d.instGroups||[]).find(g=>g.id===gid)).filter(Boolean); return gs.length? <span className="tiny">{gs.map(g=>g.name).join('、')}</span> : <span className="tiny">暂无</span>; }},
+     {title:'适用器具类别', width:130, render:(_,r)=>{ const app=applicableInstruments(d,r); const cats=[...new Set(app.map(i=>i.cat))].slice(0,4); return app.length? <span className="tiny">{cats.join('、')}{app.length>4?' 等':''}</span> : <span className="tiny">暂无</span>; }},
+     {title:'版本', dataIndex:'version', width:70, render:v=><Tag color="purple">{v}</Tag>},
+-    {title:'状态', dataIndex:'status', width:90, render:s=><StatusTag s={s}/>},
+     {title:'录入人', dataIndex:'editor', width:90, ellipsis:true},
+     {title:'录入时间', dataIndex:'editorDate', width:100}
+   ];
+@@ -2877,7 +2878,7 @@ function StandardModal({value, onClose}){
+       form.setFieldsValue(r);
+     }
+     else form.setFieldsValue({id:'STD-MSA-00'+(d.standards.length+1), version:'V1.0', effDate:TODAY, status:'启用',
+-      editor:d.me.name, editorDate:TODAY, numOps:3, numTrials:3, numParts:10, qcArea:'—', plant:'—', subplant:'—', type:'GRR判定',
++      editor:d.me.name, editorDate:NOW, numOps:3, numTrials:3, numParts:10, qcArea:'—', plant:'—', subplant:'—', type:'GRR判定',
+       method:'均值-极差法(Xbar-R)'});
+   },[]);
+   const onOk = async ()=>{
+@@ -2955,10 +2956,10 @@ function CharPage(){
+   /* 行内字段即时写 store；只读字段渲染为禁用控件；保存常驻操作列；启用/停用用 Switch */
+   const setF=(r,k,v)=>{ mut(s=>{ const rec=s.characteristics.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
+   const setStdF=(r,k,v)=>{ mut(s=>{ const rec=s.standards.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
+-  const saveRow=(r)=>{ mut(s=>{ const rec=s.characteristics.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=TODAY; } logAction(s.me.name,'编辑被测参数',r.id,'行内编辑 '+r.id+' '+(r.name||'')); }); toast.ok('已保存'); };
+-  const saveStdRow=(r)=>{ mut(s=>{ const rec=s.standards.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=TODAY; } logAction(s.me.name,'修订检验标准',r.id,'行内修订 '+r.id); }); toast.ok('已保存'); };
+-  const addCharRow=()=>{ const id='CHAR-2026-'+(d.characteristics.length+1); mut(s=>{ s.characteristics.unshift({id, name:'', type:'普通', category:'计量型', status:'启用', editor:s.me.name, editorDate:TODAY, plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, methods:[], partName:'', partNo:'', processName:'', unit:'', target:'', usl:'', lsl:''}); logAction(s.me.name,'新增被测参数',id,'列表新增空白行'); }); };
+-  const addStdRow=()=>{ const id='STD-2026-'+(d.standards.length+1); mut(s=>{ s.standards.unshift({id, name:'', basis:'', method:'', type:'GRR判定', numOps:3, numTrials:3, numParts:10, version:'V1.0', status:'启用', editor:s.me.name, editorDate:TODAY, groupIds:[], note:''}); logAction(s.me.name,'新增检验标准',id,'列表新增空白行'); }); };
++  const saveRow=(r)=>{ mut(s=>{ const rec=s.characteristics.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑被测参数',r.id,'行内编辑 '+r.id+' '+(r.name||'')); }); toast.ok('已保存'); };
++  const saveStdRow=(r)=>{ mut(s=>{ const rec=s.standards.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'修订检验标准',r.id,'行内修订 '+r.id); }); toast.ok('已保存'); };
++  const addCharRow=()=>{ const id='CHAR-2026-'+(d.characteristics.length+1); mut(s=>{ s.characteristics.unshift({id, name:'', type:'普通', category:'计量型', status:'启用', editor:s.me.name, editorDate:NOW, plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, methods:[], partName:'', partNo:'', processName:'', unit:'', target:'', usl:'', lsl:''}); logAction(s.me.name,'新增被测参数',id,'列表新增空白行'); }); };
++  const addStdRow=()=>{ const id='STD-2026-'+(d.standards.length+1); mut(s=>{ s.standards.unshift({id, name:'', basis:'', method:'', type:'GRR判定', numOps:3, numTrials:3, numParts:10, version:'V1.0', status:'启用', editor:s.me.name, editorDate:NOW, groupIds:[], note:''}); logAction(s.me.name,'新增检验标准',id,'列表新增空白行'); }); };
+   const charRef=(r)=>(d.plans||[]).some(p=>p.charId===r.id);
+   const stdRef=(r)=> (d.characteristics||[]).some(c=>(c.methods||[]).some(m=>m.standardId===r.id)) || (d.plans||[]).some(p=>p.standard===r.id);
+   const delChar=(r)=>{ Modal.confirm({title:'删除被测参数 — '+(r.name||r.id), content:'删除后相关关联关系一并解除。确认删除？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.characteristics=s.characteristics.filter(x=>x.id!==r.id); logAction(s.me.name,'删除被测参数',r.id,'删除被测参数 '+(r.name||'')); }); toast.ok('已删除'); } }); };
+@@ -2969,7 +2970,7 @@ function CharPage(){
+       <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
+       <Button size="small" type="link" danger disabled={charRef(r)} onClick={()=>delChar(r)}>删除</Button>
+     </Space>},
+-    {title:'被测参数编号', dataIndex:'id', width:130, render:v=><Input size="small" className="mono" value={v} disabled/>},
++    {title:'被测参数编号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
+     {title:'被测参数名称', dataIndex:'name', width:170, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
+     {title:'特性类型', dataIndex:'type', width:110, render:(_,r)=><Select size="small" value={r.type||'普通'} style={{width:100}} options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]} onChange={x=>setF(r,'type',x)}/>},
+     {title:'零件名称', dataIndex:'partName', width:110, ellipsis:true, render:(_,r)=><Input size="small" value={r.partName||''} onChange={e=>setF(r,'partName',e.target.value)}/>},
+@@ -2983,9 +2984,9 @@ function CharPage(){
+     {title:'下限LSL', dataIndex:'lsl', width:90, render:(_,r)=><Input size="small" className="mono" value={r.lsl||''} onChange={e=>setF(r,'lsl',e.target.value)}/>},
+     {title:'工厂', dataIndex:'plant', width:110, render:(_,r)=><Select size="small" value={r.plant||''} style={{width:100}} options={PLANTS_OPT} onChange={x=>setF(r,'plant',x)}/>},
+     {title:'车间', dataIndex:'subplant', width:100, render:(_,r)=><Select size="small" value={r.subplant||''} style={{width:90}} options={SUBPLANTS_OPT} onChange={x=>setF(r,'subplant',x)}/>},
+-    {title:'状态', dataIndex:'status', width:100, render:(_,r)=><Switch size="small" checked={r.status==='启用'} checkedChildren="启" unCheckedChildren="停" onChange={x=>setF(r,'status',x?'启用':'停用')}/>},
+-    {title:'录入人', dataIndex:'editor', width:100, render:v=><Input size="small" value={v||''} disabled/>},
+-    {title:'录入时间', dataIndex:'editorDate', width:100, render:v=><Input size="small" className="mono" value={v||''} disabled/>}
++    {title:'状态', dataIndex:'status', width:100, render:(_,r)=><Switch size="small" checked={r.status==='启用'} onChange={x=>setF(r,'status',x?'启用':'停用')}/>},
++    {title:'录入人', dataIndex:'editor', width:100, render:v=><span>{v||'—'}</span>},
++    {title:'录入时间', dataIndex:'editorDate', width:100, render:v=><span className="mono">{v||'—'}</span>}
+   ];
+   const stdRows=d.standards.filter(s=>
+     (!sq.kw || (s.id+s.name+(s.partName||'')+(s.processName||'')+(s.basis||'')).toLowerCase().includes(sq.kw.toLowerCase())) &&
+@@ -3002,12 +3003,12 @@ function CharPage(){
+     {title:'测量次数', dataIndex:'numTrials', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numTrials||''} style={{width:70}} onChange={x=>setStdF(r,'numTrials',x)}/>},
+     {title:'样本数量', dataIndex:'numParts', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numParts||''} style={{width:70}} onChange={x=>setStdF(r,'numParts',x)}/>},
+     {title:'分析类型', width:110, render:(_,r)=><Select size="small" value={r.type||'GRR判定'} style={{width:100}} options={['GRR判定','NDC判定','KAPPA判定','有效性判定','偏倚/线性判定','稳定性判定'].map(c=>({value:c,label:c}))} onChange={x=>setStdF(r,'type',x)}/>},
++    {title:'状态', dataIndex:'status', width:100, render:(_,r)=><Switch size="small" checked={r.status==='启用'} onChange={x=>setStdF(r,'status',x?'启用':'停用')}/>},
+     {title:'绑定器具组', width:130, render:(_,r)=>{ const gs=(r.groupIds||[]).map(gid=>(d.instGroups||[]).find(g=>g.id===gid)).filter(Boolean); return gs.length? <span className="tiny">{gs.map(g=>g.name).join('、')}</span> : <span className="tiny">暂无</span>; }},
+-    {title:'备注', dataIndex:'note', width:160, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setStdF(r,'note',e.target.value)}/>},
+-    {title:'状态', dataIndex:'status', width:100, render:(_,r)=><Switch size="small" checked={r.status==='启用'} checkedChildren="启" unCheckedChildren="停" onChange={x=>setStdF(r,'status',x?'启用':'停用')}/>}
++    {title:'备注', dataIndex:'note', width:160, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setStdF(r,'note',e.target.value)}/>}
+   ];
+   return <div>
+-    <PageHead title="被测参数维护"/>
++    <PageHead title="被测项目维护"/>
+     <Panel title="查询条件">
+       <Space wrap size={10}>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
+@@ -3024,7 +3025,7 @@ function CharPage(){
+         <Button type="primary" onClick={doQuery}>查询</Button>
+         <Button onClick={doReset}>重置</Button>
+         <Button type="primary" onClick={addCharRow}>新增特性</Button>
+-        <ImportBtn title="被测参数维护"/>
++        <ImportBtn title="被测项目维护"/>
+         <Button>导出</Button>
+       </Space>
+     </Panel>
+@@ -3111,7 +3112,7 @@ function CharModal({value,onClose}){
+       setSelMethods(ms);
+       (revise.methods||[]).forEach(m=>form.setFieldsValue({['std_'+m.method]:m.standardId}));
+     }
+-    else form.setFieldsValue({type:'普通', category:'计量型', status:'启用', editor:d.me.name, editorDate:TODAY, id:'CHAR-2026-0'+(d.characteristics.length+1), plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value});
++    else form.setFieldsValue({type:'普通', category:'计量型', status:'启用', editor:d.me.name, editorDate:NOW, id:'CHAR-2026-0'+(d.characteristics.length+1), plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value});
+   },[]);
+   const onOk=async()=>{
+     const v=await form.validateFields();
+@@ -3174,9 +3175,9 @@ function SamplingPage(){
+   const setRF=(r,k,v)=>{ mut(s=>{ const rec=s.samplingRules.find(x=>String(x.method).toLowerCase()===String(r.code).toLowerCase()); if(rec) rec[k]=v; }); };
+   const setJF=(r,k,v)=>{ mut(s=>{ const rec=s.judgeRules.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
+   const setCF=(r,k,v)=>{ mut(s=>{ const rec=s.calParams.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
+-  const saveMRow=(r)=>{ mut(s=>{ const rec=s.anMethods.find(x=>x.code===r.code); if(rec){ rec.editor=s.me.name; rec.editorDate=TODAY; } logAction(s.me.name,'编辑分析方法',r.code,'行内编辑 '+r.code+' '+(r.name||'')); }); toast.ok('已保存'); };
+-  const saveJRow=(r)=>{ mut(s=>{ const rec=s.judgeRules.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=TODAY; } logAction(s.me.name,'编辑判断规则',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
+-  const saveCRow=(r)=>{ mut(s=>{ const rec=s.calParams.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=TODAY; } logAction(s.me.name,'编辑计算参数',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
++  const saveMRow=(r)=>{ mut(s=>{ const rec=s.anMethods.find(x=>x.code===r.code); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑分析方法',r.code,'行内编辑 '+r.code+' '+(r.name||'')); }); toast.ok('已保存'); };
++  const saveJRow=(r)=>{ mut(s=>{ const rec=s.judgeRules.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑判断规则',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
++  const saveCRow=(r)=>{ mut(s=>{ const rec=s.calParams.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑计算参数',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
+   const mRef=(r)=>(d.judgeRules||[]).some(j=>String(j.method).toLowerCase()===String(r.code).toLowerCase());
+   const delMRow=(r)=>{ Modal.confirm({title:'删除分析方法 — '+r.code, content:'删除后其取样规则一并删除。确认删除？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.anMethods=s.anMethods.filter(x=>x.code!==r.code); s.samplingRules=s.samplingRules.filter(x=>String(x.method).toLowerCase()!==String(r.code).toLowerCase()); logAction(s.me.name,'删除分析方法',r.code,'删除 '+(r.name||r.code)); }); toast.ok('已删除'); } }); };
+   const delJRow=(r)=>{ Modal.confirm({title:'删除判断规则 — '+r.id, content:'确认删除该判断规则？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.judgeRules=s.judgeRules.filter(x=>x.id!==r.id); logAction(s.me.name,'删除判断规则',r.id,'删除 '+r.id); }); toast.ok('已删除'); } }); };
+@@ -3197,24 +3198,19 @@ function SamplingPage(){
+       <Button size="small" type="link" onClick={()=>saveMRow(r)}>保存</Button>
+       <Button size="small" type="link" danger disabled={mRef(r)} onClick={()=>delMRow(r)}>删除</Button>
+     </Space>},
+-    {title:'方法代码', dataIndex:'code', width:110, render:v=><Input size="small" className="mono" value={v} disabled/>},
++    {title:'方法代码', dataIndex:'code', width:110, render:v=><span className="mono">{v}</span>},
+     {title:'方法名称', dataIndex:'name', width:190, render:(_,r)=><Input size="small" value={STRIP_PAREN(r.name)} onChange={e=>setMF(r,'name',e.target.value)}/>},
+     {title:'是否需要取样', dataIndex:'needSample', width:104, render:(_,r)=><Select size="small" value={r.needSample||'是'} style={{width:92}} options={[{value:'是',label:'是'},{value:'否',label:'否'}]} onChange={x=>setMF(r,'needSample',x)}/>},
+     {title:'可否合并取样', dataIndex:'canMerge', width:104, render:(_,r)=><Select size="small" value={r.canMerge||'否'} style={{width:92}} options={[{value:'是',label:'是'},{value:'否',label:'否'}]} onChange={x=>setMF(r,'canMerge',x)}/>},
+     {title:'方法组', dataIndex:'mergeWith', width:120, render:(_,r)=><Input size="small" placeholder="如：尺寸类合并组" value={r.mergeWith||''} onChange={e=>setMF(r,'mergeWith',e.target.value)}/>},
+     {title:'默认适用', dataIndex:'defaultType', width:100, render:(_,r)=><Input size="small" value={r.defaultType||''} onChange={e=>setMF(r,'defaultType',e.target.value)}/>},
+-    {title:'状态', dataIndex:'status', width:86, render:(_,r)=><Switch size="small" checked={r.status==='启用'} checkedChildren="启" unCheckedChildren="停" onChange={x=>setMF(r,'status',x?'启用':'停用')}/>},
++    {title:'状态', dataIndex:'status', width:86, render:(_,r)=><Switch size="small" checked={r.status==='启用'} onChange={x=>setMF(r,'status',x?'启用':'停用')}/>},
+     {title:'默认样品数', width:92, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.sampleDefault:''} style={{width:82}} onChange={x=>setRF(r,'sampleDefault',x)}/>},
+     {title:'默认人数', width:84, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.opsDefault:''} style={{width:74}} onChange={x=>setRF(r,'opsDefault',x)}/>},
+     {title:'默认次数', width:84, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.trialsDefault:''} style={{width:74}} onChange={x=>setRF(r,'trialsDefault',x)}/>},
+-    {title:'样品数下限', width:88, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.sampleMin:''} style={{width:78}} onChange={x=>setRF(r,'sampleMin',x)}/>},
+-    {title:'样品数上限', width:88, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.sampleMax:''} style={{width:78}} onChange={x=>setRF(r,'sampleMax',x)}/>},
+-    {title:'人数下限', width:82, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.opsMin:''} style={{width:72}} onChange={x=>setRF(r,'opsMin',x)}/>},
+-    {title:'人数上限', width:82, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.opsMax:''} style={{width:72}} onChange={x=>setRF(r,'opsMax',x)}/>},
+-    {title:'次数下限', width:82, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.trialsMin:''} style={{width:72}} onChange={x=>setRF(r,'trialsMin',x)}/>},
+-    {title:'次数上限', width:82, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.trialsMax:''} style={{width:72}} onChange={x=>setRF(r,'trialsMax',x)}/>},
+-    {title:'读数下限', width:84, render:(_,r)=><Input size="small" value={r.rule?(r.rule.readingsMin||''):''} placeholder="如 60" onChange={e=>setRF(r,'readingsMin',e.target.value)}/>},
+-    {title:'读数上限', width:84, render:(_,r)=><Input size="small" value={r.rule?(r.rule.readingsMax||''):''} placeholder="如 90" onChange={e=>setRF(r,'readingsMax',e.target.value)}/>},
++    {title:'样品数范围', width:140, render:(_,r)=><Space size={2}><InputNumber size="small" min={0} value={r.rule?r.rule.sampleMin:''} style={{width:58}} onChange={x=>setRF(r,'sampleMin',x)}/><span style={{color:'#999999'}}>~</span><InputNumber size="small" min={0} value={r.rule?r.rule.sampleMax:''} style={{width:58}} onChange={x=>setRF(r,'sampleMax',x)}/></Space>},
++    {title:'人数范围', width:132, render:(_,r)=><Space size={2}><InputNumber size="small" min={0} value={r.rule?r.rule.opsMin:''} style={{width:54}} onChange={x=>setRF(r,'opsMin',x)}/><span style={{color:'#999999'}}>~</span><InputNumber size="small" min={0} value={r.rule?r.rule.opsMax:''} style={{width:54}} onChange={x=>setRF(r,'opsMax',x)}/></Space>},
++    {title:'次数范围', width:132, render:(_,r)=><Space size={2}><InputNumber size="small" min={0} value={r.rule?r.rule.trialsMin:''} style={{width:54}} onChange={x=>setRF(r,'trialsMin',x)}/><span style={{color:'#999999'}}>~</span><InputNumber size="small" min={0} value={r.rule?r.rule.trialsMax:''} style={{width:54}} onChange={x=>setRF(r,'trialsMax',x)}/></Space>},
+     {title:'工厂', width:92, render:(_,r)=><Select size="small" value={r.rule?r.rule.plant:''} style={{width:82}} options={PLANTS_OPT} onChange={x=>setRF(r,'plant',x)}/>},
+     {title:'车间', width:86, render:(_,r)=><Select size="small" value={r.rule?r.rule.subplant:''} style={{width:76}} options={SUBPLANTS_OPT} onChange={x=>setRF(r,'subplant',x)}/>},
+     {title:'取样策略说明', width:220, ellipsis:true, render:(_,r)=><Input size="small" value={r.rule?r.rule.note:''} onChange={e=>setRF(r,'note',e.target.value)}/>},
+@@ -3227,7 +3223,7 @@ function SamplingPage(){
+       <Button size="small" type="link" onClick={()=>saveJRow(r)}>保存</Button>
+       <Button size="small" type="link" danger onClick={()=>delJRow(r)}>删除</Button>
+     </Space>},
+-    {title:'规则编号', dataIndex:'id', width:100, render:v=><Input size="small" className="mono" value={v} disabled/>},
++    {title:'规则编号', dataIndex:'id', width:100, render:v=><span className="mono">{v}</span>},
+     {title:'所属方法', dataIndex:'method', width:130, render:(_,r)=><Select size="small" value={r.method||undefined} style={{width:110}} options={(d.anMethods||[]).map(m=>({value:m.code,label:STRIP_PAREN(m.name)}))} onChange={x=>setJF(r,'method',x)}/>},
+     {title:'判定条件', dataIndex:'condition', width:320, ellipsis:true, render:(_,r)=><Input size="small" value={r.condition||''} onChange={e=>setJF(r,'condition',e.target.value)}/>},
+     {title:'判定结论', dataIndex:'verdict', width:150, render:(_,r)=><Input size="small" value={r.verdict||''} onChange={e=>setJF(r,'verdict',e.target.value)}/>},
+@@ -3238,7 +3234,7 @@ function SamplingPage(){
+       <Button size="small" type="link" onClick={()=>saveCRow(r)}>保存</Button>
+       <Button size="small" type="link" danger onClick={()=>delCRow(r)}>删除</Button>
+     </Space>},
+-    {title:'参数编号', dataIndex:'id', width:110, render:v=><Input size="small" className="mono" value={v} disabled/>},
++    {title:'参数编号', dataIndex:'id', width:110, render:v=><span className="mono">{v}</span>},
+     {title:'参数名称', dataIndex:'name', width:320, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setCF(r,'name',e.target.value)}/>},
+     {title:'参数值', dataIndex:'value', width:160, render:(_,r)=><Input size="small" className="mono" value={r.value||''} onChange={e=>setCF(r,'value',e.target.value)}/>}
+   ];
+@@ -3262,7 +3258,7 @@ function SamplingPage(){
+     </Panel>
+     <Panel title="分析方法列表">
+       <div style={{marginBottom:8, textAlign:'left'}}><Button type="primary" onClick={addMethodRow}>新增分析方法</Button></div>
+-      <Table rowKey="code" size="small" dataSource={mRows} onRow={r=>({onClick:()=>setSelMethod(r.code), style: selMethod===r.code? {background:'#e6f4ff'} : undefined})} scroll={{x:2750}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}} columns={mergeCols}/>
++      <Table rowKey="code" size="small" dataSource={mRows} onRow={r=>({onClick:()=>setSelMethod(r.code), style: selMethod===r.code? {background:'#e6f4ff'} : undefined})} scroll={{x:2500}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}} columns={mergeCols}/>
+     </Panel>
+     <Panel title="判断规则 / 计算参数">
+       <Tabs defaultActiveKey="judge" items={[
+@@ -3459,7 +3455,7 @@ function SampleLibPage(){
+   const [logOpen,setLogOpen]=useState(null);
+   /* 行内字段即时写 store；保存常驻操作列；启用/停用用 Switch；日志按钮保留在行上 */
+   const setF=(r,k,v)=>{ mut(s=>{ const rec=s.sampleLib.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
+-  const saveRow=(r)=>{ mut(s=>{ const rec=s.sampleLib.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=TODAY; } logAction(s.me.name,'编辑样本',r.id,'行内编辑 '+r.id+' '+(r.name||'')); }); toast.ok('已保存'); };
++  const saveRow=(r)=>{ mut(s=>{ const rec=s.sampleLib.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑样本',r.id,'行内编辑 '+r.id+' '+(r.name||'')); }); toast.ok('已保存'); };
+   const addRow=()=>{ const id='SPL-'+String((d.sampleLib||[]).length+1).padStart(3,'0'); mut(s=>{ s.sampleLib.unshift({id, name:'', type:'标准件', partNo:'', partName:'', charDim:'', nominal:'', refValue:'', unit:'mm', standardId:'', source:'', expireDate:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, status:'启用', note:''}); logAction(s.me.name,'新增样本',id,'列表新增空白行'); }); };
+   const delRow=(r)=>{ Modal.confirm({title:'删除样本 — '+(r.name||r.id), content:'确认删除该样本？删除后不可恢复。', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.sampleLib=s.sampleLib.filter(x=>x.id!==r.id); logAction(s.me.name,'删除样本',r.id,'删除 '+(r.name||'')); }); toast.ok('已删除'); } }); };
+   const rows=(d.sampleLib||[]).filter(r=>(!q.kw||(r.id+r.name+(r.partNo||'')+(r.charDim||'')).toLowerCase().includes(q.kw.toLowerCase())))
+@@ -3473,7 +3469,7 @@ function SampleLibPage(){
+       <Button size="small" type="link" onClick={()=>setLogOpen(r.id)}>日志</Button>
+       <Button size="small" type="link" danger onClick={()=>delRow(r)}>删除</Button>
+     </Space>},
+-    {title:'样本编号', dataIndex:'id', width:110, render:v=><Input size="small" className="mono" value={v} disabled/>},
++    {title:'样本编号', dataIndex:'id', width:110, render:v=><span className="mono">{v}</span>},
+     {title:'样本名称', dataIndex:'name', width:190, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
+     {title:'样本类型', dataIndex:'type', width:104, render:(_,r)=><Select size="small" value={r.type||'标准件'} style={{width:92}} options={[{value:'标准件',label:'标准件'},{value:'生产件',label:'生产件'}]} onChange={x=>setF(r,'type',x)}/>},
+     {title:'零件号', dataIndex:'partNo', width:100, render:(_,r)=><Input size="small" className="mono" value={r.partNo||''} onChange={e=>setF(r,'partNo',e.target.value)}/>},
+@@ -3485,7 +3481,7 @@ function SampleLibPage(){
+     {title:'有效期至', dataIndex:'expireDate', width:110, render:(_,r)=><Input size="small" className="mono" value={r.expireDate||''} onChange={e=>setF(r,'expireDate',e.target.value)}/>},
+     {title:'工厂', dataIndex:'plant', width:110, render:(_,r)=><Select size="small" value={r.plant||''} style={{width:100}} options={PLANTS_OPT} onChange={x=>setF(r,'plant',x)}/>},
+     {title:'车间', dataIndex:'subplant', width:100, render:(_,r)=><Select size="small" value={r.subplant||''} style={{width:90}} options={SUBPLANTS_OPT} onChange={x=>setF(r,'subplant',x)}/>},
+-    {title:'状态', dataIndex:'status', width:86, render:(_,r)=><Switch size="small" checked={r.status==='启用'} checkedChildren="启" unCheckedChildren="停" onChange={x=>setF(r,'status',x?'启用':'停用')}/>},
++    {title:'状态', dataIndex:'status', width:86, render:(_,r)=><Switch size="small" checked={r.status==='启用'} onChange={x=>setF(r,'status',x?'启用':'停用')}/>},
+     {title:'说明', dataIndex:'note', width:240, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setF(r,'note',e.target.value)}/>}
+   ];
+   return <div>
+@@ -3548,7 +3544,7 @@ function SampleLibModal({value,onClose}){
+       if(revise){
+         const old=s.sampleLib.find(x=>x.id===value.record.id);
+         if(!s.sampleLibLogs) s.sampleLibLogs=[];
+-        const now=dayjs().format('YYYY-MM-DD HH:mm');
++        const now=dayjs().format('YYYY-MM-DD HH:mm:ss');
+         if(old&&old.refValue!==v.refValue) (s.sampleLibLogs||[]).unshift({id:'LG-'+String((s.sampleLibLogs||[]).length+1).padStart(3,'0'), sampleId:v.id, field:'参考值（真值）', before:old.refValue||'—', after:v.refValue||'—', actor:s.me.name, time:now, note:'样本真值更新'});
+         if(old&&old.expireDate!==v.expireDate) (s.sampleLibLogs||[]).unshift({id:'LG-'+String((s.sampleLibLogs||[]).length+1).padStart(3,'0'), sampleId:v.id, field:'有效期至', before:old.expireDate||'—', after:v.expireDate||'—', actor:s.me.name, time:now, note:'样本有效期调整'});
+         Object.assign(old, v); logAction(s.me.name,'编辑样本',v.id,v.name);
+@@ -4733,7 +4729,7 @@ function LogPage(){
+ /* ================= 挂载 ================= */
+ (function init(){
+   let saved=null;
+-  try{ saved = JSON.parse(localStorage.getItem('msa_demo_data')); }catch(e){}
++  try{ saved = JSON.parse(localStorage.getItem('msa_demo_data_v20260916')); }catch(e){}
+   if(saved && saved.instruments && saved.instruments.length){
+     Store.data=saved;
+     try{
