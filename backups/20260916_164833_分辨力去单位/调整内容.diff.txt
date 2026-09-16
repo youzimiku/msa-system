@@ -1,0 +1,24 @@
+--- index_备份_20260916_164833_分辨力去单位前.html
++++ index.html
+@@ -705,6 +705,13 @@
+ const GROUP_POST={iqc:'POST-IQC', ipqc:'POST-IPQC', fqc:'POST-FQC', gpr:'POST-GPR'};
+ const GROUP_POST_NAME={iqc:'IQC检验员', ipqc:'IPQC巡检', fqc:'FQC终检', gpr:'动总GPR'};
+ 
++/* 分辨力去单位：'0.01mm'→'0.01'、'0.02MPa'→'0.02'、'0.1N·m'→'0.1'、'0.1℃'→'0.1'；非"数字+单位"形态（如 计数型/暂无）原样保留 */
++function resClean(v){
++  const s=String(v==null?'':v).trim();
++  const m=s.match(/^([0-9]+(?:\.[0-9]+)?)\s*[a-zA-Z°℃Ω%·]+$/);
++  return m?m[1]:s;
++}
++
+ /* 企业字段口径补全函数：对旧数据 / 新数据统一补齐新增字段默认值（本地已存数据加载时同样调用） */
+ function applyFieldDefaults(d){
+   const LINES=['1号线','2号线','3号线','4号线','5号线','6号线'];
+@@ -777,6 +784,7 @@
+       doMsa:i.doMsa||'是', cycleValue:i.cycleValue||i.period, cycle:i.cycle||(i.period+'个月'),
+       plant:i.plant||PLANTS[ix%2], subplant:i.subplant||SUBPLANTS[ix%2], qcArea:i.qcArea||'质检科',
+       nextReviewDate:i.nextReviewDate||(i.nextCal?i.nextCal:'暂无'), calAdvanceDays:i.calAdvanceDays||(i.calAdvance||15),
++      res:i.res?resClean(i.res):i.res,
+       lastMsa:i.lastMsa||(msaDates.length?msaDates[msaDates.length-1]:'暂无'),
+       extrapolatedFrom:i.extrapolatedFrom||''
+     });
