@@ -1,0 +1,39 @@
+--- index_备份_人员列表化前.html
++++ index.html
+@@ -4207,14 +4207,15 @@
+ }
+ function SamplePersonModal({rec, picked, onOk, onClose}){
+   const d=Store.get();
+-  const OPS=['王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'];
+   const [kw,setKw]=useState('');
+   const [selS,setSelS]=useState((picked&&picked.samples?picked.samples:[]).map(s=>s.id));
+-  const [selP,setSelP]=useState(picked&&picked.ops?picked.ops:[]);
++  const [selP,setSelP]=useState(picked&&picked.ops? picked.ops.map(n=>{const p=(d.personnel||[]).find(x=>x.name===n); return p?p.empNo:null;}).filter(Boolean) : []);
+   const samples=(d.sampleLib||[]).filter(s=>!kw||(s.id+s.name+(s.partNo||'')+(s.charDim||'')).toLowerCase().includes(kw.toLowerCase()));
+   return <Modal cancelText="取消" title={'样本/人员选择 · '+(rec?rec.id:'')} open width={900} okText="确定" destroyOnClose
+     onOk={()=>{ if(!selS.length){ toast.warn('请至少选择一个样本'); return; } if(!selP.length){ toast.warn('请至少选择一名人员'); return; }
+-      const chosenSamples=samples.filter(s=>selS.includes(s.id)); onOk(chosenSamples, selP); toast.ok('已选择 '+chosenSamples.length+' 个样本、'+selP.length+' 名人员'); }}
++      const chosenSamples=samples.filter(s=>selS.includes(s.id));
++      const chosenOps=(d.personnel||[]).filter(x=>selP.includes(x.empNo)).map(x=>x.name);
++      onOk(chosenSamples, chosenOps); toast.ok('已选择 '+chosenSamples.length+' 个样本、'+chosenOps.length+' 名人员'); }}
+     onCancel={onClose}>
+     <div style={{marginBottom:8,fontSize:14,color:'#333333'}}>第一步：选择本次使用的样本（来自样本库，可多选）</div>
+     <Input.Search allowClear placeholder="搜索 样本编号/名称/零件号/被测参数" style={{width:340,marginBottom:8}} value={kw} onChange={e=>setKw(e.target.value)}/>
+@@ -4231,9 +4232,14 @@
+       ]}/>
+     <Divider style={{margin:'12px 0'}}/>
+     <div style={{marginBottom:8,fontSize:14,color:'#333333'}}>第二步：选择操作/分析人员（可多选）</div>
+-    <Space wrap>
+-      {OPS.map(n=>{ const on=selP.includes(n); return <Tag key={n} color={on?'blue':'default'} style={{cursor:'pointer',padding:'3px 12px',fontSize:13}} onClick={()=>setSelP(on?selP.filter(x=>x!==n):[...selP,n])}>{n}</Tag>; })}
+-    </Space>
++    <Table size="small" rowKey="empNo" dataSource={(d.personnel||[])} pagination={{pageSize:5,showTotal:t=>'共 '+t+' 人'}} scroll={{y:170}}
++      rowSelection={{selectedRowKeys:selP, onChange:setSelP}}
++      columns={[
++        {title:'人员编号', dataIndex:'empNo', width:90},
++        {title:'姓名', dataIndex:'name', width:90},
++        {title:'部门', dataIndex:'dept', width:120},
++        {title:'岗位', dataIndex:'postName', width:120}
++      ]}/>
+   </Modal>;
+ }
+ function ImportPreviewModal({rec, kind, onClose}){
