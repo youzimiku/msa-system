@@ -1,0 +1,78 @@
+--- index_备份_20260916_224614_模块顺序换位前.html
++++ index.html
+@@ -2597,36 +2597,4 @@
+   ];
+   return <Modal cancelText="取消" title={(mode==='person')?'创建 MSA 计划-人员':'创建 MSA 计划-器具'} open width={1360} onCancel={onClose} onOk={submit} okText="确认创建" destroyOnClose bodyStyle={{height:660, overflow:'hidden', display:'flex', flexDirection:'column'}}>
+-    <div style={{flexShrink:0, border:'1px solid #e3eaf3', borderRadius:6, padding:'8px 10px 10px', marginBottom:8, background:'#fafcff'}}>
+-      <div className="grp-label" style={{marginBottom:6}}>计划填写信息</div>
+-      <Row gutter={[12,10]}>
+-        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">被测参数 <b style={{color:'#cf1322'}}>*</b></span><Select size="small" style={{width:140}} placeholder="选择被测参数" options={charOptions} value={charSel||undefined} onChange={pickChar}/></Col>
+-        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">零件号</span><Input size="small" style={{width:140}} disabled placeholder={charObj&&charObj.partNo? charObj.partNo : '由特性带出'}/></Col>
+-        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">零件名称</span><Input size="small" style={{width:140}} disabled placeholder={charObj&&charObj.partName? charObj.partName : '由特性带出'}/></Col>
+-        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">质量特性</span><Select size="small" style={{width:140}} showSearch optionFilterProp="label" placeholder="选择质量特性" options={(d.specialChars||[]).map(s=>({value:s.id,label:s.id+' '+s.name}))} value={qualityChar||undefined} onChange={setQualityChar}/></Col>
+-        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">车间</span><Select size="small" style={{width:140}} options={SUBPLANTS_OPT} value={meta.subplant} onChange={v=>setMetaK('subplant',v)}/></Col>
+-        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">责任人 <b style={{color:'#cf1322'}}>*</b></span><Select size="small" style={{width:140}} placeholder="选择责任人" value={meta.analyst||undefined} options={['李工程师','王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(c=>({value:c,label:c}))} onChange={v=>setMetaK('analyst',v)}/></Col>
+-        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">部门</span><Select size="small" style={{width:140}} value={meta.dept} options={ENUM.deptOptions.map(c=>({value:c,label:c}))} onChange={v=>setMetaK('dept',v)}/></Col>
+-        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">触发依据</span><Select size="small" style={{width:140}} value={trigger} options={['周期复评','新量具','新过程','过程变更','顾客要求','内审发现'].map(c=>({value:c,label:c}))} onChange={setTrigger}/></Col>
+-        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">计划检期</span><Input size="small" style={{width:140}} value={planDate} onChange={e=>setPlanDate(e.target.value)}/></Col>
+-      </Row>
+-    </div>
+-    <div style={{flexShrink:0, border:'1px solid #e3eaf3', borderRadius:6, padding:'8px 10px 10px', marginBottom:8, background:'#fafcff', maxHeight:230, overflow:'auto'}}>
+-      <div className="grp-label" style={{marginBottom:6}}>分析方法</div>
+-      {!charSel && <div style={{color:'#666666', fontSize:14}}>先选择被测参数</div>}
+-      {charSel && <>
+-        <div style={{marginBottom:8}}><Checkbox.Group size="small" disabled={isPersonGroup} value={isPersonGroup?['KAPPA']:checked} options={(isPersonGroup?['KAPPA']:charMethods).map(m=>({value:m,label:ANAL_SHORT[m]+'（'+subRuleText(m)+'）'}))} onChange={setChecked}/></div>
+-        {(isPersonGroup?['KAPPA']:charMethods).filter(m=>(isPersonGroup?['KAPPA']:checked).indexOf(m)>=0).map(m=>{
+-          const c=mCfg[m]||{};
+-          const sd=samplingDef(m);
+-          const ops=c.ops!==undefined?c.ops:sd.ops, trials=c.trials!==undefined?c.trials:sd.trials, parts=c.parts!==undefined?c.parts:sd.parts;
+-          return <div key={m} style={{display:'flex', gap:12, alignItems:'center', flexWrap:'wrap', padding:'6px 0', borderTop:'1px solid #f0f0f0'}}>
+-            <Tag color={ANAL_COLOR[m]} style={{marginRight:0,width:66,textAlign:'center'}}>{ANAL_SHORT[m]}</Tag>
+-            {sd.useOps && <><span className="flt-label">人数</span><InputNumber size="small" min={sd.opsMin} max={sd.opsMax} style={{width:70}} value={ops} onChange={v=>setM(m,{ops:v})}/></>}
+-            <span className="flt-label">次数</span><InputNumber size="small" min={sd.trialsMin} max={sd.trialsMax} style={{width:70}} value={trials} onChange={v=>setM(m,{trials:v})}/>
+-            <span className="flt-label">样本数</span><InputNumber size="small" min={sd.partsMin} max={sd.partsMax} style={{width:70}} value={parts} onChange={v=>setM(m,{parts:v})}/>
+-          </div>;
+-        })}
+-      </>}
+-    </div>
+     <div style={{flex:1, minHeight:0, border:'1px solid #e3eaf3', borderRadius:6, padding:'8px 10px 10px', background:'#fafcff', display:'flex', flexDirection:'column'}}>
+       <div className="grp-label" style={{marginBottom:6, flexShrink:0}}>器具选择</div>
+@@ -2665,5 +2633,37 @@
+           </div>
+         </div>
+-      </div>
++      </div>    <div style={{flexShrink:0, border:'1px solid #e3eaf3', borderRadius:6, padding:'8px 10px 10px', marginBottom:8, background:'#fafcff'}}>
++      <div className="grp-label" style={{marginBottom:6}}>计划填写信息</div>
++      <Row gutter={[12,10]}>
++        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">被测参数 <b style={{color:'#cf1322'}}>*</b></span><Select size="small" style={{width:140}} placeholder="选择被测参数" options={charOptions} value={charSel||undefined} onChange={pickChar}/></Col>
++        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">零件号</span><Input size="small" style={{width:140}} disabled placeholder={charObj&&charObj.partNo? charObj.partNo : '由特性带出'}/></Col>
++        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">零件名称</span><Input size="small" style={{width:140}} disabled placeholder={charObj&&charObj.partName? charObj.partName : '由特性带出'}/></Col>
++        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">质量特性</span><Select size="small" style={{width:140}} showSearch optionFilterProp="label" placeholder="选择质量特性" options={(d.specialChars||[]).map(s=>({value:s.id,label:s.id+' '+s.name}))} value={qualityChar||undefined} onChange={setQualityChar}/></Col>
++        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">车间</span><Select size="small" style={{width:140}} options={SUBPLANTS_OPT} value={meta.subplant} onChange={v=>setMetaK('subplant',v)}/></Col>
++        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">责任人 <b style={{color:'#cf1322'}}>*</b></span><Select size="small" style={{width:140}} placeholder="选择责任人" value={meta.analyst||undefined} options={['李工程师','王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(c=>({value:c,label:c}))} onChange={v=>setMetaK('analyst',v)}/></Col>
++        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">部门</span><Select size="small" style={{width:140}} value={meta.dept} options={ENUM.deptOptions.map(c=>({value:c,label:c}))} onChange={v=>setMetaK('dept',v)}/></Col>
++        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">触发依据</span><Select size="small" style={{width:140}} value={trigger} options={['周期复评','新量具','新过程','过程变更','顾客要求','内审发现'].map(c=>({value:c,label:c}))} onChange={setTrigger}/></Col>
++        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">计划检期</span><Input size="small" style={{width:140}} value={planDate} onChange={e=>setPlanDate(e.target.value)}/></Col>
++      </Row>
++    </div>
++    <div style={{flexShrink:0, border:'1px solid #e3eaf3', borderRadius:6, padding:'8px 10px 10px', marginBottom:8, background:'#fafcff', maxHeight:230, overflow:'auto'}}>
++      <div className="grp-label" style={{marginBottom:6}}>分析方法</div>
++      {!charSel && <div style={{color:'#666666', fontSize:14}}>先选择被测参数</div>}
++      {charSel && <>
++        <div style={{marginBottom:8}}><Checkbox.Group size="small" disabled={isPersonGroup} value={isPersonGroup?['KAPPA']:checked} options={(isPersonGroup?['KAPPA']:charMethods).map(m=>({value:m,label:ANAL_SHORT[m]+'（'+subRuleText(m)+'）'}))} onChange={setChecked}/></div>
++        {(isPersonGroup?['KAPPA']:charMethods).filter(m=>(isPersonGroup?['KAPPA']:checked).indexOf(m)>=0).map(m=>{
++          const c=mCfg[m]||{};
++          const sd=samplingDef(m);
++          const ops=c.ops!==undefined?c.ops:sd.ops, trials=c.trials!==undefined?c.trials:sd.trials, parts=c.parts!==undefined?c.parts:sd.parts;
++          return <div key={m} style={{display:'flex', gap:12, alignItems:'center', flexWrap:'wrap', padding:'6px 0', borderTop:'1px solid #f0f0f0'}}>
++            <Tag color={ANAL_COLOR[m]} style={{marginRight:0,width:66,textAlign:'center'}}>{ANAL_SHORT[m]}</Tag>
++            {sd.useOps && <><span className="flt-label">人数</span><InputNumber size="small" min={sd.opsMin} max={sd.opsMax} style={{width:70}} value={ops} onChange={v=>setM(m,{ops:v})}/></>}
++            <span className="flt-label">次数</span><InputNumber size="small" min={sd.trialsMin} max={sd.trialsMax} style={{width:70}} value={trials} onChange={v=>setM(m,{trials:v})}/>
++            <span className="flt-label">样本数</span><InputNumber size="small" min={sd.partsMin} max={sd.partsMax} style={{width:70}} value={parts} onChange={v=>setM(m,{parts:v})}/>
++          </div>;
++        })}
++      </>}
++    </div>
++
+     </div>
+   </Modal>;
