@@ -1,0 +1,75 @@
+--- index_备份_20260916_172503_台账列调整前.html
++++ index.html
+@@ -2320,7 +2320,8 @@
+     {title:'工厂', width:100, dataIndex:'plant', render:(_,r)=><Select size="small" value={r.plant||undefined} style={{width:90}} options={PLANTS_OPT} onChange={x=>setF(r,'plant',x)}/>},
+     {title:'计划完成时间', dataIndex:'planDate', width:120, render:(_,r)=><Input size="small" className="mono" value={r.planDate||''} onChange={e=>setF(r,'planDate',e.target.value)}/>},
+     {title:'实际完成时间', dataIndex:'actualDate', width:116, render:v=><span className="mono">{v||'—'}</span>},
+-    {title:'录入人', dataIndex:'editor', width:100, ellipsis:true, render:v=><span>{v||'—'}</span>}
++    {title:'录入人', dataIndex:'editor', width:100, ellipsis:true, render:v=><span>{v||'—'}</span>},
++    {title:'录入时间', dataIndex:'editorDate', width:115, render:v=><span className="mono">{v||'—'}</span>}
+   ];
+ 
+   return <div>
+@@ -4116,32 +4117,37 @@
+   const selRows=rows.filter(r=>selKeys.includes(r.id));
+   const [auditOpen,setAuditOpen]=useState(false); const [auditPerson,setAuditPerson]=useState(undefined);
+   const cols=[
+-    {title:'操作', width:290, fixed:'left', render:(_,r)=><OpBtns items={[
+-      {label:'审核',onClick:()=>setAuditOpen(true)},
+-      {label:'手动分析',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待分析',onClick:()=>setAnlRec(r)},
+-      {label:'查看结果',onClick:()=>goResult(r)},
+-      {label:'修改数据',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待分析',onClick:()=>{DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind);}},
+-      {label:'操作人',onClick:()=>setOpsRec(r)},
+-      {label:'预览',onClick:()=>{}},
+-      {label:'录入数据',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待采集',onClick:()=>{DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind);}}
+-    ]}/>},
++    {title:'操作', width:560, fixed:'left', render:(_,r)=><Space size={0} wrap>
++      <Button size="small" type="link" onClick={()=>setAuditOpen(true)}>审核</Button>
++      <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')||r.reviewStatus!=='待分析'} onClick={()=>setAnlRec(r)}>分析</Button>
++      <Button size="small" type="link" onClick={()=>goResult(r)}>查看结果</Button>
++      <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')||r.reviewStatus!=='待分析'} onClick={()=>{DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind);}}>修改数据</Button>
++      <Button size="small" type="link" onClick={()=>setOpsRec(r)}>操作人</Button>
++      <Button size="small" type="link" onClick={()=>{}}>预览</Button>
++      <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')||r.reviewStatus!=='待采集'} onClick={()=>{DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind);}}>录入数据</Button>
++    </Space>},
+     {title:CFG.idPref+'编号', dataIndex:'id', width:115, render:(v,r)=><span className="row-link mono" onClick={()=>goResult(r)}>{v}</span>},
+     {title:'责任人', dataIndex:'analyst', width:90},
+     {title:'操作人', width:150, render:(_,r)=><span className="tiny">{opsLabel(kind,r)}</span>},
+     {title:'关联计划', dataIndex:'planId', width:110, render:(v)=><span className="row-link mono" onClick={()=>NavAPI.go('plan')}>{v||'暂无'}</span>},
+     {title:'器具名称', width:150, render:(_,r)=>{ const it=d.instruments.find(i=>i.id===r.instId); return <span>{it?it.name:r.instName}</span>; }, ellipsis:true},
+     {title:'型号', width:110, render:(_,r)=>{ const it=d.instruments.find(i=>i.id===r.instId); return <span>{it&&it.model?it.model:'暂无'}</span>; }, ellipsis:true},
+-    {title:'分辨力', width:100, render:(_,r)=>{ const it=d.instruments.find(i=>i.id===r.instId); return <span>{it&&it.res?it.res:'暂无'}</span>; }},
++    ...(kind==='kappa'||kind==='stability'?[]:[{title:'分辨力', width:100, render:(_,r)=>{ const it=d.instruments.find(i=>i.id===r.instId); return <span>{it&&it.res?it.res:'暂无'}</span>; }}]),
+     {title:'工序', width:90, render:(_,r)=>{ const it=d.instruments.find(i=>i.id===r.instId); return <span>{it&&it.process?it.process:'暂无'}</span>; }},
+-    {title:'测量对象', dataIndex:'object', width:170, ellipsis:true},
++    {title:'被测参数', dataIndex:'object', width:170, ellipsis:true},
+     {title:'取样规则', width:170, render:(_,r)=><span>{recParams(r)}</span>},
+-    {title:'上限', width:90, render:(_,r)=><span>{r.tolerance&&r.tolerance.has?r.tolerance.usl:'暂无'}</span>},
+-    {title:'下限', width:90, render:(_,r)=><span>{r.tolerance&&r.tolerance.has?r.tolerance.lsl:'暂无'}</span>},
+-    {title:'标准值', width:100, render:(_,r)=>{ const sp=(d.sampleLib||[]).find(s=>s.charDim===r.object); return <span>{sp&&sp.refValue&&sp.refValue!=='待维护'?sp.refValue:'暂无'}</span>; }},
++    ...(kind==='kappa'?[]:[
++      {title:'上限', width:90, render:(_,r)=><span>{r.tolerance&&r.tolerance.has?r.tolerance.usl:'暂无'}</span>},
++      {title:'下限', width:90, render:(_,r)=><span>{r.tolerance&&r.tolerance.has?r.tolerance.lsl:'暂无'}</span>},
++      {title:'标准值', width:100, render:(_,r)=>{ const sp=(d.sampleLib||[]).find(s=>s.charDim===r.object); return <span>{sp&&sp.refValue&&sp.refValue!=='待维护'?sp.refValue:'暂无'}</span>; }}
++    ]),
+     {title:'结论', width:120, render:(_,r)=><VerdictTag v={r.conclusion}/>},
+     {title:'状态', width:90, render:(_,r)=><StatusTag s={r.reviewStatus}/>},
+-    {title:'审核人', width:90, render:(_,r)=><span>{r.reviewer||'暂无'}</span>},
+-    {title:'确认状态', width:90, render:(_,r)=>{ const ok=!!(r.approver||r.approveDate); return <Tooltip title={ok?'该记录已完成确认':'该记录尚未确认'}><span style={{color:ok?'#52c41a':'#666666'}}>{ok?'已确认':'未确认'}</span></Tooltip>; }}
++    {title:'审核人', width:90, render:(_,r)=><span>{r.reviewer||'—'}</span>},
++    {title:'审核时间', width:115, render:(_,r)=><span className="mono">{r.reviewDate||'—'}</span>},
++    {title:'确认人', width:90, render:(_,r)=><span>{r.approver||'—'}</span>},
++    {title:'确认状态', width:90, render:(_,r)=>{ const ok=!!(r.approver||r.approveDate); return <Tooltip title={ok?'该记录已完成确认':'该记录尚未确认'}><span style={{color:ok?'#52c41a':'#666666'}}>{ok?'已确认':'未确认'}</span></Tooltip>; }},
++    {title:'确认时间', width:115, render:(_,r)=><span className="mono">{r.approveDate||'—'}</span>}
+   ];
+   return <div>
+     <Panel title="查询条件">
+@@ -4163,7 +4169,7 @@
+       </Space>
+     </Panel>
+     <Panel title={CFG.title+' · 记录列表（'+rows.length+' 条）'}>
+-      <Table rowKey="id" size="middle" dataSource={rows} columns={cols} rowSelection={{selectedRowKeys:selKeys, onChange:setSelKeys}} scroll={{x:1500}} pagination={false}/>
++      <Table rowKey="id" size="middle" dataSource={rows} columns={cols} rowSelection={{selectedRowKeys:selKeys, onChange:setSelKeys}} scroll={{x:2100}} pagination={false}/>
+     </Panel>
+     {anlRec && <AnalyzeModal rec={anlRec} kind={kind} onClose={()=>setAnlRec(null)}/>}
+     {opsRec && <OpsModal rec={opsRec} kind={kind} onClose={()=>setOpsRec(null)}/>}
