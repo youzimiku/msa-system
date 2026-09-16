@@ -1,0 +1,10 @@
+--- index_备份_去回显标签前.html
++++ index.html
+@@ -4148,7 +4148,6 @@
+       <Button size="small" type="link" onClick={()=>setOpsRec(r)}>操作人</Button>
+       <Button size="small" type="link" onClick={()=>{}}>预览</Button>
+       <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')||r.reviewStatus!=='待采集'} onClick={()=>{DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind);}}>录入数据</Button>
+-      {pickedMap[r.id]&&<Tooltip title={'样本：'+((pickedMap[r.id].samples||[]).map(s=>s.id).join('、')||'—')+'；人员：'+((pickedMap[r.id].ops||[]).join('、')||'—')}><Tag color="blue">{(pickedMap[r.id].samples||[]).length}样本/{(pickedMap[r.id].ops||[]).length}人</Tag></Tooltip>}
+     </Space>},
+     {title:'台账编号', dataIndex:'id', width:115, render:(v,r)=><span className="row-link mono" onClick={()=>goResult(r)}>{v}</span>},
+     {title:'责任人', dataIndex:'analyst', width:90},
