@@ -1,0 +1,28 @@
+--- index_备份_20260916_173508_补打按钮移位前.html
++++ index.html
+@@ -3487,12 +3487,11 @@
+     .filter(r=>!q.plant||r.plant===q.plant).filter(r=>!q.sub||r.subplant===q.sub);
+   const resetQ=()=>{ setFkw('');setFtype();setFst();setFPlant();setFSub(); setQ({kw:'',type:undefined,st:undefined,plant:undefined,sub:undefined}); };
+   const cols=[
+-    {title:'操作', width:180, fixed:'left', render:(_,r)=><OpBtns items={[
+-      {label:'保存', onClick:()=>saveRow(r)},
+-      {label:'日志', onClick:()=>setLogOpen(r.id)},
+-      {label:'删除', danger:true, onClick:()=>delRow(r)},
+-      {label:'补打', onClick:()=>{}}
+-    ]}/>},
++    {title:'操作', width:180, fixed:'left', render:(_,r)=><Space size={0}>
++      <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
++      <Button size="small" type="link" onClick={()=>setLogOpen(r.id)}>日志</Button>
++      <Button size="small" type="link" danger onClick={()=>delRow(r)}>删除</Button>
++    </Space>},
+     {title:'样本编号', dataIndex:'id', width:110, render:v=><span className="mono">{v}</span>},
+     {title:'样本名称', dataIndex:'name', width:190, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
+     {title:'样本类型', dataIndex:'type', width:104, render:(_,r)=><Select size="small" value={r.type||'标准件'} style={{width:92}} options={[{value:'标准件',label:'标准件'},{value:'生产件',label:'生产件'}]} onChange={x=>setF(r,'type',x)}/>},
+@@ -3524,6 +3523,7 @@
+         <Button type="primary" onClick={()=>setQ({kw:fkw,type:ftype,st:fst,plant:fPlant,sub:fSub})}>查询</Button>
+         <Button onClick={resetQ}>重置</Button>
+         <Button type="primary" onClick={addRow}>新增样本</Button>
++        <Button onClick={()=>{}}>补打</Button>
+         <ImportBtn title="样本库管理"/>
+         <Button>导出</Button>
+       </Space>
