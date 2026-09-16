@@ -1,0 +1,25 @@
+diff --git "a/C:\\Users\\youzi\\Doubao\\chats\\2026-09-03\\new-chat\\MSA\347\263\273\347\273\237\\backups\\20260916_140818_\345\210\240\344\270\211\345\210\227\345\210\206\345\217\267\346\226\271\346\263\225\346\227\245\346\234\237\346\216\247\344\273\266\345\216\273\346\243\200\351\252\214\346\240\207\345\207\206\\index.html" "b/C:\\Users\\youzi\\Doubao\\chats\\2026-09-03\\new-chat\\MSA\347\263\273\347\273\237\\index.html"
+index 69e8e41..5b2fc50 100644
+--- "a/C:\\Users\\youzi\\Doubao\\chats\\2026-09-03\\new-chat\\MSA\347\263\273\347\273\237\\backups\\20260916_140818_\345\210\240\344\270\211\345\210\227\345\210\206\345\217\267\346\226\271\346\263\225\346\227\245\346\234\237\346\216\247\344\273\266\345\216\273\346\243\200\351\252\214\346\240\207\345\207\206\\index.html"
++++ "b/C:\\Users\\youzi\\Doubao\\chats\\2026-09-03\\new-chat\\MSA\347\263\273\347\273\237\\index.html"
+@@ -146,8 +146,9 @@ a{color:#333333}
+ .row-link:hover{color:#1677ff}
+ 
+ /* 检验方法多选：已选项用；分隔的纯文本展示 */
+-.msa-method-select .ant-select-selection-item{background:transparent!important;border:none!important;padding:0!important;margin-inline-end:0!important;border-radius:0!important;height:auto!important;line-height:22px!important;font-size:13px;color:#333333}
+-.msa-method-select .ant-select-selection-item + .ant-select-selection-item::before{content:'；';margin-right:2px}
++.msa-method-select .ant-select-selection-overflow-item{margin-inline-end:0!important;padding:0!important}
++.msa-method-select .ant-select-selection-overflow-item + .ant-select-selection-overflow-item::before{content:'；';margin-right:2px}
++.msa-method-select .ant-select-selection-overflow-item.ant-select-selection-overflow-item-suffix{min-width:4px}
+ </style>
+ </head>
+ <body>
+@@ -2987,7 +2988,7 @@ function CharPage(){
+     {title:'零件编号', dataIndex:'partNo', width:100, ellipsis:true, render:(_,r)=><Input size="small" className="mono" value={r.partNo||''} onChange={e=>setF(r,'partNo',e.target.value)}/>},
+     {title:'工序', dataIndex:'processName', width:90, ellipsis:true, render:(_,r)=><Input size="small" value={r.processName||''} onChange={e=>setF(r,'processName',e.target.value)}/>},
+     {title:'特性类别', dataIndex:'category', width:100, render:(_,r)=><Input size="small" value={r.category||''} onChange={e=>setF(r,'category',e.target.value)}/>},
+-    {title:'检验方法', width:230, render:(_,r)=><Select size="small" className="msa-method-select" mode="multiple" value={(r.methods||[]).map(m=>m.method)} style={{width:220}} options={(d.anMethods||[]).map(m=>({value:m.code,label:METHOD_NAME(m.code)}))} tagRender={(p)=><span>{p.label}</span>} onChange={x=>setF(r,'methods',x.map(v=>({method:v})))}/>},
++    {title:'检验方法', width:230, render:(_,r)=><Select size="small" className="msa-method-select" mode="multiple" value={(r.methods||[]).map(m=>String(m.method).toUpperCase())} style={{width:220}} options={(d.anMethods||[]).map(m=>({value:m.code,label:METHOD_NAME(m.code)}))} tagRender={(p)=><span>{p.label}</span>} onChange={x=>setF(r,'methods',x.map(v=>({method:v})))}/>},
+     {title:'单位', dataIndex:'unit', width:70, render:(_,r)=><Input size="small" className="mono" value={r.unit||''} onChange={e=>setF(r,'unit',e.target.value)}/>},
+     {title:'标准值', dataIndex:'target', width:90, render:(_,r)=><Input size="small" className="mono" value={r.target||''} onChange={e=>setF(r,'target',e.target.value)}/>},
+     {title:'上限USL', dataIndex:'usl', width:90, render:(_,r)=><Input size="small" className="mono" value={r.usl||''} onChange={e=>setF(r,'usl',e.target.value)}/>},
