@@ -1,0 +1,21 @@
+--- 改动前
++++ 改动后
+@@ -2673,14 +2673,14 @@
+         <Table size="small" rowKey="method" pagination={false} dataSource={methodRows}
+           locale={{emptyText:'未添加分析方法，请在上方勾选后点击「确定」'}}
+           columns={[
++            {title:'操作', width:110, render:(_,r)=><Space size={0}>
++              <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
++              <Button size="small" type="link" danger onClick={()=>delRow(r)}>删除</Button>
++            </Space>},
+             {title:'分析方法', width:120, render:(_,r)=><Tag color={ANAL_COLOR[r.method]} style={{marginRight:0,width:76,textAlign:'center'}}>{ANAL_SHORT[r.method]}</Tag>},
+             {title:'人数', width:100, render:(_,r)=>{ const sd=samplingDef(r.method); if(!sd.useOps) return <span className="tiny">—</span>; return <InputNumber size="small" min={sd.opsMin} max={sd.opsMax} style={{width:88}} value={r.ops} onChange={v=>setRow(r.method,{ops:v})}/>; }},
+             {title:'次数', width:100, render:(_,r)=>{ const sd=samplingDef(r.method); return <InputNumber size="small" min={sd.trialsMin} max={sd.trialsMax} style={{width:88}} value={r.trials} onChange={v=>setRow(r.method,{trials:v})}/>; }},
+             {title:'样本数', width:100, render:(_,r)=>{ const sd=samplingDef(r.method); return <InputNumber size="small" min={sd.partsMin} max={sd.partsMax} style={{width:88}} value={r.parts} onChange={v=>setRow(r.method,{parts:v})}/>; }},
+-            {title:'操作', width:110, render:(_,r)=><Space size={0}>
+-              <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
+-              <Button size="small" type="link" danger onClick={()=>delRow(r)}>删除</Button>
+-            </Space>}
+           ]}/>
+       </>}
+     </div>
