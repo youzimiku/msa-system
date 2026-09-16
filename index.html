@@ -159,7 +159,7 @@ const { useState, useEffect, useMemo, useRef, useReducer } = React;
 const { Table, Card, Tag, Badge, Button, Space, Input, InputNumber, Select, Form, Modal, Drawer,
         Descriptions, Tabs, Steps, Alert, Tooltip, Popconfirm, Progress, Timeline,
         Result, Empty, Row, Col, Divider, List, Avatar, Dropdown, Breadcrumb, Statistic,
-        Menu, Layout, message, Pagination, Radio, Segmented, Checkbox } = antd;
+        Menu, Layout, message, Pagination, Radio, Segmented, Checkbox, Switch } = antd;
 const { Sider, Header, Content, Footer } = Layout;
 
 const TODAY = (window.dayjs && dayjs().format('YYYY-MM-DD')) || '2026-09-03';
@@ -1952,40 +1952,38 @@ function InstGroupPage(){
   const [fPlant,setFPlant]=useState(undefined);
   const [fSub,setFSub]=useState(undefined);
   const [q,setQ]=useState({kw:'',cycle:undefined,type:undefined,plant:undefined,sub:undefined});
-  const [modal,setModal]=useState(null);
   const [detail,setDetail]=useState(null);
   const rows=d.instGroups.filter(g=>
     (!q.kw||(g.id+g.name+(g.note||'')).toLowerCase().includes(q.kw.toLowerCase())) &&
     (!q.cycle||String(g.calCycle||12)===q.cycle) &&
     (!q.type||(g.type||'inst')===q.type) &&
     (!q.plant||g.plant===q.plant) && (!q.sub||g.subplant===q.sub));
-  const openAdd=()=>setModal({mode:'add',record:{}});
-  const openEdit=(r)=>setModal({mode:'edit',record:r});
-  const [editingId,setEditingId]=useState(null); const [draft,setDraft]=useState({}); const [addRow,setAddRow]=useState(false);
-  const startEdit=(r)=>{ setAddRow(false); setEditingId(r.id); setDraft({...r}); };
-  const addRowStart=()=>{ setEditingId('__NEW__'); setDraft({id:'',name:'',type:'inst',calCycle:12,lastExec:'',nextPlanDate:'',remindAdvance:20,nextRemind:'',note:'',postCode:'',postName:''}); setAddRow(true); };
-  const saveEdit=()=>{ if(!editingId) return; if(!draft.name||!draft.name.trim()){ toast.warn('请填写组名称'); return; } const tp=draft.type||'inst'; const dc=isPersonGroupType(tp)?{postCode:GROUP_POST[tp],postName:GROUP_POST_NAME[tp]}:{}; mut(s=>{ if(editingId==='__NEW__'){ const nid=(draft.id&&draft.id.trim())?draft.id.trim(): (isPersonGroupType(tp)? 'P-'+String(s.instGroups.filter(g=>g.id.startsWith('P-')).length+1).padStart(2,'0') : 'G-'+String(s.instGroups.filter(g=>g.id.startsWith('G-')).length+1).padStart(2,'0')); const rec={...draft, ...dc, id:nid, type:tp, editor:s.me.name, editorDate:TODAY, records:[]}; s.instGroups.push(rec); logAction(s.me.name,'新增器具组',nid+' '+(draft.name||''),'行内新增器具组'); } else { const rec=s.instGroups.find(x=>x.id===editingId); if(rec) Object.assign(rec,draft,dc); logAction(s.me.name,'编辑器具组',editingId,'行内编辑器具组 '+editingId+' '+(draft.name||'')); } }); setEditingId(null); setDraft({}); setAddRow(false); toast.ok('已保存'); };
-  const memberText=(r)=>{ if(isPersonGroupType(r.type||'inst')){ const pc=r.postCode||GROUP_POST[r.type]; const pn=(d.personnel||[]).filter(x=>x.postCode===pc).length; return <span className="tiny">{pn+' 人 · '+(pc||'')}</span>; } const ms=(r.memberIds||[]).map(id=>d.instruments.find(i=>i.id===id)).filter(Boolean); return <span className="tiny">{ms.length} 台器具</span>; };
+  const [draft,setDraft]=useState({}); const [addRow,setAddRow]=useState(false);
+  const addRowStart=()=>{ setDraft({id:'',name:'',type:'inst',calCycle:12,lastExec:'',nextPlanDate:'',remindAdvance:20,nextRemind:'',note:''}); setAddRow(true); };
+  const isNew=(r)=>r.id==='__NEW__';
+  const gv=(o,k,dv)=>(o&&o[k]!==undefined&&o[k]!==null)?o[k]:dv;
+  const saveNew=()=>{ if(!draft.name||!draft.name.trim()){ toast.warn('请填写组名称'); return; } const tp=draft.type||'inst'; const dc=isPersonGroupType(tp)?{postCode:GROUP_POST[tp],postName:GROUP_POST_NAME[tp]}:{}; mut(s=>{ const nid=(draft.id&&draft.id.trim())?draft.id.trim(): (isPersonGroupType(tp)? 'P-'+String(s.instGroups.filter(g=>g.id.startsWith('P-')).length+1).padStart(2,'0') : 'G-'+String(s.instGroups.filter(g=>g.id.startsWith('G-')).length+1).padStart(2,'0')); const rec={...draft, ...dc, id:nid, type:tp, editor:s.me.name, editorDate:TODAY, records:[]}; s.instGroups.push(rec); logAction(s.me.name,'新增器具组',nid+' '+(draft.name||''),'行内新增器具组'); }); setAddRow(false); setDraft({}); toast.ok('已保存'); };
+  const setF=(r,k,v)=>{ mut(s=>{ const g=s.instGroups.find(x=>x.id===r.id); if(g) g[k]=v; }); };
+  const saveRow=(r)=>{ mut(s=>{ const g=s.instGroups.find(x=>x.id===r.id); if(g){ g.editor=s.me.name; g.editorDate=TODAY; } logAction(s.me.name,'编辑器具组',r.id,'行内编辑器具组 '+r.id+' '+(r.name||'')); }); toast.ok('已保存'); };
+  const referenced=(r)=>(d.plans||[]).some(p=> (r.memberIds||[]).some(mid=>(p.instIds||[]).indexOf(mid)>=0));
+  const delRow=(r)=>{ if(isNew(r)){ setAddRow(false); setDraft({}); return; } Modal.confirm({title:'删除器具组 — '+r.name, content:'删除后组内器具保留在台账中，仅解除分组关系。确认删除？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.instGroups=s.instGroups.filter(g=>g.id!==r.id); logAction(s.me.name,'删除器具组',r.id,'删除器具组 '+r.name); }); toast.ok('已删除器具组 '+r.id); } }); };
   const cols=[
-    {title:'操作', width:180, fixed:'left', render:(_,r)=><Space size={0}>
-      {editingId!=='__NEW__' && <Button size="small" type="link" onClick={()=>setDetail(r)}>详情</Button>}
-      {editingId===r.id
-        ? <><Button size="small" type="link" onClick={saveEdit}>保存</Button><Button size="small" type="link" onClick={()=>{setEditingId(null);setDraft({});setAddRow(false);}}>取消</Button></>
-        : <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>startEdit(r)}>编辑</Button>}
-      {editingId!=='__NEW__' && <Button size="small" type="link" danger disabled={!canDo(d.me.role,'edit')} onClick={()=>{ Modal.confirm({title:'删除器具组 — '+r.name, content:'删除后组内器具保留在台账中，仅解除分组关系。确认删除？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.instGroups=s.instGroups.filter(g=>g.id!==r.id); logAction(s.me.name,'删除器具组',r.id,'删除器具组 '+r.name); }); toast.ok('已删除器具组 '+r.id); } }); }}>删除</Button>}
+    {title:'操作', width:150, fixed:'left', render:(_,r)=><Space size={0}>
+      {!isNew(r) && <Button size="small" type="link" onClick={()=>setDetail(r)}>详情</Button>}
+      <Button size="small" type="link" onClick={isNew(r)?saveNew:()=>saveRow(r)}>保存</Button>
+      <Button size="small" type="link" danger disabled={!isNew(r)&&referenced(r)} onClick={()=>delRow(r)}>删除</Button>
     </Space>},
-    {title:'组编码', dataIndex:'id', width:110, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={editingId==='__NEW__'?(draft.id||''):v} placeholder="留空自动生成" onChange={e=>setDraft(d=>({...d,id:e.target.value}))}/>:<span className="row-link mono" onClick={()=>setDetail(r)}>{v}</span>},
-    {title:'组名称', dataIndex:'name', width:180, ellipsis:true, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,name:e.target.value}))}/>:<span>{v}</span>},
-    {title:'组类型', width:130, render:(_,r)=>editingId===r.id?<Select size="small" defaultValue={r.type||'inst'} style={{width:120}} options={GROUP_TYPE_OPTS} onChange={x=>setDraft(d=>({...d,type:x}))}/>:<Tag color={isPersonGroupType(r.type||'inst')?'purple':'blue'} style={{marginRight:0}}>{GROUP_TYPE_MAP[r.type]||'测量器具组'}</Tag>},
-
-    {title:'检验周期(月)', width:110, render:(_,r)=>editingId===r.id?<InputNumber size="small" min={1} defaultValue={r.calCycle||12} style={{width:92}} onChange={x=>setDraft(d=>({...d,calCycle:x}))}/>:<span className="mono">{r.calCycle||12}</span>},
-    {title:'上次执行时间', dataIndex:'lastExec', width:115, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,lastExec:e.target.value}))}/>:<span className="mono tiny">{v||'暂无'}</span>},
-    {title:'下次计划日期', dataIndex:'nextPlanDate', width:115, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,nextPlanDate:e.target.value}))}/>:<span className="mono tiny">{v||'暂无'}</span>},
-    {title:'提醒周期(天)', width:115, render:(_,r)=>editingId===r.id?<InputNumber size="small" min={0} defaultValue={r.remindAdvance||20} style={{width:96}} onChange={x=>setDraft(d=>({...d,remindAdvance:x}))}/>:<span className="mono">{r.remindAdvance||20}</span>},
-    {title:'下次提醒时间', dataIndex:'nextRemind', width:115, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,nextRemind:e.target.value}))}/>:<span className="mono tiny">{v||'暂无'}</span>},
-    {title:'说明', dataIndex:'note', ellipsis:true, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,note:e.target.value}))}/>:<span>{v||'—'}</span>},
-    {title:'维护人', dataIndex:'editor', width:110},
-    {title:'维护时间', dataIndex:'editorDate', width:105, render:v=><span className="mono tiny">{v||'暂无'}</span>}
+    {title:'组编码', dataIndex:'id', width:110, render:(v,r)=>isNew(r)?<Input size="small" value={draft.id||''} placeholder="留空自动生成" onChange={e=>setDraft(d=>({...d,id:e.target.value}))}/>:<Input size="small" value={v} disabled/>},
+    {title:'组名称', dataIndex:'name', width:190, ellipsis:true, render:(v,r)=>isNew(r)?<Input size="small" value={draft.name||''} onChange={e=>setDraft(d=>({...d,name:e.target.value}))}/>:<Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
+    {title:'组类型', width:140, render:(_,r)=>isNew(r)?<Select size="small" value={draft.type||'inst'} style={{width:130}} options={GROUP_TYPE_OPTS} onChange={x=>setDraft(d=>({...d,type:x}))}/>:<Select size="small" value={r.type||'inst'} style={{width:130}} options={GROUP_TYPE_OPTS} onChange={x=>setF(r,'type',x)}/>},
+    {title:'检验周期(月)', width:110, render:(_,r)=>isNew(r)?<InputNumber size="small" min={1} value={draft.calCycle||12} style={{width:92}} onChange={x=>setDraft(d=>({...d,calCycle:x}))}/>:<InputNumber size="small" min={1} value={gv(r,'calCycle',12)} style={{width:92}} onChange={x=>setF(r,'calCycle',x)}/>},
+    {title:'上次执行时间', dataIndex:'lastExec', width:120, render:(v,r)=>isNew(r)?<Input size="small" value={draft.lastExec||''} placeholder="YYYY-MM-DD" onChange={e=>setDraft(d=>({...d,lastExec:e.target.value}))}/>:<Input size="small" value={r.lastExec||''} placeholder="YYYY-MM-DD" onChange={e=>setF(r,'lastExec',e.target.value)}/>},
+    {title:'下次计划日期', dataIndex:'nextPlanDate', width:120, render:(v,r)=>isNew(r)?<Input size="small" value={draft.nextPlanDate||''} placeholder="YYYY-MM-DD" onChange={e=>setDraft(d=>({...d,nextPlanDate:e.target.value}))}/>:<Input size="small" value={r.nextPlanDate||''} placeholder="YYYY-MM-DD" onChange={e=>setF(r,'nextPlanDate',e.target.value)}/>},
+    {title:'提醒周期(天)', width:115, render:(_,r)=>isNew(r)?<InputNumber size="small" min={0} value={draft.remindAdvance||20} style={{width:96}} onChange={x=>setDraft(d=>({...d,remindAdvance:x}))}/>:<InputNumber size="small" min={0} value={gv(r,'remindAdvance',20)} style={{width:96}} onChange={x=>setF(r,'remindAdvance',x)}/>},
+    {title:'下次提醒时间', dataIndex:'nextRemind', width:120, render:(v,r)=>isNew(r)?<Input size="small" value={draft.nextRemind||''} placeholder="YYYY-MM-DD" onChange={e=>setDraft(d=>({...d,nextRemind:e.target.value}))}/>:<Input size="small" value={r.nextRemind||''} placeholder="YYYY-MM-DD" onChange={e=>setF(r,'nextRemind',e.target.value)}/>},
+    {title:'说明', dataIndex:'note', ellipsis:true, render:(v,r)=>isNew(r)?<Input size="small" value={draft.note||''} onChange={e=>setDraft(d=>({...d,note:e.target.value}))}/>:<Input size="small" value={r.note||''} onChange={e=>setF(r,'note',e.target.value)}/>},
+    {title:'维护人', dataIndex:'editor', width:100, render:v=><Input size="small" value={v||''} disabled/>},
+    {title:'维护时间', dataIndex:'editorDate', width:105, render:v=><Input size="small" value={v||''} disabled/>}
   ];
   return <div>
     <Panel title="查询条件">
@@ -2002,17 +2000,16 @@ function InstGroupPage(){
       <Space wrap>
         <Button type="primary" onClick={()=>setQ({kw,cycle:fCycle,type:fType,plant:fPlant,sub:fSub})}>查询</Button>
         <Button onClick={()=>{setKw('');setFCycle(undefined);setFType(undefined);setFPlant(undefined);setFSub(undefined);setQ({kw:'',cycle:undefined,type:undefined,plant:undefined,sub:undefined});}}>重置</Button>
-        <Button type="primary" disabled={!canDo(d.me.role,'edit')} onClick={addRowStart}>+ 新增器具组</Button>
-        {canDo(d.me.role,'edit') && <ImportBtn table="instGroups" title="器具组维护"
+        <Button type="primary" onClick={addRowStart}>+ 新增器具组</Button>
+        <ImportBtn table="instGroups" title="器具组维护"
           columns={[{key:'id',title:'组编码'},{key:'name',title:'组名称'},{key:'calCycle',title:'检验周期(月)'},{key:'lastExec',title:'上次执行时间'},{key:'nextRemind',title:'下次提醒时间'},{key:'memberIds',title:'成员器具(分号分隔)'},{key:'note',title:'说明'}]}
-          onImported={()=>toast.ok('器具组导入完成')}/>}
+          onImported={()=>toast.ok('器具组导入完成')}/>
       </Space>
     </Panel>
     <Panel title={'器具组列表（'+rows.length+' 组）'}>
-      <Table rowKey="id" size="middle" dataSource={addRow? [{...draft, id:'__NEW__'}, ...rows] : rows} columns={cols} scroll={{x:1300}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 组'}}/>
+      <Table rowKey="id" size="middle" dataSource={addRow? [{...draft, id:'__NEW__'}, ...rows] : rows} columns={cols} scroll={{x:1500}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 组'}}/>
     </Panel>
-    {modal && <InstGroupModal value={modal} onClose={()=>setModal(null)}/>}
-    {detail && <InstGroupDetail rec={detail} onClose={()=>setDetail(null)} onEdit={(r)=>{setDetail(null);openEdit(r);}}/>}
+    {detail && <InstGroupDetail rec={detail} onClose={()=>setDetail(null)}/>}
   </div>;
 }
 
@@ -2208,10 +2205,6 @@ function PlanPage(){
   const [convert,setConvert]=useState(null); // 详情内定型
   const [detail,setDetail]=useState(null);
   const [edit,setEdit]=useState(null);       // 编辑计划信息
-  const [editingId,setEditingId]=useState(null); const [draft,setDraft]=useState({});
-  const startEdit=(r)=>{ setEditingId(r.id); setDraft({...r}); };
-  const saveEdit=()=>{ if(!editingId) return; mut(s=>{ const rec=s.plans.find(x=>x.id===editingId); if(rec) Object.assign(rec,draft); logAction(s.me.name,'编辑MSA计划',editingId,'行内编辑 '+editingId); }); setEditingId(null); setDraft({}); toast.ok('已保存'); };
-  
   const [fkw,setFkw]=useState('');
   const [ftype,setFtype]=useState();
   const [fstatus,setFstatus]=useState();
@@ -2222,7 +2215,6 @@ function PlanPage(){
   const [qPlant,setQPlant]=useState(); const [qSub,setQSub]=useState(); const [qSource,setQSource]=useState();
   const doQuery=()=>{ setQkw(fkw); setQType(ftype); setQStatus(fstatus); setQPlant(fPlant); setQSub(fSub); setQSource(fSource); };
   const resetQ=()=>{ setFkw('');setFtype();setFstatus();setFPlant();setFSub();setFSource(); setQkw('');setQType();setQStatus();setQPlant();setQSub();setQSource(); };
-
 
   const rows = d.plans.filter(p=>{
     const recs=planRecords(d,p.id);
@@ -2265,19 +2257,21 @@ function PlanPage(){
     if(!worst) return <Tooltip title={label+'：未做（计划范围内尚未完成分析）'}><span style={{cursor:'pointer'}} onClick={jump}><TodoSvg/></span></Tooltip>;
     return <Tooltip title={label+'：'+(worst==='fail'?'不通过':'通过')}><span style={{cursor:'pointer'}} onClick={jump}>{worst==='fail'?<FailSvg/>:<PassSvg/>}</span></Tooltip>;
   };
+  /* 行内字段即时写 store；只读字段渲染为禁用控件；保存常驻操作列 */
+  const setF=(r,k,v)=>{ mut(s=>{ const p=s.plans.find(x=>x.id===r.id); if(p) p[k]=v; }); };
+  const saveRow=(r)=>{ mut(s=>{ const p=s.plans.find(x=>x.id===r.id); if(p){ p.editor=s.me.name; p.editorDate=TODAY; } logAction(s.me.name,'编辑MSA计划',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
+  const STATUS_BACK={'待开始':['未定型','待采集'],'进行中':['待分析','已批准','需整改'],'已完成':['已闭环','已关闭']};
   const cols=[
-    {title:'操作', width:150, fixed:'left', render:(_,r)=><PlanActions r={r} onDetail={()=>setDetail(r)} onEdit={()=>setEdit(r)} editingId={editingId} startEdit={startEdit} saveEdit={saveEdit} cancelEdit={()=>{setEditingId(null);setDraft({});}}/>},
-    {title:'MSA计划号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
-    {title:'分析人', width:110, render:(_,r)=>editingId===r.id?<Input size="small" defaultValue={r.analyst||r.observer||''} onChange={e=>setDraft(d=>({...d,analyst:e.target.value}))}/>:<span>{r.analyst||r.observer||'暂无'}</span>},
-    {title:'计划类型', width:90, render:(_,r)=>{ const t=r.planType||'器具MSA'; return <Tag color={t==='人员MSA'?'purple':'blue'} style={{display:'inline-flex',justifyContent:'center',minWidth:78,marginRight:0}}>{t}</Tag>; }},
-    {title:'任务来源', width:100, render:(_,r)=> r.source==='周期任务'
-      ? <Tooltip title="按器具组检验周期自动生成，提前一个月推送待办"><Tag color="geekblue" style={{marginRight:0}}>周期任务</Tag></Tooltip>
-      : <Tooltip title="手动创建（新增器具/过程变更/顾客要求等）"><Tag style={{marginRight:0}}>临时任务</Tag></Tooltip>},
+    {title:'操作', width:150, fixed:'left', render:(_,r)=><PlanActions r={r} onDetail={()=>setDetail(r)} onSave={()=>saveRow(r)}/>},
+    {title:'MSA计划号', dataIndex:'id', width:130, render:v=><Input size="small" className="mono" value={v} disabled/>},
+    {title:'分析人', width:110, render:(_,r)=><Input size="small" value={r.analyst||r.observer||''} onChange={e=>setF(r,'analyst',e.target.value)}/>},
+    {title:'计划类型', width:100, render:(_,r)=><Input size="small" value={r.planType||'器具MSA'} disabled/>},
+    {title:'任务来源', width:100, render:(_,r)=><Input size="small" value={r.source==='周期任务'?'周期任务':'临时任务'} disabled/>},
     {title:'仪器/设备名称', width:160, render:(_,r)=>instCell(r,it=>it?it.name:'')},
     {title:'量具编号', width:110, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.id}</span>:'')},
-    {title:'零件号', width:100, dataIndex:'partNo', render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,partNo:e.target.value}))}/>:<span className="mono">{v||'—'}</span>},
-    {title:'测量特性', width:160, ellipsis:true, render:(_,r)=>{ if(editingId===r.id) return <Input size="small" defaultValue={r.object||''} onChange={e=>setDraft(d=>({...d,object:e.target.value}))}/>; const recs=planRecords(d,r.id); return (r.instIds||[]).length>1? <span className="tiny">{recs.map(x=>x.object).filter(Boolean).join('、')}</span> : <span>{r.object||'暂无'}</span>; }},
-    {title:'检验标准', width:105, render:(_,r,idx)=>{ if(stdSame) return idx===0? <span className="mono">{stdAll[0]}</span> : <span>—</span>; const v=stdOf(r); return v? <span className="mono">{v}</span> : <span>暂无</span>; }},
+    {title:'零件号', width:100, dataIndex:'partNo', render:(_,r)=><Input size="small" className="mono" value={r.partNo||''} onChange={e=>setF(r,'partNo',e.target.value)}/>},
+    {title:'测量特性', width:170, ellipsis:true, render:(_,r)=>{ const recs=planRecords(d,r.id); const cur=(r.instIds||[]).length>1? recs.map(x=>x.object).filter(Boolean).join('、') : (r.object||''); return <Input size="small" value={cur} onChange={e=>setF(r,'object',e.target.value)}/>; }},
+    {title:'检验标准', width:110, render:(_,r,idx)=>{ if(stdSame) return idx===0? <Input size="small" className="mono" value={stdAll[0]} disabled/> : <span>—</span>; const v=stdOf(r); return <Input size="small" className="mono" value={v} disabled/>; }},
     {title:'CG/CGK', width:68, align:'center', render:fenCell('cgcgk','CG/CGK')},
     {title:'偏倚', width:68, align:'center', render:fenCell('linear','偏倚')},
     {title:'线性', width:68, align:'center', render:fenCell('linear','线性')},
@@ -2286,19 +2280,19 @@ function PlanPage(){
     {title:'再现性', width:68, align:'center', render:fenCell('GRR','再现性')},
     {title:'KAPPA', width:68, align:'center', render:fenCell('KAPPA','KAPPA')},
     {title:'判定结果', width:110, render:(_,r)=>{ const recs=planRecords(d,r.id); const sv=sumVerdict(recs); return recs.length? <VerdictTag v={sv}/> : (r.result&&r.result!=='-'?<VerdictTag v={r.result}/>:<span className="tiny">待采集</span>); }},
-    {title:'状态', width:90, render:(_,r)=>{ const v=planStatusView(r.status); return <Tooltip title={TIPS.plan[v.text]||v.text}><Tag color={v.color} style={{display:'inline-flex',justifyContent:'center',minWidth:78,marginRight:0,textAlign:'center'}}>{v.text}</Tag></Tooltip>; }},
-    {title:'测量人数', width:90, render:(_,r)=>{ const recs=planRecords(d,r.id); return recs.length? <span className="mono tiny">{recs[0].numOps}</span> : (r.params? <span className="mono tiny">{r.params.ops}</span> : <span className="tiny">待定型</span>); }},
-    {title:'测量次数', width:90, render:(_,r)=>{ const recs=planRecords(d,r.id); return recs.length? <span className="mono tiny">{recs[0].numTrials}</span> : (r.params? <span className="mono tiny">{r.params.trials}</span> : <span className="tiny">待定型</span>); }},
-    {title:'样本数量', width:90, render:(_,r)=>{ const recs=planRecords(d,r.id); return recs.length? <span className="mono tiny">{recs[0].numParts}</span> : (r.params? <span className="mono tiny">{r.params.parts}</span> : <span className="tiny">待定型</span>); }},
+    {title:'状态', width:112, render:(_,r)=>{ const v=planStatusView(r.status); return <Select size="small" style={{width:98}} value={v.text} options={['待开始','进行中','已完成'].map(c=>({value:c,label:c}))} onChange={x=>{ const cand=STATUS_BACK[x]||[]; const cur=r.status; setF(r,'status', cand.indexOf(cur)>=0? cur : (x==='待开始'?'未定型':x==='已完成'?'已闭环':'待分析')); }}/>; }},
+    {title:'测量人数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <Input size="small" className="mono" value={String(recs.length? recs[0].numOps : (r.params&&r.params.ops!==undefined? r.params.ops : ''))} disabled/>; }},
+    {title:'测量次数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <Input size="small" className="mono" value={String(recs.length? recs[0].numTrials : (r.params&&r.params.trials!==undefined? r.params.trials : ''))} disabled/>; }},
+    {title:'样本数量', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <Input size="small" className="mono" value={String(recs.length? recs[0].numParts : (r.params&&r.params.parts!==undefined? r.params.parts : ''))} disabled/>; }},
     {title:'工序', width:84, render:(_,r)=>instCell(r,it=>it?<span>{it.process||'暂无'}</span>:'')},
     {title:'分辨力', width:86, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.res||'暂无'}</span>:'')},
-    {title:'数据类型', width:100, render:(_,r)=>editingId===r.id?<Select size="small" defaultValue={r.dataType||'计量型'} style={{width:92}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setDraft(d=>({...d,dataType:x}))}/>:<Tag color={(r.dataType||'计量型')==='计数型'?'purple':'blue'}>{r.dataType||'计量型'}</Tag>},
-    {title:'操作方法', width:160, render:(_,r)=>editingId===r.id?<Input size="small" defaultValue={r.opMethod||''} onChange={e=>setDraft(d=>({...d,opMethod:e.target.value}))}/>:<span>{r.opMethod||'《测量系统分析操作指导书》'}</span>},
-    {title:'部门', dataIndex:'dept', width:100, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,dept:e.target.value}))}/>:<span className="tiny">{v||'暂无'}</span>},
-    {title:'分厂', width:90, dataIndex:'subplant', render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,subplant:e.target.value}))}/>:<span>{v||'—'}</span>},
-    {title:'计划完成时间', dataIndex:'planDate', width:120, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,planDate:e.target.value}))}/>:<span className="mono tiny">{v||'暂无'}</span>},
-    {title:'实际完成时间', dataIndex:'actualDate', width:112, render:v=><span className="mono tiny">{v||'暂无'}</span>},
-    {title:'录入人', dataIndex:'editor', width:90, ellipsis:true}
+    {title:'数据类型', width:102, render:(_,r)=><Select size="small" value={r.dataType||'计量型'} style={{width:92}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setF(r,'dataType',x)}/>},
+    {title:'操作方法', width:170, render:(_,r)=><Input size="small" value={r.opMethod||'《测量系统分析操作指导书》'} onChange={e=>setF(r,'opMethod',e.target.value)}/>},
+    {title:'部门', dataIndex:'dept', width:100, render:(_,r)=><Input size="small" value={r.dept||''} onChange={e=>setF(r,'dept',e.target.value)}/>},
+    {title:'分厂', width:90, dataIndex:'subplant', render:(_,r)=><Input size="small" value={r.subplant||''} onChange={e=>setF(r,'subplant',e.target.value)}/>},
+    {title:'计划完成时间', dataIndex:'planDate', width:120, render:(_,r)=><Input size="small" className="mono" value={r.planDate||''} onChange={e=>setF(r,'planDate',e.target.value)}/>},
+    {title:'实际完成时间', dataIndex:'actualDate', width:116, render:v=><Input size="small" className="mono" value={v||''} disabled/>},
+    {title:'录入人', dataIndex:'editor', width:100, ellipsis:true, render:v=><Input size="small" value={v||''} disabled/>}
   ];
 
   return <div>
@@ -2318,8 +2312,8 @@ function PlanPage(){
         <Button type="primary" onClick={doQuery}>查询</Button>
         <Button onClick={resetQ}>重置</Button>
         <Space wrap size={8}>
-        <Button type="primary" disabled={!canDo(d.me.role,'edit')} onClick={()=>setBatchModal({mode:'inst'})}>创建MSA计划-器具</Button>
-        <Button type="primary" disabled={!canDo(d.me.role,'edit')} onClick={()=>setBatchModal({mode:'person'})}>创建MSA计划-人员</Button>
+        <Button type="primary" onClick={()=>setBatchModal({mode:'inst'})}>创建MSA计划-器具</Button>
+        <Button type="primary" onClick={()=>setBatchModal({mode:'person'})}>创建MSA计划-人员</Button>
       </Space>
       </Space>
     </Panel>
@@ -2330,7 +2324,6 @@ function PlanPage(){
     {convert && <ConvertModal plan={convert} onClose={()=>setConvert(null)}/>}
     {detail && <PlanDetail plan={detail} onClose={()=>setDetail(null)} onConvert={()=>{ setDetail(null); setConvert(detail); }}/>}
     {edit && <PlanEditModal plan={edit} onClose={()=>setEdit(null)}/>}
-
   </div>;
 }
 
@@ -2338,15 +2331,13 @@ function deletePlan(p){
   Modal.confirm({ title:'删除计划 '+p.id, content:'将同时删除该计划下的全部台账分析单，且不可恢复。确认删除？', okText:'删除', okButtonProps:{danger:true}, cancelText:'取消',
     onOk:()=>{ mut(s=>{ ['grr','kappa','linear','stability','cgcgk','resolution'].forEach(k=>{ s[k]=s[k].filter(r=>r.planId!==p.id); }); s.plans=s.plans.filter(x=>x.id!==p.id); logAction(s.me.name,'删除计划',p.id,'删除 MSA 计划及其台账分析单'); }); toast.ok('计划已删除'); } });
 }
-function PlanActions({r, onDetail, onEdit, editingId, startEdit, saveEdit, cancelEdit}){
+function PlanActions({r, onDetail, onSave}){
   const d=Store.get();
   const deletable = r.status==='未定型'||r.status==='待采集';
   return <Space size={0}>
-    {editingId===r.id
-      ? <><Button size="small" type="link" onClick={saveEdit}>保存</Button><Button size="small" type="link" onClick={cancelEdit}>取消</Button></>
-      : <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>startEdit(r)}>编辑</Button>}
+    <Button size="small" type="link" onClick={onSave}>保存</Button>
     <Button size="small" type="link" onClick={onDetail}>详情</Button>
-    <Button size="small" type="link" danger disabled={!deletable||!canDo(d.me.role,'edit')} onClick={()=>deletePlan(r)}>删除</Button>
+    <Button size="small" type="link" danger disabled={!deletable} onClick={()=>deletePlan(r)}>删除</Button>
   </Space>;
 }
 /* 分计划（取样计划）公共表格：一个 MSA 总计划下按分析方法生成的分计划列表 */
@@ -2952,8 +2943,6 @@ function CharPage(){
   const [modal,setModal]=useState(null);
   const [stdDetail,setStdDetail]=useState(null);
   const [stdModal,setStdModal]=useState(null);
-  const [editingId,setEditingId]=useState(null); const [draft,setDraft]=useState({});
-  const [stdEditingId,setStdEditingId]=useState(null); const [stdDraft,setStdDraft]=useState({});
   const [sfkw,setSfkw]=useState(''); const [stype,setStype]=useState(undefined); const [sstatus,setSstatus]=useState(undefined);
   const [sq,setSq]=useState({kw:'',type:undefined,status:undefined});
   const doQuery=()=>{ setKw(fkw2); setFType(ft2); setFStatus(fs2); setFQPlant(fPlant); setFQSub(fSub); setFCat2(fCat2); setFProc2(fProc2); };
@@ -2963,37 +2952,40 @@ function CharPage(){
     .filter(r=>!fCat2 || r.category===fCat2).filter(r=>!fProc2 || r.processName===fProc2)
     .filter(r=>!fQPlant || r.plant===fQPlant).filter(r=>!fQSub || r.subplant===fQSub);
   const methodView=(r)=>{ const ms=r.methods||[]; return ms.length? <Space size={2} wrap>{ms.map(m=><Tag key={m.method} color="blue" style={{marginRight:0}}>{METHOD_NAME(m.method)}</Tag>)}</Space> : <span className="tiny">—</span>; };
-  const startEdit=(r)=>{ setEditingId(r.id); setDraft({...r}); };
-  const saveEdit=()=>{ if(!editingId) return; mut(s=>{ const rec=s.characteristics.find(x=>x.id===editingId); if(rec) Object.assign(rec,draft); logAction(s.me.name,'编辑被测参数',editingId,'行内编辑 '+editingId+' '+(draft.name||'')); }); setEditingId(null); setDraft({}); toast.ok('已保存'); };
-  const startStdEdit=(r)=>{ setStdEditingId(r.id); setStdDraft({...r}); };
-  const saveStdEdit=()=>{ if(!stdEditingId) return; mut(s=>{ const rec=s.standards.find(x=>x.id===stdEditingId); if(rec) Object.assign(rec,stdDraft); logAction(s.me.name,'修订检验标准',stdEditingId,'行内修订 '+stdEditingId); }); setStdEditingId(null); setStdDraft({}); toast.ok('已保存'); };
-  const addCharRow=()=>{ const id='CHAR-2026-'+(d.characteristics.length+1); mut(s=>{ s.characteristics.unshift({id, name:'', type:'普通', category:'计量型', status:'启用', editor:s.me.name, editorDate:TODAY, plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, methods:[], partName:'', partNo:'', processName:'', unit:'', target:'', usl:'', lsl:''}); logAction(s.me.name,'新增被测参数',id,'列表新增空白行'); }); setEditingId(id); setDraft({id}); };
-  const addStdRow=()=>{ const id='STD-2026-'+(d.standards.length+1); mut(s=>{ s.standards.unshift({id, name:'', basis:'', method:'', type:'GRR判定', numOps:3, numTrials:3, numParts:10, version:'V1.0', status:'启用', editor:s.me.name, editorDate:TODAY, groupIds:[], note:''}); logAction(s.me.name,'新增检验标准',id,'列表新增空白行'); }); setStdEditingId(id); setStdDraft({id}); };
+  /* 行内字段即时写 store；只读字段渲染为禁用控件；保存常驻操作列；启用/停用用 Switch */
+  const setF=(r,k,v)=>{ mut(s=>{ const rec=s.characteristics.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
+  const setStdF=(r,k,v)=>{ mut(s=>{ const rec=s.standards.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
+  const saveRow=(r)=>{ mut(s=>{ const rec=s.characteristics.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=TODAY; } logAction(s.me.name,'编辑被测参数',r.id,'行内编辑 '+r.id+' '+(r.name||'')); }); toast.ok('已保存'); };
+  const saveStdRow=(r)=>{ mut(s=>{ const rec=s.standards.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=TODAY; } logAction(s.me.name,'修订检验标准',r.id,'行内修订 '+r.id); }); toast.ok('已保存'); };
+  const addCharRow=()=>{ const id='CHAR-2026-'+(d.characteristics.length+1); mut(s=>{ s.characteristics.unshift({id, name:'', type:'普通', category:'计量型', status:'启用', editor:s.me.name, editorDate:TODAY, plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, methods:[], partName:'', partNo:'', processName:'', unit:'', target:'', usl:'', lsl:''}); logAction(s.me.name,'新增被测参数',id,'列表新增空白行'); }); };
+  const addStdRow=()=>{ const id='STD-2026-'+(d.standards.length+1); mut(s=>{ s.standards.unshift({id, name:'', basis:'', method:'', type:'GRR判定', numOps:3, numTrials:3, numParts:10, version:'V1.0', status:'启用', editor:s.me.name, editorDate:TODAY, groupIds:[], note:''}); logAction(s.me.name,'新增检验标准',id,'列表新增空白行'); }); };
+  const charRef=(r)=>(d.plans||[]).some(p=>p.charId===r.id);
+  const stdRef=(r)=> (d.characteristics||[]).some(c=>(c.methods||[]).some(m=>m.standardId===r.id)) || (d.plans||[]).some(p=>p.standard===r.id);
+  const delChar=(r)=>{ Modal.confirm({title:'删除被测参数 — '+(r.name||r.id), content:'删除后相关关联关系一并解除。确认删除？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.characteristics=s.characteristics.filter(x=>x.id!==r.id); logAction(s.me.name,'删除被测参数',r.id,'删除被测参数 '+(r.name||'')); }); toast.ok('已删除'); } }); };
+  const delStd=(r)=>{ Modal.confirm({title:'删除检验标准 — '+r.id, content:'确认删除该检验标准？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.standards=s.standards.filter(x=>x.id!==r.id); logAction(s.me.name,'删除检验标准',r.id,'删除检验标准 '+r.id); }); toast.ok('已删除'); } }); };
   const cols=[
-    {title:'操作', width:150, fixed:'left', render:(_,r)=><Space size={4}>
+    {title:'操作', width:150, fixed:'left', render:(_,r)=><Space size={0}>
       <Button size="small" type="link" onClick={()=>setDetail(r)}>查看</Button>
-      {editingId===r.id
-        ? <><Button size="small" type="link" onClick={saveEdit}>保存</Button><Button size="small" type="link" onClick={()=>{setEditingId(null);setDraft({});}}>取消</Button></>
-        : <Button size="small" type="link" onClick={()=>startEdit(r)}>编辑</Button>}
-      <Button size="small" type="link" danger={r.status==='启用'} onClick={()=>{mut(s=>{const g=s.characteristics.find(x=>x.id===r.id);g.status=r.status==='启用'?'停用':'启用';logAction(s.me.name,r.status==='启用'?'停用特性':'启用特性',g.id,g.name);});toast.ok('已'+(r.status==='启用'?'停用':'启用'));}}>{r.status==='启用'?'停用':'启用'}</Button>
+      <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
+      <Button size="small" type="link" danger disabled={charRef(r)} onClick={()=>delChar(r)}>删除</Button>
     </Space>},
-    {title:'被测参数编号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
-    {title:'被测参数名称', dataIndex:'name', width:170, ellipsis:true, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,name:e.target.value}))}/>:<span>{v}</span>},
-    {title:'特性类型', dataIndex:'type', width:110, render:(v,r)=>editingId===r.id?<Select size="small" defaultValue={v} style={{width:100}} options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]} onChange={x=>setDraft(d=>({...d,type:x}))}/>:<Tooltip title={TIPS.charType[v]||v}><Tag color={v==='SC'?'red':v==='CC'?'orange':'default'} style={{minWidth:56,display:'inline-flex',justifyContent:'center',marginRight:0}}>{v}</Tag></Tooltip>},
-    {title:'零件名称', dataIndex:'partName', width:110, ellipsis:true, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,partName:e.target.value}))}/>:<span>{v||'—'}</span>},
-    {title:'零件编号', dataIndex:'partNo', width:100, ellipsis:true, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,partNo:e.target.value}))}/>:<span className="mono">{v||'—'}</span>},
-    {title:'工序', dataIndex:'processName', width:90, ellipsis:true, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,processName:e.target.value}))}/>:<span>{v||'—'}</span>},
-    {title:'特性类别', dataIndex:'category', width:100, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,category:e.target.value}))}/>:<span>{v||'—'}</span>},
-    {title:'检验方法', width:200, render:(_,r)=>editingId===r.id?<Select size="small" mode="multiple" defaultValue={(r.methods||[]).map(m=>m.method)} style={{width:190}} options={(d.anMethods||[]).map(m=>({value:m.code,label:METHOD_NAME(m.code)}))} onChange={x=>setDraft(d=>({...d,methods:x.map(v=>({method:v}))}))}/>:methodView(r)},
-    {title:'单位', dataIndex:'unit', width:70, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,unit:e.target.value}))}/>:<span className="mono">{v||'—'}</span>},
-    {title:'标准值', dataIndex:'target', width:90, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,target:e.target.value}))}/>:<span className="mono">{v||'—'}</span>},
-    {title:'上限USL', dataIndex:'usl', width:90, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,usl:e.target.value}))}/>:<span className="mono">{v||'—'}</span>},
-    {title:'下限LSL', dataIndex:'lsl', width:90, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,lsl:e.target.value}))}/>:<span className="mono">{v||'—'}</span>},
-    {title:'工厂', dataIndex:'plant', width:110, render:(v,r)=>editingId===r.id?<Select size="small" defaultValue={v} style={{width:100}} options={PLANTS_OPT} onChange={x=>setDraft(d=>({...d,plant:x}))}/>:<span>{v||'—'}</span>},
-    {title:'车间', dataIndex:'subplant', width:100, render:(v,r)=>editingId===r.id?<Select size="small" defaultValue={v} style={{width:90}} options={SUBPLANTS_OPT} onChange={x=>setDraft(d=>({...d,subplant:x}))}/>:<span>{v||'—'}</span>},
-    {title:'状态', dataIndex:'status', width:100, render:(v,r)=>editingId===r.id?<Select size="small" defaultValue={v} style={{width:90}} options={[{value:'启用',label:'启用'},{value:'停用',label:'停用'}]} onChange={x=>setDraft(d=>({...d,status:x}))}/>:<Tooltip title={TIPS.status2[v]||v}><Tag color={ENUM.statusColor[v]||'default'} style={{minWidth:56,display:'inline-flex',justifyContent:'center',marginRight:0}}>{v}</Tag></Tooltip>},
-    {title:'录入人', dataIndex:'editor', width:100},
-    {title:'录入时间', dataIndex:'editorDate', width:100, render:v=><span className="mono">{v}</span>}
+    {title:'被测参数编号', dataIndex:'id', width:130, render:v=><Input size="small" className="mono" value={v} disabled/>},
+    {title:'被测参数名称', dataIndex:'name', width:170, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
+    {title:'特性类型', dataIndex:'type', width:110, render:(_,r)=><Select size="small" value={r.type||'普通'} style={{width:100}} options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]} onChange={x=>setF(r,'type',x)}/>},
+    {title:'零件名称', dataIndex:'partName', width:110, ellipsis:true, render:(_,r)=><Input size="small" value={r.partName||''} onChange={e=>setF(r,'partName',e.target.value)}/>},
+    {title:'零件编号', dataIndex:'partNo', width:100, ellipsis:true, render:(_,r)=><Input size="small" className="mono" value={r.partNo||''} onChange={e=>setF(r,'partNo',e.target.value)}/>},
+    {title:'工序', dataIndex:'processName', width:90, ellipsis:true, render:(_,r)=><Input size="small" value={r.processName||''} onChange={e=>setF(r,'processName',e.target.value)}/>},
+    {title:'特性类别', dataIndex:'category', width:100, render:(_,r)=><Input size="small" value={r.category||''} onChange={e=>setF(r,'category',e.target.value)}/>},
+    {title:'检验方法', width:210, render:(_,r)=><Select size="small" mode="multiple" value={(r.methods||[]).map(m=>m.method)} style={{width:200}} options={(d.anMethods||[]).map(m=>({value:m.code,label:METHOD_NAME(m.code)}))} onChange={x=>setF(r,'methods',x.map(v=>({method:v})))}/>},
+    {title:'单位', dataIndex:'unit', width:70, render:(_,r)=><Input size="small" className="mono" value={r.unit||''} onChange={e=>setF(r,'unit',e.target.value)}/>},
+    {title:'标准值', dataIndex:'target', width:90, render:(_,r)=><Input size="small" className="mono" value={r.target||''} onChange={e=>setF(r,'target',e.target.value)}/>},
+    {title:'上限USL', dataIndex:'usl', width:90, render:(_,r)=><Input size="small" className="mono" value={r.usl||''} onChange={e=>setF(r,'usl',e.target.value)}/>},
+    {title:'下限LSL', dataIndex:'lsl', width:90, render:(_,r)=><Input size="small" className="mono" value={r.lsl||''} onChange={e=>setF(r,'lsl',e.target.value)}/>},
+    {title:'工厂', dataIndex:'plant', width:110, render:(_,r)=><Select size="small" value={r.plant||''} style={{width:100}} options={PLANTS_OPT} onChange={x=>setF(r,'plant',x)}/>},
+    {title:'车间', dataIndex:'subplant', width:100, render:(_,r)=><Select size="small" value={r.subplant||''} style={{width:90}} options={SUBPLANTS_OPT} onChange={x=>setF(r,'subplant',x)}/>},
+    {title:'状态', dataIndex:'status', width:100, render:(_,r)=><Switch size="small" checked={r.status==='启用'} checkedChildren="启" unCheckedChildren="停" onChange={x=>setF(r,'status',x?'启用':'停用')}/>},
+    {title:'录入人', dataIndex:'editor', width:100, render:v=><Input size="small" value={v||''} disabled/>},
+    {title:'录入时间', dataIndex:'editorDate', width:100, render:v=><Input size="small" className="mono" value={v||''} disabled/>}
   ];
   const stdRows=d.standards.filter(s=>
     (!sq.kw || (s.id+s.name+(s.partName||'')+(s.processName||'')+(s.basis||'')).toLowerCase().includes(sq.kw.toLowerCase())) &&
@@ -3001,19 +2993,18 @@ function CharPage(){
     (!sq.status || s.status===sq.status));
   const stdCols=[
     {title:'操作', width:110, render:(_,r)=><Space size={0}>
-      {stdEditingId===r.id
-        ? <><Button size="small" type="link" onClick={saveStdEdit}>保存</Button><Button size="small" type="link" onClick={()=>{setStdEditingId(null);setStdDraft({});}}>取消</Button></>
-        : <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>startStdEdit(r)}>修订</Button>}
+      <Button size="small" type="link" onClick={()=>saveStdRow(r)}>保存</Button>
+      <Button size="small" type="link" danger disabled={stdRef(r)} onClick={()=>delStd(r)}>删除</Button>
     </Space>},
-    {title:'检验标准', dataIndex:'basis', width:200, ellipsis:true, render:(v,r)=>stdEditingId===r.id?<Select size="small" showSearch optionFilterProp="label" style={{width:190}} placeholder="选择检验标准" defaultValue={(d.standards||[]).find(s=>s.basis===v)?(d.standards||[]).find(s=>s.basis===v).id:undefined} options={(d.standards||[]).map(s=>({value:s.id,label:(s.basis||s.name||s.id)}))} onChange={id=>{const st=(d.standards||[]).find(s=>s.id===id); setStdDraft(dd=>({...dd,basis:st?st.basis:id}));}}/>:<span>{v||'—'}</span>},
-    {title:'检验方法', dataIndex:'method', width:150, ellipsis:true, render:(v,r)=>stdEditingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setStdDraft(d=>({...d,method:e.target.value}))}/>:<span>{v||'—'}</span>},
-    {title:'测量人数', dataIndex:'numOps', width:80, render:(v,r)=>stdEditingId===r.id?<InputNumber size="small" min={1} defaultValue={v} style={{width:70}} onChange={x=>setStdDraft(d=>({...d,numOps:x}))}/>:<span>{v}</span>},
-    {title:'测量次数', dataIndex:'numTrials', width:80, render:(v,r)=>stdEditingId===r.id?<InputNumber size="small" min={1} defaultValue={v} style={{width:70}} onChange={x=>setStdDraft(d=>({...d,numTrials:x}))}/>:<span>{v}</span>},
-    {title:'样本数量', dataIndex:'numParts', width:80, render:(v,r)=>stdEditingId===r.id?<InputNumber size="small" min={1} defaultValue={v} style={{width:70}} onChange={x=>setStdDraft(d=>({...d,numParts:x}))}/>:<span>{v}</span>},
-    {title:'分析类型', width:110, render:(_,r)=>stdEditingId===r.id?<Select size="small" defaultValue={r.type} style={{width:100}} options={['GRR判定','NDC判定','KAPPA判定','有效性判定','偏倚/线性判定','稳定性判定'].map(c=>({value:c,label:c}))} onChange={x=>setStdDraft(d=>({...d,type:x}))}/>:<Tag color="blue">{r.type}</Tag>},
+    {title:'检验标准', dataIndex:'basis', width:200, ellipsis:true, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" style={{width:190}} placeholder="选择检验标准" value={r.basis||undefined} options={(d.standards||[]).map(s=>({value:s.id,label:(s.basis||s.name||s.id)}))} onChange={id=>{const st=(d.standards||[]).find(s=>s.id===id); setStdF(r,'basis',st?st.basis:id);}}/>},
+    {title:'检验方法', dataIndex:'method', width:150, ellipsis:true, render:(_,r)=><Input size="small" value={r.method||''} onChange={e=>setStdF(r,'method',e.target.value)}/>},
+    {title:'测量人数', dataIndex:'numOps', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numOps||''} style={{width:70}} onChange={x=>setStdF(r,'numOps',x)}/>},
+    {title:'测量次数', dataIndex:'numTrials', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numTrials||''} style={{width:70}} onChange={x=>setStdF(r,'numTrials',x)}/>},
+    {title:'样本数量', dataIndex:'numParts', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numParts||''} style={{width:70}} onChange={x=>setStdF(r,'numParts',x)}/>},
+    {title:'分析类型', width:110, render:(_,r)=><Select size="small" value={r.type||'GRR判定'} style={{width:100}} options={['GRR判定','NDC判定','KAPPA判定','有效性判定','偏倚/线性判定','稳定性判定'].map(c=>({value:c,label:c}))} onChange={x=>setStdF(r,'type',x)}/>},
     {title:'绑定器具组', width:130, render:(_,r)=>{ const gs=(r.groupIds||[]).map(gid=>(d.instGroups||[]).find(g=>g.id===gid)).filter(Boolean); return gs.length? <span className="tiny">{gs.map(g=>g.name).join('、')}</span> : <span className="tiny">暂无</span>; }},
-    {title:'备注', dataIndex:'note', width:160, ellipsis:true, render:(v,r)=>stdEditingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setStdDraft(d=>({...d,note:e.target.value}))}/>:<span>{v||'—'}</span>},
-    {title:'状态', dataIndex:'status', width:100, render:(s,r)=>stdEditingId===r.id?<Select size="small" defaultValue={s} style={{width:90}} options={[{value:'启用',label:'启用'},{value:'停用',label:'停用'}]} onChange={x=>setStdDraft(d=>({...d,status:x}))}/>:<StatusTag s={s}/>}
+    {title:'备注', dataIndex:'note', width:160, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setStdF(r,'note',e.target.value)}/>},
+    {title:'状态', dataIndex:'status', width:100, render:(_,r)=><Switch size="small" checked={r.status==='启用'} checkedChildren="启" unCheckedChildren="停" onChange={x=>setStdF(r,'status',x?'启用':'停用')}/>}
   ];
   return <div>
     <PageHead title="被测参数维护"/>
@@ -3033,12 +3024,12 @@ function CharPage(){
         <Button type="primary" onClick={doQuery}>查询</Button>
         <Button onClick={doReset}>重置</Button>
         <Button type="primary" onClick={addCharRow}>新增特性</Button>
-        {canDo(d.me.role,'edit') && <ImportBtn title="被测参数维护"/>}
+        <ImportBtn title="被测参数维护"/>
         <Button>导出</Button>
       </Space>
     </Panel>
     <Panel title={'被测参数列表（'+rows.length+' 条）'}>
-      <Table rowKey="id" size="small" dataSource={rows} scroll={{x:1650}} pagination={{pageSize:10,showTotal:t=>'共 '+t+' 条'}} columns={cols}/>
+      <Table rowKey="id" size="small" dataSource={rows} scroll={{x:1750}} pagination={{pageSize:10,showTotal:t=>'共 '+t+' 条'}} columns={cols}/>
     </Panel>
     <Panel title={'检验标准列表（'+stdRows.length+' 条）'}>
       <Space wrap style={{marginBottom:10}}>
@@ -3047,12 +3038,11 @@ function CharPage(){
         <Select allowClear placeholder="标准状态" style={{width:140}} value={sstatus} options={['启用','停用'].map(c=>({value:c,label:c}))} onChange={setSstatus}/>
         <Button type="primary" onClick={()=>setSq({kw:sfkw,type:stype,status:sstatus})}>查询</Button>
         <Button onClick={()=>{setSfkw('');setStype(undefined);setSstatus(undefined);setSq({kw:'',type:undefined,status:undefined});}}>重置</Button>
-        <Button type="primary" disabled={!canDo(d.me.role,'edit')} onClick={addStdRow}>新增标准</Button>
+        <Button type="primary" onClick={addStdRow}>新增标准</Button>
       </Space>
       <Table rowKey="id" size="small" dataSource={stdRows} scroll={{x:1250}} pagination={false} columns={stdCols}/>
     </Panel>
-    {detail && <CharDetail rec={detail} onClose={()=>setDetail(null)} onEdit={(r)=>{setDetail(null);setModal({record:r});}}/>}
-    {modal && <CharModal value={modal} onClose={()=>setModal(null)}/>}
+    {detail && <CharDetail rec={detail} onClose={()=>setDetail(null)}/>}
     {stdDetail && <Drawer title={stdDetail.id+' '+(stdDetail.name||'')} width={720} open onClose={()=>setStdDetail(null)}>
       <Descriptions column={2} size="small" bordered items={[
         {key:'标准编号', label:'标准编号', children:<span className="mono">{stdDetail.id}</span>},
@@ -3176,18 +3166,21 @@ function SamplingPage(){
   const [jModal,setJModal]=useState(null);
   const [aModal,setAModal]=useState(null);
   const [selMethod,setSelMethod]=useState();
-  const [mEditingId,setMEditingId]=useState(null); const [mDraft,setMDraft]=useState({});
-  const [jEditingId,setJEditingId]=useState(null); const [jDraft,setJDraft]=useState({});
-  const [cEditingId,setCEditingId]=useState(null); const [cDraft,setCDraft]=useState({});
-  const addMethodRow=()=>{ const code='M'+(d.anMethods.length+1); mut(s=>{ s.anMethods.unshift({code, name:'', needSample:'是', canMerge:'否', mergeWith:'', defaultType:'计量型', status:'启用', note:''}); s.samplingRules.unshift({id:'SR-0'+(s.samplingRules.length+1), method:code, category:'其他', sampleDefault:10, sampleMin:1, sampleMax:30, opsDefault:3, opsMin:1, opsMax:5, trialsDefault:3, trialsMin:2, trialsMax:5, useOps:true, readings:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, note:''}); logAction(s.me.name,'新增分析方法',code,'列表新增空白行'); }); setMEditingId(code); setMDraft({code, rule:{}}); };
-  const addJudgeRow=()=>{ const id='JR-0'+(d.judgeRules.length+1); mut(s=>{ s.judgeRules.unshift({id, method:'', condition:'', verdict:'', note:''}); logAction(s.me.name,'新增判断规则',id,'列表新增空白行'); }); setJEditingId(id); setJDraft({id}); };
-  const addParamRow=()=>{ const id='CAL-'+(d.calParams.length+1).toString().padStart(3,'0'); mut(s=>{ s.calParams.unshift({id, name:'', value:''}); logAction(s.me.name,'新增计算参数',id,'列表新增空白行'); }); setCEditingId(id); setCDraft({id}); };
-  const saveCEdit=()=>{ if(!cEditingId) return; mut(s=>{ const rec=s.calParams.find(x=>x.id===cEditingId); if(rec) Object.assign(rec,cDraft); logAction(s.me.name,'编辑计算参数',cEditingId,'行内编辑 '+cEditingId); }); setCEditingId(null); setCDraft({}); toast.ok('已保存'); };
-  const delParamRow=(id)=>{ mut(s=>{ s.calParams=s.calParams.filter(x=>x.id!==id); logAction(s.me.name,'删除计算参数',id,'删除 '+id); }); if(cEditingId===id){ setCEditingId(null); setCDraft({}); } toast.ok('已删除'); };
-  const startMEdit=(r)=>{ setMEditingId(r.code); setMDraft({...r, rule: r.rule?{...r.rule}:null}); };
-  const saveMEdit=()=>{ if(!mEditingId) return; mut(s=>{ const rec=s.anMethods.find(x=>x.code===mEditingId); if(rec) Object.assign(rec, mDraft, {rule:undefined}); if(mDraft.rule){ const rule=s.samplingRules.find(x=>String(x.method).toLowerCase()===String(mEditingId).toLowerCase()); if(rule) Object.assign(rule, mDraft.rule); } logAction(s.me.name,'编辑分析方法',mEditingId,'行内编辑 '+mEditingId+' '+(mDraft.name||'')); }); setMEditingId(null); setMDraft({}); toast.ok('已保存'); };
-  const startJEdit=(r)=>{ setJEditingId(r.id); setJDraft({...r}); };
-  const saveJEdit=()=>{ if(!jEditingId) return; mut(s=>{ const rec=s.judgeRules.find(x=>x.id===jEditingId); if(rec) Object.assign(rec,jDraft); logAction(s.me.name,'编辑判断规则',jEditingId,'行内编辑 '+jEditingId); }); setJEditingId(null); setJDraft({}); toast.ok('已保存'); };
+  const addMethodRow=()=>{ const code='M'+(d.anMethods.length+1); mut(s=>{ s.anMethods.unshift({code, name:'', needSample:'是', canMerge:'否', mergeWith:'', defaultType:'计量型', status:'启用', note:''}); s.samplingRules.unshift({id:'SR-0'+(s.samplingRules.length+1), method:code, category:'其他', sampleDefault:10, sampleMin:1, sampleMax:30, opsDefault:3, opsMin:1, opsMax:5, trialsDefault:3, trialsMin:2, trialsMax:5, useOps:true, readingsMin:'', readingsMax:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, note:''}); logAction(s.me.name,'新增分析方法',code,'列表新增空白行'); }); };
+  const addJudgeRow=()=>{ const id='JR-0'+(d.judgeRules.length+1); mut(s=>{ s.judgeRules.unshift({id, method:'', condition:'', verdict:'', note:''}); logAction(s.me.name,'新增判断规则',id,'列表新增空白行'); }); };
+  const addParamRow=()=>{ const id='CAL-'+(d.calParams.length+1).toString().padStart(3,'0'); mut(s=>{ s.calParams.unshift({id, name:'', value:''}); logAction(s.me.name,'新增计算参数',id,'列表新增空白行'); }); };
+  /* 行内字段即时写 store；保存常驻操作列；启用/停用用 Switch */
+  const setMF=(r,k,v)=>{ mut(s=>{ const rec=s.anMethods.find(x=>x.code===r.code); if(rec) rec[k]=v; }); };
+  const setRF=(r,k,v)=>{ mut(s=>{ const rec=s.samplingRules.find(x=>String(x.method).toLowerCase()===String(r.code).toLowerCase()); if(rec) rec[k]=v; }); };
+  const setJF=(r,k,v)=>{ mut(s=>{ const rec=s.judgeRules.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
+  const setCF=(r,k,v)=>{ mut(s=>{ const rec=s.calParams.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
+  const saveMRow=(r)=>{ mut(s=>{ const rec=s.anMethods.find(x=>x.code===r.code); if(rec){ rec.editor=s.me.name; rec.editorDate=TODAY; } logAction(s.me.name,'编辑分析方法',r.code,'行内编辑 '+r.code+' '+(r.name||'')); }); toast.ok('已保存'); };
+  const saveJRow=(r)=>{ mut(s=>{ const rec=s.judgeRules.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=TODAY; } logAction(s.me.name,'编辑判断规则',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
+  const saveCRow=(r)=>{ mut(s=>{ const rec=s.calParams.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=TODAY; } logAction(s.me.name,'编辑计算参数',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
+  const mRef=(r)=>(d.judgeRules||[]).some(j=>String(j.method).toLowerCase()===String(r.code).toLowerCase());
+  const delMRow=(r)=>{ Modal.confirm({title:'删除分析方法 — '+r.code, content:'删除后其取样规则一并删除。确认删除？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.anMethods=s.anMethods.filter(x=>x.code!==r.code); s.samplingRules=s.samplingRules.filter(x=>String(x.method).toLowerCase()!==String(r.code).toLowerCase()); logAction(s.me.name,'删除分析方法',r.code,'删除 '+(r.name||r.code)); }); toast.ok('已删除'); } }); };
+  const delJRow=(r)=>{ Modal.confirm({title:'删除判断规则 — '+r.id, content:'确认删除该判断规则？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.judgeRules=s.judgeRules.filter(x=>x.id!==r.id); logAction(s.me.name,'删除判断规则',r.id,'删除 '+r.id); }); toast.ok('已删除'); } }); };
+  const delCRow=(r)=>{ Modal.confirm({title:'删除计算参数 — '+r.id, content:'确认删除该计算参数？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.calParams=s.calParams.filter(x=>x.id!==r.id); logAction(s.me.name,'删除计算参数',r.id,'删除 '+r.id); }); toast.ok('已删除'); } }); };
   const doQuery=()=>{ setKw(fkw2); setFNeed(fn2); setFSt(fs2); setFQPlant(fPlant); setFQSub(fSub); setFMethod(fMethod2); setFMerge(fMerge2); };
   const doReset=()=>{ setFkw2(''); setFn2(); setFs2(); setFPlant(); setFSub(); setKw(''); setFNeed(); setFSt(); setFQPlant(); setFQSub(); setFMethod(); setFMerge(); setFMethod2(); setFMerge2(); };
   /* 分析方法列表（合并取样规则字段：方法字段全保留，取样规则按方法关联拼入） */
@@ -3200,53 +3193,54 @@ function SamplingPage(){
     .filter(m=>!fQPlant || !m.rule || m.rule.plant===fQPlant)
     .filter(m=>!fQSub || !m.rule || m.rule.subplant===fQSub);
   const mergeCols=[
-    {title:'操作', width:90, fixed:'left', render:(_,r)=>mEditingId===r.code
-      ? <><Button size="small" type="link" onClick={saveMEdit}>保存</Button><Button size="small" type="link" onClick={()=>{setMEditingId(null);setMDraft({});}}>取消</Button></>
-      : <Button size="small" type="link" onClick={()=>startMEdit(r)}>编辑</Button>},
-    {title:'方法代码', dataIndex:'code', width:110, render:v=><span className="mono">{v}</span>},
-    {title:'方法名称', dataIndex:'name', width:220, render:(v,r)=>mEditingId===r.code?<Input size="small" defaultValue={v} onChange={e=>setMDraft(d=>({...d,name:e.target.value}))}/>:<span>{STRIP_PAREN(v)}</span>},
-    {title:'是否需要取样', dataIndex:'needSample', width:110, render:(v,r)=>mEditingId===r.code?<Select size="small" defaultValue={v} style={{width:90}} options={[{value:'是',label:'是'},{value:'否',label:'否'}]} onChange={x=>setMDraft(d=>({...d,needSample:x}))}/>:<span>{v}</span>},
-    {title:'可否合并取样', dataIndex:'canMerge', width:110, render:(v,r)=>mEditingId===r.code?<Select size="small" defaultValue={v} style={{width:90}} options={[{value:'是',label:'是'},{value:'否',label:'否'}]} onChange={x=>setMDraft(d=>({...d,canMerge:x}))}/>:<span>{v||'—'}</span>},
-    {title:'方法组', dataIndex:'mergeWith', width:120, render:(v,r)=>mEditingId===r.code?<Input size="small" placeholder="如：尺寸类合并组" defaultValue={v} onChange={e=>setMDraft(d=>({...d,mergeWith:e.target.value}))}/>:<span>{v||'—'}</span>},
-    {title:'默认适用', dataIndex:'defaultType', width:100, render:(v,r)=>mEditingId===r.code?<Input size="small" defaultValue={v} onChange={e=>setMDraft(d=>({...d,defaultType:e.target.value}))}/>:<span>{v||'—'}</span>},
-    {title:'状态', dataIndex:'status', width:100, render:(v,r)=>mEditingId===r.code?<Select size="small" defaultValue={v} style={{width:90}} options={[{value:'启用',label:'启用'},{value:'停用',label:'停用'}]} onChange={x=>setMDraft(d=>({...d,status:x}))}/>:<Tag color={v==='启用'?'green':'default'} style={{marginRight:0}}>{v}</Tag>},
-    {title:'默认样品数', width:100, render:(_,r)=>mEditingId===r.code&&r.rule?<InputNumber size="small" min={0} defaultValue={r.rule.sampleDefault} style={{width:88}} onChange={x=>setMDraft(d=>({...d,rule:{...(d.rule||{}),sampleDefault:x}}))}/>:<span className="mono">{r.rule?r.rule.sampleDefault:'—'}</span>},
-    {title:'默认人数', width:90, render:(_,r)=>mEditingId===r.code&&r.rule?<InputNumber size="small" min={0} defaultValue={r.rule.opsDefault} style={{width:80}} onChange={x=>setMDraft(d=>({...d,rule:{...(d.rule||{}),opsDefault:x}}))}/>:<span className="mono">{r.rule?r.rule.opsDefault:'—'}</span>},
-    {title:'默认次数', width:90, render:(_,r)=>mEditingId===r.code&&r.rule?<InputNumber size="small" min={0} defaultValue={r.rule.trialsDefault} style={{width:80}} onChange={x=>setMDraft(d=>({...d,rule:{...(d.rule||{}),trialsDefault:x}}))}/>:<span className="mono">{r.rule?r.rule.trialsDefault:'—'}</span>},
-    {title:'样品数下限', width:92, render:(_,r)=>mEditingId===r.code&&r.rule?<InputNumber size="small" min={0} defaultValue={r.rule.sampleMin} style={{width:82}} onChange={x=>setMDraft(d=>({...d,rule:{...(d.rule||{}),sampleMin:x}}))}/>:<span className="mono">{r.rule?r.rule.sampleMin:'—'}</span>},
-    {title:'样品数上限', width:92, render:(_,r)=>mEditingId===r.code&&r.rule?<InputNumber size="small" min={0} defaultValue={r.rule.sampleMax} style={{width:82}} onChange={x=>setMDraft(d=>({...d,rule:{...(d.rule||{}),sampleMax:x}}))}/>:<span className="mono">{r.rule?r.rule.sampleMax:'—'}</span>},
-    {title:'人数下限', width:86, render:(_,r)=>mEditingId===r.code&&r.rule?<InputNumber size="small" min={0} defaultValue={r.rule.opsMin} style={{width:76}} onChange={x=>setMDraft(d=>({...d,rule:{...(d.rule||{}),opsMin:x}}))}/>:<span className="mono">{r.rule?r.rule.opsMin:'—'}</span>},
-    {title:'人数上限', width:86, render:(_,r)=>mEditingId===r.code&&r.rule?<InputNumber size="small" min={0} defaultValue={r.rule.opsMax} style={{width:76}} onChange={x=>setMDraft(d=>({...d,rule:{...(d.rule||{}),opsMax:x}}))}/>:<span className="mono">{r.rule?r.rule.opsMax:'—'}</span>},
-    {title:'次数下限', width:86, render:(_,r)=>mEditingId===r.code&&r.rule?<InputNumber size="small" min={0} defaultValue={r.rule.trialsMin} style={{width:76}} onChange={x=>setMDraft(d=>({...d,rule:{...(d.rule||{}),trialsMin:x}}))}/>:<span className="mono">{r.rule?r.rule.trialsMin:'—'}</span>},
-    {title:'次数上限', width:86, render:(_,r)=>mEditingId===r.code&&r.rule?<InputNumber size="small" min={0} defaultValue={r.rule.trialsMax} style={{width:76}} onChange={x=>setMDraft(d=>({...d,rule:{...(d.rule||{}),trialsMax:x}}))}/>:<span className="mono">{r.rule?r.rule.trialsMax:'—'}</span>},
-    {title:'读数下限', width:92, render:(_,r)=>mEditingId===r.code&&r.rule?<Input size="small" defaultValue={r.rule.readingsMin} placeholder="如 60" onChange={e=>setMDraft(d=>({...d,rule:{...(d.rule||{}),readingsMin:e.target.value}}))}/>:<span className="mono">{r.rule?(r.rule.readingsMin||'—'):'—'}</span>},
-    {title:'读数上限', width:92, render:(_,r)=>mEditingId===r.code&&r.rule?<Input size="small" defaultValue={r.rule.readingsMax} placeholder="如 90" onChange={e=>setMDraft(d=>({...d,rule:{...(d.rule||{}),readingsMax:e.target.value}}))}/>:<span className="mono">{r.rule?(r.rule.readingsMax||'—'):'—'}</span>},
-    {title:'工厂', width:100, render:(_,r)=>mEditingId===r.code&&r.rule?<Select size="small" defaultValue={r.rule.plant} style={{width:90}} options={PLANTS_OPT} onChange={x=>setMDraft(d=>({...d,rule:{...(d.rule||{}),plant:x}}))}/>:<span>{r.rule?r.rule.plant:'—'}</span>},
-    {title:'车间', width:90, render:(_,r)=>mEditingId===r.code&&r.rule?<Select size="small" defaultValue={r.rule.subplant} style={{width:80}} options={SUBPLANTS_OPT} onChange={x=>setMDraft(d=>({...d,rule:{...(d.rule||{}),subplant:x}}))}/>:<span>{r.rule?r.rule.subplant:'—'}</span>},
-    {title:'取样策略说明', width:300, ellipsis:true, render:(_,r)=>mEditingId===r.code&&r.rule?<Input size="small" defaultValue={r.rule.note} onChange={e=>setMDraft(d=>({...d,rule:{...(d.rule||{}),note:e.target.value}}))}/>:<span>{r.rule?r.rule.note:'—'}</span>},
-    {title:'方法备注', dataIndex:'note', width:200, ellipsis:true, render:(v,r)=>mEditingId===r.code?<Input size="small" defaultValue={v} onChange={e=>setMDraft(d=>({...d,note:e.target.value}))}/>:<span>{v||'—'}</span>}
+    {title:'操作', width:110, fixed:'left', render:(_,r)=><Space size={0}>
+      <Button size="small" type="link" onClick={()=>saveMRow(r)}>保存</Button>
+      <Button size="small" type="link" danger disabled={mRef(r)} onClick={()=>delMRow(r)}>删除</Button>
+    </Space>},
+    {title:'方法代码', dataIndex:'code', width:110, render:v=><Input size="small" className="mono" value={v} disabled/>},
+    {title:'方法名称', dataIndex:'name', width:190, render:(_,r)=><Input size="small" value={STRIP_PAREN(r.name)} onChange={e=>setMF(r,'name',e.target.value)}/>},
+    {title:'是否需要取样', dataIndex:'needSample', width:104, render:(_,r)=><Select size="small" value={r.needSample||'是'} style={{width:92}} options={[{value:'是',label:'是'},{value:'否',label:'否'}]} onChange={x=>setMF(r,'needSample',x)}/>},
+    {title:'可否合并取样', dataIndex:'canMerge', width:104, render:(_,r)=><Select size="small" value={r.canMerge||'否'} style={{width:92}} options={[{value:'是',label:'是'},{value:'否',label:'否'}]} onChange={x=>setMF(r,'canMerge',x)}/>},
+    {title:'方法组', dataIndex:'mergeWith', width:120, render:(_,r)=><Input size="small" placeholder="如：尺寸类合并组" value={r.mergeWith||''} onChange={e=>setMF(r,'mergeWith',e.target.value)}/>},
+    {title:'默认适用', dataIndex:'defaultType', width:100, render:(_,r)=><Input size="small" value={r.defaultType||''} onChange={e=>setMF(r,'defaultType',e.target.value)}/>},
+    {title:'状态', dataIndex:'status', width:86, render:(_,r)=><Switch size="small" checked={r.status==='启用'} checkedChildren="启" unCheckedChildren="停" onChange={x=>setMF(r,'status',x?'启用':'停用')}/>},
+    {title:'默认样品数', width:92, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.sampleDefault:''} style={{width:82}} onChange={x=>setRF(r,'sampleDefault',x)}/>},
+    {title:'默认人数', width:84, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.opsDefault:''} style={{width:74}} onChange={x=>setRF(r,'opsDefault',x)}/>},
+    {title:'默认次数', width:84, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.trialsDefault:''} style={{width:74}} onChange={x=>setRF(r,'trialsDefault',x)}/>},
+    {title:'样品数下限', width:88, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.sampleMin:''} style={{width:78}} onChange={x=>setRF(r,'sampleMin',x)}/>},
+    {title:'样品数上限', width:88, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.sampleMax:''} style={{width:78}} onChange={x=>setRF(r,'sampleMax',x)}/>},
+    {title:'人数下限', width:82, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.opsMin:''} style={{width:72}} onChange={x=>setRF(r,'opsMin',x)}/>},
+    {title:'人数上限', width:82, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.opsMax:''} style={{width:72}} onChange={x=>setRF(r,'opsMax',x)}/>},
+    {title:'次数下限', width:82, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.trialsMin:''} style={{width:72}} onChange={x=>setRF(r,'trialsMin',x)}/>},
+    {title:'次数上限', width:82, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.trialsMax:''} style={{width:72}} onChange={x=>setRF(r,'trialsMax',x)}/>},
+    {title:'读数下限', width:84, render:(_,r)=><Input size="small" value={r.rule?(r.rule.readingsMin||''):''} placeholder="如 60" onChange={e=>setRF(r,'readingsMin',e.target.value)}/>},
+    {title:'读数上限', width:84, render:(_,r)=><Input size="small" value={r.rule?(r.rule.readingsMax||''):''} placeholder="如 90" onChange={e=>setRF(r,'readingsMax',e.target.value)}/>},
+    {title:'工厂', width:92, render:(_,r)=><Select size="small" value={r.rule?r.rule.plant:''} style={{width:82}} options={PLANTS_OPT} onChange={x=>setRF(r,'plant',x)}/>},
+    {title:'车间', width:86, render:(_,r)=><Select size="small" value={r.rule?r.rule.subplant:''} style={{width:76}} options={SUBPLANTS_OPT} onChange={x=>setRF(r,'subplant',x)}/>},
+    {title:'取样策略说明', width:220, ellipsis:true, render:(_,r)=><Input size="small" value={r.rule?r.rule.note:''} onChange={e=>setRF(r,'note',e.target.value)}/>},
+    {title:'方法备注', dataIndex:'note', width:180, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setMF(r,'note',e.target.value)}/>}
   ];
   const jRows=(d.judgeRules||[]).filter(r=>(!kw || (r.id+r.method+r.verdict).toLowerCase().includes(kw.toLowerCase())))
     .filter(r=>!selMethod || String(r.method).toLowerCase()===String(selMethod).toLowerCase());
   const judgeCols=[
-    {title:'操作', width:90, fixed:'left', render:(_,r)=>jEditingId===r.id
-      ? <><Button size="small" type="link" onClick={saveJEdit}>保存</Button><Button size="small" type="link" onClick={()=>{setJEditingId(null);setJDraft({});}}>取消</Button></>
-      : <Button size="small" type="link" onClick={()=>startJEdit(r)}>编辑</Button>},
-    {title:'规则编号', dataIndex:'id', width:100, render:v=><span className="mono">{v}</span>},
-    {title:'所属方法', dataIndex:'method', width:130, render:(v,r)=>jEditingId===r.id?<Select size="small" defaultValue={v} style={{width:110}} options={(d.anMethods||[]).map(m=>({value:m.code,label:STRIP_PAREN(m.name)}))} onChange={x=>setJDraft(d=>({...d,method:x}))}/>:<span>{METHOD_NAME(v)}</span>},
-    {title:'判定条件', dataIndex:'condition', width:320, ellipsis:true, render:(v,r)=>jEditingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setJDraft(d=>({...d,condition:e.target.value}))}/>:<span>{v}</span>},
-    {title:'判定结论', dataIndex:'verdict', width:150, render:(v,r)=>jEditingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setJDraft(d=>({...d,verdict:e.target.value}))}/>:<span>{v}</span>},
-    {title:'说明', dataIndex:'note', width:460, ellipsis:true, render:(v,r)=>jEditingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setJDraft(d=>({...d,note:e.target.value}))}/>:<span>{v||'—'}</span>}
+    {title:'操作', width:110, fixed:'left', render:(_,r)=><Space size={0}>
+      <Button size="small" type="link" onClick={()=>saveJRow(r)}>保存</Button>
+      <Button size="small" type="link" danger onClick={()=>delJRow(r)}>删除</Button>
+    </Space>},
+    {title:'规则编号', dataIndex:'id', width:100, render:v=><Input size="small" className="mono" value={v} disabled/>},
+    {title:'所属方法', dataIndex:'method', width:130, render:(_,r)=><Select size="small" value={r.method||undefined} style={{width:110}} options={(d.anMethods||[]).map(m=>({value:m.code,label:STRIP_PAREN(m.name)}))} onChange={x=>setJF(r,'method',x)}/>},
+    {title:'判定条件', dataIndex:'condition', width:320, ellipsis:true, render:(_,r)=><Input size="small" value={r.condition||''} onChange={e=>setJF(r,'condition',e.target.value)}/>},
+    {title:'判定结论', dataIndex:'verdict', width:150, render:(_,r)=><Input size="small" value={r.verdict||''} onChange={e=>setJF(r,'verdict',e.target.value)}/>},
+    {title:'说明', dataIndex:'note', width:460, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setJF(r,'note',e.target.value)}/>}
   ];
   const calCols=[
-    {title:'操作', width:150, fixed:'left', render:(_,r)=><Space size={0}>
-      {cEditingId===r.id
-        ? <><Button size="small" type="link" onClick={saveCEdit}>保存</Button><Button size="small" type="link" onClick={()=>{setCEditingId(null);setCDraft({});}}>取消</Button></>
-        : <><Button size="small" type="link" onClick={()=>{setCEditingId(r.id);setCDraft({...r});}}>编辑</Button><Button size="small" type="link" danger onClick={()=>delParamRow(r.id)}>删除</Button></>}
+    {title:'操作', width:110, fixed:'left', render:(_,r)=><Space size={0}>
+      <Button size="small" type="link" onClick={()=>saveCRow(r)}>保存</Button>
+      <Button size="small" type="link" danger onClick={()=>delCRow(r)}>删除</Button>
     </Space>},
-    {title:'参数编号', dataIndex:'id', width:110, render:v=><span className="mono">{v}</span>},
-    {title:'参数名称', dataIndex:'name', width:320, ellipsis:true, render:(v,r)=>cEditingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setCDraft(dd=>({...dd,name:e.target.value}))}/>:<span>{v||'—'}</span>},
-    {title:'参数值', dataIndex:'value', width:160, render:(v,r)=>cEditingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setCDraft(dd=>({...dd,value:e.target.value}))}/>:<span className="mono">{v||'—'}</span>}
+    {title:'参数编号', dataIndex:'id', width:110, render:v=><Input size="small" className="mono" value={v} disabled/>},
+    {title:'参数名称', dataIndex:'name', width:320, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setCF(r,'name',e.target.value)}/>},
+    {title:'参数值', dataIndex:'value', width:160, render:(_,r)=><Input size="small" className="mono" value={r.value||''} onChange={e=>setCF(r,'value',e.target.value)}/>}
   ];
   return <div>
     <PageHead title="抽样方法维护"/>
@@ -3262,13 +3256,13 @@ function SamplingPage(){
       <Space wrap size={10}>
         <Button type="primary" onClick={doQuery}>查询</Button>
         <Button onClick={doReset}>重置</Button>
-        {canDo(d.me.role,'edit') && <ImportBtn title="抽样方法维护"/>}
+        <ImportBtn title="抽样方法维护"/>
         <Button>导出</Button>
       </Space>
     </Panel>
     <Panel title="分析方法列表">
       <div style={{marginBottom:8, textAlign:'left'}}><Button type="primary" onClick={addMethodRow}>新增分析方法</Button></div>
-      <Table rowKey="code" size="small" dataSource={mRows} onRow={r=>({onClick:()=>setSelMethod(r.code), style: selMethod===r.code? {background:'#e6f4ff'} : undefined})} scroll={{x:2450}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}} columns={mergeCols}/>
+      <Table rowKey="code" size="small" dataSource={mRows} onRow={r=>({onClick:()=>setSelMethod(r.code), style: selMethod===r.code? {background:'#e6f4ff'} : undefined})} scroll={{x:2750}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}} columns={mergeCols}/>
     </Panel>
     <Panel title="判断规则 / 计算参数">
       <Tabs defaultActiveKey="judge" items={[
@@ -3463,10 +3457,11 @@ function SampleLibPage(){
   const [q,setQ]=useState({kw:'',type:undefined,st:undefined,std:undefined,plant:undefined,sub:undefined});
   const [modal,setModal]=useState(null);
   const [logOpen,setLogOpen]=useState(null);
-  const [editingId,setEditingId]=useState(null); const [draft,setDraft]=useState({});
-  const startEdit=(r)=>{ setEditingId(r.id); setDraft({...r}); };
-  const saveEdit=()=>{ if(!editingId) return; mut(s=>{ const rec=s.sampleLib.find(x=>x.id===editingId); if(rec) Object.assign(rec,draft); logAction(s.me.name,'编辑样本',editingId,'行内编辑 '+editingId+' '+(draft.name||'')); }); setEditingId(null); setDraft({}); toast.ok('已保存'); };
-  const addRow=()=>{ const id='SPL-'+String((d.sampleLib||[]).length+1).padStart(3,'0'); mut(s=>{ s.sampleLib.unshift({id, name:'', type:'标准件', partNo:'', partName:'', charDim:'', nominal:'', refValue:'', unit:'mm', standardId:'', source:'', expireDate:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, status:'启用', note:''}); logAction(s.me.name,'新增样本',id,'列表新增空白行'); }); setEditingId(id); setDraft({id}); };
+  /* 行内字段即时写 store；保存常驻操作列；启用/停用用 Switch；日志按钮保留在行上 */
+  const setF=(r,k,v)=>{ mut(s=>{ const rec=s.sampleLib.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
+  const saveRow=(r)=>{ mut(s=>{ const rec=s.sampleLib.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=TODAY; } logAction(s.me.name,'编辑样本',r.id,'行内编辑 '+r.id+' '+(r.name||'')); }); toast.ok('已保存'); };
+  const addRow=()=>{ const id='SPL-'+String((d.sampleLib||[]).length+1).padStart(3,'0'); mut(s=>{ s.sampleLib.unshift({id, name:'', type:'标准件', partNo:'', partName:'', charDim:'', nominal:'', refValue:'', unit:'mm', standardId:'', source:'', expireDate:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, status:'启用', note:''}); logAction(s.me.name,'新增样本',id,'列表新增空白行'); }); };
+  const delRow=(r)=>{ Modal.confirm({title:'删除样本 — '+(r.name||r.id), content:'确认删除该样本？删除后不可恢复。', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.sampleLib=s.sampleLib.filter(x=>x.id!==r.id); logAction(s.me.name,'删除样本',r.id,'删除 '+(r.name||'')); }); toast.ok('已删除'); } }); };
   const rows=(d.sampleLib||[]).filter(r=>(!q.kw||(r.id+r.name+(r.partNo||'')+(r.charDim||'')).toLowerCase().includes(q.kw.toLowerCase())))
     .filter(r=>!q.type||r.type===q.type).filter(r=>!q.st||r.status===q.st)
     .filter(r=>!q.std||r.standardId===q.std)
@@ -3474,25 +3469,24 @@ function SampleLibPage(){
   const resetQ=()=>{ setFkw('');setFtype();setFst();setFStd();setFPlant();setFSub(); setQ({kw:'',type:undefined,st:undefined,std:undefined,plant:undefined,sub:undefined}); };
   const cols=[
     {title:'操作', width:160, fixed:'left', render:(_,r)=><Space size={0}>
-      {editingId===r.id
-        ? <><Button size="small" type="link" onClick={saveEdit}>保存</Button><Button size="small" type="link" onClick={()=>{setEditingId(null);setDraft({});}}>取消</Button></>
-        : <Button size="small" type="link" onClick={()=>startEdit(r)}>编辑</Button>}
-      <Button size="small" type="link" danger={r.status==='启用'} onClick={()=>{mut(s=>{const g=s.sampleLib.find(x=>x.id===r.id);g.status=r.status==='启用'?'停用':'启用';});toast.ok('已'+(r.status==='启用'?'停用':'启用'));}}>{r.status==='启用'?'停用':'启用'}</Button>
-      <Button size="small" type="link" onClick={()=>setLogOpen(r.id)}>日志</Button></Space>},
-    {title:'样本编号', dataIndex:'id', width:110, render:v=><span className="mono">{v}</span>},
-    {title:'样本名称', dataIndex:'name', width:190, ellipsis:true, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,name:e.target.value}))}/>:<span>{v}</span>},
-    {title:'样本类型', dataIndex:'type', width:110, render:(v,r)=>editingId===r.id?<Select size="small" defaultValue={v} style={{width:92}} options={[{value:'标准件',label:'标准件'},{value:'生产件',label:'生产件'}]} onChange={x=>setDraft(d=>({...d,type:x}))}/>:<Tag color={v==='标准件'?'blue':'green'}>{v}</Tag>},
-    {title:'零件号', dataIndex:'partNo', width:100, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,partNo:e.target.value}))}/>:<span className="mono">{v||'—'}</span>},
-    {title:'零件名称', dataIndex:'partName', width:110, ellipsis:true, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,partName:e.target.value}))}/>:<span>{v||'—'}</span>},
-    {title:'对应被测项目', dataIndex:'charDim', width:150, ellipsis:true, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,charDim:e.target.value}))}/>:<span>{v||'—'}</span>},
-    {title:'标准值', dataIndex:'nominal', width:100, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,nominal:e.target.value}))}/>:<span className="mono">{(v&&v!=='—')?v:'待维护'}</span>},
-    {title:'真值', dataIndex:'refValue', width:110, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,refValue:e.target.value}))}/>:<span className="mono">{(v&&v!=='—')?v:'待维护'}</span>},
-    {title:'单位', dataIndex:'unit', width:70, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,unit:e.target.value}))}/>:<span className="mono">{v||'—'}</span>},
-    {title:'有效期至', dataIndex:'expireDate', width:110, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,expireDate:e.target.value}))}/>:<span className="mono tiny">{v}</span>},
-    {title:'工厂', dataIndex:'plant', width:110, render:(v,r)=>editingId===r.id?<Select size="small" defaultValue={v} style={{width:100}} options={PLANTS_OPT} onChange={x=>setDraft(d=>({...d,plant:x}))}/>:<span>{v||'—'}</span>},
-    {title:'车间', dataIndex:'subplant', width:100, render:(v,r)=>editingId===r.id?<Select size="small" defaultValue={v} style={{width:90}} options={SUBPLANTS_OPT} onChange={x=>setDraft(d=>({...d,subplant:x}))}/>:<span>{v||'—'}</span>},
-    {title:'状态', dataIndex:'status', width:100, render:(v,r)=>editingId===r.id?<Select size="small" defaultValue={v} style={{width:90}} options={[{value:'启用',label:'启用'},{value:'停用',label:'停用'}]} onChange={x=>setDraft(d=>({...d,status:x}))}/>:<Tooltip title={TIPS.status2[v]||v}><Tag color={ENUM.statusColor[v]||'default'} style={{minWidth:56,display:'inline-flex',justifyContent:'center',marginRight:0}}>{v}</Tag></Tooltip>},
-    {title:'说明', dataIndex:'note', width:240, ellipsis:true, render:(v,r)=>editingId===r.id?<Input size="small" defaultValue={v} onChange={e=>setDraft(d=>({...d,note:e.target.value}))}/>:<span>{v||'—'}</span>}
+      <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
+      <Button size="small" type="link" onClick={()=>setLogOpen(r.id)}>日志</Button>
+      <Button size="small" type="link" danger onClick={()=>delRow(r)}>删除</Button>
+    </Space>},
+    {title:'样本编号', dataIndex:'id', width:110, render:v=><Input size="small" className="mono" value={v} disabled/>},
+    {title:'样本名称', dataIndex:'name', width:190, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
+    {title:'样本类型', dataIndex:'type', width:104, render:(_,r)=><Select size="small" value={r.type||'标准件'} style={{width:92}} options={[{value:'标准件',label:'标准件'},{value:'生产件',label:'生产件'}]} onChange={x=>setF(r,'type',x)}/>},
+    {title:'零件号', dataIndex:'partNo', width:100, render:(_,r)=><Input size="small" className="mono" value={r.partNo||''} onChange={e=>setF(r,'partNo',e.target.value)}/>},
+    {title:'零件名称', dataIndex:'partName', width:110, ellipsis:true, render:(_,r)=><Input size="small" value={r.partName||''} onChange={e=>setF(r,'partName',e.target.value)}/>},
+    {title:'对应被测项目', dataIndex:'charDim', width:150, ellipsis:true, render:(_,r)=><Input size="small" value={r.charDim||''} onChange={e=>setF(r,'charDim',e.target.value)}/>},
+    {title:'标准值', dataIndex:'nominal', width:100, render:(_,r)=><Input size="small" className="mono" value={(r.nominal&&r.nominal!=='—')?r.nominal:''} placeholder="待维护" onChange={e=>setF(r,'nominal',e.target.value)}/>},
+    {title:'真值', dataIndex:'refValue', width:110, render:(_,r)=><Input size="small" className="mono" value={(r.refValue&&r.refValue!=='—')?r.refValue:''} placeholder="待维护" onChange={e=>setF(r,'refValue',e.target.value)}/>},
+    {title:'单位', dataIndex:'unit', width:70, render:(_,r)=><Input size="small" className="mono" value={r.unit||''} onChange={e=>setF(r,'unit',e.target.value)}/>},
+    {title:'有效期至', dataIndex:'expireDate', width:110, render:(_,r)=><Input size="small" className="mono" value={r.expireDate||''} onChange={e=>setF(r,'expireDate',e.target.value)}/>},
+    {title:'工厂', dataIndex:'plant', width:110, render:(_,r)=><Select size="small" value={r.plant||''} style={{width:100}} options={PLANTS_OPT} onChange={x=>setF(r,'plant',x)}/>},
+    {title:'车间', dataIndex:'subplant', width:100, render:(_,r)=><Select size="small" value={r.subplant||''} style={{width:90}} options={SUBPLANTS_OPT} onChange={x=>setF(r,'subplant',x)}/>},
+    {title:'状态', dataIndex:'status', width:86, render:(_,r)=><Switch size="small" checked={r.status==='启用'} checkedChildren="启" unCheckedChildren="停" onChange={x=>setF(r,'status',x?'启用':'停用')}/>},
+    {title:'说明', dataIndex:'note', width:240, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setF(r,'note',e.target.value)}/>}
   ];
   return <div>
     <PageHead title="样本库管理"/>
@@ -3511,7 +3505,7 @@ function SampleLibPage(){
         <Button type="primary" onClick={()=>setQ({kw:fkw,type:ftype,st:fst,std:fStd,plant:fPlant,sub:fSub})}>查询</Button>
         <Button onClick={resetQ}>重置</Button>
         <Button type="primary" onClick={addRow}>新增样本</Button>
-        {canDo(d.me.role,'edit') && <ImportBtn title="样本库管理"/>}
+        <ImportBtn title="样本库管理"/>
         <Button>导出</Button>
       </Space>
     </Panel>
