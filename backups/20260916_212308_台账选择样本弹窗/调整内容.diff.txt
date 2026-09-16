@@ -1,0 +1,69 @@
+--- index_备份_台账选择样本前.html
++++ index.html
+@@ -4134,11 +4134,13 @@
+   const goResult=(r)=>{ if(kind==='grr'){ GrrOpenId=r.id; NavAPI.go('grr'); } else if(kind==='kappa'){ KpaOpenId=r.id; NavAPI.go('kappa'); } else { AnlOpen={kind,id:r.id}; NavAPI.go(CFG.result); } };
+   const recParams=(r)=> kind==='grr'? (r.numOps+'人 × '+r.numTrials+'次 × '+r.numParts+'件') : kind==='kappa'? (r.numApp+'人 × '+r.numSamples+'件') : ANA_CFG[kind].params(r);
+   const [anlRec,setAnlRec]=useState(null); const [opsRec,setOpsRec]=useState(null); const [prevRec,setPrevRec]=useState(null);
++  const [pickRec,setPickRec]=useState(null); const [pickedMap,setPickedMap]=useState({});
+   const [selKeys,setSelKeys]=useState([]);
+   const selRows=rows.filter(r=>selKeys.includes(r.id));
+   const [auditOpen,setAuditOpen]=useState(false); const [auditPerson,setAuditPerson]=useState(undefined);
+   const cols=[
+-    {title:'操作', width:560, fixed:'left', render:(_,r)=><Space size={0} wrap>
++    {title:'操作', width:680, fixed:'left', render:(_,r)=><Space size={0} wrap>
++      <Button size="small" type="link" onClick={()=>setPickRec(r)}>样本/人员选择</Button>
+       <Button size="small" type="link" onClick={()=>setAuditOpen(true)}>审核</Button>
+       <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')||r.reviewStatus!=='待分析'} onClick={()=>setAnlRec(r)}>分析</Button>
+       <Button size="small" type="link" onClick={()=>goResult(r)}>查看结果</Button>
+@@ -4146,6 +4148,7 @@
+       <Button size="small" type="link" onClick={()=>setOpsRec(r)}>操作人</Button>
+       <Button size="small" type="link" onClick={()=>{}}>预览</Button>
+       <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')||r.reviewStatus!=='待采集'} onClick={()=>{DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind);}}>录入数据</Button>
++      {pickedMap[r.id]&&<Tooltip title={'样本：'+((pickedMap[r.id].samples||[]).map(s=>s.id).join('、')||'—')+'；人员：'+((pickedMap[r.id].ops||[]).join('、')||'—')}><Tag color="blue">{(pickedMap[r.id].samples||[]).length}样本/{(pickedMap[r.id].ops||[]).length}人</Tag></Tooltip>}
+     </Space>},
+     {title:'台账编号', dataIndex:'id', width:115, render:(v,r)=><span className="row-link mono" onClick={()=>goResult(r)}>{v}</span>},
+     {title:'责任人', dataIndex:'analyst', width:90},
+@@ -4195,11 +4198,43 @@
+     {anlRec && <AnalyzeModal rec={anlRec} kind={kind} onClose={()=>setAnlRec(null)}/>}
+     {opsRec && <OpsModal rec={opsRec} kind={kind} onClose={()=>setOpsRec(null)}/>}
+     {prevRec && <ImportPreviewModal rec={prevRec} kind={kind} onClose={()=>setPrevRec(null)}/>}
++    {pickRec && <SamplePersonModal rec={pickRec} picked={pickedMap[pickRec.id]} onOk={(samples,ops)=>{ setPickedMap(p=>{const n={...p}; n[pickRec.id]={samples:samples,ops:ops}; return n;}); setPickRec(null); }} onClose={()=>setPickRec(null)}/>}
+     {auditOpen && <Modal cancelText="取消" title="审核 · 选择审核人员" open okText="确认" onOk={()=>{ if(!auditPerson){ toast.warn('请选择审核人员'); return; } toast.ok('已提交审核：'+auditPerson); setAuditOpen(false); setAuditPerson(undefined); }} onCancel={()=>{ setAuditOpen(false); setAuditPerson(undefined); }} destroyOnClose width={420}>
+       <div style={{marginBottom:4}}><span className="flt-label" style={{fontSize:14,color:'#333333'}}>审核人员</span></div>
+       <Select style={{width:'100%'}} placeholder="请选择审核人员" value={auditPerson} options={['王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(n=>({value:n,label:n}))} onChange={setAuditPerson}/>
+     </Modal>}
+   </div>;
++}
++function SamplePersonModal({rec, picked, onOk, onClose}){
++  const d=Store.get();
++  const OPS=['王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'];
++  const [kw,setKw]=useState('');
++  const [selS,setSelS]=useState((picked&&picked.samples?picked.samples:[]).map(s=>s.id));
++  const [selP,setSelP]=useState(picked&&picked.ops?picked.ops:[]);
++  const samples=(d.sampleLib||[]).filter(s=>!kw||(s.id+s.name+(s.partNo||'')+(s.charDim||'')).toLowerCase().includes(kw.toLowerCase()));
++  return <Modal cancelText="取消" title={'样本/人员选择 · '+(rec?rec.id:'')} open width={900} okText="确定" destroyOnClose
++    onOk={()=>{ if(!selS.length){ toast.warn('请至少选择一个样本'); return; } if(!selP.length){ toast.warn('请至少选择一名人员'); return; }
++      const chosenSamples=samples.filter(s=>selS.includes(s.id)); onOk(chosenSamples, selP); toast.ok('已选择 '+chosenSamples.length+' 个样本、'+selP.length+' 名人员'); }}
++    onCancel={onClose}>
++    <div style={{marginBottom:8,fontSize:14,color:'#333333'}}>第一步：选择本次使用的样本（来自样本库，可多选）</div>
++    <Input.Search allowClear placeholder="搜索 样本编号/名称/零件号/被测参数" style={{width:340,marginBottom:8}} value={kw} onChange={e=>setKw(e.target.value)}/>
++    <Table size="small" rowKey="id" dataSource={samples} pagination={{pageSize:5,showTotal:t=>'共 '+t+' 条'}} scroll={{y:210}}
++      rowSelection={{selectedRowKeys:selS, onChange:setSelS}}
++      columns={[
++        {title:'样本编号', dataIndex:'id', width:90},
++        {title:'样本名称', dataIndex:'name', width:190, ellipsis:true},
++        {title:'零件号', dataIndex:'partNo', width:90, render:(v)=><span>{v||'—'}</span>},
++        {title:'被测参数', dataIndex:'charDim', width:150, ellipsis:true},
++        {title:'真值', dataIndex:'refValue', width:90, render:(v)=><span>{v||'—'}</span>},
++        {title:'有效期至', dataIndex:'expireDate', width:100, render:(v)=><span>{v||'—'}</span>},
++        {title:'状态', dataIndex:'status', width:70, render:(v)=><Tag color={v==='启用'?'green':'default'}>{v}</Tag>}
++      ]}/>
++    <Divider style={{margin:'12px 0'}}/>
++    <div style={{marginBottom:8,fontSize:14,color:'#333333'}}>第二步：选择操作/分析人员（可多选）</div>
++    <Space wrap>
++      {OPS.map(n=>{ const on=selP.includes(n); return <Tag key={n} color={on?'blue':'default'} style={{cursor:'pointer',padding:'3px 12px',fontSize:13}} onClick={()=>setSelP(on?selP.filter(x=>x!==n):[...selP,n])}>{n}</Tag>; })}
++    </Space>
++  </Modal>;
+ }
+ function ImportPreviewModal({rec, kind, onClose}){
+   const build=()=>{
