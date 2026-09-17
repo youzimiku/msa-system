@@ -1,0 +1,43 @@
+# -*- coding: utf-8 -*-
+"""提取待删说明的精确文本"""
+import io, re
+s = io.open(r'C:\Users\youzi\Doubao\chats\2026-09-03\new-chat\MSA系统\index.html', encoding='utf-8').read()
+
+def show(anchor, before=120, after=260, tag=''):
+    i = s.find(anchor)
+    print('==', tag or anchor[:40], '@', i, '==')
+    if i >= 0:
+        print(s[max(0,i-before):i+after].replace('\n', '⏎'))
+    print()
+
+show('查询 / 重置 对所有列表生效')
+show('为组配置成员器具')
+show('增删改：新增器具 / 登记校准 在此')
+show('登记校准按校准周期自动生成到期计划')
+show('检验标准定义在「零件/工序」上')
+show('样本覆盖过程变差')
+show('分析记录由 MSA 计划按分析方法自动生成')
+show('{CFG.name}台账：')
+show('GRR 记录由 MSA 计划定型自动生成')
+show('KAPPA 记录由 MSA 计划定型自动生成')
+show('创建流程：先选零件')
+show('仅用于筛选下方器具清单')
+show('以下字段将写入创建的 MSA 计划')
+show('本次创建：1 个检验标准')
+show('可用下方筛选辅助挑样')
+show('已默认勾选，可改')
+show('仅「在用 / 待校准」且「无未闭环计划」的器具可纳入')
+show('未勾选（定型时按分析类型自动带出')
+show('为周期自动选样准备')
+show('该标准按工序「')
+show('自动从测量对象解析')
+show('业务速查默认值')
+show('自动解析自测量对象')
+show('条待采集记录；提交后自动计算')
+show('取样规则（固化）')
+show('EV=K1·R̄')
+show('结论取最差档')
+show('评审修正后的业务规则')
+show('演示版通过右上角')
+show('banner.desc')
+show('一个计划可支持多个分析方法', 200, 160, 'taskdrawer')

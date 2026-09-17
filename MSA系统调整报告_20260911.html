@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MSA 系统调整报告（2026-09-11）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@4.24.15/dist/antd.min.css"/>
+<style>
+  body{margin:0;background:#f5f5f5;font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;}
+  .wrap{max-width:1200px;margin:0 auto;padding:24px 16px 60px;}
+  .card{background:#fff;border-radius:8px;padding:20px 24px;margin-bottom:16px;border:1px solid #e8e8e8;}
+  .sec{color:#333333;font-size:16px;font-weight:600;margin:0 0 12px;padding-left:10px;border-left:4px solid #1677ff;}
+  .sub{color:#666666;font-size:14px;line-height:1.7;margin:4px 0;}
+  .note{color:#666666;font-size:14px;line-height:1.7;}
+  .tag-ok{background:#f6ffed;border:1px solid #b7eb8f;color:#389e0d;padding:2px 10px;border-radius:4px;font-size:14px;white-space:nowrap;}
+  .tag-del{background:#fff1f0;border:1px solid #ffa39e;color:#cf1322;padding:2px 10px;border-radius:4px;font-size:14px;white-space:nowrap;}
+  .tag-add{background:#e6f4ff;border:1px solid #91caff;color:#0958d9;padding:2px 10px;border-radius:4px;font-size:14px;white-space:nowrap;}
+  .tag-mod{background:#fffbe6;border:1px solid #ffe58f;color:#d48806;padding:2px 10px;border-radius:4px;font-size:14px;white-space:nowrap;}
+  .tag-wait{background:#f5f5f5;border:1px solid #d9d9d9;color:#666666;padding:2px 10px;border-radius:4px;font-size:14px;white-space:nowrap;}
+  table{width:100%;border-collapse:collapse;font-size:14px;color:#333333;}
+  th{background:#fafafa;text-align:left;padding:8px 10px;border:1px solid #e8e8e8;font-weight:600;white-space:nowrap;color:#333333;}
+  td{padding:8px 10px;border:1px solid #e8e8e8;vertical-align:top;color:#333333;line-height:1.6;}
+  td.tiny{color:#666666;font-size:14px;}
+  .h1{font-size:20px;color:#333333;font-weight:700;margin:0 0 4px;}
+  .meta{color:#666666;font-size:14px;margin-bottom:16px;}
+  .btn{display:inline-block;padding:5px 16px;border-radius:6px;font-size:14px;text-decoration:none;}
+  .btn-primary{background:#1677ff;color:#ffffff;}
+  .btn-ghost{border:1px solid #1677ff;color:#1677ff;background:#fff;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1 class="h1">MSA 测量系统分析管理系统 · 调整报告</h1>
+    <div class="meta">报告日期：2026-09-11 ｜ 基准方案：MSA系统评审会纪要及调整方案_20260910晚（19:44 版，16 项） ｜ 调整前已完整备份：MSA系统_backup_20260911_101042</div>
+  </div>
+
+  <div class="card">
+    <h2 class="sec">一、按 19:44 方案执行的调整（字段级）</h2>
+    <table>
+      <tr><th style="width:130px">页面/模块</th><th style="width:80px">类型</th><th>字段级变更</th></tr>
+      <tr>
+        <td>计量器具台账</td>
+        <td><span class="tag-add">新增</span></td>
+        <td>新增字段：<b>所属器具组（量具组，引用器具组编码）</b>、<b>是否做 MSA</b>、<b>下次复评日期</b>、<b>复评提前提醒（天）</b>。分辨力/分辨率统一为“分辨力”。自加的“精度”字段已去掉。厂商、品牌、使用部门、校准机构等原字段保留。</td>
+      </tr>
+      <tr>
+        <td>器具组维护（新增页面）</td>
+        <td><span class="tag-add">新增</span></td>
+        <td>独立页面：组编码、组名称、组类型（普通/卡帕人员组）、检验周期（月）、上次执行时间、下次提醒时间、执行记录/日志；支持导入按钮。器具组完成自动带入台账与周期性复评计划生成（MSAP-2026-010 周期任务种子）。</td>
+      </tr>
+      <tr>
+        <td>质量特性维护</td>
+        <td><span class="tag-add">新增/修改</span></td>
+        <td>“所属零件”改为<b>零件名称</b>；新增<b>零件编号</b>字段。移除独立的“关联检验标准”字段，改为特性主表下挂<b>检验方法子表</b>（一个特性对应多方法：GRR/KAPPA/线性/稳定性/CgCgk，每方法关联一个检验标准）。</td>
+      </tr>
+      <tr>
+        <td>检验标准列表</td>
+        <td><span class="tag-del">删除</span></td>
+        <td>列表移到质量特性页下方；删除字段：检验项目号、检验项目名、工序名称、零件名称、分辨率、单位、标准值、目标上限值、目标下限值、关联质量特性、适用器具类别。</td>
+      </tr>
+      <tr>
+        <td>抽样方法维护</td>
+        <td><span class="tag-mod">合并</span></td>
+        <td>取样规则与分析方法列表合并展示（分析方法为主表核心参数：方法代码、方法名称、是否需要取样、取样规则文本）；判断规则保留为下方子表（新增判断规则按钮）。</td>
+      </tr>
+      <tr>
+        <td>样本库管理（合并原样本管理）</td>
+        <td><span class="tag-add">新增/修改</span></td>
+        <td>新增：<b>对应被测项目（质量特性维度）</b>、<b>名义值/标准值</b>、<b>工厂</b>、<b>车间</b>、<b>导入按钮</b>；<b>关联检验标准</b>。移除：目标上限值、目标下限值。样本类型（标准件/生产件）保留。样本管理/校准管理页面移除。</td>
+      </tr>
+      <tr>
+        <td>MSA 计划（创建弹窗）</td>
+        <td><span class="tag-mod">重构</span></td>
+        <td>创建流程改为：选择被测参数 → 自动带出关联检验方法（每方法带出对应检验标准 + 取样参数：人数/次数/样本数，可修改）→ 勾选器具（同一被测参数可多台批量生成，每台生成一个计划）→ 提交后每方法生成一条台账“待采集”记录。检验标准与质量特性穿透关联，不再手选检验标准。工厂/车间自动带出。</td>
+      </tr>
+      <tr>
+        <td>MSA 计划（列表）</td>
+        <td><span class="tag-mod">调整</span></td>
+        <td>恢复 7 个分项列：CG/CGK、偏倚、线性、稳定性、重复性、再现性、KAPPA（绿勾=已做该分析，灰横线=未做）；新增“任务来源”列（周期任务/临时任务）；判定结果列为汇总结论。删除：分析类型列、分计划列、台账跳转按钮。</td>
+      </tr>
+      <tr>
+        <td>五类台账（GRR/KAPPA/线性/稳定性/CgCgk）</td>
+        <td><span class="tag-mod">调整</span></td>
+        <td>操作人/操作件字段按方法区分：GRR/KAPPA 选人（多选）；线性/偏移选件（多选）；稳定性 标准件1+操作人1+工位1；Cg/Cgk 选件（多选）+选人（多选）。新增“手动分析”入口（样本录入/导入完成后手动分析）、“导入”按钮。状态流：待采集→待分析→待审核→已批准/需整改→已闭环/已关闭。</td>
+      </tr>
+      <tr>
+        <td>全局</td>
+        <td><span class="tag-add">新增</span></td>
+        <td>所有基础数据页面（台账/器具组/质量特性/抽样方法/样本库）增加工厂/车间字段与查询条件；增加导入/导出按钮（仅按钮）。</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2 class="sec">二、本次测试中发现并修复的问题（精确到字段/逻辑）</h2>
+    <table>
+      <tr><th style="width:240px">问题</th><th style="width:90px">位置</th><th>修复说明</th></tr>
+      <tr><td>创建计划弹窗“分析方法 undefined（不取样，直接录入）”</td><td>创建弹窗</td><td>charMethods 直接取特性 methods（对象数组）未映射为方法代码，ANAL_SHORT[m] 取不到。修复：map 为方法代码数组并过滤空值。</td></tr>
+      <tr><td>线性/偏移检验标准带错（显示 STD-MSA-001）</td><td>创建弹窗</td><td>stdsOf 与 pickChar 未按特性 methods 的 standardId 精确匹配，且 pickChar 内 ms 未映射。修复：stdsOf 优先取特性 methods[].standardId；pickChar 将 methods 映射为代码后再遍历。</td></tr>
+      <tr><td>Cg/Cgk 取样参数误用 GRR 标准参数（显示 3 次）</td><td>创建弹窗</td><td>标准类型不匹配方法时不应套用标准参数。修复：仅当标准类型与方法一致（stdTypeOf 命中）时用标准 numOps/numTrials/numParts，否则用方法默认（Cg/Cgk 50 次、线性 5 标准件×12 次）。</td></tr>
+      <tr><td>特性 methods 结构漂移（旧 localStorage 字符串数组残留）</td><td>启动重建</td><td>SEED_CHARS 引用模块级 characteristics 恒为空（特性数组是 buildSeed 内部变量）。修复：模块级中转变量 G_SEED_CHARS + 调整 init 顺序（先 buildSeed 再 applyFieldDefaults），旧数据 methods 统一锚定为对象数组。</td></tr>
+      <tr><td>REBUILD 删除用户新建台账记录（GRR-2026-005 等）</td><td>启动重建</td><td>台账重建按种子 id 集合过滤，把用户新建记录删掉。修复：仅对种子记录做对齐（Object.assign），保留全部记录；种子状态/结论仍锚定。</td></tr>
+      <tr><td>计划判定结果空结论显示“可接受”</td><td>MSA 计划列表</td><td>sumVerdict 对空数组 v.every() 返回 true 误判“可接受”。修复：无结论直接返回“待采集”。</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2 class="sec">三、完整测试验证结果（2026-09-11）</h2>
+    <div class="note">
+      1. <b>创建计划全链路</b>：选特性“轴径 φ50±0.05（SC）” → 自动带出 GRR（10 件×3 人×3 次，STD-MSA-001）、线性/偏移（5 标准件×12 次，STD-MSA-005）、Cg/Cgk（50 次，STD-MSA-001）→ 勾选数显卡尺 → 提交 → 生成计划 MSAP-2026-011 及 GRR/LIN/CG 三条“待采集”台账，对象/器具/标准/参数一致。<br/>
+      2. <b>计划删除</b>：仅“待开始”状态可删，删除级联删除该计划下全部台账分析单，不可恢复（有确认提示）。<br/>
+      3. <b>GRR 录入→分析</b>：录入页填演示数据 → 校验“数据完整” → 保存（待分析）→ 手动分析（%GRR 12.8%、NDC 10、有条件接受）→ 提交审核（待审核）。<br/>
+      4. <b>7 分项列</b>：MSAP-2026-001（GRR/LIN/CG 已批准）显示 5 个绿色对勾（CG/CGK、偏倚、线性、重复性、再现性），未做项显示灰横线。<br/>
+      5. <b>页面渲染</b>：5 台账页 + 5 数据录入页 + 5 分析结果页 + 5 基础数据页 + MSA 计划页，共 21 个页面全部渲染正常、无 console 报错。<br/>
+      6. <b>种子对齐</b>：reload 后种子记录状态/结论锚定回基线（如 GRR-2026-003 回到“待采集”），用户新建记录不被删除。
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="sec">四、待确认 / 延后项（方案标注，本次未执行）</h2>
+    <table>
+      <tr><th style="width:240px">事项</th><th style="width:110px">状态</th><th>说明</th></tr>
+      <tr><td>华为判读规则</td><td><span class="tag-wait">待确认</span></td><td>需华为操作指导书提供结构化规则后重新设计判断规则维护界面与结论逻辑。</td></tr>
+      <tr><td>图表交互升级</td><td><span class="tag-wait">延后</span></td><td>分析结果图表交互增强，方案标注延后。</td></tr>
+      <tr><td>报告对齐 Excel 模板</td><td><span class="tag-wait">延后</span></td><td>报告导出对齐 MCU6 焊接 KAPPA 报告模板，延后 3–4 周。</td></tr>
+      <tr><td>可视化看板</td><td><span class="tag-wait">延后</span></td><td>后续迭代。</td></tr>
+      <tr><td>操作指导书跳转</td><td><span class="tag-wait">二期</span></td><td>二期实现。</td></tr>
+      <tr><td>IQC 自动抓取</td><td><span class="tag-wait">不开发</span></td><td>评审结论不开发。</td></tr>
+      <tr><td>特性类型扩展</td><td><span class="tag-wait">待确认</span></td><td>维持 SC/CC/普通 三级，特性级别代码未定暂不扩展。</td></tr>
+    </table>
+  </div>
+</div>
+</body>
+</html>

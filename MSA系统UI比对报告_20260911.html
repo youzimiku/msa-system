@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MSA 系统 UI 前后版本比对报告（2026-09-11）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@4.24.15/dist/antd.min.css"/>
+<style>
+  body{margin:0;background:#f5f5f5;font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;}
+  .wrap{max-width:1280px;margin:0 auto;padding:24px 16px 60px;}
+  .card{background:#fff;border-radius:8px;padding:20px 24px;margin-bottom:16px;border:1px solid #e8e8e8;}
+  .sec{color:#333333;font-size:16px;font-weight:600;margin:0 0 12px;padding-left:10px;border-left:4px solid #1677ff;}
+  .meta{color:#666666;font-size:14px;line-height:1.7;}
+  table{width:100%;border-collapse:collapse;font-size:14px;color:#333333;}
+  th{background:#fafafa;text-align:left;padding:8px 10px;border:1px solid #e8e8e8;font-weight:600;white-space:nowrap;color:#333333;}
+  td{padding:8px 10px;border:1px solid #e8e8e8;vertical-align:top;color:#333333;line-height:1.7;}
+  .tag-del{background:#fff1f0;border:1px solid #ffa39e;color:#cf1322;padding:1px 8px;border-radius:4px;font-size:14px;white-space:nowrap;}
+  .tag-add{background:#e6f4ff;border:1px solid #91caff;color:#0958d9;padding:1px 8px;border-radius:4px;font-size:14px;white-space:nowrap;}
+  .tag-mod{background:#fffbe6;border:1px solid #ffe58f;color:#d48806;padding:1px 8px;border-radius:4px;font-size:14px;white-space:nowrap;}
+  .tag-none{background:#f6ffed;border:1px solid #b7eb8f;color:#389e0d;padding:1px 8px;border-radius:4px;font-size:14px;white-space:nowrap;}
+  .h1{font-size:20px;color:#333333;font-weight:700;margin:0 0 4px;}
+  code{background:#f5f5f5;padding:1px 5px;border-radius:3px;font-size:14px;color:#333333;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1 class="h1">MSA 测量系统分析管理系统 · UI 前后版本比对报告</h1>
+    <div class="meta">
+      比对日期：2026-09-11 ｜ 比对对象：<b>调整前</b> = <code>MSA系统_backup_20260911_101042\index.html</code>（376,590 字节，今日调整前备份基线）　→　<b>调整后</b> = <code>MSA系统\index.html</code>（403,506 字节，当前版本）<br/>
+      比对方式：逐页代码级提取（列标题 / 表单字段 / 按钮 / 菜单 / 样式规则）两版全量对比 + 当前版浏览器实测确认。<br/>
+      比对范围：<b>排除 5 个分析结果页面</b>（GRR / KAPPA / 线性偏移 / 稳定性 / CgCgk 分析结果），其余全部页面与弹窗、抽屉均覆盖。
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="sec">一、总体结论</h2>
+    <div class="meta">
+      1. <b>样式零变化</b>：两版 CSS 完全一致（9,090 字节，逐规则相同）。字号仍为 16/14px，文字颜色仅 #333333 / #666666，按钮仍为蓝底白字（主）/ 白底蓝边蓝字（次）——本次调整未触碰视觉规范。<br/>
+      2. <b>菜单结构无增减</b>：左侧导航 21 项完全一致（计量器具台账 → Cg/Cgk 分析结果），仅「质量特性维护」一项更名为「被测参数维护」。<br/>
+      3. <b>变化集中在字段与交互</b>：共涉及 6 个页面/弹窗的字段级调整 + 创建计划弹窗交互重构 + 6 个逻辑缺陷修复（详见第三、四节）。
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="sec">二、按页面详细比对（调整前 → 调整后 → 原因）</h2>
+    <table>
+      <tr><th style="width:140px">页面</th><th style="width:44%">调整前</th><th style="width:44%">调整后</th></tr>
+      <tr>
+        <td>全局（菜单 / 样式）</td>
+        <td>「质量特性维护」菜单项及页面标题</td>
+        <td>更名为「<b>被测参数维护</b>」；其余菜单项、页面结构、样式规范全部保持不变</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="color:#666666">原因：业务方沟通确认统一使用「被测参数」口径（与 MSA 计划创建弹窗、样本库「对应被测项目」保持一致）。</td>
+      </tr>
+      <tr>
+        <td>计量器具台账</td>
+        <td>列表含「样机」列（是/否标记样机）</td>
+        <td>「样机」列<b>删除</b>；其余列（量具组、是否做 MSA、复评日期、分辨力等）保持不变</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="color:#666666">原因：9/10 评审确认样机标识暂不维护（业务未要求按样机筛选），移除冗余列。</td>
+      </tr>
+      <tr>
+        <td>器具组维护</td>
+        <td>列表含「成员器具」列（直接列出组内器具）；无组类型概念；无成员管理按钮</td>
+        <td>「成员器具」列<b>删除</b>，改为「<b>组类型</b>」列（普通 / 卡帕人员组）+「<b>组成员</b>」列（工号 / 姓名 / 岗位）；新增「<b>+ 添加成员</b>」「<b>导入工号</b>」按钮</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="color:#666666">原因：器具组需要承载两类用途——测量器具组与 KAPPA 检验员组（卡帕人员组），成员需按工号/岗位管理，因此列与操作改为按成员维度展示。</td>
+      </tr>
+      <tr>
+        <td>MSA 计划（列表）</td>
+        <td>列序：操作 → MSA计划号 → 分析人 → 仪器/设备名称 → …（无任务来源列）</td>
+        <td>分析人之后<b>新增「任务来源」列</b>（周期任务 / 临时任务）；其余列序与 7 个分项列（CG/CGK → 偏倚 → 线性 → 稳定性 → 重复性 → 再现性 → KAPPA）、判定结果列保持不变</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="color:#666666">原因：器具组周期复评会自动生成计划（如 MSAP-2026-010 周期任务），需在列表直观区分「周期任务」与「临时任务」，便于追溯计划来源。</td>
+      </tr>
+      <tr>
+        <td>MSA 计划（创建弹窗）</td>
+        <td>「选择质量特性」；器具列表含「样机」列；按检验标准直接选择</td>
+        <td>「选择<b>被测参数</b>」；器具列表「样机」列<b>删除</b>；交互重构：选被测参数 → 自动带出关联检验方法 → 每方法带出对应检验标准 + 取样参数（人数/次数/样本数，可改）→ 勾选器具 → 一器具一计划批量生成</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="color:#666666">原因：19:44 方案第 6 项——检验标准与质量特性（被测参数）穿透关联，不再在创建页手选检验标准；一个量具生成一个计划、一个计划含多个分析方法。</td>
+      </tr>
+      <tr>
+        <td>被测参数维护（原质量特性）</td>
+        <td>字段：特性编号、特性名称、所属零件…</td>
+        <td>字段更名：「<b>被测参数编号</b>」「<b>被测参数名称</b>」；其余（检验方法子表、零件名称/编号等）保持</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="color:#666666">原因：与全局「被测参数」口径统一（同第一行）。</td>
+      </tr>
+      <tr>
+        <td>样本库管理</td>
+        <td>列「质量特性维度」；无日志查询入口</td>
+        <td>列更名为「<b>对应被测项目</b>」；新增「<b>日志查询</b>」按钮（样本变更留痕：变更前/后、变更字段、变更时间）；标准值/名义值、工厂/车间、关联检验标准等字段保持</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="color:#666666">原因：样本真值需对应到被测项目维度（口径统一）；样本库变更需可审计追溯，故增加日志查询。</td>
+      </tr>
+      <tr>
+        <td>抽样方法维护</td>
+        <td>上下两列表（取样规则 / 判断规则）</td>
+        <td>结构、字段、按钮<b>无变化</b>（上下列表结构在两版间保持一致）</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="color:#666666">原因：本页调整在备份前已完成，本次无新增差异。</td>
+      </tr>
+      <tr>
+        <td>五类台账（GRR/KAPPA/线性/稳定性/CgCgk）</td>
+        <td>当前字段结构</td>
+        <td>列表字段<b>无变化</b>（操作人/操作件选择规则、状态流转、手动分析入口均保持一致）</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="color:#666666">原因：台账页字段在备份前已按五类规则定稿，本次无新增差异。</td>
+      </tr>
+      <tr>
+        <td>分析结果页（GRR/KAPPA 等 5 页）</td>
+        <td colspan="2" style="color:#666666">按用户要求<b>不参与本次比对</b>（两版实际存在「手动分析 / 修改数据 / 导入」按钮差异，详见调整报告，此处不展开）。</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2 class="sec">三、字段级变更清单（两版代码差异实录）</h2>
+    <table>
+      <tr><th style="width:200px">位置</th><th style="width:90px">类型</th><th>字段 / 元素</th></tr>
+      <tr><td>计量器具台账列表</td><td><span class="tag-del">删除</span></td><td>样机</td></tr>
+      <tr><td>器具组维护列表</td><td><span class="tag-add">新增</span></td><td>组类型（普通 / 卡帕人员组）、组成员（工号 / 姓名 / 岗位）</td></tr>
+      <tr><td>器具组维护列表</td><td><span class="tag-del">删除</span></td><td>成员器具</td></tr>
+      <tr><td>器具组维护按钮</td><td><span class="tag-add">新增</span></td><td>+ 添加成员、导入工号</td></tr>
+      <tr><td>MSA 计划列表</td><td><span class="tag-add">新增</span></td><td>任务来源（周期任务 / 临时任务）</td></tr>
+      <tr><td>创建计划弹窗</td><td><span class="tag-del">删除</span></td><td>样机（器具列表列）、样机/暂无 选项</td></tr>
+      <tr><td>创建计划弹窗</td><td><span class="tag-mod">更名</span></td><td>选择质量特性 → 选择被测参数；质量特性 → 被测参数；先选择质量特性 → 先选择被测参数</td></tr>
+      <tr><td>被测参数维护</td><td><span class="tag-mod">更名</span></td><td>特性编号 → 被测参数编号；特性名称 → 被测参数名称</td></tr>
+      <tr><td>样本库管理</td><td><span class="tag-mod">更名</span></td><td>质量特性维度 → 对应被测项目</td></tr>
+      <tr><td>样本库管理按钮</td><td><span class="tag-add">新增</span></td><td>日志查询</td></tr>
+      <tr><td>全局样式</td><td><span class="tag-none">无变化</span></td><td>CSS 9,090 字节逐规则相同；字号 16/14px、颜色 #333333/#666666、按钮蓝白样式不变</td></tr>
+      <tr><td>全局菜单</td><td><span class="tag-mod">更名</span></td><td>质量特性维护 → 被测参数维护（菜单项 + 页面标题）</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2 class="sec">四、行为 / 逻辑级调整（本次测试确认并修复）</h2>
+    <table>
+      <tr><th style="width:230px">问题</th><th>调整前表现</th><th>调整后表现</th></tr>
+      <tr><td>创建弹窗「分析方法 undefined（不取样，直接录入）」</td><td>带出的分析方法显示 undefined，参数行错乱</td><td>按特性检验方法正确带出方法代码（GRR/KAPPA/线性/稳定性/CgCgk），参数行正常</td></tr>
+      <tr><td>线性/偏移检验标准带错</td><td>线性方法显示 STD-MSA-001（错）</td><td>精确带出特性方法关联的 STD-MSA-005</td></tr>
+      <tr><td>Cg/Cgk 取样参数误用 GRR 标准参数</td><td>Cg/Cgk 显示 3 次（错）</td><td>按方法默认 50 次、线性 5 标准件×12 次</td></tr>
+      <tr><td>判定结果空结论误判「可接受」</td><td>无结论的计划显示「可接受」</td><td>无结论显示「待采集」</td></tr>
+      <tr><td>REBUILD 误删用户新建数据</td><td>启动重建会删除非种子台账记录</td><td>保留全部用户记录，仅对齐种子字段</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2 class="sec">五、为什么调整（原因汇总）</h2>
+    <div class="meta">
+      1. <b>业务口径统一</b>：9/10 评审及后续沟通中业务使用「被测参数」表述，系统将「质量特性」相关名称统一改为「被测参数」（菜单、页面、弹窗、样本库字段）。<br/>
+      2. <b>器具组双用途</b>：器具组既要挂测量器具（周期复评），又要挂 KAPPA 检验员（卡帕人员组），成员管理按工号/岗位维护，故组类型、组成员取代成员器具。<br/>
+      3. <b>计划来源可追溯</b>：周期复评自动生成计划后需与手工临时计划区分，新增任务来源列。<br/>
+      4. <b>创建计划闭环</b>：检验标准与特性穿透关联，选特性即带方法、带标准、带取样参数，减少手选出错（配合修复 3 个带出类缺陷）。<br/>
+      5. <b>样机标识移除</b>：业务暂不维护样机概念，台账与创建弹窗同步删除该列。<br/>
+      6. <b>数据可审计</b>：样本库变更留痕，新增日志查询入口。
+    </div>
+  </div>
+</div>
+</body>
+</html>

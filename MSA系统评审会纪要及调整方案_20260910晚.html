@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MSA管理系统评审会纪要及页面调整方案（2026-09-10晚）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@4.24.15/dist/antd.min.css">
+<style>
+  body{background:#f5f5f5;margin:0;padding:24px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;color:#333}
+  .wrap{max-width:1080px;margin:0 auto}
+  .card{background:#fff;border-radius:8px;padding:24px 28px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+  h1{font-size:22px;margin:0 0 6px}
+  .sub{color:#666;font-size:13px;margin-bottom:18px}
+  h2{font-size:17px;border-left:4px solid #1890ff;padding-left:10px;margin:22px 0 12px}
+  h3{font-size:15px;margin:16px 0 8px}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+  th,td{border:1px solid #e8e8e8;padding:8px 10px;text-align:left;vertical-align:top;line-height:1.6}
+  th{background:#fafafa;font-weight:600;white-space:nowrap}
+  .tag{display:inline-block;padding:1px 8px;border-radius:3px;font-size:12px;margin-right:4px}
+  .t-add{background:#f6ffed;color:#389e0d;border:1px solid #b7eb8f}
+  .t-del{background:#fff2f0;color:#cf1322;border:1px solid #ffa39e}
+  .t-mod{background:#e6f7ff;color:#096dd9;border:1px solid #91d5ff}
+  .t-wait{background:#fffbe6;color:#d48806;border:1px solid #ffe58f}
+  ul,ol{padding-left:22px;line-height:1.8;font-size:14px;margin:8px 0}
+  li{margin-bottom:4px}
+  .note{background:#f6f6f6;border-radius:6px;padding:12px 16px;font-size:13px;color:#555;line-height:1.8}
+  .kpi{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0}
+  .kpi div{background:#fafafa;border:1px solid #f0f0f0;border-radius:6px;padding:10px 16px;font-size:13px}
+  .kpi b{font-size:16px;display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>MSA 管理系统评审会纪要及页面调整方案</h1>
+    <div class="sub">会议时间：2026-09-10 17:08–19:12 ｜ 会议主题：MSA/MIC 系统功能方案确认讨论 ｜ 材料来源：飞书智能纪要 + 飞书文字记录 + 腾讯会议智能纪要（Word 摘要版）+ 逐字转写（Word 完整版），四份材料为同一场会议，内容交叉印证一致</div>
+    <div class="kpi">
+      <div><b>参会方</b>业务：万小云、汪敏、雷德军、时阳阳、张会娟、黄友国、邓天鹏、杨天林等<br>我方：高国翔、刘科壮、张韫仪等</div>
+      <div><b>核心结论</b>字段口径、计划逻辑、台账规则全面收敛，下周二前业务全量字段确认，之后进入开发</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>一、完整会议纪要（业务逻辑梳理）</h2>
+    <h3>1. 计量器具台账</h3>
+    <ul>
+      <li>在已确认字段基础上，台账只新增两个字段：<b>“是否需做 MSA”</b>（勾选）与<b>“所属器具组”</b>（下拉），其余字段维持现状。</li>
+      <li><b>移除“是否样机”字段</b>（万工：已勾选要做 MSA 就不必再判断组里做不做；样机概念在过审时难以解释）。器具组维护成员时也不再标注样机。</li>
+      <li>器具组按<b>型号维度</b>划分（同规格/同厂家/同型号归一组）；<b>MSA 评测周期维护在器具组层</b>，不做单台器具维护（同型号不全检，只挑代表器具做 MSA）。</li>
+      <li>器具组页面三合一：<b>基础信息定义 + 评测周期/提前提醒周期设置 + 组内 MSA 执行履历查询</b>；到期提醒推送到待办。</li>
+    </ul>
+    <h3>2. 被测参数（原质量特性维护）</h3>
+    <ul>
+      <li>页面名正式更名<b>“被测参数 / 被测项目”</b>，避免与特殊特性清单、CP 概念混淆，降低审核解释成本。</li>
+      <li>字段：被测参数编号、被测名称、计量/计数类型、适用检验方法（多选）、标准值、单位、上下限、零件名称/零件编号（产品特性）、工序（过程特性）、特性等级/SC·CC、工厂/车间。<b>工厂/车间、特性等级暂不强制填写</b>（预留扩展）。</li>
+      <li><b>被测参数与计量器具（器具组）直接绑定</b>，暂不强制关联零件/工序，但保留产品/过程特性扩展接口；每个被测参数可绑定多个分析方法及各自默认抽样规则，同一参数配多个器具组时可分别绑定。</li>
+      <li>一期手工/导入维护，二期再关联 CP（控制计划）。</li>
+    </ul>
+    <h3>3. KAPPA 人员组</h3>
+    <ul>
+      <li>单独建<b>“卡帕人员组”</b>，按<b>岗位</b>维度划分（IQC 检验员、IPQC、动总 GPR、电控 GPR、FQC 等），不以人名划分。</li>
+      <li>用<b>工号列表导入</b>维护；做 KAPPA 任务时从岗位组内选具体执行人。</li>
+      <li>周期/提醒规则与器具组一致，在器具组配置页面统一维护。</li>
+    </ul>
+    <h3>4. 样本库</h3>
+    <ul>
+      <li>核心字段：样本编号、样本名称、样本类型（标准件/生产件）、对应被测项目、<b>样本真值</b>、有效期；去掉名义值/上下限等冗余字段。</li>
+      <li><b>新增“日志查询”按钮</b>：真值变更、效期变更自动记录操作人/操作时间/变更前后值，供审核追溯；<b>评审流程不纳入线上</b>（线下评审、系统留记录即可）。</li>
+      <li>MIC 任务选标准件后与样本编号自动关联，可反查履历。</li>
+    </ul>
+    <h3>5. MSA（MIC）计划</h3>
+    <ul>
+      <li>创建动线：<b>选被测参数 → 自动带出绑定的分析方法与器具组 → 勾选器具一键生成</b>。</li>
+      <li>任务两个来源：①<b>周期任务由系统后台自动滚动生成</b>（按器具组评测周期，提前一个月生成任务并推送待办，不在年初一次性建计划）；②<b>临时任务</b>（新增器具/维修后）手动创建，仅需填截止时间。</li>
+      <li><b>同一器具组 + 同一被测参数下支持多台器具批量勾选</b>，一次生成多个任务（较此前“单选量具”放宽）。</li>
+      <li><b>线性 + 偏移同时勾选时默认合并</b>为一个任务，共用一套取样数据（5 标准件 × 12 次 = 60 数据）出两份报告（AIAG 允许的合并，降成本）；仅选其一则单独生成。</li>
+      <li>检验标准与质量特性（被测参数）做穿透关联，不再在创建页直接手选检验标准。</li>
+    </ul>
+    <h3>6. 数据录入</h3>
+    <ul>
+      <li>Excel 模板导入 + 页面直接录入并存。<b>暂不开发设备数据自动抓取</b>（无法区分点检/产品测/MIC 测，IQC 单独讨论）。</li>
+      <li>导入由<b>分析人在台账执行</b>，操作员只能在线录入；录入的实测值允许修改。</li>
+      <li>GRR 按岗位选执行人（10 件 × 3 人 × 3 次）；线性/偏移先选标准件再录数据。</li>
+    </ul>
+    <h3>7. 结果展示</h3>
+    <ul>
+      <li>每个分析任务独立结论（合格/不合格）；<b>MSA 计划主台账展示各方法分项结论 + 总结论</b>（任一分项不合格 → 总结论不合格）。</li>
+      <li>结果页展示零部件/分析人/操作人/样本/关键结论。</li>
+      <li><b>全部图表改为动态交互图</b>（控制图、直方图、正态概率图、回归分析图，悬停出数值气泡）。</li>
+      <li>报告输出格式对齐业务现有 Excel 模板。</li>
+    </ul>
+    <h3>8. 待确认/待推进（会议遗留）</h3>
+    <ul>
+      <li>判读规则：业务方已发华为 MSA 指导书，需逐一核对各方法判读逻辑；<b>线性规则最复杂，需专项确认</b>；非结构化规则标记后单独对齐。</li>
+      <li>操作指导书链接跳转：<b>暂不纳入一期</b>（使用频次低、逐特性绑定维护麻烦），二期全平台快捷搜索再议。</li>
+      <li>可视化看板：周明鹏统筹，一期功能完成且有数据后评估；赶华为质量听证会/五星现场时先出报表雏形。</li>
+      <li>IQC 设备素材自动上传：单独讨论。</li>
+    </ul>
+    <h3>9. 排期</h3>
+    <ul>
+      <li>本周输出 HTML 原型链接 → <b>下周二前业务全量字段确认</b> → 全面开发。</li>
+      <li>功能优先交付，定制化报表延后 3–4 周，开发一个交付一个。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>二、与当前页面的差异 & 页面调整方案（待你确认，暂不改页面）</h2>
+    <p>已逐页比对当前 index.html 现状与会议口径，调整项如下（<span class="tag t-add">新增</span><span class="tag t-del">删除</span><span class="tag t-mod">修改</span><span class="tag t-wait">待确认</span>）：</p>
+    <table>
+      <tr><th style="width:150px">页面</th><th style="width:220px">调整项</th><th>现状 → 调整为</th></tr>
+      <tr>
+        <td rowspan="3">计量器具台账</td>
+        <td><span class="tag t-del">删除</span> 样机概念</td>
+        <td>现状：台账数据含 prototype“样机”字段、器具组成员下拉带“（样机）”标注 → 全部移除（会议明确：样机不利审核解释）</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-mod">保留</span> 是否做MSA / 所属器具组</td>
+        <td>两个字段已在页面，符合会议口径，保留</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-mod">确认</span> MSA 周期归属</td>
+        <td>MSA 评测周期只在器具组层维护，台账不重复维护（校准周期字段保留，属校准范畴）</td>
+      </tr>
+      <tr>
+        <td rowspan="2">器具组维护</td>
+        <td><span class="tag t-add">新增</span> 卡帕人员组</td>
+        <td>器具组增加“组类型”（测量器具组 / 卡帕人员组）；人员组按岗位维度、工号列表导入，做 KAPPA 时从组内选执行人</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-mod">保留</span> 三合一结构</td>
+        <td>基础信息 + 评测周期/提醒 + 组内执行履历（当前已有“执行记录/日志”区块），符合会议，保留并去除样机标注</td>
+      </tr>
+      <tr>
+        <td rowspan="3">质量特性维护</td>
+        <td><span class="tag t-mod">修改</span> 更名“被测参数”</td>
+        <td>菜单/页面标题/字段“特性编号·特性名称”→“被测参数编号·被测参数名称”，列表列名同步</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-mod">保留</span> 字段口径</td>
+        <td>特性类型 SC/CC/普通、零件名称/编号、工序、标准值、上下限、工厂/车间、检验方法子表均保留（特性等级暂不强制）</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-wait">待确认</span> 多器具组绑定</td>
+        <td>确认创建/编辑是否支持“同一被测参数配多个器具组分别绑定方法与抽样规则”，不支持则扩展</td>
+      </tr>
+      <tr>
+        <td>抽样方法维护</td>
+        <td><span class="tag t-add">新增</span> 取样范围校验</td>
+        <td>取样规则增加“允许取样范围”字段与校验提示（如测量次数 2–5 次，超出提示不允许）；判断规则页签保留，内容待华为指导书对齐后更新</td>
+      </tr>
+      <tr>
+        <td rowspan="2">样本库管理</td>
+        <td><span class="tag t-add">新增</span> 日志查询</td>
+        <td>新增“日志查询”按钮：真值/效期变更自动记录操作人、时间、变更前后值（当前页面无日志入口）</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-mod">确认</span> 字段口径</td>
+        <td>编号/名称/类型/对应被测项目/真值/有效期/工厂/车间/关联检验标准已在页面；上下限已移除，符合会议</td>
+      </tr>
+      <tr>
+        <td rowspan="5">MSA 计划</td>
+        <td><span class="tag t-add">恢复</span> 分项结论列 + 总结论列</td>
+        <td>计划列表新增“偏倚 / 线性 / 稳定性 / 重复性 / 再现性 / 计数型”各方法结论列（合格/不合格）＋“总结论”列（任一不合格→不合格）——即你记忆中的绿色对勾列，按会议口径以分项结论+总结论形态恢复</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-mod">修改</span> 多器具批量生成</td>
+        <td>创建弹窗由“单选一个计量器具”改为“同一器具组 + 同一被测参数下多台器具批量勾选，一次生成多任务”</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-del">删除</span> 样机默认勾选逻辑</td>
+        <td>创建时“拉出组内器具并默认选中样机”的逻辑移除</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-add">新增</span> 任务来源标识</td>
+        <td>计划列表/详情标识任务来源（周期自动 / 临时手动）与待办提示（周期任务提前一个月生成+推待办）；临时任务创建仅填截止时间</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-mod">确认</span> 线性+偏移合并</td>
+        <td>确认创建时同时勾选线性+偏移默认合并为一个任务（5 标准件×12 次共用数据出两份报告）；仅选其一则单独生成</td>
+      </tr>
+      <tr>
+        <td rowspan="4">五类台账</td>
+        <td><span class="tag t-add">新增</span> 手动“分析”入口</td>
+        <td>台账操作列增加“分析”按钮：样本录入/导入完成后由分析人手动触发分析（当前只有 去录入/详情/器具）</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-add">新增</span> 台账导入</td>
+        <td>台账操作区增加“导入”按钮（导入样本录入结果，与录入/分析动线衔接）</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-mod">保留</span> 选人/选件规则</td>
+        <td>GRR/KAPPA 操作人多选；线性/偏移选件多选；稳定性标准件1+操作人1+工位1；Cg/Cgk 选件多选+操作人多选；稳定性工位 MES 下拉+手填兜底——均已实现，保留</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-mod">保留</span> 录入/审核动线</td>
+        <td>录入实测值可修改、录入后待审核/已批准/需整改流程保留</td>
+      </tr>
+      <tr>
+        <td rowspan="3">全局</td>
+        <td><span class="tag t-wait">待确认</span> 图表交互升级</td>
+        <td>分析结果页图表升级为动态交互图（控制图/直方图/正态概率图/回归图，悬停出数值气泡）——需确认当前图表形态后再定工作量</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-wait">延后</span> 报告对齐 Excel 模板</td>
+        <td>按会议排期延后 3–4 周，本期不做，功能优先</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-mod">保留</span> 工厂/车间与导入导出</td>
+        <td>基础数据页工厂/车间字段+查询条件、导入导出按钮（仅按钮不实现）已全站铺开，保留</td>
+      </tr>
+    </table>
+    <div class="note">说明：本轮未改任何页面。以上为待确认调整项，你逐条拍板后我再动手；动手前会先完整备份项目。</div>
+  </div>
+
+  <div class="card">
+    <h2>三、本次页面修改调整报告（2026-09-10 已完成的改造，新增/删除清单）</h2>
+    <h3>本次新增</h3>
+    <table>
+      <tr><th>页面/模块</th><th>新增内容</th></tr>
+      <tr><td>计量器具台账</td><td>“是否做MSA”“所属器具组”字段；分辨力/分辨率统一为“分辨力”；补齐规格、厂商、品牌、使用部门、校准机构等字段</td></tr>
+      <tr><td>器具组维护（新页面）</td><td>组编码/名称、检验周期、上次执行时间、下次提醒时间、执行记录/日志、成员器具多选、支持导入</td></tr>
+      <tr><td>质量特性维护</td><td>零件名称、零件编号、工序、工厂/车间、标准值/上下限/单位、检验方法子表；检验标准维护列表并入页面下方（原独立页移除）</td></tr>
+      <tr><td>抽样方法维护</td><td>列表改为 tab 页签（取样规则 + 判断规则）；取样规则与分析方法列表合并展示</td></tr>
+      <tr><td>样本库管理（新页面，合并原样本管理）</td><td>样本编号/名称/类型、零件号、质量特性维度、名义值、参考值（真值）、单位、关联检验标准、来源、有效期、工厂/车间、状态</td></tr>
+      <tr><td>MSA 计划</td><td>选特性自动带出检验方法与检验标准，人数/次数/样本数可改；工厂/车间默认带出；计划支持删除（仅待开始状态）；计划详情/分析单信息展示</td></tr>
+      <tr><td>五类台账</td><td>操作人字段（多人选择，显示姓名）；录入实测值可修改；样本录入/导入后手动分析；待采集→待审核→已批准/需整改状态流</td></tr>
+      <tr><td>数据录入</td><td>五个独立录入数据页面（GRR/KAPPA/线性偏移/稳定性/CgCgk），支持独立使用</td></tr>
+      <tr><td>分析执行</td><td>五个分析结果页面（GRR/KAPPA/线性偏移/稳定性/CgCgk）</td></tr>
+      <tr><td>全局</td><td>所有基础数据页增加工厂/车间字段与查询条件；导入导出按钮（仅按钮不实现功能）</td></tr>
+    </table>
+    <h3>本次删除</h3>
+    <table>
+      <tr><th>页面/模块</th><th>删除内容</th></tr>
+      <tr><td>校准管理</td><td>整个页面移除（校准不属 MSA 范畴）</td></tr>
+      <tr><td>样本管理</td><td>整个页面移除（合并入样本库管理）</td></tr>
+      <tr><td>计量器具台账</td><td>自加的“精度”字段移除（分辨力/分辨率统一为分辨力）</td></tr>
+      <tr><td>MSA 计划</td><td>列表“分析方法”列、“分计划”字段（按你 9/10 指令删除）；创建弹窗的测量人员下拉框、计划名称模板输入框、创建方式输入框、复评周期/复评提前提醒输入框（按你 9/10 指令删除）</td></tr>
+      <tr><td>检验标准维护（独立页）</td><td>独立页面移除、并入质量特性页下方；删除列表冗余字段（检验项目号/项目名、工序名称、零件名称、分辨率、单位、标准值、目标上下限、关联质量特性、适用器具类别）</td></tr>
+      <tr><td>样本库</td><td>上下限字段移除；名义值/参考值保留但按新口径展示</td></tr>
+      <tr><td>全站</td><td>各页面/弹窗/抽屉的说明性文字（上一轮已清理）</td></tr>
+    </table>
+    <div class="note" style="margin-top:12px">
+      <b>关于“绿色对勾列”（偏倚/线性/稳定性/重复性/再现性/计数型）：</b>该列于 9/10 上午按你当时“MSA 计划列表去掉分析方法字段”的指令随同删除（当时删的是显示 GRR/KAPPA/线性/稳定性/CgCgk 标签的“分析方法”列）。经查证：当前代码中“分析方法”列已不在计划列表列定义内，但分析结果数据结构与方法映射仍在，恢复成本低。且 17:12 会议明确要求计划主台账展示<b>各方法分项结论列 + 总结论列</b>（合格/不合格）——正是你记忆中的形态。此列已列入上方调整方案第一条，待你确认后按新形态恢复。
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>四、需要你/业务确认的待确认项</h2>
+    <table>
+      <tr><th style="width:40px">#</th><th>待确认项</th><th style="width:220px">来源/背景</th></tr>
+      <tr><td>1</td><td>判读规则：华为 MSA 指导书逐方法核对（线性最复杂需专项确认），确认后更新“判断规则”页签内容</td><td>会议遗留，依赖业务回传指导书</td></tr>
+      <tr><td>2</td><td>MSA 计划列表“分项结论列”布局：每方法一列（偏倚/线性/稳定性/重复性/再现性/计数型共 6 列）还是合并展示？</td><td>需你确认列布局</td></tr>
+      <tr><td>3</td><td>操作指导书链接跳转：一期不做，二期全平台快捷搜索再议</td><td>会议决定（雷主管想要、石工反对）</td></tr>
+      <tr><td>4</td><td>可视化看板：一期功能完成+有数据后评估，周明鹏统筹</td><td>会议决定</td></tr>
+      <tr><td>5</td><td>IQC 设备数据自动抓取：暂不开发，单独讨论</td><td>会议决定</td></tr>
+      <tr><td>6</td><td>特性类型维持 SC/CC/普通 三级（暂不强制），是否加“安全特性”等扩展留待二期</td><td>你此前问过，会议口径维持</td></tr>
+      <tr><td>7</td><td>图表交互升级的工作量评估（控制图/直方图/正态概率图/回归图悬停交互）</td><td>需确认当前图表形态后评估</td></tr>
+      <tr><td>8</td><td>排期：下周二前业务全量字段确认</td><td>会议排期</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>五、备份与后续约定</h2>
+    <ul>
+      <li>完整备份已建立：<b>MSA系统_backup_20260910_193015</b>（192 个文件），当前页面状态已完整留存。</li>
+      <li>今后<b>每次页面调整前先完整备份</b>本项目，备份目录按“项目名_backup_日期时间”命名。</li>
+      <li>本次按你要求<b>未改任何页面</b>，等你对第二节调整方案逐条确认后再动手。</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>
