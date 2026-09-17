@@ -1,0 +1,20 @@
+--- 上版
++++ 改动后
+@@ -3574,7 +3574,7 @@
+   const saveRow=(r)=>{ mut(s=>{ const rec=s.sampleLib.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑样本',r.id,'行内编辑 '+r.id+' '+(r.name||'')); }); toast.ok('已保存'); };
+   const addRow=()=>{ const id='SPL-'+String((d.sampleLib||[]).length+1).padStart(3,'0'); mut(s=>{ s.sampleLib.unshift({id, name:'', type:'标准件', partNo:'', partName:'', charDim:'', verdict:'', nominal:'', refValue:'', unit:'mm', standardId:'', source:'', expireDate:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, status:'启用', note:''}); logAction(s.me.name,'新增样本',id,'列表新增空白行'); }); };
+   const delRow=(r)=>{ Modal.confirm({title:'删除样本 — '+(r.name||r.id), content:'确认删除该样本？删除后不可恢复。', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.sampleLib=s.sampleLib.filter(x=>x.id!==r.id); logAction(s.me.name,'删除样本',r.id,'删除 '+(r.name||'')); }); toast.ok('已删除'); } }); };
+-  const rows=(d.sampleLib||[]).filter(r=>(!q.kw||(r.id+r.name+(r.partNo||'')+(r.charDim||'')).toLowerCase().includes(q.kw.toLowerCase())))
++  const rows=(d.sampleLib||[]).filter(r=>(!q.kw||(r.id+r.name+(r.partNo||'')+(r.partName||'')+(r.charDim||'')).toLowerCase().includes(q.kw.toLowerCase())))
+     .filter(r=>!q.type||r.type===q.type).filter(r=>!q.st||r.status===q.st)
+     .filter(r=>!q.plant||r.plant===q.plant).filter(r=>!q.sub||r.subplant===q.sub);
+   const resetQ=()=>{ setFkw('');setFtype();setFst();setFPlant();setFSub(); setQ({kw:'',type:undefined,st:undefined,plant:undefined,sub:undefined}); };
+@@ -3606,7 +3606,7 @@
+       <Space wrap>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
+-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="样本编号/样本名称/零件号/被测项目" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
++        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="样本编号/样本名称/零件号/零件名称/被测项目" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>样本类型</span><Select allowClear style={{width:140}} options={[{value:'标准件',label:'标准件'},{value:'生产件',label:'生产件'}]} value={ftype} onChange={setFtype}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fst||''} onChange={e=>setFst(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="启用">启用</Radio><Radio value="停用">停用</Radio></Radio.Group>
+       </Space>
