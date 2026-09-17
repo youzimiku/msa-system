@@ -1,0 +1,50 @@
+--- 上版
++++ 改动后
+@@ -1516,7 +1516,8 @@
+         <tbody>
+           <tr><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>不做（灰色横线）</td><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>该分析方法不在本计划创建时勾选的方法范围内，本计划无需开展</td></tr>
+           <tr><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>未做（灰色虚线圆圈）</td><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>属于计划范围，但尚未完成对应台账分析</td></tr>
+-          <tr><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>通过（绿色对勾）</td><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>对应台账分析已完成，结论为可接受 / 有条件接受</td></tr>
++          <tr><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>通过（绿色对勾）</td><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>对应台账分析已完成，结论为可接受</td></tr>
++          <tr><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>有条件接受（黄色感叹号）</td><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>对应台账分析已完成，结论为有条件接受（可接受但需关注）；多个分计划以最差结论为准</td></tr>
+           <tr><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>不通过（红色叉）</td><td style={{border:'1px solid #d9d9d9',padding:'4px 10px'}}>对应台账分析已完成，结论为不可接受，需整改；多个分计划以最差结论为准</td></tr>
+         </tbody>
+       </table>
+@@ -1561,6 +1562,7 @@
+ const FailSvg=()=> <DimBadge bg="#dc2626" stroke="M8.5 8.5l7 7M15.5 8.5l-7 7"/>;
+ const TodoSvg=()=> <DimBadge bg="#9ca3af" stroke="M12 12m-3.4 0a3.4 3.4 0 1 0 6.8 0a3.4 3.4 0 1 0-6.8 0"/>;
+ const NaSvg=()=> <svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#e5e7eb"/><path d="M7 12h10" stroke="#9ca3af" strokeWidth="2.4" strokeLinecap="round"/></svg>;
++const CondSvg=()=> <DimBadge bg="#fadb14" stroke="M12 7.5v4.2M12 16.2h.01"/>;
+ 
+ /* 校准到期徽标 */
+ function CalBadge({nextCal}){
+@@ -2318,11 +2320,11 @@
+     const inScope=(r.msaMethods||[]).some(m=>String(m).toLowerCase()===String(msaKey).toLowerCase());
+     const recs=planRecords(d,r.id).filter(x=>recKindId(x)===kind);
+     const concls=recs.map(x=>x.conclusion).filter(c=>c&&c!=='-'&&c!=='待采集');
+-    const worst= concls.includes('不可接受')? 'fail' : (concls.length? 'pass' : '');
++    const worst= concls.includes('不可接受')? 'fail' : (concls.includes('有条件接受')? 'cond' : (concls.length? 'pass' : ''));
+     const jump=()=>{ const rec=recs[0]; if(rec){ recJump(rec); } else { NavAPI.go(DIM_ENTRY[kind]||'entry_grr'); } };
+     if(!inScope) return <Tooltip title={label+'：不做（不在本计划范围）'}><NaSvg/></Tooltip>;
+     if(!worst) return <Tooltip title={label+'：未做（计划范围内尚未完成分析）'}><span style={{cursor:'pointer'}} onClick={jump}><TodoSvg/></span></Tooltip>;
+-    return <Tooltip title={label+'：'+(worst==='fail'?'不通过':'通过')}><span style={{cursor:'pointer'}} onClick={jump}>{worst==='fail'?<FailSvg/>:<PassSvg/>}</span></Tooltip>;
++    return <Tooltip title={label+'：'+(worst==='fail'?'不通过':(worst==='cond'?'有条件接受':'通过'))}><span style={{cursor:'pointer'}} onClick={jump}>{worst==='fail'?<FailSvg/>:(worst==='cond'?<CondSvg/>:<PassSvg/>)}</span></Tooltip>;
+   };
+   /* 行内字段即时写 store；只读字段渲染为禁用控件；保存常驻操作列 */
+   const setF=(r,k,v)=>{ mut(s=>{ const p=s.plans.find(x=>x.id===r.id); if(p) p[k]=v; }); };
+@@ -2771,12 +2773,12 @@
+     const inScope=(plan.msaMethods||[]).some(m=>String(m).toLowerCase()===String(msaKey).toLowerCase());
+     const rs=recs.filter(x=>recKindId(x)===kind);
+     const concls=rs.map(x=>x.conclusion).filter(c=>c&&c!=='-'&&c!=='待采集');
+-    const worst=concls.includes('不可接受')?'fail':(concls.length?'pass':'');
++    const worst=concls.includes('不可接受')?'fail':(concls.includes('有条件接受')?'cond':(concls.length?'pass':''));
+     if(!inScope) return '不做';
+     if(!worst) return '未做';
+-    return worst==='fail'?'不通过':'通过';
++    return worst==='fail'?'不通过':(worst==='cond'?'有条件接受':'通过');
+   };
+-  const dimTag=(kind,label)=>{ const s=dimStatus(kind,label); const color=s==='通过'?'green':s==='不通过'?'red':s==='未做'?'orange':'default'; return <Tag color={color} style={{marginRight:0}}>{s}</Tag>; };
++  const dimTag=(kind,label)=>{ const s=dimStatus(kind,label); const color=s==='通过'?'green':s==='不通过'?'red':s==='有条件接受'?'#fadb14':s==='未做'?'orange':'default'; return <Tag color={color} style={{marginRight:0}}>{s}</Tag>; };
+   const stdOf=(()=>{ if(recs.length) return [...new Set(recs.map(x=>x.standard).filter(Boolean))].join('、'); return plan.standard||''; })();
+   const sumVerdict=(rs)=>{ if(!rs.length) return '待采集'; const v=rs.map(x=>x.conclusion).filter(Boolean); if(!v.length) return '待采集'; if(v.some(x=>x==='不可接受')) return '不可接受'; if(v.some(x=>x==='有条件接受')) return '有条件接受'; if(v.every(x=>x==='可接受'||x==='非常理想可接受')) return '可接受'; return v[0]; };
+   const instIds=(plan.instIds||[plan.instId]);
