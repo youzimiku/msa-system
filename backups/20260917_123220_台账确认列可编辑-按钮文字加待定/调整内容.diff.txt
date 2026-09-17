@@ -1,0 +1,28 @@
+diff --git a/index.html b/index.html
+index 200079b..8d5dd8c 100644
+--- a/index.html
++++ b/index.html
+@@ -4246,8 +4246,8 @@ function EntryPage({kind}){
+     {title:'状态', width:90, render:(_,r)=><StatusTag s={r.reviewStatus}/>},
+     {title:'审核人', width:90, render:(_,r)=><span>{r.reviewer||'—'}</span>},
+     {title:'审核时间', width:115, render:(_,r)=><span className="mono">{r.reviewDate||'—'}</span>},
+-    {title:'确认人', width:90, render:(_,r)=><span>{r.approver||'—'}</span>},
+-    {title:'确认状态', width:90, render:(_,r)=>{ const ok=!!(r.approver||r.approveDate); return <Tooltip title={ok?'该记录已完成确认':'该记录尚未确认'}><span style={{color:ok?'#52c41a':'#666666'}}>{ok?'已确认':'未确认'}</span></Tooltip>; }},
++    {title:'确认人', width:110, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" placeholder="选择确认人" value={r.approver||undefined} style={{width:100}} options={PEOPLE_OPT} onChange={x=>setRecF(r,'approver',x)}/>},
++    {title:'确认状态', width:110, render:(_,r)=><Select size="small" value={r.confirmStatus||(r.approver||r.approveDate?'已确认':'未确认')} style={{width:100}} options={[{value:'已确认',label:'已确认'},{value:'未确认',label:'未确认'}]} onChange={x=>setRecF(r,'confirmStatus',x)}/>},
+     {title:'确认时间', width:115, render:(_,r)=><span className="mono">{r.approveDate||'—'}</span>}
+   ];
+   return <div>
+@@ -4264,9 +4264,9 @@ function EntryPage({kind}){
+       <Space wrap>
+         <Button type="primary" onClick={()=>setQ({kw:fkw,status:fstatus,concl:fconcl})}>查询</Button>
+         <Button onClick={resetQ}>重置</Button>
+-        <Button onClick={()=>{ if(selRows.length!==1){ toast.warn('请勾选一条记录'); return; } setOpsRec(selRows[0]); }}>操作人</Button>
+-        <Button disabled={!canDo(d.me.role,'edit')||!selRows.length} onClick={()=>{ if(selRows.length!==1){ toast.warn('请勾选一条记录'); return; } const rr=selRows[0]; if(rr.reviewStatus!=='待分析'){ toast.warn('仅「待分析」状态可执行分析'); return; } setAnlRec(rr); }}>分析</Button>
+-        <Button disabled={!canDo(d.me.role,'edit')||!selRows.length} onClick={()=>{ if(selRows.length!==1){ toast.warn('请勾选一条记录'); return; } const rr=selRows[0]; if(rr.reviewStatus!=='待采集'&&rr.reviewStatus!=='待分析'){ toast.warn('仅「待采集/待分析」状态可录入数据'); return; } DataOpen={kind,id:rr.id}; NavAPI.go('data_'+kind); }}>数据录入</Button>
++        <Button onClick={()=>{ if(selRows.length!==1){ toast.warn('请勾选一条记录'); return; } setOpsRec(selRows[0]); }}>操作人（待定）</Button>
++        <Button disabled={!canDo(d.me.role,'edit')||!selRows.length} onClick={()=>{ if(selRows.length!==1){ toast.warn('请勾选一条记录'); return; } const rr=selRows[0]; if(rr.reviewStatus!=='待分析'){ toast.warn('仅「待分析」状态可执行分析'); return; } setAnlRec(rr); }}>分析（待定）</Button>
++        <Button disabled={!canDo(d.me.role,'edit')||!selRows.length} onClick={()=>{ if(selRows.length!==1){ toast.warn('请勾选一条记录'); return; } const rr=selRows[0]; if(rr.reviewStatus!=='待采集'&&rr.reviewStatus!=='待分析'){ toast.warn('仅「待采集/待分析」状态可录入数据'); return; } DataOpen={kind,id:rr.id}; NavAPI.go('data_'+kind); }}>数据录入（待定）</Button>
+         <Button onClick={()=>{ if(!selRows.length){ toast.warn('请先在列表中勾选记录'); return; } toast.ok('已确认所选 '+selRows.length+' 条记录'); }}>确认</Button>
+         <Button disabled={!canDo(d.me.role,'edit')} onClick={()=>{}}>导入</Button>
+         <Button disabled={!canDo(d.me.role,'edit')}>导出</Button>
