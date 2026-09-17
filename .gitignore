@@ -1,0 +1,14 @@
+# MSA 系统原型仓库——仅跟踪页面与备份
+# 忽略历史辅助文件（本地保留，不入库）
+_*
+!backups/
+!index.html
+index_备份_*.html
+index_online.html
+index.backup_*.html
+index.html.bak*
+serve*.js
+check.js
+user_upload_check*
+manual-img/
+*.bak
