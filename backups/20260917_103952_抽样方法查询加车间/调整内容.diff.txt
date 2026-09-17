@@ -1,0 +1,19 @@
+--- 上版
++++ 改动后
+@@ -3356,6 +3356,7 @@
+     <Panel title="查询条件">
+       <Space wrap size={10}>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
++        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:120}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={fkw2} onChange={e=>setFkw2(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>方法名称</span><Select allowClear style={{width:140}} options={(d.anMethods||[]).map(m=>({value:m.code,label:STRIP_PAREN(m.name)}))} value={fMethod2} onChange={setFMethod2}/>
+       </Space>
+@@ -3375,7 +3376,7 @@
+       <Tabs defaultActiveKey="sample" items={[
+         {key:'sample', label:'抽样规则', children:<>
+           <div style={{marginBottom:8, textAlign:'left'}}><Button type="primary" onClick={addRuleRow}>新增抽样规则</Button></div>
+-          <Table rowKey="id" size="small" dataSource={(d.samplingRules||[]).filter(r=>!selMethod || String(r.method).toLowerCase()===String(selMethod).toLowerCase())} scroll={{x:1500}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}} columns={samplingCols}/>
++          <Table rowKey="id" size="small" dataSource={(d.samplingRules||[]).filter(r=>!selMethod || String(r.method).toLowerCase()===String(selMethod).toLowerCase()).filter(r=>!fQPlant || r.plant===fQPlant).filter(r=>!fQSub || r.subplant===fQSub)} scroll={{x:1500}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}} columns={samplingCols}/>
+         </>},
+         {key:'judge', label:'判断规则', children:<>
+           <div style={{marginBottom:8, textAlign:'left'}}><Button type="primary" onClick={addJudgeRow}>新增判断规则</Button></div>
