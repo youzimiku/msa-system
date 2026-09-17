@@ -1,0 +1,119 @@
+--- 上版
++++ 改动后
+@@ -1751,7 +1751,7 @@
+       <Space wrap>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} value={fPlant} options={PLANTS_OPT} onChange={setFPlant}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} value={fSub} options={SUBPLANTS_OPT} onChange={setFSub}/>
+-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={kw} onChange={e=>setKw(e.target.value)}/>
++        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="支持：编号/名称/型号/出厂编号/领用人" style={{width:220}} value={kw} onChange={e=>setKw(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>器具类别</span><Select allowClear style={{width:140}} value={fCat} options={ENUM.instCat.map(c=>({value:c,label:c}))} onChange={setFCat}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>器具类型</span><Select allowClear style={{width:140}} value={fMcat} options={[...new Set(d.instruments.map(i=>i.mcat).filter(Boolean))].map(c=>({value:c,label:c}))} onChange={setFMcat}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fStatus||''} onChange={e=>setFStatus(e.target.value||undefined)}><Radio value="">全部</Radio>{ENUM.instStatus.map(c=><Radio key={c} value={c}>{c}</Radio>)}</Radio.Group>
+@@ -2057,7 +2057,7 @@
+       <Space wrap>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
+-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={kw} onChange={e=>setKw(e.target.value)}/>
++        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="支持：组编码/组名称/说明" style={{width:220}} value={kw} onChange={e=>setKw(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>组类型</span><Select allowClear style={{width:140}} value={fType} options={GROUP_TYPE_OPTS} onChange={setFType}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>检验周期(月)</span><Select allowClear style={{width:140}} value={fCycle} options={[6,12,24].map(v=>({value:String(v),label:v+' 个月'}))} onChange={setFCycle}/>
+         <span className="tiny">共 {rows.length} 组</span>
+@@ -2234,7 +2234,7 @@
+   return <div>
+     <Panel title="查询条件">
+       <Space wrap>
+-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
++        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="支持：器具编号/器具名称/校准机构/证书编号" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>校准结果</span><Select allowClear style={{width:140}} value={fresult} options={['合格','限用','不合格'].map(c=>({value:c,label:c}))} onChange={setFresult}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>校准方式</span><Select allowClear style={{width:140}} value={fmode} options={['外校','内校'].map(c=>({value:c,label:c}))} onChange={setFmode}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstate||''} onChange={e=>setFstate(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="正常">正常</Radio><Radio value="临期">临期</Radio><Radio value="超期">超期</Radio></Radio.Group>
+@@ -2371,7 +2371,7 @@
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关联类型</span><Select allowClear style={{width:140}} value={ftype} options={[{value:'GRR',label:'GRR'},{value:'KAPPA',label:'KAPPA'},{value:'linear',label:'线性/偏移'},{value:'stability',label:'稳定性'},{value:'cgcgk',label:'Cg/Cgk'},{value:'未定型',label:'未定型'}]} onChange={setFtype}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>任务来源</span><Select allowClear style={{width:140}} value={fSource} options={[{value:'周期任务',label:'周期任务'},{value:'临时任务',label:'临时任务'}]} onChange={setFSource}/>
+-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
++        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="支持：计划号/器具编号/器具名称/零件号/零件名称" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待开始">待开始</Radio><Radio value="进行中">进行中</Radio><Radio value="已完成">已完成</Radio></Radio.Group>
+         <span className="tiny">共 {rows.length} 条</span>
+       </Space>
+@@ -2909,7 +2909,7 @@
+   return <div>
+     <Panel title="查询条件">
+       <Space wrap>
+-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
++        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="支持：标准编号/标准名称/零件名称/工序名称/检验依据" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>分析类型</span><Select allowClear style={{width:140}} value={ftype} options={[{value:'GRR',label:'GRR'},{value:'KAPPA',label:'KAPPA'}]} onChange={setFtype}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="启用">启用</Radio><Radio value="停用">停用</Radio></Radio.Group>
+         <span className="tiny">共 {rows.length} 条</span>
+@@ -3105,7 +3105,7 @@
+       <Space wrap size={10}>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
+-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={fkw2} onChange={e=>setFkw2(e.target.value)}/>
++        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="支持：参数编号/参数名称/零件号/零件名称/工序名称" style={{width:220}} value={fkw2} onChange={e=>setFkw2(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>特性类型</span><Select allowClear style={{width:140}} options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]} value={ft2} onChange={setFt2}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>特性类别</span><Select allowClear style={{width:140}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} value={fCat2} onChange={setFCat2}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工序</span><Select allowClear style={{width:140}} options={[...new Set((d.characteristics||[]).map(r=>r.processName).filter(Boolean))].map(c=>({value:c,label:c}))} value={fProc2} onChange={setFProc2}/>
+@@ -3357,7 +3357,7 @@
+       <Space wrap size={10}>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:120}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
+-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={fkw2} onChange={e=>setFkw2(e.target.value)}/>
++        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="支持：方法代码/方法名称（判断规则：规则编号/方法/结论）" style={{width:220}} value={fkw2} onChange={e=>setFkw2(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>方法名称</span><Select allowClear style={{width:140}} options={(d.anMethods||[]).map(m=>({value:m.code,label:STRIP_PAREN(m.name)}))} value={fMethod2} onChange={setFMethod2}/>
+       </Space>
+     </Panel>
+@@ -3606,7 +3606,7 @@
+       <Space wrap>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
+-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
++        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="支持：样本编号/样本名称/零件号/被测项目" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>样本类型</span><Select allowClear style={{width:140}} options={[{value:'标准件',label:'标准件'},{value:'生产件',label:'生产件'}]} value={ftype} onChange={setFtype}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fst||''} onChange={e=>setFst(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="启用">启用</Radio><Radio value="停用">停用</Radio></Radio.Group>
+       </Space>
+@@ -3721,7 +3721,7 @@
+   return <div>
+     <Panel title="查询条件">
+       <Space wrap>
+-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
++        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="支持：样本编号/样本名称/器具编号/计划号" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待测量">待测量</Radio><Radio value="已测量">已测量</Radio></Radio.Group>
+         <span className="tiny">共 {rows.length} 组</span>
+       </Space>
+@@ -3962,7 +3962,7 @@
+   return <div>
+     <Panel title="查询条件">
+       <Space wrap>
+-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
++        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="支持：台账编号/计划号/器具编号/器具名称/测量对象" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待分析">待分析</Radio><Radio value="待审核">待审核</Radio><Radio value="已批准">已批准</Radio><Radio value="需整改">需整改</Radio><Radio value="已闭环">已闭环</Radio><Radio value="已关闭">已关闭</Radio></Radio.Group>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>结论</span><Select allowClear style={{width:140}} value={fconcl} options={conclOpts.map(c=>({value:c,label:c}))} onChange={setFconcl}/>
+         <span className="tiny">共 {rows.length} 条</span>
+@@ -4247,7 +4247,7 @@
+   return <div>
+     <Panel title="查询条件">
+       <Space wrap>
+-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
++        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="支持：台账编号/计划号/器具编号/器具名称/测量对象" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Select allowClear style={{width:140}} value={fstatus||undefined} options={['待采集','待分析','待审核','已批准','需整改','已闭环','已关闭'].map(c=>({value:c,label:c}))} onChange={v=>setFstatus(v||undefined)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>结论</span><Select allowClear style={{width:140}} value={fconcl} options={conclOpts.map(c=>({value:c,label:c}))} onChange={setFconcl}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>责任人</span><Select allowClear style={{width:140}} value={fanl} options={anlOpts.map(c=>({value:c,label:c}))} onChange={setFanl}/>
+@@ -4426,7 +4426,7 @@
+   return <div>
+     <Panel title="查询条件">
+       <Space wrap>
+-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
++        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="支持：台账编号/计划号/器具编号/器具名称/测量对象" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待分析">待分析</Radio><Radio value="待审核">待审核</Radio><Radio value="已批准">已批准</Radio><Radio value="需整改">需整改</Radio><Radio value="已闭环">已闭环</Radio><Radio value="已关闭">已关闭</Radio></Radio.Group>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>结论</span><Select allowClear style={{width:140}} value={fconcl} options={conclOpts.map(c=>({value:c,label:c}))} onChange={setFconcl}/>
+         <span className="tiny">共 {rows.length} 条</span>
+@@ -4590,7 +4590,7 @@
+   return <div>
+     <Panel title="查询条件">
+       <Space wrap>
+-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear style={{width:140}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
++        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="支持：台账编号/计划号/器具编号/器具名称/测量对象" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待分析">待分析</Radio><Radio value="待审核">待审核</Radio><Radio value="已批准">已批准</Radio><Radio value="需整改">需整改</Radio><Radio value="已闭环">已闭环</Radio><Radio value="已关闭">已关闭</Radio></Radio.Group>
+         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>结论</span><Select allowClear style={{width:140}} value={fconcl} options={conclOpts.map(c=>({value:c,label:c}))} onChange={setFconcl}/>
+         <span className="tiny">共 {rows.length} 条</span>
