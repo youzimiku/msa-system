@@ -1,0 +1,43 @@
+--- 上版
++++ 改动后
+@@ -1552,7 +1552,14 @@
+ function ImportBtn({title}){
+   return <Button onClick={()=>toast.info((title||'导入')+'功能待接入')}>导入</Button>;
+ }
+-function VerdictTag({v}){ const vv=(!v||v==='-')?'待采集':v; return <Tooltip title={TIPS.verdict[vv]||TIPS.verdict[v]||vv}><Tag color={verdictColor(vv)} className="spec-tag" style={{minWidth:84,display:'inline-flex',justifyContent:'center',marginRight:0,textAlign:'center'}}>{vv}</Tag></Tooltip>; }
++const normVerdict=v=>{
++  if(!v||v==='-'||v==='待采集') return '待采集';
++  if(String(v).indexOf('不可接受')>=0) return '不可接受';
++  if(String(v).indexOf('有条件')>=0||String(v).indexOf('边缘')>=0||String(v).indexOf('较理想')>=0) return '有条件接受';
++  if(String(v).indexOf('可接受')>=0||String(v).indexOf('优秀')>=0||String(v).indexOf('理想')>=0||String(v).indexOf('评价人')>=0||String(v).indexOf('好')>=0) return '可接受';
++  return v;
++};
++function VerdictTag({v}){ const vv=normVerdict(v); return <Tooltip title={TIPS.verdict[vv]||vv}><Tag color={verdictColor(vv)} className="spec-tag" style={{minWidth:84,display:'inline-flex',justifyContent:'center',marginRight:0,textAlign:'center'}}>{vv}</Tag></Tooltip>; }
+ function StatusTag({s}){ return <Tooltip title={TIPS.status[s]||s}><Tag color={ENUM.statusColor[s]||'default'}>{s}</Tag></Tooltip>; }
+ 
+ /* 分项列状态图标（一套圆底：绿勾=通过 / 红叉=不通过 / 灰圆点=未做 / 灰横线=不做） */
+@@ -2350,11 +2357,11 @@
+     {title:'重复性', width:68, align:'center', render:fenCell('GRR','重复性')},
+     {title:'再现性', width:68, align:'center', render:fenCell('GRR','再现性')},
+     {title:'KAPPA', width:68, align:'center', render:fenCell('KAPPA','KAPPA')},
+-    {title:'判定结果', width:110, render:(_,r)=>{ const recs=planRecords(d,r.id); const sv=sumVerdict(recs); return recs.length? <VerdictTag v={sv}/> : (r.result&&r.result!=='-'?<VerdictTag v={r.result}/>:<span className="tiny">待采集</span>); }},
++    {title:'判定结果', width:110, render:(_,r)=>{ const recs=planRecords(d,r.id); const sv=sumVerdict(recs); return recs.length? <VerdictTag v={sv}/> : (r.result&&r.result!=='-'?<VerdictTag v={r.result}/>:<VerdictTag v="待采集"/>); }},
+     {title:'状态', width:112, render:(_,r)=>{ const v=planStatusView(r.status); return <Tag color={v.color} style={{marginRight:0}}>{v.text}</Tag>; }},
+-    {title:'测量人数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <span className="mono">{String(recs.length? recs[0].numOps : (r.params&&r.params.ops!==undefined? r.params.ops : ''))}</span>; }},
+-    {title:'测量次数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <span className="mono">{String(recs.length? recs[0].numTrials : (r.params&&r.params.trials!==undefined? r.params.trials : ''))}</span>; }},
+-    {title:'样本数量', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); return <span className="mono">{String(recs.length? recs[0].numParts : (r.params&&r.params.parts!==undefined? r.params.parts : ''))}</span>; }},
++    {title:'测量人数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); const v=recs.length&&recs[0].numOps!=null? recs[0].numOps : (r.params&&r.params.ops!=null? r.params.ops : ''); return <span className="mono">{v===''?'-':v}</span>; }},
++    {title:'测量次数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); const v=recs.length&&recs[0].numTrials!=null? recs[0].numTrials : (r.params&&r.params.trials!=null? r.params.trials : ''); return <span className="mono">{v===''?'-':v}</span>; }},
++    {title:'样本数量', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); const v=recs.length&&recs[0].numParts!=null? recs[0].numParts : (r.params&&r.params.parts!=null? r.params.parts : ''); return <span className="mono">{v===''?'-':v}</span>; }},
+     {title:'工序', width:84, render:(_,r)=>instCell(r,it=>it?<span>{it.process||'暂无'}</span>:'')},
+     {title:'分辨力', width:86, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.res||'暂无'}</span>:'')},
+     {title:'数据类型', width:102, render:(_,r)=><Select size="small" value={r.dataType||'计量型'} style={{width:92}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setF(r,'dataType',x)}/>},
+@@ -2801,7 +2808,7 @@
+       {key:'repeat', label:'重复性', children:dimTag('GRR','重复性')},
+       {key:'repro', label:'再现性', children:dimTag('GRR','再现性')},
+       {key:'kappa', label:'KAPPA', children:dimTag('KAPPA','KAPPA')},
+-      {key:'verdict', label:'判定结果', children: recs.length? <VerdictTag v={sumVerdict(recs)}/> : (plan.result&&plan.result!=='-'?<VerdictTag v={plan.result}/>:<span className="tiny">待采集</span>)},
++      {key:'verdict', label:'判定结果', children: recs.length? <VerdictTag v={sumVerdict(recs)}/> : (plan.result&&plan.result!=='-'?<VerdictTag v={plan.result}/>:<VerdictTag v="待采集"/>)},
+       {key:'status', label:'状态', children:<Tag color={planStatusView(plan.status).color} style={{marginRight:0}}>{planStatusView(plan.status).text}</Tag>},
+       {key:'numOps', label:'测量人数', children: recs.length? recs[0].numOps+' 人' : (plan.params?plan.params.ops+' 人':'待定型')},
+       {key:'numTrials', label:'测量次数', children: recs.length? recs[0].numTrials+' 次' : (plan.params?plan.params.trials+' 次':'待定型')},
