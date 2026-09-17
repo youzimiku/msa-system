@@ -1,0 +1,186 @@
+--- 基准
++++ 改动后
+@@ -632,11 +632,11 @@
+ 
+   /* 样本库管理（标准件/生产件真值维护，会议口径新增页面：质量特性维度 / 名义值 / 关联检验标准 / 工厂车间） */
+   const sampleLib = [
+-    {id:'SPL-001', name:'轴径 φ50 标准件', type:'标准件', partNo:'PN-1001', refValue:'50.000', nominal:'50.000', unit:'mm', charDim:'轴径 φ50±0.05', standardId:'STD-MSA-001', source:'计量校准中心', expireDate:'2027-03-31', plant:'青岛工厂', subplant:'一分厂', status:'启用', note:'高等级量具鉴定真值，用于 GRR/偏倚/线性参考'},
+-    {id:'SPL-002', name:'轴径 φ10 标准件', type:'标准件', partNo:'PN-1002', refValue:'10.000', nominal:'10.000', unit:'mm', charDim:'轴径 φ10±0.02', standardId:'STD-MSA-001', source:'计量校准中心', expireDate:'2027-06-30', plant:'青岛工厂', subplant:'一分厂', status:'启用', note:'用于 Cg/Cgk 参考值±10% 控制线'},
+-    {id:'SPL-003', name:'扭矩标准杆 25N·m', type:'标准件', partNo:'PN-1003', refValue:'25.000', nominal:'25.000', unit:'N·m', charDim:'螺栓拧紧力矩 25N·m', standardId:'STD-MSA-001', source:'第三方检定', expireDate:'2027-01-31', plant:'青岛工厂', subplant:'二分厂', status:'启用', note:'用于扭力扳手 Cg/Cgk 与稳定性分析'},
+-    {id:'SPL-004', name:'壳体成品件 003 批', type:'生产件', partNo:'PN-2001', refValue:'待维护', nominal:'待维护', unit:'mm', charDim:'壳体关键尺寸', standardId:'STD-MSA-003', source:'3号线当班抽取', expireDate:'待维护', plant:'烟台工厂', subplant:'一分厂', status:'启用', note:'生产件代表过程散差，用于 GRR 样本抽取'},
+-    {id:'SPL-005', name:'外观判定样件 外观 A', type:'生产件', partNo:'PN-2002', refValue:'合格', nominal:'合格', unit:'—', charDim:'外观判定', standardId:'STD-MSA-004', source:'检验班留样', expireDate:'—', plant:'烟台工厂', subplant:'一分厂', status:'停用', note:'计数型 KAPPA 判定参考样件'}
++    {id:'SPL-001', name:'轴径 φ50 标准件', type:'标准件', partNo:'PN-1001', refValue:'50.000', nominal:'50.000', unit:'mm', charDim:'轴径 φ50±0.05', standardId:'STD-MSA-001', source:'计量校准中心', expireDate:'2027-03-31', plant:'青岛工厂', subplant:'一分厂', status:'启用', note:'高等级量具鉴定真值，用于 GRR/偏倚/线性参考', verdict:'合格'},
++    {id:'SPL-002', name:'轴径 φ10 标准件', type:'标准件', partNo:'PN-1002', refValue:'10.000', nominal:'10.000', unit:'mm', charDim:'轴径 φ10±0.02', standardId:'STD-MSA-001', source:'计量校准中心', expireDate:'2027-06-30', plant:'青岛工厂', subplant:'一分厂', status:'启用', note:'用于 Cg/Cgk 参考值±10% 控制线', verdict:'合格'},
++    {id:'SPL-003', name:'扭矩标准杆 25N·m', type:'标准件', partNo:'PN-1003', refValue:'25.000', nominal:'25.000', unit:'N·m', charDim:'螺栓拧紧力矩 25N·m', standardId:'STD-MSA-001', source:'第三方检定', expireDate:'2027-01-31', plant:'青岛工厂', subplant:'二分厂', status:'启用', note:'用于扭力扳手 Cg/Cgk 与稳定性分析', verdict:'合格'},
++    {id:'SPL-004', name:'壳体成品件 003 批', type:'生产件', partNo:'PN-2001', refValue:'待维护', nominal:'待维护', unit:'mm', charDim:'壳体关键尺寸', standardId:'STD-MSA-003', source:'3号线当班抽取', expireDate:'待维护', plant:'烟台工厂', subplant:'一分厂', status:'启用', note:'生产件代表过程散差，用于 GRR 样本抽取', verdict:'不合格'},
++    {id:'SPL-005', name:'外观判定样件 外观 A', type:'生产件', partNo:'PN-2002', refValue:'合格', nominal:'合格', unit:'—', charDim:'外观判定', standardId:'STD-MSA-004', source:'检验班留样', expireDate:'—', plant:'烟台工厂', subplant:'一分厂', status:'停用', note:'计数型 KAPPA 判定参考样件', verdict:'合格'}
+   ];
+   /* 样本库变更日志（真值 / 有效期变更自动留痕：操作人 / 时间 / 变更前后值） */
+   const sampleLibLogs = [
+@@ -728,12 +728,13 @@
+   if(!d.judgeRules) d.judgeRules=[];
+   if(!d.calParams) d.calParams=[];
+   if(!d.sampleLib.length) d.sampleLib=[
+-    {id:'SPL-001', name:'轴径 φ50 标准件', type:'标准件', partNo:'PN-1001', refValue:'50.000', nominal:'50.000', unit:'mm', charDim:'轴径 φ50±0.05', standardId:'STD-MSA-001', source:'计量校准中心', expireDate:'2027-03-31', plant:'青岛工厂', subplant:'一分厂', status:'启用', note:'高等级量具鉴定真值，用于 GRR/偏倚/线性参考'},
+-    {id:'SPL-002', name:'轴径 φ10 标准件', type:'标准件', partNo:'PN-1002', refValue:'10.000', nominal:'10.000', unit:'mm', charDim:'轴径 φ10±0.02', standardId:'STD-MSA-001', source:'计量校准中心', expireDate:'2027-06-30', plant:'青岛工厂', subplant:'一分厂', status:'启用', note:'用于 Cg/Cgk 参考值±10% 控制线'},
+-    {id:'SPL-003', name:'扭矩标准杆 25N·m', type:'标准件', partNo:'PN-1003', refValue:'25.000', nominal:'25.000', unit:'N·m', charDim:'螺栓拧紧力矩 25N·m', standardId:'STD-MSA-001', source:'第三方检定', expireDate:'2027-01-31', plant:'青岛工厂', subplant:'二分厂', status:'启用', note:'用于扭力扳手 Cg/Cgk 与稳定性分析'},
+-    {id:'SPL-004', name:'壳体成品件 003 批', type:'生产件', partNo:'PN-2001', refValue:'待维护', nominal:'待维护', unit:'mm', charDim:'壳体关键尺寸', standardId:'STD-MSA-003', source:'3号线当班抽取', expireDate:'待维护', plant:'烟台工厂', subplant:'一分厂', status:'启用', note:'生产件代表过程散差，用于 GRR 样本抽取'},
+-    {id:'SPL-005', name:'外观判定样件 外观 A', type:'生产件', partNo:'PN-2002', refValue:'合格', nominal:'合格', unit:'—', charDim:'外观判定', standardId:'STD-MSA-004', source:'检验班留样', expireDate:'—', plant:'烟台工厂', subplant:'一分厂', status:'停用', note:'计数型 KAPPA 判定参考样件'}
+-  ];
++    {id:'SPL-001', name:'轴径 φ50 标准件', type:'标准件', partNo:'PN-1001', refValue:'50.000', nominal:'50.000', unit:'mm', charDim:'轴径 φ50±0.05', standardId:'STD-MSA-001', source:'计量校准中心', expireDate:'2027-03-31', plant:'青岛工厂', subplant:'一分厂', status:'启用', note:'高等级量具鉴定真值，用于 GRR/偏倚/线性参考', verdict:'合格'},
++    {id:'SPL-002', name:'轴径 φ10 标准件', type:'标准件', partNo:'PN-1002', refValue:'10.000', nominal:'10.000', unit:'mm', charDim:'轴径 φ10±0.02', standardId:'STD-MSA-001', source:'计量校准中心', expireDate:'2027-06-30', plant:'青岛工厂', subplant:'一分厂', status:'启用', note:'用于 Cg/Cgk 参考值±10% 控制线', verdict:'合格'},
++    {id:'SPL-003', name:'扭矩标准杆 25N·m', type:'标准件', partNo:'PN-1003', refValue:'25.000', nominal:'25.000', unit:'N·m', charDim:'螺栓拧紧力矩 25N·m', standardId:'STD-MSA-001', source:'第三方检定', expireDate:'2027-01-31', plant:'青岛工厂', subplant:'二分厂', status:'启用', note:'用于扭力扳手 Cg/Cgk 与稳定性分析', verdict:'合格'},
++    {id:'SPL-004', name:'壳体成品件 003 批', type:'生产件', partNo:'PN-2001', refValue:'待维护', nominal:'待维护', unit:'mm', charDim:'壳体关键尺寸', standardId:'STD-MSA-003', source:'3号线当班抽取', expireDate:'待维护', plant:'烟台工厂', subplant:'一分厂', status:'启用', note:'生产件代表过程散差，用于 GRR 样本抽取', verdict:'不合格'},
++    {id:'SPL-005', name:'外观判定样件 外观 A', type:'生产件', partNo:'PN-2002', refValue:'合格', nominal:'合格', unit:'—', charDim:'外观判定', standardId:'STD-MSA-004', source:'检验班留样', expireDate:'—', plant:'烟台工厂', subplant:'一分厂', status:'停用', note:'计数型 KAPPA 判定参考样件', verdict:'合格'}
++  ];
++  (d.sampleLib||[]).forEach(o=>{ if(o.verdict===undefined) o.verdict=''; });
+   if(!d.judgeRules.length) d.judgeRules=[
+     {id:'JR-001', method:'GRR', condition:'NDC ≥ 5', verdict:'可接受', note:'可区分类别数达标，测量系统分辨力与变差可接受'},
+     {id:'JR-002', method:'GRR', condition:'%GRR < 10%', verdict:'可接受', note:'测量系统重复性+再现性占比小于 10%，可接受'},
+@@ -2447,6 +2448,7 @@
+   const [meta,setMeta]=useState({ qcArea:'质检科', plant:'青岛工厂', subplant:'一分厂', analyst:'', owner:'', resolution:'', dept:'质量' });
+   const setMetaK=(k,v)=>setMeta(m=>({...m,[k]:v}));
+   const [qualityChar,setQualityChar]=useState('');
++  const [methodRows,setMethodRows]=useState([]);
+   const [trigger,setTrigger]=useState('周期复评');
+   const [planDate,setPlanDate]=useState(dayjs().add(30,'day').format('YYYY-MM-DD'));
+   const [dueSel,setDueSel]=useState('');
+@@ -2485,7 +2487,7 @@
+     setMetaK('plant', c.plant||'青岛工厂');
+     setMetaK('subplant', c.subplant||'一分厂');
+     const ms = c.methods&&c.methods.length? c.methods.map(x=>typeof x==='string'?x:(x.method||'')).filter(Boolean) : ((c.dataType==='计数型')?['KAPPA']:['GRR']);
+-    setChecked(ms);
++    setMethodRows([]);
+     const cfg={};
+     ms.forEach(m=>{
+       const stds=stdsOf(m,c);
+@@ -2520,6 +2522,7 @@
+   const pickGroup=(gid)=>{
+     setCurGroup(gid);
+     setSelKeys([]);
++    setMethodRows([]);
+   };
+   const subRuleText=(an)=>{ const c=mCfg[an]||{}; const sd=samplingDef(an);
+     const ops=c.ops!==undefined?c.ops:sd.ops, trials=c.trials!==undefined?c.trials:sd.trials, parts=c.parts!==undefined?c.parts:sd.parts;
+@@ -2528,16 +2531,30 @@
+     if(an==='stability') return parts+' 子组 × '+trials+' 次';
+     if(an==='cgcgk') return trials+' 次';
+     return '不取样，直接录入'; };
++  const methodList = isPersonGroup? ['KAPPA'] : charMethods;
++  /* 确定：把勾选中且未入列表的方法加入配置列表（不允许重复添加） */
++  const addMethods=()=>{
++    const list=methodList.filter(m=>checked.indexOf(m)>=0 && !methodRows.some(r=>r.method===m));
++    if(!list.length){ toast.warn('请先勾选未加入列表的分析方法'); return; }
++    const rows=list.map(m=>{ const sd=samplingDef(m); const c=mCfg[m]||{};
++      return {method:m, std:(c.std||''), ops:sd.useOps?(c.ops!==undefined?c.ops:sd.ops):undefined, trials:(c.trials!==undefined?c.trials:sd.trials), parts:(c.parts!==undefined?c.parts:sd.parts), saved:false}; });
++    setMethodRows(rs=>rs.concat(rows));
++  };
++  /* 行内编辑受控更新 */
++  const setRow=(m,patch)=>setMethodRows(rs=>rs.map(r=>r.method===m?{...r,...patch}:r));
++  /* 保存当前行配置 */
++  const saveRow=(r)=>{ setMethodRows(rs=>rs.map(x=>x.method===r.method?{...x,saved:true}:x)); toast.ok(ANAL_SHORT[r.method]+' 配置已保存'); };
++  /* 删除行：联动取消勾选（无二次确认） */
++  const delRow=(r)=>{ setMethodRows(rs=>rs.filter(x=>x.method!==r.method)); setChecked(c=>c.filter(x=>x!==r.method)); };
+   const submit=()=>{
+     if(!charSel){ toast.warn('请选择被测参数'); return; }
+-    const effMethods=isPersonGroup?['KAPPA']:charMethods;
+-    const effChecked=isPersonGroup?['KAPPA']:checked;
+-    const acts=effMethods.filter(m=>effChecked.indexOf(m)>=0);
+-    if(!acts.length){ toast.warn('请至少勾选一个分析方法'); return; }
+-    for(const m of acts){
+-      const sd=samplingDef(m); const c=mCfg[m]||{};
+-      const ops=c.ops!==undefined?c.ops:sd.ops, trials=c.trials!==undefined?c.trials:sd.trials, parts=c.parts!==undefined?c.parts:sd.parts;
+-      if(ops<sd.opsMin||ops>sd.opsMax||trials<sd.trialsMin||trials>sd.trialsMax||parts<sd.partsMin||parts>sd.partsMax){ toast.warn('分析方法 '+ANAL_SHORT[m]+' 取样参数超出允许范围（人数 '+sd.opsMin+'~'+sd.opsMax+'、次数 '+sd.trialsMin+'~'+sd.trialsMax+'、样本数 '+sd.partsMin+'~'+sd.partsMax+'），请调整'); return; }
++    const savedRows=methodRows.filter(r=>r.saved);
++    const acts=savedRows.map(r=>r.method);
++    if(!acts.length){ toast.warn('请先在上方勾选分析方法并点击「确定」加入列表，然后在列表中保存至少一个方法的配置'); return; }
++    for(const r of savedRows){
++      const m=r.method; const sd=samplingDef(m);
++      const ops=r.ops, trials=r.trials, parts=r.parts;
++      if((sd.useOps&&(ops<sd.opsMin||ops>sd.opsMax))||trials<sd.trialsMin||trials>sd.trialsMax||parts<sd.partsMin||parts>sd.partsMax){ toast.warn('分析方法 '+ANAL_SHORT[m]+' 取样参数超出允许范围（人数 '+sd.opsMin+'~'+sd.opsMax+'、次数 '+sd.trialsMin+'~'+sd.trialsMax+'、样本数 '+sd.partsMin+'~'+sd.partsMax+'），请调整'); return; }
+     }
+     let okKeys;
+     if(isPersonGroup){
+@@ -2558,19 +2575,19 @@
+         const fullName= isPersonGroup? per.name : ((it.range&&it.range!=='-'&&it.range!=='计数型'&&it.range!=='通端/止端')?(it.name+' '+it.range):it.name);
+         const pid=nextPlanId(s);
+         const dataType= acts.indexOf('KAPPA')>=0?'计数型':'计量型';
+-        const mkP=(an)=>{ const c=mCfg[an]||{}; const ops=Number(c.ops)||3, trials=Number(c.trials)||3, parts=Number(c.parts)||10;
++        const mkP=(an)=>{ const r=savedRows.find(x=>x.method===an); const ops=Number(r?r.ops:undefined)||3, trials=Number(r?r.trials:undefined)||3, parts=Number(r?r.parts:undefined)||10;
+           if(an==='GRR'||an==='KAPPA') return {ops,trials,parts};
+           if(an==='linear') return {stds:parts, per:trials, points:parts, biasRuns:(TYPE_PARAMS.linear||{}).biasRuns||15};
+           if(an==='stability') return {groups:parts, per:trials, span:'4周~3个月'};
+           if(an==='cgcgk') return {runs:trials, parts:1};
+           return {ops,trials,parts}; };
+         s.plans.unshift({ id:pid, name:(charObj?charObj.name:fullName)+' MSA 分析计划', instId:skey, instName:fullName, instIds:[skey], cat: isPersonGroup? per.postName : it.cat, planType: isPersonGroup? '人员MSA':'器具MSA',
+-          type:acts[0], method:ENUM.taskMethod[acts[0]][0], methods:acts.slice(), standard:mCfg[acts[0]].std, params:mkP(acts[0]),
++          type:acts[0], method:ENUM.taskMethod[acts[0]][0], methods:acts.slice(), standard:(savedRows.find(r=>r.method===acts[0])||{}).std||'', params:mkP(acts[0]),
+           object:charObj?charObj.name:'', feature:charObj?charObj.type:'', charId:charSel, owner:meta.owner||s.me.name, editor:s.me.name, editorDate:NOW,
+           planDate, trigger, source:'临时任务', status:'待采集', recordId:'', result:'',
+           note:'', partNo:charObj?charObj.partNo:'', partName:charObj?charObj.partName:'', qcArea:meta.qcArea, plant:meta.plant, subplant:meta.subplant, analyst:meta.analyst, resolution:meta.resolution,
+           dept:meta.dept, dataType, msaMethods: acts.reduce((a,x)=>a.concat(msaExcelMap(x)),[]), opMethod:'《测量系统分析操作指导书》' });
+-        acts.forEach(an=>{ spawnRecord(s, pid, {type:an, instId:skey, instName:fullName, object:charObj?charObj.name:'', standard:mCfg[an].std, method:ENUM.taskMethod[an][0], params:mkP(an), feature:charObj?charObj.type:'', charId:charSel, note:''}); });
++        acts.forEach(an=>{ spawnRecord(s, pid, {type:an, instId:skey, instName:fullName, object:charObj?charObj.name:'', standard:(savedRows.find(r=>r.method===an)||{}).std||'', method:ENUM.taskMethod[an][0], params:mkP(an), feature:charObj?charObj.type:'', charId:charSel, note:''}); });
+         syncPlanFromRecord(s,pid);
+         logAction(s.me.name,'计划编制',pid,'按被测参数 '+charSel+' 创建 MSA 计划（分析方法：'+acts.map(x=>ANAL_SHORT[x]).join('、')+'）');
+         created++;
+@@ -2650,18 +2667,22 @@
+       <div className="grp-label" style={{marginBottom:6}}>分析方法</div>
+       {!charSel && <div style={{color:'#666666', fontSize:14}}>先选择被测参数</div>}
+       {charSel && <>
+-        <div style={{marginBottom:8}}><Checkbox.Group size="small" disabled={isPersonGroup} value={isPersonGroup?['KAPPA']:checked} options={(isPersonGroup?['KAPPA']:charMethods).map(m=>({value:m,label:ANAL_SHORT[m]+'（'+subRuleText(m)+'）'}))} onChange={setChecked}/></div>
+-        {(isPersonGroup?['KAPPA']:charMethods).filter(m=>(isPersonGroup?['KAPPA']:checked).indexOf(m)>=0).map(m=>{
+-          const c=mCfg[m]||{};
+-          const sd=samplingDef(m);
+-          const ops=c.ops!==undefined?c.ops:sd.ops, trials=c.trials!==undefined?c.trials:sd.trials, parts=c.parts!==undefined?c.parts:sd.parts;
+-          return <div key={m} style={{display:'flex', gap:12, alignItems:'center', flexWrap:'wrap', padding:'6px 0', borderTop:'1px solid #f0f0f0'}}>
+-            <Tag color={ANAL_COLOR[m]} style={{marginRight:0,width:66,textAlign:'center'}}>{ANAL_SHORT[m]}</Tag>
+-            {sd.useOps && <><span className="flt-label">人数</span><InputNumber size="small" min={sd.opsMin} max={sd.opsMax} style={{width:70}} value={ops} onChange={v=>setM(m,{ops:v})}/></>}
+-            <span className="flt-label">次数</span><InputNumber size="small" min={sd.trialsMin} max={sd.trialsMax} style={{width:70}} value={trials} onChange={v=>setM(m,{trials:v})}/>
+-            <span className="flt-label">样本数</span><InputNumber size="small" min={sd.partsMin} max={sd.partsMax} style={{width:70}} value={parts} onChange={v=>setM(m,{parts:v})}/>
+-          </div>;
+-        })}
++        <div style={{marginBottom:8, display:'flex', alignItems:'center', gap:12, flexWrap:'wrap'}}>
++          <Checkbox.Group size="small" value={checked} options={methodList.map(m=>({value:m,label:ANAL_SHORT[m]+'（'+subRuleText(m)+'）', disabled:methodRows.some(r=>r.method===m)}))} onChange={setChecked}/>
++          <Button size="small" type="primary" onClick={addMethods}>确定</Button>
++        </div>
++        <Table size="small" rowKey="method" pagination={false} dataSource={methodRows}
++          locale={{emptyText:'未添加分析方法，请在上方勾选后点击「确定」'}}
++          columns={[
++            {title:'操作', width:110, render:(_,r)=><Space size={0}>
++              <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
++              <Button size="small" type="link" danger onClick={()=>delRow(r)}>删除</Button>
++            </Space>},
++            {title:'分析方法', width:120, render:(_,r)=><Tag color={ANAL_COLOR[r.method]} style={{marginRight:0,width:76,textAlign:'center'}}>{ANAL_SHORT[r.method]}</Tag>},
++            {title:'人数', width:100, render:(_,r)=>{ const sd=samplingDef(r.method); if(!sd.useOps) return <span className="tiny">—</span>; return <InputNumber size="small" min={sd.opsMin} max={sd.opsMax} style={{width:88}} value={r.ops} onChange={v=>setRow(r.method,{ops:v})}/>; }},
++            {title:'次数', width:100, render:(_,r)=>{ const sd=samplingDef(r.method); return <InputNumber size="small" min={sd.trialsMin} max={sd.trialsMax} style={{width:88}} value={r.trials} onChange={v=>setRow(r.method,{trials:v})}/>; }},
++            {title:'样本数', width:100, render:(_,r)=>{ const sd=samplingDef(r.method); return <InputNumber size="small" min={sd.partsMin} max={sd.partsMax} style={{width:88}} value={r.parts} onChange={v=>setRow(r.method,{parts:v})}/>; }},
++          ]}/>
+       </>}
+     </div>
+ 
+@@ -3525,10 +3546,11 @@
+   const [q,setQ]=useState({kw:'',type:undefined,st:undefined,plant:undefined,sub:undefined});
+   const [modal,setModal]=useState(null);
+   const [logOpen,setLogOpen]=useState(null);
++  const cleanV=(v)=>(v&&v!=='—'&&v!=='待维护'&&v!=='合格')?v:'';
+   /* 行内字段即时写 store；保存常驻操作列；启用/停用用 Switch；日志按钮保留在行上 */
+   const setF=(r,k,v)=>{ mut(s=>{ const rec=s.sampleLib.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
+   const saveRow=(r)=>{ mut(s=>{ const rec=s.sampleLib.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑样本',r.id,'行内编辑 '+r.id+' '+(r.name||'')); }); toast.ok('已保存'); };
+-  const addRow=()=>{ const id='SPL-'+String((d.sampleLib||[]).length+1).padStart(3,'0'); mut(s=>{ s.sampleLib.unshift({id, name:'', type:'标准件', partNo:'', partName:'', charDim:'', nominal:'', refValue:'', unit:'mm', standardId:'', source:'', expireDate:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, status:'启用', note:''}); logAction(s.me.name,'新增样本',id,'列表新增空白行'); }); };
++  const addRow=()=>{ const id='SPL-'+String((d.sampleLib||[]).length+1).padStart(3,'0'); mut(s=>{ s.sampleLib.unshift({id, name:'', type:'标准件', partNo:'', partName:'', charDim:'', verdict:'', nominal:'', refValue:'', unit:'mm', standardId:'', source:'', expireDate:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, status:'启用', note:''}); logAction(s.me.name,'新增样本',id,'列表新增空白行'); }); };
+   const delRow=(r)=>{ Modal.confirm({title:'删除样本 — '+(r.name||r.id), content:'确认删除该样本？删除后不可恢复。', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.sampleLib=s.sampleLib.filter(x=>x.id!==r.id); logAction(s.me.name,'删除样本',r.id,'删除 '+(r.name||'')); }); toast.ok('已删除'); } }); };
+   const rows=(d.sampleLib||[]).filter(r=>(!q.kw||(r.id+r.name+(r.partNo||'')+(r.charDim||'')).toLowerCase().includes(q.kw.toLowerCase())))
+     .filter(r=>!q.type||r.type===q.type).filter(r=>!q.st||r.status===q.st)
+@@ -3546,8 +3568,9 @@
+     {title:'零件号', dataIndex:'partNo', width:110, render:(_,r)=><PartSelect value={r.partNo} width={100} onChange={(no,name)=>{setF(r,'partNo',no); setF(r,'partName',name);}}/>},
+     {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><span>{r.partName||'—'}</span>},
+     {title:'被测参数', dataIndex:'charDim', width:170, render:(_,r)=><Select size="small" showSearch value={r.charDim||undefined} style={{width:160}} options={(d.characteristics||[]).map(c=>({value:c.name,label:c.name}))} onChange={x=>setF(r,'charDim',x)}/>},
+-    {title:'标准值', dataIndex:'nominal', width:100, render:(_,r)=><Input size="small" className="mono" value={(r.nominal&&r.nominal!=='—')?r.nominal:''} placeholder="待维护" onChange={e=>setF(r,'nominal',e.target.value)}/>},
+-    {title:'真值', dataIndex:'refValue', width:110, render:(_,r)=><Input size="small" className="mono" value={(r.refValue&&r.refValue!=='—')?r.refValue:''} placeholder="待维护" onChange={e=>setF(r,'refValue',e.target.value)}/>},
++    {title:'判定状态', dataIndex:'verdict', width:104, render:(_,r)=><Select size="small" value={r.verdict||undefined} style={{width:92}} options={[{value:'合格',label:'合格'},{value:'不合格',label:'不合格'}]} onChange={x=>setF(r,'verdict',x)}/>},
++    {title:'标准值', dataIndex:'nominal', width:100, render:(_,r)=><Input size="small" className="mono" value={cleanV(r.nominal)} onChange={e=>setF(r,'nominal',e.target.value)}/>},
++    {title:'真值', dataIndex:'refValue', width:110, render:(_,r)=><Input size="small" className="mono" value={cleanV(r.refValue)} onChange={e=>setF(r,'refValue',e.target.value)}/>},
+     {title:'单位', dataIndex:'unit', width:86, render:(_,r)=><Select size="small" value={r.unit||undefined} style={{width:76}} options={UNIT_OPT} onChange={x=>setF(r,'unit',x)}/>},
+     {title:'有效期至', dataIndex:'expireDate', width:110, render:(_,r)=><FDate size="small" className="mono" style={{width:104}} value={r.expireDate||''} onChange={x=>setF(r,'expireDate',x)}/>},
+     {title:'工厂', dataIndex:'plant', width:110, render:(_,r)=><Select size="small" value={r.plant||''} style={{width:100}} options={PLANTS_OPT} onChange={x=>setF(r,'plant',x)}/>},
