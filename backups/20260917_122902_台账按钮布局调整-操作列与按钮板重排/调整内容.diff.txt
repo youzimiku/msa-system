@@ -1,0 +1,34 @@
+diff --git a/index.html b/index.html
+index 984b809..200079b 100644
+--- a/index.html
++++ b/index.html
+@@ -4222,13 +4222,10 @@ function EntryPage({kind}){
+   const delRow=(r)=>{ Modal.confirm({ title:'删除台账记录 — '+r.id, content:'删除后该台账记录将从列表移除（仅允许删除「待采集/待分析」状态记录）。确认删除？', okText:'删除', okType:'danger', cancelText:'取消', onOk:()=>{ mut(s=>{ const arr=kind==='grr'?s.grr:kind==='kappa'?s.kappa:s[ANA_CFG[kind].arr]; const i=arr.findIndex(x=>x.id===r.id); if(i>=0) arr.splice(i,1); logAction(s.me.name,'删除台账',r.id,'删除台账记录 '+r.id); }); toast.ok('已删除'); } }); };
+   const cols=[
+     {title:'操作', width:560, fixed:'left', render:(_,r)=><Space size={0} wrap>
+-      <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
+-      <Button size="small" type="link" danger disabled={!canDo(d.me.role,'edit')||!canDel(r)} onClick={()=>delRow(r)}>删除</Button>
+       <Button size="small" type="link" onClick={()=>setPickRec(r)}>样本/人员选择</Button>
+-      <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')||(r.reviewStatus!=='待采集'&&r.reviewStatus!=='待分析')} onClick={()=>{DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind);}}>数据录入</Button>
+-      <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')||r.reviewStatus!=='待分析'} onClick={()=>setAnlRec(r)}>分析</Button>
+       <Button size="small" type="link" onClick={()=>goResult(r)}>查看结果</Button>
+-      <Button size="small" type="link" onClick={()=>setOpsRec(r)}>操作人</Button>
++      <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
++      <Button size="small" type="link" danger disabled={!canDo(d.me.role,'edit')||!canDel(r)} onClick={()=>delRow(r)}>删除</Button>
+     </Space>},
+     {title:'台账编号', dataIndex:'id', width:115, render:(v,r)=><span className="row-link mono" onClick={()=>goResult(r)}>{v}</span>},
+     {title:'责任人', width:110, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" placeholder="选择责任人" value={r.analyst||undefined} style={{width:100}} options={PEOPLE_OPT} onChange={x=>setRecF(r,'analyst',x)}/>},
+@@ -4267,9 +4264,12 @@ function EntryPage({kind}){
+       <Space wrap>
+         <Button type="primary" onClick={()=>setQ({kw:fkw,status:fstatus,concl:fconcl})}>查询</Button>
+         <Button onClick={resetQ}>重置</Button>
++        <Button onClick={()=>{ if(selRows.length!==1){ toast.warn('请勾选一条记录'); return; } setOpsRec(selRows[0]); }}>操作人</Button>
++        <Button disabled={!canDo(d.me.role,'edit')||!selRows.length} onClick={()=>{ if(selRows.length!==1){ toast.warn('请勾选一条记录'); return; } const rr=selRows[0]; if(rr.reviewStatus!=='待分析'){ toast.warn('仅「待分析」状态可执行分析'); return; } setAnlRec(rr); }}>分析</Button>
++        <Button disabled={!canDo(d.me.role,'edit')||!selRows.length} onClick={()=>{ if(selRows.length!==1){ toast.warn('请勾选一条记录'); return; } const rr=selRows[0]; if(rr.reviewStatus!=='待采集'&&rr.reviewStatus!=='待分析'){ toast.warn('仅「待采集/待分析」状态可录入数据'); return; } DataOpen={kind,id:rr.id}; NavAPI.go('data_'+kind); }}>数据录入</Button>
++        <Button onClick={()=>{ if(!selRows.length){ toast.warn('请先在列表中勾选记录'); return; } toast.ok('已确认所选 '+selRows.length+' 条记录'); }}>确认</Button>
+         <Button disabled={!canDo(d.me.role,'edit')} onClick={()=>{}}>导入</Button>
+         <Button disabled={!canDo(d.me.role,'edit')}>导出</Button>
+-        <Button onClick={()=>{ if(!selRows.length){ toast.warn('请先在列表中勾选记录'); return; } toast.ok('已确认所选 '+selRows.length+' 条记录'); }}>确认</Button>
+       </Space>
+     </Panel>
+     <Panel title={CFG.title+' · 记录列表（'+rows.length+' 条）'}>
