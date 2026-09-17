@@ -1,0 +1,17 @@
+--- 上版
++++ 改动后
+@@ -1563,12 +1563,12 @@
+ function StatusTag({s}){ return <Tooltip title={TIPS.status[s]||s}><Tag color={ENUM.statusColor[s]||'default'}>{s}</Tag></Tooltip>; }
+ 
+ /* 分项列状态图标（一套圆底：绿勾=通过 / 红叉=不通过 / 灰圆点=未做 / 灰横线=不做） */
+-const DimBadge=({bg,stroke})=> <svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill={bg}/><path d={stroke} stroke="#fff" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>;
++const DimBadge=({bg,stroke})=> <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill={bg}/><path d={stroke} stroke="#fff" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+ const CheckSvg=()=> <DimBadge bg="#16a34a" stroke="M7 12.5l3 3 7-7"/>;
+ const PassSvg=()=> <DimBadge bg="#16a34a" stroke="M7 12.5l3 3 7-7"/>;
+ const FailSvg=()=> <DimBadge bg="#dc2626" stroke="M8.5 8.5l7 7M15.5 8.5l-7 7"/>;
+ const TodoSvg=()=> <DimBadge bg="#9ca3af" stroke="M12 12m-3.4 0a3.4 3.4 0 1 0 6.8 0a3.4 3.4 0 1 0-6.8 0"/>;
+-const NaSvg=()=> <svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#e5e7eb"/><path d="M7 12h10" stroke="#9ca3af" strokeWidth="2.4" strokeLinecap="round"/></svg>;
++const NaSvg=()=> <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#e5e7eb"/><path d="M7 12h10" stroke="#9ca3af" strokeWidth="2.4" strokeLinecap="round"/></svg>;
+ const CondSvg=()=> <DimBadge bg="#fadb14" stroke="M12 7.5v4.2M12 16.2h.01"/>;
+ 
+ /* 校准到期徽标 */
