@@ -1,0 +1,47 @@
+diff --git a/index.html b/index.html
+index 402fab3..984b809 100644
+--- a/index.html
++++ b/index.html
+@@ -4215,20 +4215,23 @@ function EntryPage({kind}){
+   const [pickRec,setPickRec]=useState(null); const [pickedMap,setPickedMap]=useState({});
+   const [selKeys,setSelKeys]=useState([]);
+   const selRows=rows.filter(r=>selKeys.includes(r.id));
+-  const [auditOpen,setAuditOpen]=useState(false); const [auditPerson,setAuditPerson]=useState(undefined);
++  const PEOPLE_OPT=['王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(n=>({value:n,label:n}));
++  const setRecF=(r,k,v)=>{ mut(s=>{ const arr=kind==='grr'?s.grr:kind==='kappa'?s.kappa:s[ANA_CFG[kind].arr]; const g=arr.find(x=>x.id===r.id); if(g) g[k]=v; }); };
++  const saveRow=(r)=>{ mut(s=>{ logAction(s.me.name,'编辑台账',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
++  const canDel=(r)=>['待采集','待分析'].includes(r.reviewStatus);
++  const delRow=(r)=>{ Modal.confirm({ title:'删除台账记录 — '+r.id, content:'删除后该台账记录将从列表移除（仅允许删除「待采集/待分析」状态记录）。确认删除？', okText:'删除', okType:'danger', cancelText:'取消', onOk:()=>{ mut(s=>{ const arr=kind==='grr'?s.grr:kind==='kappa'?s.kappa:s[ANA_CFG[kind].arr]; const i=arr.findIndex(x=>x.id===r.id); if(i>=0) arr.splice(i,1); logAction(s.me.name,'删除台账',r.id,'删除台账记录 '+r.id); }); toast.ok('已删除'); } }); };
+   const cols=[
+-    {title:'操作', width:680, fixed:'left', render:(_,r)=><Space size={0} wrap>
++    {title:'操作', width:560, fixed:'left', render:(_,r)=><Space size={0} wrap>
++      <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
++      <Button size="small" type="link" danger disabled={!canDo(d.me.role,'edit')||!canDel(r)} onClick={()=>delRow(r)}>删除</Button>
+       <Button size="small" type="link" onClick={()=>setPickRec(r)}>样本/人员选择</Button>
+-      <Button size="small" type="link" onClick={()=>setAuditOpen(true)}>审核</Button>
++      <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')||(r.reviewStatus!=='待采集'&&r.reviewStatus!=='待分析')} onClick={()=>{DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind);}}>数据录入</Button>
+       <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')||r.reviewStatus!=='待分析'} onClick={()=>setAnlRec(r)}>分析</Button>
+       <Button size="small" type="link" onClick={()=>goResult(r)}>查看结果</Button>
+-      <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')||r.reviewStatus!=='待分析'} onClick={()=>{DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind);}}>修改数据</Button>
+       <Button size="small" type="link" onClick={()=>setOpsRec(r)}>操作人</Button>
+-      <Button size="small" type="link" onClick={()=>{}}>预览</Button>
+-      <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')||r.reviewStatus!=='待采集'} onClick={()=>{DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind);}}>录入数据</Button>
+     </Space>},
+     {title:'台账编号', dataIndex:'id', width:115, render:(v,r)=><span className="row-link mono" onClick={()=>goResult(r)}>{v}</span>},
+-    {title:'责任人', dataIndex:'analyst', width:90},
++    {title:'责任人', width:110, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" placeholder="选择责任人" value={r.analyst||undefined} style={{width:100}} options={PEOPLE_OPT} onChange={x=>setRecF(r,'analyst',x)}/>},
+     {title:'操作人', width:150, render:(_,r)=><span className="tiny">{opsLabel(kind,r)}</span>},
+     {title:'关联计划', dataIndex:'planId', width:110, render:(v)=><span className="row-link mono" onClick={()=>NavAPI.go('plan')}>{v||'暂无'}</span>},
+     {title:'器具名称', width:150, render:(_,r)=>{ const it=d.instruments.find(i=>i.id===r.instId); return <span>{it?it.name:r.instName}</span>; }, ellipsis:true},
+@@ -4276,10 +4279,7 @@ function EntryPage({kind}){
+     {opsRec && <OpsModal rec={opsRec} kind={kind} onClose={()=>setOpsRec(null)}/>}
+     {prevRec && <ImportPreviewModal rec={prevRec} kind={kind} onClose={()=>setPrevRec(null)}/>}
+     {pickRec && <SamplePersonModal rec={pickRec} picked={pickedMap[pickRec.id]} onOk={(samples,ops)=>{ setPickedMap(p=>{const n={...p}; n[pickRec.id]={samples:samples,ops:ops}; return n;}); setPickRec(null); }} onClose={()=>setPickRec(null)}/>}
+-    {auditOpen && <Modal cancelText="取消" title="审核 · 选择审核人员" open okText="确认" onOk={()=>{ if(!auditPerson){ toast.warn('请选择审核人员'); return; } toast.ok('已提交审核：'+auditPerson); setAuditOpen(false); setAuditPerson(undefined); }} onCancel={()=>{ setAuditOpen(false); setAuditPerson(undefined); }} destroyOnClose width={420}>
+-      <div style={{marginBottom:4}}><span className="flt-label" style={{fontSize:14,color:'#333333'}}>审核人员</span></div>
+-      <Select style={{width:'100%'}} placeholder="请选择审核人员" value={auditPerson} options={['王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(n=>({value:n,label:n}))} onChange={setAuditPerson}/>
+-    </Modal>}
++    {/* 审核入口已移除：审核流程经「分析」弹窗提交审核 */}
+   </div>;
+ }
+ function SamplePersonModal({rec, picked, onOk, onClose}){
