@@ -1,0 +1,88 @@
+diff --git a/index.html b/index.html
+index 8d5dd8c..0e04d48 100644
+--- a/index.html
++++ b/index.html
+@@ -4222,7 +4222,7 @@ function EntryPage({kind}){
+   const delRow=(r)=>{ Modal.confirm({ title:'删除台账记录 — '+r.id, content:'删除后该台账记录将从列表移除（仅允许删除「待采集/待分析」状态记录）。确认删除？', okText:'删除', okType:'danger', cancelText:'取消', onOk:()=>{ mut(s=>{ const arr=kind==='grr'?s.grr:kind==='kappa'?s.kappa:s[ANA_CFG[kind].arr]; const i=arr.findIndex(x=>x.id===r.id); if(i>=0) arr.splice(i,1); logAction(s.me.name,'删除台账',r.id,'删除台账记录 '+r.id); }); toast.ok('已删除'); } }); };
+   const cols=[
+     {title:'操作', width:560, fixed:'left', render:(_,r)=><Space size={0} wrap>
+-      <Button size="small" type="link" onClick={()=>setPickRec(r)}>样本/人员选择</Button>
++      <Button size="small" type="link" onClick={()=>setPickRec(r)}>{(kind==='grr'||kind==='kappa')?'人员选择':(kind==='linear')?'样本选择':'样本/人员选择'}</Button>
+       <Button size="small" type="link" onClick={()=>goResult(r)}>查看结果</Button>
+       <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
+       <Button size="small" type="link" danger disabled={!canDo(d.me.role,'edit')||!canDel(r)} onClick={()=>delRow(r)}>删除</Button>
+@@ -4278,25 +4278,34 @@ function EntryPage({kind}){
+     {anlRec && <AnalyzeModal rec={anlRec} kind={kind} onClose={()=>setAnlRec(null)}/>}
+     {opsRec && <OpsModal rec={opsRec} kind={kind} onClose={()=>setOpsRec(null)}/>}
+     {prevRec && <ImportPreviewModal rec={prevRec} kind={kind} onClose={()=>setPrevRec(null)}/>}
+-    {pickRec && <SamplePersonModal rec={pickRec} picked={pickedMap[pickRec.id]} onOk={(samples,ops)=>{ setPickedMap(p=>{const n={...p}; n[pickRec.id]={samples:samples,ops:ops}; return n;}); setPickRec(null); }} onClose={()=>setPickRec(null)}/>}
++    {pickRec && <SamplePersonModal kind={kind} rec={pickRec} picked={pickedMap[pickRec.id]} onOk={(samples,ops,stations)=>{ setPickedMap(p=>{const n={...p}; n[pickRec.id]={samples:samples||[],ops:ops||[],stations:stations||[]}; return n;}); setPickRec(null); }} onClose={()=>setPickRec(null)}/>}
+     {/* 审核入口已移除：审核流程经「分析」弹窗提交审核 */}
+   </div>;
+ }
+-function SamplePersonModal({rec, picked, onOk, onClose}){
++function SamplePersonModal({kind, rec, picked, onOk, onClose}){
+   const d=Store.get();
++  const onlyPeople=(kind==='grr'||kind==='kappa');
++  const onlySamples=(kind==='linear');
++  const needStation=(kind==='stability');
+   const [kw,setKw]=useState('');
+   const [selS,setSelS]=useState((picked&&picked.samples?picked.samples:[]).map(s=>s.id));
+   const [selP,setSelP]=useState(picked&&picked.ops? picked.ops.map(n=>{const p=(d.personnel||[]).find(x=>x.name===n); return p?p.empNo:null;}).filter(Boolean) : []);
++  const [selSt,setSelSt]=useState(picked&&picked.stations?picked.stations.slice():[]);
+   const samples=(d.sampleLib||[]).filter(s=>!kw||(s.id+s.name+(s.partNo||'')+(s.charDim||'')).toLowerCase().includes(kw.toLowerCase()));
+-  return <Modal cancelText="取消" title={'样本/人员选择 · '+(rec?rec.id:'')} open width={900} okText="确定" destroyOnClose
+-    onOk={()=>{ if(!selS.length){ toast.warn('请至少选择一个样本'); return; } if(!selP.length){ toast.warn('请至少选择一名人员'); return; }
+-      const chosenSamples=samples.filter(s=>selS.includes(s.id));
+-      const chosenOps=(d.personnel||[]).filter(x=>selP.includes(x.empNo)).map(x=>x.name);
+-      onOk(chosenSamples, chosenOps); toast.ok('已选择 '+chosenSamples.length+' 个样本、'+chosenOps.length+' 名人员'); }}
+-    onCancel={onClose}>
+-    <div style={{marginBottom:8,fontSize:14,color:'#333333'}}>第一步：选择本次使用的样本（来自样本库，可多选）</div>
+-    <Input.Search allowClear placeholder="搜索 样本编号/名称/零件号/被测参数" style={{width:340,marginBottom:8}} value={kw} onChange={e=>setKw(e.target.value)}/>
+-    <Table size="small" rowKey="id" dataSource={samples} pagination={{pageSize:5,showTotal:t=>'共 '+t+' 条'}} scroll={{y:210}}
++  const title= onlyPeople?('人员选择'):onlySamples?('样本选择'):('样本/人员选择');
++  const doOk=()=>{
++    if(!onlyPeople && !selS.length){ toast.warn('请至少选择一个样本'); return; }
++    if(!onlySamples && !selP.length){ toast.warn('请至少选择一名人员'); return; }
++    const chosenSamples=onlyPeople?[]:samples.filter(s=>selS.includes(s.id));
++    const chosenOps=onlySamples?[]:(d.personnel||[]).filter(x=>selP.includes(x.empNo)).map(x=>x.name);
++    onOk(chosenSamples, chosenOps, selSt.slice());
++    toast.ok(onlyPeople?('已选择 '+chosenOps.length+' 名人员'):onlySamples?('已选择 '+chosenSamples.length+' 个样本'):('已选择 '+chosenSamples.length+' 个样本、'+chosenOps.length+' 名人员'+(needStation?('、'+selSt.length+' 个工位'):'')));
++  };
++  return <Modal cancelText="取消" title={title+' · '+(rec?rec.id:'')} open width={onlyPeople?560:900} okText="确定" destroyOnClose
++    onOk={doOk} onCancel={onClose}>
++    {!onlyPeople && <div style={{marginBottom:8,fontSize:14,color:'#333333'}}>第一步：选择本次使用的样本（来自样本库，可多选）</div>}
++    {!onlyPeople && <Input.Search allowClear placeholder="搜索 样本编号/名称/零件号/被测参数" style={{width:340,marginBottom:8}} value={kw} onChange={e=>setKw(e.target.value)}/>}
++    {!onlyPeople && <Table size="small" rowKey="id" dataSource={samples} pagination={{pageSize:5,showTotal:t=>'共 '+t+' 条'}} scroll={{y:210}}
+       rowSelection={{selectedRowKeys:selS, onChange:setSelS}}
+       columns={[
+         {title:'样本编号', dataIndex:'id', width:90},
+@@ -4306,17 +4315,23 @@ function SamplePersonModal({rec, picked, onOk, onClose}){
+         {title:'真值', dataIndex:'refValue', width:90, render:(v)=><span>{v||'—'}</span>},
+         {title:'有效期至', dataIndex:'expireDate', width:100, render:(v)=><span>{v||'—'}</span>},
+         {title:'状态', dataIndex:'status', width:70, render:(v)=><Tag color={v==='启用'?'green':'default'}>{v}</Tag>}
+-      ]}/>
+-    <Divider style={{margin:'12px 0'}}/>
+-    <div style={{marginBottom:8,fontSize:14,color:'#333333'}}>第二步：选择操作/分析人员（可多选）</div>
+-    <Table size="small" rowKey="empNo" dataSource={(d.personnel||[])} pagination={{pageSize:5,showTotal:t=>'共 '+t+' 人'}} scroll={{y:170}}
++      ]}/>}
++    {!onlyPeople && !onlySamples && <Divider style={{margin:'12px 0'}}/>}
++    {!onlySamples && <div style={{marginBottom:8,fontSize:14,color:'#333333'}}>{onlyPeople?'':'第二步：'}选择操作/分析人员（可多选）</div>}
++    {!onlySamples && <Table size="small" rowKey="empNo" dataSource={(d.personnel||[])} pagination={{pageSize:5,showTotal:t=>'共 '+t+' 人'}} scroll={{y:170}}
+       rowSelection={{selectedRowKeys:selP, onChange:setSelP}}
+       columns={[
+         {title:'人员编号', dataIndex:'empNo', width:90},
+         {title:'姓名', dataIndex:'name', width:90},
+         {title:'部门', dataIndex:'dept', width:120},
+         {title:'岗位', dataIndex:'postName', width:120}
+-      ]}/>
++      ]}/>}
++    {needStation && <div>
++      <Divider style={{margin:'12px 0'}}/>
++      <div style={{marginBottom:8,fontSize:14,color:'#333333'}}>第三步：选择工位（可多选）</div>
++      <Select mode="multiple" style={{width:'100%'}} placeholder="选择工位" value={selSt} onChange={setSelSt}
++        options={((d.mesStations&&d.mesStations.length)? d.mesStations : ['1号工位','2号工位','3号工位','4号工位','5号工位']).map(x=>({value:x,label:x}))}/>
++    </div>}
+   </Modal>;
+ }
+ function ImportPreviewModal({rec, kind, onClose}){
