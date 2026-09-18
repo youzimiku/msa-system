@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MSA 系统界面功能确认会议纪要 2026-09-17</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d39c4'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='sans-serif'%3EM%3C/text%3E%3C/svg%3E">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f0f2f5; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; color: #1f1f1f; }
+  /* ---------- AntD 组件样式（本地自包含） ---------- */
+  .ant-card { background: #fff; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.06); border: 1px solid #f0f0f0; }
+  .ant-card-head { min-height: 48px; padding: 0 20px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; }
+  .ant-card-head-title { font-size: 15px; font-weight: 600; flex: 1; }
+  .ant-card-extra { font-size: 13px; color: #8c8c8c; }
+  .ant-card-body { padding: 16px 20px; }
+  .ant-card-small .ant-card-head { min-height: 40px; padding: 0 20px; }
+  .ant-card-small .ant-card-body { padding: 14px 20px; }
+  .ant-tag { display: inline-block; line-height: 20px; height: 22px; padding: 0 7px; border-radius: 2px; border: 1px solid transparent; font-size: 12px; }
+  .ant-tag-green { color: #389e0d; background: #f6ffed; border-color: #b7eb8f; }
+  .ant-tag-blue { color: #1d39c4; background: #f0f5ff; border-color: #adc6ff; }
+  .ant-tag-orange { color: #d46b08; background: #fff7e6; border-color: #ffd591; }
+  .ant-tag-purple { color: #531dab; background: #f9f0ff; border-color: #d3adf7; }
+  .ant-alert { border-radius: 8px; padding: 12px 16px; font-size: 13.5px; line-height: 1.7; border: 1px solid; }
+  .ant-alert-success { background: #f6ffed; border-color: #b7eb8f; color: #135200; }
+  .ant-alert-info { background: #e6f4ff; border-color: #91caff; color: #003eb3; }
+  .ant-alert-with-description { padding: 16px 20px; }
+  .ant-alert-message { font-weight: 600; margin-bottom: 6px; }
+  .ant-alert-description { color: #389e0d; }
+  .ant-alert-info .ant-alert-description { color: #003eb3; }
+  .ant-table { width: 100%; font-size: 13px; color: #1f1f1f; }
+  .ant-table table { width: 100%; border-collapse: collapse; }
+  .ant-table-thead > tr > th { background: #fafafa; font-weight: 600; text-align: left; padding: 10px 12px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; }
+  .ant-table-tbody > tr > td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; }
+  .ant-table-tbody > tr:hover > td { background: #fafafa; }
+  .ant-table-tbody > tr:last-child > td { border-bottom: none; }
+  .ant-descriptions { font-size: 13px; }
+  .ant-descriptions-view { width: 100%; }
+  .ant-descriptions table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .ant-descriptions-item { padding: 8px 0; vertical-align: top; }
+  .ant-descriptions-item-label { font-weight: 600; color: #595959; white-space: nowrap; padding-right: 12px; width: 90px; }
+  .ant-descriptions-item-content { color: #1f1f1f; padding-right: 20px; word-break: break-all; }
+  .ant-divider { border-top: 1px solid #e8e8e8; margin: 28px 0; }
+  /* ---------- 页面自定义 ---------- */
+  .page-header { background: linear-gradient(135deg, #1d39c4 0%, #10239e 100%); padding: 36px 24px 28px; color: #fff; }
+  .page-header h1 { color: #fff; font-size: 26px; margin: 0 0 8px; font-weight: 600; }
+  .page-header .sub { color: rgba(255,255,255,.82); font-size: 14px; margin-bottom: 16px; }
+  .page-header .meta { display: flex; flex-wrap: wrap; gap: 12px 28px; color: rgba(255,255,255,.9); font-size: 13px; }
+  .page-header .meta b { font-weight: 600; margin-right: 4px; }
+  .container { max-width: 1180px; margin: 0 auto; padding: 24px 20px 48px; }
+  .section-title { display: flex; align-items: center; gap: 10px; margin: 32px 0 16px; }
+  .section-title .num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 6px; background: #1d39c4; color: #fff; font-size: 14px; font-weight: 600; flex: none; }
+  .section-title h2 { margin: 0; font-size: 19px; font-weight: 600; color: #1f1f1f; }
+  .meeting-card { margin-bottom: 14px; }
+  .meet-sec { margin-bottom: 22px; }
+  .meet-sec .sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .meet-sec .sec-head .st { font-size: 15px; font-weight: 600; color: #1f1f1f; }
+  .meet-sec .sec-body { padding-left: 4px; }
+  .meet-sec .sec-body p { margin: 7px 0; color: #434343; line-height: 1.75; font-size: 13.5px; }
+  .meet-sec .sec-body .lb { color: #1d39c4; font-weight: 600; }
+  .meet-sec .sec-body .lb2 { color: #d46b08; font-weight: 600; }
+  .meet-sec .sec-body ul { margin: 7px 0; padding-left: 20px; }
+  .meet-sec .sec-body li { color: #434343; line-height: 1.75; font-size: 13.5px; margin: 3px 0; }
+  .key-alert { margin-bottom: 20px; }
+  .footer-note { margin-top: 36px; padding: 16px 20px; background: #fff; border-radius: 8px; color: #8c8c8c; font-size: 12.5px; line-height: 1.8; }
+  @media (max-width: 640px) {
+    .page-header { padding: 24px 16px 20px; }
+    .page-header h1 { font-size: 21px; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="lib/react.production.min.js"></script>
+<script src="lib/react-dom.production.min.js"></script>
+<script src="lib/dayjs.min.js"></script>
+<script src="lib/antd.min.js"></script>
+<script src="lib/babel.min.js"></script>
+<script type="text/babel" data-presets="react">
+const { Card, Tag, Alert, Table, Divider, Descriptions } = antd;
+
+const meetings = [
+  {
+    no: '01', time: '16:30 - 17:29', platform: '腾讯会议', subject: 'MSA 系统原型评审',
+    duration: '约 40 分钟', host: '时阳阳（个人会议室）',
+    attendees: ['时阳阳', '高国翔', '元工_刘科壮'],
+    focus: '界面功能逐页评审：报告分工与展示、被测参数 / 特殊特性、版本管理、器具组展示、抽样方法、样本库状态、MSA 计划创建逻辑',
+    url: 'https://meeting.tencent.com/ctm/N8ag01pJe2'
+  },
+  {
+    no: '02', time: '17:11 - 18:11', platform: '腾讯会议', subject: 'MSA 功能逻辑与数据一致性对齐',
+    duration: '约 35 分钟', host: '高国翔（个人会议室）',
+    attendees: ['高国翔', '元工_刘科壮', '时阳阳'],
+    focus: 'Kappa 适用范围、判定结果汇总、计划追加子任务、台账删除回退、多器具×多方法创建与草稿状态',
+    url: 'https://meeting.tencent.com/ctm/KwbnZEPj28'
+  },
+  {
+    no: '03', time: '17:48 - 18:10', platform: '飞书妙记', subject: '与业务（万小云）待确认问题逐条确认',
+    duration: '22 分 12 秒', host: '时阳阳（视频会议）',
+    attendees: ['时阳阳', '万小云（业务）', '高国翔', '刘科壮', 'Speaker 1（未识别）'],
+    focus: '抽样参数可调、Kappa 台账只选人员、器具×特性全遍历生成计划、年中补做新增台账、被测参数版本管理',
+    url: 'https://o6kywrlp32.feishu.cn/minutes/obcn3q97vj793723jl241289'
+  }
+];
+
+const s1 = [
+  {
+    t: '报告分工', tag: '分工', color: 'purple', items: [
+      { k: '结论：', v: '台账之后的「报告 / 录入」部分由刘科壮负责；「MSA 计划」与「被测参数基础数据」由张云一（张俊怡）负责。特殊特性同步逻辑需通知张玉怡（张姐）。' }
+    ]
+  },
+  {
+    t: '报告展示方式（线性 / 偏倚）', tag: '方案', color: 'blue', items: [
+      { k: '图表：', v: '线性 / 偏倚报告的图由丁宁程序出，标题 / 配置项由前端传入；MSA 计划里已有的信息直接显示，不重复录入。' },
+      { k: '合并规则：', v: '线性 + 偏移可以合并在一张图；单独偏移只出一张图；重复性 + 再现性合在一起做；稳定性单独做。' },
+      { k: '数量约束：', v: '一个特性最多同时做 2~3 项分析（如重复性 / 再现性 / 偏移），不会出现一个计量器具做很多项再合并的情况——合并是报表问题，不在 MSA 计划里处理。' },
+      { k: '页面效果：', v: '分析结果页目前的效果类似 8D 页面，「比较丑」，可勉强实现。' }
+    ]
+  },
+  {
+    t: '被测参数 / 特殊特性', tag: '待办确认', color: 'orange', items: [
+      { k: '编码来源：', v: '特殊特性编码（如 SC-020）从 CP 模块（控制计划）同步，不在 MSA 侧独立维护。' },
+      { k: '同步方式：', v: 'CP 录入特性文本 → 自动生成唯一编码 → 按「零件号 + 工序 + 特殊特性」三个条件匹配后推送写入 MSA 被测参数，带 SC-020 全局唯一码。' },
+      { k: '界面显示：', v: '前端显示「编号 + 名称」复合下拉（类似零件号 + 零件名称），数据库存编码、界面显示名称。' },
+      { k: '待确认：', v: 'CP 模块特殊特性表结构需联系刘斌（藏莽）确认（重庆九州 QMS 群），同步逻辑需通知张玉怡。' }
+    ]
+  },
+  {
+    t: '被测参数版本管理', tag: '待问业务', color: 'orange', items: [
+      { k: '背景：', v: 'CP 发布后 MSA 不一定立即执行；控制线会随小批 → 大批生产内缩而变化。' },
+      { k: '方案：', v: '被测参数需加「版本号 + 状态 + 启停时间（起止时间）」字段，用起止时间卡效期。' },
+      { k: '结论：', v: '「不加版本的可能性比较小」，但业务未最终想好（时阳阳回头问汪敏 / 万小云）。——17:48 业务会已拍板：新增版本。' }
+    ]
+  },
+  {
+    t: '器具组（提取组）展示', tag: '方案', color: 'blue', items: [
+      { k: '结论：', v: '被测参数列表的「器具组」列恢复显示，一个器具组绑定多条时用分号（；）分隔展示，不能只在弹窗里看。' }
+    ]
+  },
+  {
+    t: '抽样方法', tag: '方案', color: 'blue', items: [
+      { k: '方法维护：', v: '分析方法改为固定代码表，全部生成出来逐条维护（方法固定就那几个，页面不再定义方法）。' },
+      { k: '页签结构：', v: '取样方法单独做页签；抽样规则维护「哪个工厂哪个车间用到这个方法时的抽样规则」，同一方法 + 工厂 + 车间只能一条；判断规则 / 计算参数现阶段先不弄。' }
+    ]
+  },
+  {
+    t: '样本库合格 / 不合格状态', tag: '业务口径', color: 'blue', items: [
+      { k: '强制范围：', v: '外观件必须强制维护合格 / 不合格状态；做 Kappa 分析的样本件也必须维护。' },
+      { k: '存储口径：', v: '存 0/1 数值（0 = 不合格，1 = 合格），MSA 模块所有合格 / 不合格统一按 0/1 存储。' },
+      { k: '核验提示：', v: 'Kappa 选择样本件时做核验，状态缺失提示「状态不全」。' }
+    ]
+  },
+  {
+    t: 'MSA 计划创建逻辑', tag: '方案', color: 'blue', items: [
+      { k: '创建顺序：', v: '先选器具 → 选被测参数 → 自动带出该参数支持的分析方法（不自动勾选，手动勾选后点确定加入列表）→ 在列表里维护人数 / 次数 / 样本数。' },
+      { k: '质量特性：', v: '由被测参数自动带出，默认显示、不可编辑（「不用选了，自动带过来」）。' },
+      { k: '计划维度：', v: '手工创建到器具（一台器具一个计划）；周期性任务到器具组，从组里选器具生成计划；器具组可绑多特性 → 自动生成多个 MSA 计划（手工创建不受影响）。' },
+      { k: '创建类型（按人员 / 按器具）：', v: '讨论是否加字段区分：最终结论倾向不显示单独字段，靠「后面只有卡帕的就是人员的」判断；但高国翔指出器具也可做 Kappa（OK/NG 或等级判定时），此点未完全定论，17:48 业务确认：Kappa 台账当前只做人员维度。' }
+    ]
+  }
+];
+
+const s2 = [
+  {
+    t: 'Kappa 分析适用范围', tag: '待业务确认', color: 'orange', items: [
+      { k: '范围：', v: 'Kappa 既支持器具也支持人员。器具仅在判定结果为 OK/NG 或等级状态（如 AOI 图像视觉识别）时适用；人员直接支持。' },
+      { k: '过滤策略：', v: '不做细粒度区分，不做限制：维护了该方法就做，不维护就不做。通过器具创建计划时，被测参数维护了 Kappa 方法也不强制过滤，保持现状。' },
+      { k: '后续：', v: '高国翔提出 Kappa 台账需区分「器具卡帕 / 人员卡帕」两类弹窗，时阳阳未当场答复，转向与业务确认（17:48 已确认：当前只做人员维度）。' }
+    ]
+  },
+  {
+    t: '判定结果汇总口径', tag: '方案', color: 'blue', items: [
+      { k: '汇总：', v: '按特性维度或计量器具维度做报表 / 看板：特性维度查该特性下多个 MSA 计划取结论；器具维度各方法取最新一次结论，有一个不合格则整体不合格。' },
+      { k: '动态更新：', v: '计划内新增子任务后，判定结果随子任务最新结论动态汇总更新。' }
+    ]
+  },
+  {
+    t: '计划追加子任务', tag: '方案', color: 'blue', items: [
+      { k: '需求：', v: '计划创建后，后续可在同一计划下追加新的分析任务（如原来只有 Cg/Cgk，后补加 RR / 稳定性）。' },
+      { k: '入口：', v: '在计划行的「追加」按钮上操作，追加时过滤已存在的分析方法，不能再选。' },
+      { k: '实现：', v: '确认创建时后台判断：已有该方法的台账则不重复创建，只新增缺失的。' }
+    ]
+  },
+  {
+    t: '台账删除 / 回退', tag: '方案', color: 'blue', items: [
+      { k: '结论：', v: '录入数据前可删（多创建的子任务到台账页或详情页删除）；开始录入后不可直接删，走流程回退。追加与删除互不影响。' }
+    ]
+  },
+  {
+    t: '多器具创建与草稿状态（技术方案）', tag: '方案', color: 'blue', items: [
+      { k: '多器具 × 多方法：', v: '勾选 2 个器具 × 2 种方法 → 点确认创建时生成 4 个台账、2 个计划（按器具生成计划号，方法挂到计划下）。' },
+      { k: '计划号生成时机：', v: '由「打开弹窗即生成」改为「点确认创建时一次性生成」。' },
+      { k: '草稿状态：', v: '新增「草稿」状态：创建过程中数据标记为草稿 → 确认创建改为「待开始」；取消或点关闭时解析已生成计划号并删除对应计划与台账；打开创建弹窗前先清理数据库中所有草稿状态数据；界面只查非草稿数据。' },
+      { k: '状态枚举：', v: '草稿 / 待开始 / 进行中 / 已完成。' },
+      { k: '说明：', v: '此逻辑需写入开发说明文档，供张云（张俊怡）参考。' }
+    ]
+  }
+];
+
+const s3 = [
+  {
+    t: '抽样方法参数是否固定', tag: '业务已确认', color: 'green', items: [
+      { k: '业务解答（万小云）：', v: '不固定。参数在「抽样方法维护 → 分析方法 → 抽样规则」模块统一维护，创建计划选择器具 / 卡号时自动带入默认值，创建时可再修改。' },
+      { k: '背景：', v: '旧 Excel 工具将抽样人数固定为 3 人、参数不可调，参数变动后计算易出错；新版分析方法不得做成固定参数模式。' }
+    ]
+  },
+  {
+    t: 'Kappa 台账选人', tag: '业务已确认', color: 'green', items: [
+      { k: '业务解答（万小云 / 时阳阳）：', v: 'Kappa 台账当前只做人员维度，只需选择人员，不做器具维度的「选件 + 选人」逻辑。' }
+    ]
+  },
+  {
+    t: '周期任务生成规则（器具 × 特性）', tag: '业务已确认', color: 'green', items: [
+      { k: '业务现状（万小云）：', v: '目前基本「一台仪器一个特性」一对一；个别仪器（如粗糙度 / 圆度仪）两个无关特性会做两个；三坐标这类多特性仪器统一算作一个「测量」特性。' },
+      { k: '最终方案：', v: '不加「必做标记」字段（原方案被否，业务认为太复杂）；周期任务按「器具 × 特性」全部遍历展开生成，多了由管理员 / 有权限用户删除（系统会推广到其他公司，删除权限必须有）。' }
+    ]
+  },
+  {
+    t: '年中补做', tag: '业务已确认', color: 'green', items: [
+      { k: '问题：', v: '年初只做 1 项分析，年中客户要求补做 Cg/Cgk 或 GRR，怎么加？' },
+      { k: '业务解答（万小云）：', v: '在原年度 MSA 计划下直接新增台账（子任务），不新建计划（大计划不变）。' }
+    ]
+  },
+  {
+    t: '被测参数版本管理', tag: '业务已确认', color: 'green', items: [
+      { k: '问题：', v: 'CP 规格变化（如上下限 48~50 变为 49~50），直接更新还是加版本？' },
+      { k: '业务解答（万小云）：', v: '新增一个版本、默认用最新版本（直接更新没有记录，不可取）；CP 会不断检讨微调，规格变了效期就变。' }
+    ]
+  },
+  {
+    t: '收尾', tag: '说明', color: 'purple', items: [
+      { k: '协作：', v: '时阳阳下周轮休，将高国翔、刘科壮与万小云互加飞书，后续小问题单点沟通，不必每次开会。' }
+    ]
+  }
+];
+
+const todos = [
+  { item: '报告 / 录入开发', owner: '刘科壮', note: '台账之后的报告与数据录入部分' },
+  { item: 'MSA 计划 + 被测参数基础数据', owner: '张云一（张俊怡）', note: '含草稿状态 / 多计划创建逻辑开发说明' },
+  { item: '特殊特性同步逻辑', owner: '张玉怡（张姐）', note: '需通知到位；CP 侧表结构联系刘斌（藏莽）确认' },
+  { item: '抽样方法改造', owner: '开发侧', note: '方法改为固定代码表；抽样规则页签（方法 + 工厂 + 车间唯一）' },
+  { item: '周期任务全遍历生成 + 删除权限', owner: '开发侧', note: '器具 × 特性全展开；管理员可删多余计划' }
+];
+
+const openIssues = [
+  { item: '特殊特性编码同步逻辑及表结构', desc: '联系刘斌（藏莽）确认 CP 模块表结构；同步逻辑需通知张玉怡。', state: '待办' },
+  { item: '器具 Kappa 的台账类型区分', desc: '器具 Kappa vs 人员 Kappa 是否需要两类弹窗；当前暂按「只做人员维度」实施。', state: '待确认' },
+  { item: '计划「创建类型」列是否显示', desc: '按人员 / 按器具的区分方式未完全定论，暂不加列。', state: '待确认' },
+  { item: '判断规则 / 计算参数', desc: '第一阶段先不做，后续版本再议。', state: '待定' },
+  { item: '检验标准与器具组绑定边界', desc: '一个特性多个器具组等边界已通过「全部生成、多余的删」规避，唯一性规则后续细化。', state: '待确认' }
+];
+
+function App() {
+  return (
+    <div>
+      <div className="page-header">
+        <h1>MSA 系统界面功能确认会议纪要</h1>
+        <div className="sub">MSA 管理系统 · 界面功能与数据逻辑评审及业务确认</div>
+        <div className="meta">
+          <span><b>会议日期</b>2026-09-17（周四）</span>
+          <span><b>系统</b>MSA 管理系统（单页原型）</span>
+          <span><b>场次</b>3 场（腾讯会议 ×2 + 飞书妙记 ×1）</span>
+          <span><b>参会</b>时阳阳 · 高国翔 · 元工_刘科壮 · 万小云（业务）</span>
+        </div>
+      </div>
+      <div className="container">
+        <div className="section-title">
+          <span className="num">1</span><h2>会议概况</h2>
+        </div>
+        {meetings.map(m => (
+          <Card className="meeting-card" key={m.no} title={'会议 ' + m.no + ' · ' + m.subject} extra={m.time}>
+            <Descriptions size="small" column={2}>
+              <Descriptions.Item label="平台 / 时长">{m.platform}（{m.duration}）</Descriptions.Item>
+              <Descriptions.Item label="发起人">{m.host}</Descriptions.Item>
+              <Descriptions.Item label="参会人员">{m.attendees.join('、')}</Descriptions.Item>
+              <Descriptions.Item label="素材链接"><a href={m.url} target="_blank" rel="noopener noreferrer">{m.url}</a></Descriptions.Item>
+              <Descriptions.Item label="会议主题" span={2}>{m.focus}</Descriptions.Item>
+            </Descriptions>
+          </Card>
+        ))}
+
+        <div className="section-title">
+          <span className="num">2</span><h2>会议一 · 16:30 腾讯会议（MSA 系统原型评审）</h2>
+        </div>
+        <Card size="small">
+          {s1.map(sec => (
+            <div className="meet-sec" key={sec.t}>
+              <div className="sec-head">
+                <span className="st">{sec.t}</span>
+                <Tag color={sec.color}>{sec.tag}</Tag>
+              </div>
+              <div className="sec-body">
+                {sec.items.map((b, i) => <p key={i}><span className="lb">{b.k}</span>{b.v}</p>)}
+              </div>
+            </div>
+          ))}
+        </Card>
+
+        <div className="section-title">
+          <span className="num">3</span><h2>会议二 · 17:11 腾讯会议（功能逻辑与数据一致性对齐）</h2>
+        </div>
+        <Card size="small">
+          {s2.map(sec => (
+            <div className="meet-sec" key={sec.t}>
+              <div className="sec-head">
+                <span className="st">{sec.t}</span>
+                <Tag color={sec.color}>{sec.tag}</Tag>
+              </div>
+              <div className="sec-body">
+                {sec.items.map((b, i) => <p key={i}><span className="lb">{b.k}</span>{b.v}</p>)}
+              </div>
+            </div>
+          ))}
+        </Card>
+
+        <div className="section-title">
+          <span className="num">4</span><h2>会议三 · 17:48 飞书妙记（与业务万小云逐条确认）</h2>
+        </div>
+        <Alert className="key-alert" type="success" showIcon message="本场核心：开发侧带着前两场评审产生的待确认问题，与业务万小云逐条确认，以下为业务明确答复，作为后续开发依据。" />
+        <Card size="small">
+          {s3.map(sec => (
+            <div className="meet-sec" key={sec.t}>
+              <div className="sec-head">
+                <span className="st">{sec.t}</span>
+                <Tag color={sec.color}>{sec.tag}</Tag>
+              </div>
+              <div className="sec-body">
+                {sec.items.map((b, i) => <p key={i}><span className="lb">{b.k}</span>{b.v}</p>)}
+              </div>
+            </div>
+          ))}
+        </Card>
+
+        <div className="section-title">
+          <span className="num">5</span><h2>开发待办与分工</h2>
+        </div>
+        <Card size="small">
+          <Table size="small" pagination={false} rowKey="item" dataSource={todos}
+            columns={[
+              { title: '事项', dataIndex: 'item', width: 240 },
+              { title: '负责人', dataIndex: 'owner', width: 180 },
+              { title: '说明', dataIndex: 'note' }
+            ]} />
+        </Card>
+
+        <div className="section-title">
+          <span className="num">6</span><h2>遗留待确认事项</h2>
+        </div>
+        <Card size="small">
+          <Table size="small" pagination={false} rowKey="item" dataSource={openIssues}
+            columns={[
+              { title: '事项', dataIndex: 'item', width: 240 },
+              { title: '说明', dataIndex: 'desc' },
+              { title: '状态', dataIndex: 'state', width: 90 }
+            ]} />
+        </Card>
+
+        <div className="footer-note">
+          纪要说明：本纪要基于三场会议的智能纪要、AI 总结与完整文字转写逐字整理（16:30 场转写 248 段、17:11 场转写 197 段、飞书妙记 22 分 12 秒全文），按会议场次完整覆盖全部讨论内容。<br />
+          标记说明：「业务已确认」= 万小云（业务）在 17:48 飞书会议中明确答复；「方案」= 开发侧在 16:30 / 17:11 评审中达成的一致结论；「待办确认 / 待业务确认 / 待定」= 已讨论但依赖外部确认或后续细化。<br />
+          纪要整理日期：2026-09-18。
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+</script>
+</body>
+</html>

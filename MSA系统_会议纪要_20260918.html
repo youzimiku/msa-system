@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MSA 系统报表开发三场会议纪要 2026-09-18</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d39c4'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='sans-serif'%3EM%3C/text%3E%3C/svg%3E">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f0f2f5; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; color: #1f1f1f; }
+  .ant-card { background: #fff; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.06); border: 1px solid #f0f0f0; }
+  .ant-card-head { min-height: 48px; padding: 0 20px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; }
+  .ant-card-head-title { font-size: 15px; font-weight: 600; flex: 1; }
+  .ant-card-extra { font-size: 13px; color: #8c8c8c; }
+  .ant-card-body { padding: 16px 20px; }
+  .ant-tag { display: inline-block; line-height: 20px; height: 22px; padding: 0 7px; border-radius: 2px; border: 1px solid transparent; font-size: 12px; }
+  .ant-tag-green { color: #389e0d; background: #f6ffed; border-color: #b7eb8f; }
+  .ant-tag-blue { color: #1d39c4; background: #f0f5ff; border-color: #adc6ff; }
+  .ant-tag-orange { color: #d46b08; background: #fff7e6; border-color: #ffd591; }
+  .ant-tag-purple { color: #531dab; background: #f9f0ff; border-color: #d3adf7; }
+  .ant-tag-red { color: #cf1322; background: #fff1f0; border-color: #ffa39e; }
+  .ant-alert { border-radius: 8px; padding: 12px 16px; font-size: 13.5px; line-height: 1.7; border: 1px solid; margin-bottom: 14px; }
+  .ant-alert-info { background: #e6f4ff; border-color: #91caff; color: #003eb3; }
+  .ant-alert-success { background: #f6ffed; border-color: #b7eb8f; color: #135200; }
+  .ant-alert-message { font-weight: 600; margin-bottom: 4px; }
+  .ant-table { width: 100%; font-size: 13px; color: #1f1f1f; }
+  .ant-table table { width: 100%; border-collapse: collapse; }
+  .ant-table-thead > tr > th { background: #fafafa; font-weight: 600; text-align: left; padding: 10px 12px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; }
+  .ant-table-tbody > tr > td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  .ant-table-tbody > tr:hover > td { background: #fafafa; }
+  .ant-table-tbody > tr:last-child > td { border-bottom: none; }
+  .ant-descriptions { font-size: 13px; }
+  .ant-descriptions table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .ant-descriptions-item { padding: 6px 0; vertical-align: top; }
+  .ant-descriptions-item-label { font-weight: 600; color: #595959; white-space: nowrap; padding-right: 12px; width: 110px; }
+  .ant-descriptions-item-content { color: #1f1f1f; padding-right: 20px; word-break: break-all; }
+  .ant-divider { border-top: 1px solid #e8e8e8; margin: 28px 0; }
+  .page-header { background: linear-gradient(135deg, #1d39c4 0%, #10239e 100%); padding: 36px 24px 28px; color: #fff; }
+  .page-header h1 { color: #fff; font-size: 26px; margin: 0 0 8px; font-weight: 600; }
+  .page-header .sub { color: rgba(255,255,255,.82); font-size: 14px; margin-bottom: 16px; }
+  .page-header .meta { display: flex; flex-wrap: wrap; gap: 12px 28px; color: rgba(255,255,255,.9); font-size: 13px; }
+  .page-header .meta b { font-weight: 600; margin-right: 4px; }
+  .container { max-width: 1180px; margin: 0 auto; padding: 24px 20px 48px; }
+  .section-title { display: flex; align-items: center; gap: 10px; margin: 32px 0 16px; }
+  .section-title .num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 6px; background: #1d39c4; color: #fff; font-size: 14px; font-weight: 600; flex: none; }
+  .section-title h2 { margin: 0; font-size: 19px; font-weight: 600; color: #1f1f1f; }
+  .meeting-card { margin-bottom: 14px; }
+  .meet-sec { margin-bottom: 22px; }
+  .meet-sec .sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .meet-sec .sec-head .st { font-size: 15px; font-weight: 600; color: #1f1f1f; }
+  .meet-sec .sec-body { padding-left: 4px; }
+  .meet-sec .sec-body p { margin: 7px 0; color: #434343; line-height: 1.75; font-size: 13.5px; }
+  .meet-sec .sec-body .lb { color: #1d39c4; font-weight: 600; }
+  .meet-sec .sec-body .lb2 { color: #d46b08; font-weight: 600; }
+  .meet-sec .sec-body ul { margin: 7px 0; padding-left: 20px; }
+  .meet-sec .sec-body li { color: #434343; line-height: 1.75; font-size: 13.5px; margin: 3px 0; }
+  .key-alert { margin-bottom: 20px; }
+  .footer-note { margin-top: 36px; padding: 16px 20px; background: #fff; border-radius: 8px; color: #8c8c8c; font-size: 12.5px; line-height: 1.8; }
+  @media (max-width: 640px) {
+    .page-header { padding: 24px 16px 20px; }
+    .page-header h1 { font-size: 21px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>MSA 系统报表开发三场会议纪要</h1>
+  <div class="sub">时阳阳个人会议室 · 2026-09-18 上午 10:40 之后连续三场 · 依据元宝纪要、智能总结与逐句文字转写整理</div>
+  <div class="meta">
+    <span><b>场次</b>3 场</span>
+    <span><b>时长合计</b>约 89 分钟</span>
+    <span><b>核心主题</b>线性/偏倚 · GRR · Kappa · Cg/Cgk · 稳定性（SPC）报表与录入逻辑</span>
+    <span><b>参会人</b>时阳阳 · 张会娟 · 高国翔 · 元工_刘科壮</span>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="ant-alert ant-alert-info" style="margin-top:0;">
+  <div class="ant-alert-message">纪要说明</div>
+  <div>三场会议（10:34-11:34、11:21-12:21、12:01-13:01）均为「时阳阳的个人会议室」连续会议，围绕 MSA 系统各类分析（线性/偏倚、GRR、Kappa、Cg/Cgk、稳定性）的<b>报表展示逻辑</b>与<b>数据录入逻辑</b>与开发侧对齐。本文按场次逐场完整覆盖全部讨论内容，并汇总统一结论、术语口径、待办与分工。</div>
+</div>
+
+<!-- ===== 一、会议概况 ===== -->
+<div class="section-title"><div class="num">1</div><h2>会议概况</h2></div>
+
+<div class="meeting-card ant-card"><div class="ant-card-body">
+  <div style="overflow-x:auto;">
+  <table class="ant-table" style="width:100%;border-collapse:collapse;min-width:760px;">
+    <thead><tr><th style="width:46px;text-align:center;">场次</th><th style="width:150px;">时间</th><th style="width:170px;">主题</th><th style="width:120px;">时长</th><th>讨论范围</th><th style="width:120px;">转写链接</th></tr></thead>
+    <tbody>
+      <tr><td style="text-align:center;">01</td><td>10:34 - 11:34</td><td>MSA 统计分析报告界面与逻辑对齐</td><td>约 38 分钟</td><td>线性/偏倚报告逻辑、GRR 评估方法与六图、Kappa 交叉表、样本录入字段差异化、权限与导入</td><td><a href="https://meeting.tencent.com/ctm/2O8P3pG7e2">查看转写</a></td></tr>
+      <tr><td style="text-align:center;">02</td><td>11:21 - 12:21</td><td>MSA 测量系统分析报表开发对齐</td><td>约 40 分钟</td><td>Kappa 交叉表结构与判定标准、Cg/Cgk 字段清单、稳定性（SPC）集成方案</td><td><a href="https://meeting.tencent.com/ctm/lJvEQW5Yf3">查看转写</a></td></tr>
+      <tr><td style="text-align:center;">03</td><td>12:01 - 13:01</td><td>SPC 与 MSA 数据录入逻辑对齐</td><td>约 12 分钟</td><td>SPC 判异规则、去除「刘关张」弹窗、稳定性样本录入表重建、子组参数</td><td><a href="https://meeting.tencent.com/ctm/29a7kdBa66">查看转写</a></td></tr>
+    </tbody>
+  </table>
+  </div>
+</div></div>
+
+<!-- ===== 二、会议一 ===== -->
+<div class="section-title"><div class="num">2</div><h2>会议一（10:34-11:34）：MSA 统计分析报告界面与逻辑对齐</h2></div>
+
+<div class="ant-card"><div class="ant-card-body">
+
+<div class="meet-sec">
+  <div class="sec-head"><span class="st">2.1 前置事项：监控项目位置字段维护</span><span class="ant-tag ant-tag-blue">数据准备</span></div>
+  <div class="sec-body">
+    <ul>
+      <li>在<b>监控项目</b>中维护「位置」两个字段（如 1234 四个位置），再在<b>特性 → 监控信息 → 维度</b>中加数据规则。</li>
+      <li>时阳阳安排：<span class="lb">由张会娟建飞书会议拉郑涛远程指导</span>（郑涛今天在火车上，可远程操作但信号可能不好），指导位置字段维护及数据规则配置。</li>
+    </ul>
+  </div>
+</div>
+
+<div class="meet-sec">
+  <div class="sec-head"><span class="st">2.2 线性/偏倚性分析报告逻辑</span><span class="ant-tag ant-tag-purple">报告</span></div>
+  <div class="sec-body">
+    <p><span class="lb">数据来源与分工：</span>斜率、常量、P 值等核心统计值均由丁宁（后台程序）计算输出，<b>前端仅负责接收与展示，不做二次计算</b>。报告中「表头」部分由前端自行设计展示（评价人、日期等）。</p>
+    <p><span class="lb">核心三列：</span>报告界面固定展示「部件号 / 参考值 / 测量数据」三列，对应丁宁数据中的「部件 / 参考值 / 响应（实测）」；并需提供<b>估计方法</b>选项设置。</p>
+    <p><span class="lb">术语对齐：</span>参考值即标准值，由多次测量求平均得出；<b>主水平 = 基准 = 样本库中的真值或参考值</b>，需在样本录入时维护；「平均」指平均偏移值与平均 P 值（是一行的列名，不是单独字段）。</p>
+    <p><span class="lb">P 值数量：</span>线性/偏倚在量程内选 5 个点，每个点输出各自 P 值，整体再有一个总 P 值（共 6 个），丁宁全部输出；张会娟需再与丁宁核对「平均 P 值」是否遗漏。</p>
+    <p><span class="lb">界面交互：</span>图表需支持鼠标悬停交互，显示参考值等详细信息；前端界面只需要三列即可，不必展示多余列。</p>
+    <p><span class="lb">分析结果页 vs 报告：</span><span class="lb2">分析结果页不展示原始样本数据</span>（样本有单独的页面/链接），但<b>生成报告时必须把分析结果与样本数据合并展示</b>（报告 = 表头 + 结论 + 统计值 + 图表 + 样本数据）。</p>
+    <p><span class="lb">偏移计算：</span>偏移值（Offset）由前端按「实测值 - 参考值」自动计算（c2 - c1），<b>保留负值、不要取绝对值、无需人工录入</b>。</p>
+    <p><span class="lb">偏倚（单独偏移）：</span>单独偏移没有图，只有数据 + 结果，使用<b>单样本 T 检验</b>；只有三个字段：主水平（参考值）、响应（实测值）、偏移。报告含表头 + 结论 + 中间显示值 + 直方图。</p>
+    <p><span class="lb">线性与偏移的关系：</span>偏移是线性的附属产物，做线性时必须评估偏倚，<b>没有单独的线性</b>；线性偏移性合在一起展示。</p>
+  </div>
+</div>
+
+<div class="meet-sec">
+  <div class="sec-head"><span class="st">2.3 GRR 分析调整</span><span class="ant-tag ant-tag-orange">GRR</span></div>
+  <div class="sec-body">
+    <p><span class="lb">评估方法：</span>GRR 需支持「方差分析法」与「均值极差法」两种评估方法，前端提供选项；<b>默认使用方差分析法</b>。不同分析方法使用的评估方法不同（如均值极差法配标准差，方差分析法配 Xbar 类），代码需按分析方法做映射。</p>
+    <p><span class="lb">六图展示：</span>GRR 报告包含均值图、极差图等六张图，丁宁已完成图表开发，前端按标准展示即可；报告还包括方差分量、量具评估值等（按 Minitab 标准）。</p>
+    <p><span class="lb">置信区间：</span>报告需支持隐藏 95% 置信区间列；<b>只支持 95% 置信区间，不支持 90% 等其他区间</b>（要么看 95%，要么不看）。</p>
+    <p><span class="lb">报告行/列：</span>报告表格行和列基本固定（量项目不变），值的部分变化；复制数据有 8 份（按命题宝格式）。</p>
+    <p><span class="lb">开发待办：</span>高国翔需绘制 GRR 报告原型图（表头 + 结论 + 六图），检查是否有缺漏。</p>
+  </div>
+</div>
+
+<div class="meet-sec">
+  <div class="sec-head"><span class="st">2.4 Kappa 分析补充</span><span class="ant-tag ant-tag-red">Kappa</span></div>
+  <div class="sec-body">
+    <ul>
+      <li><span class="lb">样本规模：</span>Kappa 采用<b>生产件</b>，样本量 20~50 件，默认配置为<b>50 件 × 3 人 × 3 次</b>；样本必须包含已知真值用于一致性比对（如 50 件中 40 件合格、10 件不合格）。</li>
+      <li><span class="lb">交叉表：</span>为确保程序排查准确性，Kappa 报告<b>必须增加「交叉表」</b>功能，统计检验员之间及检验员与标准之间的一致性数值。最终样式：<b>以时阳阳群里发的版本为基础，再加入交叉表</b>。</li>
+      <li><span class="lb">判断：</span>若只出矩阵，数据出错将无法排查；有了交叉表才能定位程序问题。</li>
+    </ul>
+  </div>
+</div>
+
+<div class="meet-sec">
+  <div class="sec-head"><span class="st">2.5 样本录入与权限管理</span><span class="ant-tag ant-tag-blue">录入</span></div>
+  <div class="sec-body">
+    <p><span class="lb">字段差异化：</span>不同类型的分析需<b>独立维护各自的样本录入字段，不能共用同一套录入界面</b>。当前分为两套：GRR/Kappa 一套；线性、偏倚、稳定性、Cg/Cgk 一套（字段略不同，需逐项核对）。</p>
+    <p><span class="lb">偏倚性录入：</span>录入界面需包含「人员」和「时间」字段，并支持自动计算偏移值；只显示需要的字段（如 P 值、偏移），不能多显示。</p>
+    <p><span class="lb">权限处理：</span>建议通过<b>筛选或权限控制</b>管理操作员数据查看范围，避免用分页签（Tab）方式造成查看不便与权限处理啰嗦；权限上可直接隐藏对应数据页。</p>
+    <p><span class="lb">导入逻辑：</span>导入数据在<b>台账中统一处理</b>，避免在录入界面做复杂 Sheet 页拆分。</p>
+  </div>
+</div>
+
+<div class="meet-sec">
+  <div class="sec-head"><span class="st">2.6 其他</span><span class="ant-tag">杂项</span></div>
+  <div class="sec-body">
+    <ul>
+      <li>所有人（含元工_刘科壮）需安装 <b>Minitab（命题宝）</b>软件，用于后续测试数据验证。</li>
+    </ul>
+  </div>
+</div>
+
+</div></div>
+
+<!-- ===== 三、会议二 ===== -->
+<div class="section-title"><div class="num">3</div><h2>会议二（11:21-12:21）：MSA 测量系统分析报表开发对齐</h2></div>
+
+<div class="ant-card"><div class="ant-card-body">
+
+<div class="meet-sec">
+  <div class="sec-head"><span class="st">3.1 Kappa 交叉表结构与统计逻辑</span><span class="ant-tag ant-tag-red">Kappa</span></div>
+  <div class="sec-body">
+    <p><span class="lb">交叉表本质：</span>展示「基准值 × 实测值」的<b>交叉统计数量</b>，不是原始录入值。例如统计「基准值为 0（不合格）且实测值为 0」的数量。</p>
+    <p><span class="lb">字段定义统一：</span>「标准值」字段统一更名为<b>「基准值」</b>，与「实测值」形成对应（基准值 = 标准值 = 样本库中的真值；Kappa 用 0=不合格、1=合格，也可用序列 12345）。</p>
+    <p><span class="lb">数据来源：</span>交叉表中数值（数量）、Po、Pe、期望值等由<b>丁宁后端计算</b>，前端只负责展示。</p>
+    <p><span class="lb">阅读方式：</span>一行一个人：总测量次数（如 30 次）、按基准值统计的数量（0 的数量 / 1 的数量）、实测值数量，中间为交叉值（实测 X 且基准 Y 的数量），最后汇总。</p>
+  </div>
+</div>
+
+<div class="meet-sec">
+  <div class="sec-head"><span class="st">3.2 判定标准与结论输出</span><span class="ant-tag ant-tag-orange">判定</span></div>
+  <div class="sec-body">
+    <p><span class="lb">四个通用参数（不分组、每个项目可不同）：</span></p>
+    <table class="ant-table" style="width:70%;">
+      <thead><tr><th>参数</th><th>阈值</th><th>含义</th></tr></thead>
+      <tbody>
+        <tr><td>一致性百分比</td><td>≥ 90%</td><td>评估一致性（好/差）</td></tr>
+        <tr><td>Kappa 值</td><td>≥ 75%</td><td>Fleiss Kappa 判定</td></tr>
+        <tr><td>误发（误判）率</td><td>≤ 5%</td><td>漏发/误发结论</td></tr>
+        <tr><td>漏发（漏判）率</td><td>≤ 2%</td><td>漏发/误发结论</td></tr>
+      </tbody>
+    </table>
+    <p><span class="lb">结论归属：</span>单项结论由前端做「比大小」判定（丁宁不给单项结论）；<b>总体结论由丁宁输出</b>（评估一致性 好/差）。</p>
+    <p><span class="lb">展示位置：</span>报告必须展示判定标准（准则，客户审核需要）；分析结果页可显示可不显示。</p>
+  </div>
+</div>
+
+<div class="meet-sec">
+  <div class="sec-head"><span class="st">3.3 Kappa 报告的三组 + 汇总结构</span><span class="ant-tag ant-tag-purple">结构</span></div>
+  <div class="sec-body">
+    <ul>
+      <li><b>组一 · 检验员自身（单个检验员）：</b>评估一致性 + Fleiss Kappa。</li>
+      <li><b>组二 · 每个检验员与标准：</b>评估一致性 + 不一致性 + Fleiss Kappa（比组一多「不一致性」）。</li>
+      <li><b>组三 · 检验员之间：</b>两两组合（A-B、A-C、B-C，人越多组合越多），只展示必要项（两组数据）。</li>
+      <li><b>汇总：</b>检验自身、检验之间、来源于标准、所有来源于和标准，共四种情况的汇总结论，放报告前面方便直接看结论。</li>
+      <li>每个维度（每组）都会有「好/差」结论；最终总体结论按「评估一致性」走。</li>
+    </ul>
+  </div>
+</div>
+
+<div class="meet-sec">
+  <div class="sec-head"><span class="st">3.4 Cg/Cgk 报表字段清单</span><span class="ant-tag ant-tag-green">Cg/Cgk</span></div>
+  <div class="sec-body">
+    <p><span class="lb">必显核心参数：</span>Rg（极差）、N（总数）、Sigma（标准差）、6 Sigma（六西格玛）、Cg、Cgk。</p>
+    <p><span class="lb">辅助信息：</span>名义尺寸/基准值、实测值、分辨率、领用人、基础号（工位）；表格编号、名称、精度（分辨率）。</p>
+    <p><span class="lb">剔除冗余：</span>±3 倍西格玛、0.2T、重复的「单位」字段均剔除。</p>
+    <p><span class="lb">术语：</span>「标准值」统一改为「基准值」；「名义尺寸」即被测参数的标准值/基准值。</p>
+  </div>
+</div>
+
+<div class="meet-sec">
+  <div class="sec-head"><span class="st">3.5 稳定性分析（SPC）集成方案</span><span class="ant-tag ant-tag-blue">稳定性</span></div>
+  <div class="sec-body">
+    <p><span class="lb">功能复用：</span>直接复用现有 SPC 控制图查看功能，<b>不再单独开发新界面</b>。在台账页面点击「结论 / 查看详情」时，直接调用现有 SPC 控制图查看页面。</p>
+    <p><span class="lb">界面精简：</span>调用 SPC 页面时需<b>隐藏顶部操作按钮（编辑、删除等）及状态栏</b>，仅保留图表展示区域和底部判异规则说明；去掉「刘关张」弹窗及相关红点提示（保留点选交互）。</p>
+    <p><span class="lb">报告输出：</span>稳定性报告需包含「控制图」和「直方图」，附带统计量数据；若数据量大可分页展示（一页图、一页数据）；报告最前端明确展示「受控 / 不受控」总体结论。</p>
+    <p><span class="lb">结论位置：</span>计划生成的图号里带「受控 / 不受控」结论；SPC 页面底部判异规则说明保留（当前只用「单点超出上下限」一个规则）。</p>
+    <p><span class="lb">台账关系：</span>稳定性台账单独做，不能直接用 SPC 的台账（两者不是一回事）。</p>
+  </div>
+</div>
+
+</div></div>
+
+<!-- ===== 四、会议三 ===== -->
+<div class="section-title"><div class="num">4</div><h2>会议三（12:01-13:01）：SPC 与 MSA 系统数据录入逻辑对齐</h2></div>
+
+<div class="ant-card"><div class="ant-card-body">
+
+<div class="meet-sec">
+  <div class="sec-head"><span class="st">4.1 SPC 控制图判异规则与交互删减</span><span class="ant-tag ant-tag-orange">SPC</span></div>
+  <div class="sec-body">
+    <ul>
+      <li><span class="lb">判异规则：</span>走<b>自定义规则</b>（当前只用「单点超出上下限」），不照搬国标全部规则（连续 6 点同侧等暂不用，后续可能增加）；后台算出的结果前端直接展示。</li>
+      <li><span class="lb">计算归属：</span>控制图结果由「小娜」后台计算输出，前端只取结果展示。</li>
+      <li><span class="lb">弹窗去除：</span><b>去除「刘关张」弹窗功能及相关红点提示</b>，仅保留必要的点选交互；图上的点可点击做功能的部分也要去掉。</li>
+    </ul>
+  </div>
+</div>
+
+<div class="meet-sec">
+  <div class="sec-head"><span class="st">4.2 MSA 稳定性分析数据表重构</span><span class="ant-tag ant-tag-purple">表结构</span></div>
+  <div class="sec-body">
+    <ul>
+      <li><span class="lb">重建样本录入表：</span>参照「计量样本录入」界面表结构，新建 MSA 稳定性样本录入表；<b>禁止直接使用原表名（如 ESP 结构），需重新命名</b>（复制一个，改表名）。</li>
+      <li><span class="lb">控制图编号：</span>样本录入阶段不显示；提交分析时从<b>配置表获取并传给丁宁</b>（计算号），作为唯一标识。</li>
+      <li><span class="lb">录入字段：</span>样品号（可一个或多个，如 1~3 件）、测量人、日期时间、子组号、实测值（每组最多到 10 个值）；<b>所有测量都加日期时间和人</b>。</li>
+    </ul>
+  </div>
+</div>
+
+<div class="meet-sec">
+  <div class="sec-head"><span class="st">4.3 子组（Subgroup）逻辑与录入参数</span><span class="ant-tag ant-tag-blue">子组</span></div>
+  <div class="sec-body">
+    <p><span class="lb">子组概念：</span>相近时间、相同生产条件下产出的多个数据点（如一个工位打 4 个螺丝取均值作为一组）；在 MSA 稳定性中可理解为<b>「测量次数」</b>。</p>
+    <p><span class="lb">录入参数扩展：</span>稳定性录入界面增加<b>「子组数」和「组内测量次数」</b>两个参数（加上原有样本数、人员数量、次数，共 4 个参数）：</p>
+    <ul>
+      <li><b>单值模式：</b>不需要填组内测量次数，表格中一个值即可。</li>
+      <li><b>子组模式：</b>需填写组数及每组内的测量值个数（如 4 个角各测一次 → 组内 4 个值），子组数展开成队列。</li>
+    </ul>
+    <p><span class="lb">数据完整性：</span>子组号<b>必须连续、不允许缺失</b>，系统根据设定的子组数自动生成序列（1~N），不允许手填跳号。</p>
+  </div>
+</div>
+
+</div></div>
+
+<!-- ===== 五、待办与分工 ===== -->
+<div class="section-title"><div class="num">5</div><h2>待办事项与分工汇总</h2></div>
+
+<div class="ant-card"><div class="ant-card-body">
+  <table class="ant-table" style="width:100%;">
+    <thead><tr><th style="width:70px;">来源场次</th><th>待办内容</th><th style="width:110px;">负责人</th></tr></thead>
+    <tbody>
+      <tr><td>会议一</td><td>安装 Minitab（命题宝）软件，用于测试数据验证</td><td>张会娟 / 高国翔 / 元工_刘科壮</td></tr>
+      <tr><td>会议一</td><td>创建飞书会议拉郑涛远程，指导监控项目位置字段维护及数据规则配置</td><td>张会娟</td></tr>
+      <tr><td>会议一</td><td>核对线性/偏倚报告中「平均 P 值」等字段是否由丁宁完整输出，避免遗漏</td><td>张会娟</td></tr>
+      <tr><td>会议一</td><td>修改偏倚性录入界面样式：增加人员、时间字段，调整表结构（各分析方法独立录入字段）</td><td>高国翔</td></tr>
+      <tr><td>会议一</td><td>绘制 GRR 报告原型图（表头 + 结论 + 六图），检查缺漏</td><td>高国翔</td></tr>
+      <tr><td>会议一</td><td>Kappa 报告增加交叉表展示功能（样式 = 群里版本 + 交叉表）</td><td>高国翔</td></tr>
+      <tr><td>会议二</td><td>「标准值」字段统一更名为「基准值」（页面/表结构/报告）</td><td>张会娟</td></tr>
+      <tr><td>会议二</td><td>梳理 Cg/Cgk 报表字段清单（保留 Rg、N、Sigma 等，剔除 ±3Sigma、0.2T、重复单位）</td><td>张会娟</td></tr>
+      <tr><td>会议二</td><td>截取 SPC 控制图界面参考图，用于指导开发</td><td>时阳阳</td></tr>
+      <tr><td>会议二</td><td>梳理稳定性（SPC）界面集成需求（隐藏按钮、调用逻辑、结论展示）</td><td>张会娟</td></tr>
+      <tr><td>会议三</td><td>去除「刘关张」弹窗功能及相关红点提示</td><td>张会娟</td></tr>
+      <tr><td>会议三</td><td>重建 MSA 稳定性样本录入表（参照 SPC 计量样本录入表结构，修改表名）</td><td>张会娟</td></tr>
+      <tr><td>会议三</td><td>MSA 稳定性录入界面增加「子组数」和「组内测量次数」参数（含单值/子组模式）</td><td>张会娟</td></tr>
+    </tbody>
+  </table>
+</div></div>
+
+<!-- ===== 六、统一结论与术语 ===== -->
+<div class="section-title"><div class="num">6</div><h2>统一结论与术语口径</h2></div>
+
+<div class="ant-card"><div class="ant-card-body">
+  <div class="meet-sec">
+    <div class="sec-head"><span class="st">6.1 统一结论</span></div>
+    <div class="sec-body">
+      <ul>
+        <li>报告统计值（斜率、常量、P 值、Po、Pe、期望值、交叉表数值、SPC 判异结果）一律由<b>丁宁后台 / 小娜后台计算输出</b>，前端只做接收、展示与「比大小」式单项判定。</li>
+        <li>「标准值」字段统一更名为「基准值」；参考值 = 标准值 = 多次测量平均值；主水平 = 基准 = 样本库真值/参考值。</li>
+        <li>偏倚（偏移）值 = 实测值 − 参考值，前端自动计算，保留负值，不取绝对值。</li>
+        <li>各分析方法样本录入字段独立维护（GRR/Kappa 一套；线性/偏倚/稳定性/Cg/Cgk 一套），导入在台账统一处理，权限用筛选/权限控制而非分页签。</li>
+        <li>Kappa 判定四参数通用：一致性 ≥ 90%、Kappa ≥ 75%、误发 ≤ 5%、漏发 ≤ 2%；单项结论前端判定，总体结论丁宁输出；报告必须含判定标准，分析结果页可隐藏。</li>
+        <li>稳定性分析复用 SPC 控制图页面（隐藏按钮与状态栏，保留图表 + 判异规则说明），报告 = 控制图 + 直方图 + 统计量 + 受控/不受控结论。</li>
+        <li>MSA 稳定性样本录入表参照 SPC 计量样本录入表重建（改表名），增加子组数、组内测量次数参数，子组号连续不缺失。</li>
+      </ul>
+    </div>
+  </div>
+  <div class="meet-sec">
+    <div class="sec-head"><span class="st">6.2 关键术语对照</span></div>
+    <div class="sec-body">
+      <table class="ant-table" style="width:80%;">
+        <thead><tr><th>术语</th><th>含义 / 对应关系</th></tr></thead>
+        <tbody>
+          <tr><td>参考值 / 标准值 / 基准值</td><td>同一概念，多次测量平均值；Kappa 场景下 0=不合格、1=合格（可为序列）</td></tr>
+          <tr><td>主水平</td><td>基准，对应样本库中的真值或参考值</td></tr>
+          <tr><td>偏移值</td><td>实测值 − 参考值，前端自动计算，保留负值</td></tr>
+          <tr><td>评估方法</td><td>方差分析法（默认）与均值极差法，按分析方法映射</td></tr>
+          <tr><td>子组（Subgroup）</td><td>相近时间、相同生产条件下产出的多个数据点；MSA 中理解为测量次数</td></tr>
+          <tr><td>控制图编号 / 计算号</td><td>提交分析时从配置表获取传给丁宁的唯一标识，录入阶段不显示</td></tr>
+          <tr><td>漏发 / 误发</td><td>漏判率 ≤ 2%、误判率 ≤ 5%，结论由丁宁统计、前端判定</td></tr>
+          <tr><td>六图</td><td>GRR 报告的均值图、极差图等六张图，丁宁已完成</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div></div>
+
+<div class="footer-note">
+  纪要依据：三场腾讯会议的元宝纪要（智能总结）与逐句文字转写整理（转写链接见「会议概况」表）。时间均为北京时间。参会人昵称按转写原文记录（时阳阳、张会娟、高国翔、元工_刘科壮）。本纪要完整覆盖三场会议全部讨论要点，如与后续业务确认有出入，以最新确认为准。
+</div>
+
+</div>
+</body>
+</html>
