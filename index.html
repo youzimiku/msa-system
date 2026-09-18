@@ -2028,11 +2028,11 @@ function InstGroupPage(){
   const [detail,setDetail]=useState(null);
   const rows=d.instGroups.filter(g=>
     (!q.kw||(g.id+g.name+(g.note||'')).toLowerCase().includes(q.kw.toLowerCase())) &&
-    (!q.cycle||String(g.calCycle||12)===q.cycle) &&
+    (!q.cycle||String((g.cycleUnit==='年'?(g.calCycle||1)*12:(g.calCycle||12)))===q.cycle) &&
     (!q.type||(g.type||'inst')===q.type) &&
     (!q.plant||g.plant===q.plant) && (!q.sub||g.subplant===q.sub));
   const [draft,setDraft]=useState({}); const [addRow,setAddRow]=useState(false);
-  const addRowStart=()=>{ setDraft({id:'',name:'',type:'inst',calCycle:12,lastExec:'',nextPlanDate:'',remindAdvance:20,nextRemind:'',note:''}); setAddRow(true); };
+  const addRowStart=()=>{ setDraft({id:'',name:'',type:'inst',calCycle:12,cycleUnit:'月',lastExec:'',nextPlanDate:'',remindAdvance:20,nextRemind:'',note:''}); setAddRow(true); };
   const isNew=(r)=>r.id==='__NEW__';
   const gv=(o,k,dv)=>(o&&o[k]!==undefined&&o[k]!==null)?o[k]:dv;
   const saveNew=()=>{ if(!draft.name||!draft.name.trim()){ toast.warn('请填写组名称'); return; } const tp=draft.type||'inst'; const dc=isPersonGroupType(tp)?{postCode:GROUP_POST[tp],postName:GROUP_POST_NAME[tp]}:{}; mut(s=>{ const nid=(draft.id&&draft.id.trim())?draft.id.trim(): (isPersonGroupType(tp)? 'P-'+String(s.instGroups.filter(g=>g.id.startsWith('P-')).length+1).padStart(2,'0') : 'G-'+String(s.instGroups.filter(g=>g.id.startsWith('G-')).length+1).padStart(2,'0')); const rec={...draft, ...dc, id:nid, type:tp, editor:s.me.name, editorDate:NOW, records:[]}; s.instGroups.push(rec); logAction(s.me.name,'新增器具组',nid+' '+(draft.name||''),'行内新增器具组'); }); setAddRow(false); setDraft({}); toast.ok('已保存'); };
@@ -2049,11 +2049,12 @@ function InstGroupPage(){
     {title:'组编码', dataIndex:'id', width:110, render:(v,r)=>isNew(r)?<Input size="small" value={draft.id||''} placeholder="留空自动生成" onChange={e=>setDraft(d=>({...d,id:e.target.value}))}/>:<span className="mono">{v}</span>},
     {title:'组名称', dataIndex:'name', width:190, ellipsis:true, render:(v,r)=>isNew(r)?<Input size="small" value={draft.name||''} onChange={e=>setDraft(d=>({...d,name:e.target.value}))}/>:<Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
     {title:'组类型', width:140, render:(_,r)=>isNew(r)?<Select size="small" value={draft.type||'inst'} style={{width:130}} options={GROUP_TYPE_OPTS} onChange={x=>setDraft(d=>({...d,type:x}))}/>:<Select size="small" value={r.type||'inst'} style={{width:130}} options={GROUP_TYPE_OPTS} onChange={x=>setF(r,'type',x)}/>},
-    {title:'检验周期(月)', width:110, render:(_,r)=>isNew(r)?<InputNumber size="small" min={1} value={draft.calCycle||12} style={{width:92}} onChange={x=>setDraft(d=>({...d,calCycle:x}))}/>:<InputNumber size="small" min={1} value={gv(r,'calCycle',12)} style={{width:92}} onChange={x=>setF(r,'calCycle',x)}/>},
+    {title:'检验周期', width:96, render:(_,r)=>isNew(r)?<InputNumber size="small" min={1} value={draft.calCycle||12} style={{width:78}} onChange={x=>setDraft(d=>({...d,calCycle:x}))}/>:<InputNumber size="small" min={1} value={gv(r,'calCycle',12)} style={{width:78}} onChange={x=>setF(r,'calCycle',x)}/>},
+    {title:'周期单位', width:86, render:(_,r)=>isNew(r)?<Select size="small" value={draft.cycleUnit||'月'} style={{width:76}} options={[{value:'月',label:'月'},{value:'年',label:'年'}]} onChange={x=>setDraft(d=>({...d,cycleUnit:x}))}/>:<Select size="small" value={gv(r,'cycleUnit','月')} style={{width:76}} options={[{value:'月',label:'月'},{value:'年',label:'年'}]} onChange={x=>setF(r,'cycleUnit',x)}/>},
     {title:'上次执行时间', dataIndex:'lastExec', width:120, render:(v,r)=>isNew(r)?<FDate size="small" style={{width:110}} value={draft.lastExec||''} onChange={x=>setDraft(d=>({...d,lastExec:x}))}/>:<FDate size="small" style={{width:110}} value={r.lastExec||''} onChange={x=>setF(r,'lastExec',x)}/>},
     {title:'下次计划日期', dataIndex:'nextPlanDate', width:120, render:(v,r)=>isNew(r)?<FDate size="small" style={{width:110}} value={draft.nextPlanDate||''} onChange={x=>setDraft(d=>({...d,nextPlanDate:x}))}/>:<FDate size="small" style={{width:110}} value={r.nextPlanDate||''} onChange={x=>setF(r,'nextPlanDate',x)}/>},
-    {title:'提醒周期(天)', width:115, render:(_,r)=>isNew(r)?<InputNumber size="small" min={0} value={draft.remindAdvance||20} style={{width:96}} onChange={x=>setDraft(d=>({...d,remindAdvance:x}))}/>:<InputNumber size="small" min={0} value={gv(r,'remindAdvance',20)} style={{width:96}} onChange={x=>setF(r,'remindAdvance',x)}/>},
-    {title:'下次提醒时间', dataIndex:'nextRemind', width:120, render:(v,r)=>isNew(r)?<FDate size="small" style={{width:110}} value={draft.nextRemind||''} onChange={x=>setDraft(d=>({...d,nextRemind:x}))}/>:<FDate size="small" style={{width:110}} value={r.nextRemind||''} onChange={x=>setF(r,'nextRemind',x)}/>},
+    {title:'提前提醒天数', width:112, render:(_,r)=>isNew(r)?<InputNumber size="small" min={0} value={draft.remindAdvance||20} style={{width:94}} onChange={x=>setDraft(d=>({...d,remindAdvance:x}))}/>:<InputNumber size="small" min={0} value={gv(r,'remindAdvance',20)} style={{width:94}} onChange={x=>setF(r,'remindAdvance',x)}/>},
+    {title:'下次提醒日期', dataIndex:'nextRemind', width:120, render:(v,r)=><span className="mono tiny">{r.nextRemind||draft.nextRemind||'—'}</span>},
     {title:'说明', dataIndex:'note', ellipsis:true, render:(v,r)=>isNew(r)?<Input size="small" value={draft.note||''} onChange={e=>setDraft(d=>({...d,note:e.target.value}))}/>:<Input size="small" value={r.note||''} onChange={e=>setF(r,'note',e.target.value)}/>},
     {title:'维护人', dataIndex:'editor', width:100, render:v=><span>{v||'—'}</span>},
     {title:'维护时间', dataIndex:'editorDate', width:105, render:v=><span>{v||'—'}</span>}
@@ -2065,7 +2066,7 @@ function InstGroupPage(){
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="组编码/组名称/说明" style={{width:220}} value={kw} onChange={e=>setKw(e.target.value)}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>组类型</span><Select allowClear style={{width:140}} value={fType} options={GROUP_TYPE_OPTS} onChange={setFType}/>
-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>检验周期(月)</span><Select allowClear style={{width:140}} value={fCycle} options={[6,12,24].map(v=>({value:String(v),label:v+' 个月'}))} onChange={setFCycle}/>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>检验周期</span><Input allowClear placeholder="输入月数" style={{width:140}} value={fCycle} onChange={e=>setFCycle(e.target.value||undefined)}/>
         <span className="tiny">共 {rows.length} 组</span>
       </Space>
     </Panel>
@@ -2075,7 +2076,7 @@ function InstGroupPage(){
         <Button onClick={()=>{setKw('');setFCycle(undefined);setFType(undefined);setFPlant(undefined);setFSub(undefined);setQ({kw:'',cycle:undefined,type:undefined,plant:undefined,sub:undefined});}}>重置</Button>
         <Button type="primary" onClick={addRowStart}>+ 新增器具组</Button>
         <ImportBtn table="instGroups" title="器具组维护"
-          columns={[{key:'id',title:'组编码'},{key:'name',title:'组名称'},{key:'calCycle',title:'检验周期(月)'},{key:'lastExec',title:'上次执行时间'},{key:'nextRemind',title:'下次提醒时间'},{key:'memberIds',title:'成员器具(分号分隔)'},{key:'note',title:'说明'}]}
+          columns={[{key:'id',title:'组编码'},{key:'name',title:'组名称'},{key:'calCycle',title:'检验周期'},{key:'cycleUnit',title:'周期单位'},{key:'lastExec',title:'上次执行时间'},{key:'nextRemind',title:'下次提醒日期'},{key:'memberIds',title:'成员器具(分号分隔)'},{key:'note',title:'说明'}]}
           onImported={()=>toast.ok('器具组导入完成')}/>
       </Space>
     </Panel>
@@ -2093,15 +2094,16 @@ function InstGroupModal({value,onClose}){
   const [gType,setGType]=useState((value.record.type||'inst'));
   useEffect(()=>{
     if(isEdit){ form.setFieldsValue({...value.record}); }
-    else { const n=d.instGroups.filter(g=>g.id.startsWith('G-')).length+1; form.setFieldsValue({id:'G-'+String(n).padStart(2,'0'), calCycle:12, type:'inst', remindAdvance:20}); }
+    else { const n=d.instGroups.filter(g=>g.id.startsWith('G-')).length+1; form.setFieldsValue({id:'G-'+String(n).padStart(2,'0'), calCycle:12, cycleUnit:'月', type:'inst', remindAdvance:20}); }
   },[]);
-  /* 联动：上次执行时间+检验周期 -> 下次计划日期 -> 下次提醒时间（提醒周期=提前天数） */
+  /* 联动：上次执行时间+检验周期（含单位） -> 下次计划日期 -> 下次提醒日期（提前天数） */
   const onValuesChange=(ch)=>{
     const fv=(k)=>form.getFieldValue(k);
-    if('lastExec' in ch || 'calCycle' in ch){
+    if('lastExec' in ch || 'calCycle' in ch || 'cycleUnit' in ch){
       const le=('lastExec' in ch)?ch.lastExec:fv('lastExec');
       const cc=('calCycle' in ch)?ch.calCycle:fv('calCycle');
-      if(le && cc){ const nd=dayjs(le).add(Number(cc),'month').format('YYYY-MM-DD'); const ra=('remindAdvance' in ch)?ch.remindAdvance:fv('remindAdvance')||20; form.setFieldsValue({nextPlanDate:nd, nextRemind:dayjs(nd).subtract(Number(ra),'day').format('YYYY-MM-DD')}); }
+      const cu=('cycleUnit' in ch)?ch.cycleUnit:fv('cycleUnit')||'月';
+      if(le && cc){ const nd=dayjs(le).add(Number(cc),(cu==='年')?'year':'month').format('YYYY-MM-DD'); const ra=('remindAdvance' in ch)?ch.remindAdvance:fv('remindAdvance')||20; form.setFieldsValue({nextPlanDate:nd, nextRemind:dayjs(nd).subtract(Number(ra),'day').format('YYYY-MM-DD')}); }
     }
     if('nextPlanDate' in ch || 'remindAdvance' in ch){
       const nd=('nextPlanDate' in ch)?ch.nextPlanDate:fv('nextPlanDate');
@@ -2125,11 +2127,12 @@ function InstGroupModal({value,onClose}){
         <Col span={8}><Form.Item name="id" label="组编码" rules={[{required:true}]}><Input disabled={isEdit}/></Form.Item></Col>
         <Col span={16}><Form.Item name="name" label="组名称" rules={[{required:true}]}><Input/></Form.Item></Col>
         <Col span={6}><Form.Item name="type" label="组类型" rules={[{required:true}]}><Select options={GROUP_TYPE_OPTS} onChange={v=>setGType(v||'inst')}/></Form.Item></Col>
-        <Col span={6}><Form.Item name="calCycle" label="检验周期(月)" rules={[{required:true}]}><Input type="number"/></Form.Item></Col>
+        <Col span={6}><Form.Item name="calCycle" label="检验周期" rules={[{required:true}]}><Input type="number"/></Form.Item></Col>
+        <Col span={6}><Form.Item name="cycleUnit" label="周期单位" rules={[{required:true}]}><Select options={[{value:'月',label:'月'},{value:'年',label:'年'}]}/></Form.Item></Col>
         <Col span={6}><Form.Item name="lastExec" label="上次执行时间"><FDate style={{width:'100%'}}/></Form.Item></Col>
         <Col span={6}><Form.Item name="nextPlanDate" label="下次计划日期"><FDate style={{width:'100%'}}/></Form.Item></Col>
-        <Col span={6}><Form.Item name="remindAdvance" label="提醒周期(天)"><Input type="number" placeholder="如 20"/></Form.Item></Col>
-        <Col span={6}><Form.Item name="nextRemind" label="下次提醒时间"><FDate style={{width:'100%'}}/></Form.Item></Col>
+        <Col span={6}><Form.Item name="remindAdvance" label="提前提醒天数"><Input type="number" placeholder="如 20"/></Form.Item></Col>
+        <Col span={6}><Form.Item name="nextRemind" label="下次提醒日期"><FDate style={{width:'100%'}} disabled/></Form.Item></Col>
       </Row>
       {isPersonGroupType(gType)
         ? <Row gutter={12}>
@@ -2168,11 +2171,11 @@ function InstGroupDetail({rec,onClose,onEdit}){
       {key:'组编码', label:'组编码', children:<span className="mono">{rec.id}</span>},
       {key:'组名称', label:'组名称', children:rec.name},
       {key:'组类型', label:'组类型', children:GROUP_TYPE_MAP[rec.type]||'测量器具组'},
-      {key:'检验周期', label:'检验周期', children:rec.calCycle?rec.calCycle+' 个月':'12 个月'},
+      {key:'检验周期', label:'检验周期', children:rec.calCycle?(rec.calCycle+' '+(gv(rec,'cycleUnit','月'))):('12 '+(gv(rec,'cycleUnit','月')))},
       {key:'上次执行时间', label:'上次执行时间', children:rec.lastExec||'暂无'},
       {key:'下次计划日期', label:'下次计划日期', children:rec.nextPlanDate||'暂无'},
-      {key:'提醒周期', label:'提醒周期', children:rec.remindAdvance?rec.remindAdvance+' 天':'20 天'},
-      {key:'下次提醒时间', label:'下次提醒时间', children:rec.nextRemind||'暂无'},
+      {key:'提前提醒天数', label:'提前提醒天数', children:rec.remindAdvance?rec.remindAdvance+' 天':'20 天'},
+      {key:'下次提醒日期', label:'下次提醒日期', children:rec.nextRemind||'暂无'},
       {key:'成员数量', label:'成员数量', children:isKappa? (d.personnel||[]).filter(x=>x.postCode===rec.postCode).length+' 人' : members.length+' 台器具'},
       {key:'岗位编码', label:'岗位编码', children:isKappa? (rec.postCode||'暂无') : '—'},
       {key:'维护人', label:'维护人', children:rec.editor||'暂无'},
@@ -3061,15 +3064,14 @@ function CharPage(){
   const delChar=(r)=>{ Modal.confirm({title:'删除被测参数 — '+(r.name||r.id), content:'删除后相关关联关系一并解除。确认删除？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.characteristics=s.characteristics.filter(x=>x.id!==r.id); logAction(s.me.name,'删除被测参数',r.id,'删除被测参数 '+(r.name||'')); }); toast.ok('已删除'); } }); };
   const delStd=(r)=>{ Modal.confirm({title:'删除检验标准 — '+r.id, content:'确认删除该检验标准？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.standards=s.standards.filter(x=>x.id!==r.id); logAction(s.me.name,'删除检验标准',r.id,'删除检验标准 '+r.id); }); toast.ok('已删除'); } }); };
   const cols=[
-    {title:'操作', width:150, fixed:'left', render:(_,r)=><Space size={0}>
-      <Button size="small" type="link" onClick={()=>setDetail(r)}>查看</Button>
+    {title:'操作', width:130, fixed:'left', render:(_,r)=><Space size={0}>
       <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
       <Button size="small" type="link" danger disabled={charRef(r)} onClick={()=>delChar(r)}>删除</Button>
     </Space>},
     {title:'被测参数编号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
     {title:'被测参数名称', dataIndex:'name', width:170, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
     {title:'特性类型', dataIndex:'type', width:110, render:(_,r)=><Select size="small" value={r.type||'普通'} style={{width:100}} options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]} onChange={x=>setF(r,'type',x)}/>},
-    {title:'特殊特性', width:176, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" placeholder="选择特殊特性" value={r.specialCharId||undefined} style={{width:166}} options={(d.specialChars||[]).map(s=>({value:s.id,label:s.id+' '+s.name}))} onChange={x=>setF(r,'specialCharId',x)}/>},
+    {title:'特殊特性', width:176, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" placeholder="选择特殊特性" value={r.specialCharId||undefined} style={{width:166}} options={(d.specialChars||[]).map(s=>({value:s.id,label:s.name}))} onChange={x=>setF(r,'specialCharId',x)}/>},
     {title:'零件号', dataIndex:'partNo', width:110, render:(_,r)=><PartSelect value={r.partNo} width={100} onChange={(no,name)=>{setF(r,'partNo',no); setF(r,'partName',name);}}/>},
     {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><span>{r.partName||'—'}</span>},
     {title:'工序', dataIndex:'processName', width:100, render:(_,r)=><Select size="small" value={r.processName||undefined} style={{width:90}} options={PROCESS_OPT} onChange={x=>setF(r,'processName',x)}/>},
@@ -3102,6 +3104,7 @@ function CharPage(){
     {title:'测量次数', dataIndex:'numTrials', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numTrials||''} style={{width:70}} onChange={x=>setStdF(r,'numTrials',x)}/>},
     {title:'样本数量', dataIndex:'numParts', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numParts||''} style={{width:70}} onChange={x=>setStdF(r,'numParts',x)}/>},
     {title:'分析类型', width:110, render:(_,r)=><Select size="small" value={r.type||'GRR判定'} style={{width:100}} options={['GRR判定','NDC判定','KAPPA判定','有效性判定','偏倚/线性判定','稳定性判定'].map(c=>({value:c,label:c}))} onChange={x=>setStdF(r,'type',x)}/>},
+    {title:'器具组', width:230, render:(_,r)=><Select size="small" className="msa-method-select" mode="multiple" value={r.groupIds||[]} style={{width:220}} options={(d.instGroups||[]).map(g=>({value:g.id,label:g.name}))} tagRender={(p)=><span>{p.label}</span>} onChange={x=>setStdF(r,'groupIds',x)}/>},
     {title:'状态', dataIndex:'status', width:100, render:(_,r)=><Switch size="small" checked={r.status==='启用'} onChange={x=>setStdF(r,'status',x?'启用':'停用')}/>},
     {title:'备注', dataIndex:'note', width:160, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setStdF(r,'note',e.target.value)}/>}
   ];
@@ -3139,7 +3142,7 @@ function CharPage(){
         <Button onClick={()=>{setSfkw('');setStype(undefined);setSstatus(undefined);setSq({kw:'',type:undefined,status:undefined});}}>重置</Button>
         <Button type="primary" onClick={addStdRow}>新增标准</Button>
       </Space>
-      <Table rowKey="id" size="small" dataSource={stdRows} scroll={{x:1250}} pagination={false} columns={stdCols}/>
+      <Table rowKey="id" size="small" dataSource={stdRows} scroll={{x:1500}} pagination={false} columns={stdCols}/>
     </Panel>
     {detail && <CharDetail rec={detail} onClose={()=>setDetail(null)}/>}
     {stdDetail && <Drawer title={stdDetail.id+' '+(stdDetail.name||'')} width={720} open onClose={()=>setStdDetail(null)}>
