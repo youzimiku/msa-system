@@ -4136,7 +4136,7 @@ function GrrEntry({rec, onClose}){
   const d0=Store.get();
   const refCols=[
     {title:'样本编号', width:130, fixed:'left', render:(_,row)=><Input size="small" defaultValue={items[row.i]?items[row.i].id:('样本'+String(row.i+1))} className="data-cell"/>},
-    {title:'录入人', width:140, render:(_,row)=><Select size="small" defaultValue={d0.me.name} style={{width:120}} options={[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}]}/>}
+    {title:'录入人', width:110, render:(_,row)=><Select size="small" defaultValue={d0.me.name} style={{width:100}} options={[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}]}/>}
   ];
   for(let t=0;t<trialsN;t++){
     refCols.push({title:'测'+(t+1), dataIndex:'c'+t, width:130,
@@ -4189,7 +4189,7 @@ function KappaEntry({rec, onClose}){
   const d0=Store.get();
   const cols=[
     {title:'样本编号', width:130, fixed:'left', render:(_,row)=><Input size="small" defaultValue={items[row.i]?items[row.i].id:('样本'+String(row.i+1))} className="data-cell"/>},
-    {title:'录入人', width:140, render:(_,row)=><Select size="small" defaultValue={d0.me.name} style={{width:120}} options={[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}]}/>}
+    {title:'录入人', width:110, render:(_,row)=><Select size="small" defaultValue={d0.me.name} style={{width:100}} options={[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}]}/>}
   ];
   for(let tt=0;tt<trialsN;tt++) cols.push({title:'第'+(tt+1)+'判', dataIndex:'t'+tt, width:110,
     render:(v,row)=><Select size="small" style={{width:64}} value={row.j[tt]===''?undefined:row.j[tt]}
