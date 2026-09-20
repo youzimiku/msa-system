@@ -4657,7 +4657,7 @@ function EntryPage({kind}){
 function SamplePersonModal({kind, rec, picked, onOk, onClose}){
   const d=Store.get();
   const onlyPeople=(kind==='grr'||kind==='kappa');
-  const onlySamples=(kind==='linear');
+  const onlySamples=false;
   const needStation=(kind==='stability');
   const [kw,setKw]=useState('');
   const [selS,setSelS]=useState((picked&&picked.samples?picked.samples:[]).map(s=>s.id));
