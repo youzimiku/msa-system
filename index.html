@@ -4690,7 +4690,7 @@ function SamplePersonModal({kind, rec, picked, onOk, onClose}){
         {title:'状态', dataIndex:'status', width:70, render:(v)=><Tag color={v==='启用'?'green':'default'}>{v}</Tag>}
       ]}/>}
     {!onlyPeople && !onlySamples && <Divider style={{margin:'12px 0'}}/>}
-    {!onlySamples && <div style={{marginBottom:8,fontSize:14,color:'#333333'}}>选择操作人{needStation?'（单选）':'（可多选）'}</div>}
+    {!onlySamples && <div style={{marginBottom:8,fontSize:14,color:'#333333'}}>选择操作人</div>}
     {!onlySamples && <Table size="small" rowKey="empNo" dataSource={(d.personnel||[])} pagination={{pageSize:5,showTotal:t=>'共 '+t+' 人'}} scroll={{y:170}}
       rowSelection={{type:needStation?'radio':'checkbox', selectedRowKeys:selP, onChange:setSelP}}
       columns={[
