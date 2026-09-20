@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>MSA系统会议纪要（完整版）2026-09-20</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.21.6/dist/reset.css">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #f5f5f5; margin: 0; padding: 24px; color: rgba(0,0,0,0.88); }
+  .container { max-width: 1100px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+  h1 { font-size: 26px; margin: 0 0 8px; }
+  .meta { color: rgba(0,0,0,0.45); font-size: 14px; margin-bottom: 32px; }
+  h2 { font-size: 20px; margin: 40px 0 16px; padding-left: 12px; border-left: 4px solid #1677ff; }
+  h3 { font-size: 16px; margin: 24px 0 12px; color: #1677ff; }
+  h4 { font-size: 14px; margin: 16px 0 8px; }
+  p, li { font-size: 14px; line-height: 1.8; }
+  ul, ol { padding-left: 24px; }
+  .meeting-card { border: 1px solid #f0f0f0; border-radius: 8px; padding: 20px; margin-bottom: 24px; background: #fafafa; }
+  .meeting-card h3 { margin-top: 0; }
+  .tag { display: inline-block; padding: 0 8px; border-radius: 4px; font-size: 12px; margin-right: 6px; line-height: 20px; }
+  .tag-blue { background: #e6f4ff; color: #1677ff; }
+  .tag-green { background: #f6ffed; color: #52c41a; }
+  .tag-orange { background: #fff7e6; color: #fa8c16; }
+  .tag-red { background: #fff2f0; color: #ff4d4f; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th, td { border: 1px solid #f0f0f0; padding: 8px 12px; text-align: left; }
+  th { background: #fafafa; font-weight: 600; }
+  .todo { background: #fffbe6; border-left: 3px solid #faad14; padding: 12px 16px; margin: 12px 0; border-radius: 4px; }
+  .summary-box { background: #e6f4ff; border-radius: 8px; padding: 16px 20px; margin: 16px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>MSA系统会议纪要（完整版）</h1>
+<div class="meta">会议日期：2026年9月20日 下午 14:00–17:58 ｜ 共 5 场会议 ｜ 整理时间：2026-09-20</div>
+
+<div class="summary-box">
+<strong>会议概览：</strong>本日下午共召开 5 场 MSA 系统需求评审会议，参会人员包括张会娟、高国翔、张韫仪、元工_刘科壮、yy（杨姐）。会议围绕检验标准、被测参数版本管理、抽样方法维护、MSA计划创建、台账确认流程、数据录入界面、Kappa/GRR算法、报告生成等主题进行了逐页评审，形成了明确的交互规范和待办事项。
+</div>
+
+<!-- ============ 会议1 ============ -->
+<h2>第一场：14:17–15:17 质量管理系统功能评审与交互优化研讨会</h2>
+<div class="meeting-card">
+<h3>基本信息</h3>
+<p><span class="tag tag-blue">主题</span>质量管理系统功能评审与交互优化研讨会</p>
+<p><span class="tag tag-green">参会人</span>张会娟、张韫仪、高国翔、元工_刘科壮</p>
+<p><span class="tag tag-orange">时长</span>约 60 分钟</p>
+
+<h3>一、检验标准与器具组绑定</h3>
+<ul>
+<li>检验标准列表改为弹窗化展示（从主页面下移到被测参数列表的"检验标准"按钮触发弹窗）。</li>
+<li>器具组与检验标准为<strong>一对一</strong>绑定关系（万小云确认，非一对多）。</li>
+<li>检验标准号自动生成。</li>
+<li>批量绑定检验标准功能暂不做，高国翔跟万小云确认用户倾向后再定。</li>
+</ul>
+
+<h3>二、JR（计量型研究）与分辨率自动绑定</h3>
+<ul>
+<li>JR 选中时后台自动写入分辨率数据；前台不自动勾选，前台使用 checkbox 样式（不是右侧打勾）。</li>
+<li>JR 和分辨率绑定：前台用户必须手动勾选两个，但后台只要选了 JR 就自动把分辨率写上去。</li>
+</ul>
+
+<h3>三、判定结论分级</h3>
+<ul>
+<li>判定结论分四级：<strong>非常理想 / 理想 / 可接受 / 不接受(NG)</strong>，结论为下拉单选。</li>
+<li>前三个等级均属"可接受"等级，第四个为 NG。</li>
+<li>GRR 有"有条件接受"状态。</li>
+</ul>
+
+<h3>四、抽样规则加工厂车间维度</h3>
+<ul>
+<li>抽样规则需增加工厂、车间维度（同一方法不同车间差异化配置）。</li>
+<li>方法和工厂车间是一对多关系，主表要加工厂车间字段。</li>
+<li>方法名称显示，方法代码不显示。</li>
+</ul>
+
+<h3>五、计算参数维护</h3>
+<ul>
+<li>参数编号和参数名称系统固定，不可编辑（只有超级管理员可改）。</li>
+<li>用户只能改参数值和默认值。</li>
+<li>参数编号不自动生成，需手填（如 α、P、CGK 等固定代码）。</li>
+</ul>
+
+<h3>六、被测参数版本管理</h3>
+<ul>
+<li>点"升版"复制当前行，版本号 +1，状态自动启用，旧版本自动停用。</li>
+<li>同一参数编号只能有一个启用版本。</li>
+<li>列表默认查询启用状态的数据。</li>
+<li>升版后若有未完成计划/台账引用旧版，需强制提醒用户是否同步升版，已完成的计划/台账不动。</li>
+<li>此提醒逻辑高国翔找万小云确认。</li>
+</ul>
+
+<h3>七、样本库</h3>
+<ul>
+<li>被测参数与特殊特性一对一（张会娟让高国翔跟石阳确认是否一对一）。</li>
+<li>样本库要带出来特殊特性字段。</li>
+<li>样本库本身不需要版本管理。</li>
+<li>样本库要加创建人/创建时间字段。</li>
+</ul>
+
+<h3>八、判断规则表达式</h3>
+<ul>
+<li>是用整体表达式（支持 and/or、括号）还是拆成单条件，待定让刘科壮考虑。</li>
+<li>判定条件参考石阳发群里的"五项分类"文件（黄色文件），按那个走。</li>
+<li>判断规则页签和计算参数页签位置互换（先计算参数后判断规则）。</li>
+</ul>
+
+<h3>九、判断规则页签展示</h3>
+<ul>
+<li>方法/工厂/车间不在列表里显示，放在页签上面用 label 纯文本显示。</li>
+</ul>
+
+<h3>十、表日志触发器</h3>
+<ul>
+<li>新值和旧值都为空不记录，只有不为空且不一致才记录。</li>
+</ul>
+</div>
+
+<!-- ============ 会议2 ============ -->
+<h2>第二场：14:57–15:57 质量管理系统Kappa分析模块评审与优化研讨会</h2>
+<div class="meeting-card">
+<h3>基本信息</h3>
+<p><span class="tag tag-blue">主题</span>质量管理系统Kappa分析模块评审与优化研讨会</p>
+<p><span class="tag tag-green">参会人</span>张会娟、高国翔、张韫仪、元工_刘科壮</p>
+<p><span class="tag tag-orange">时长</span>约 60 分钟</p>
+
+<h3>一、Kappa样件判定逻辑与标准值维护</h3>
+<ul>
+<li>Kappa样件的"判定状态"（合格/不合格）直接维护在"标准值"字段中，以 0 和 1 的数值形式存储，用于 Kappa 分析计算。</li>
+<li>"判定状态"与"标准值"在 Kappa 场景下去重，统一使用标准值控制逻辑。</li>
+<li>判定状态填到标准值字段，不是真值字段。</li>
+</ul>
+
+<h3>二、样件编码补打</h3>
+<ul>
+<li>支持补打二维码，打印样式需包含零件名称及编号（不只打二维码）。</li>
+<li>纸张规格 2×6 / 3×6 / 9×6 待确认（看客户打印机条码规格）。</li>
+<li>是否支持多选批量打印待确认。</li>
+<li>导入导出和打印模板自己定，不找外部。</li>
+</ul>
+
+<h3>三、表日志优化</h3>
+<ul>
+<li>新值和旧值都为空不记，都不空且不一致才记。</li>
+</ul>
+
+<h3>四、样本库列表显示创建人/创建时间</h3>
+<ul>
+<li>样本库列表要显示创建人/创建时间字段。</li>
+</ul>
+
+<h3>五、计划创建交互优化</h3>
+<ul>
+<li>分析方法"确定"按钮改叫"增加"（只负责添加行，不负责删除），删除走行按钮。</li>
+<li>新增时用 DSO（不是 DataView），点增加先结束编辑保存、再刷新 DSO 打开新行。</li>
+<li>版本默认带出当前启用最新版本，同一参数仅一个启用版本。</li>
+</ul>
+
+<h3>六、计划创建后字段编辑限制</h3>
+<ul>
+<li>计划创建后，除"责任人"外其他字段（零件号、测量参数等）都不可修改，页面禁用。</li>
+</ul>
+
+<h3>七、详情抽屉分组展示</h3>
+<ul>
+<li>去掉背景色、边框、标签样式，纯文字展示。</li>
+<li>字段分三组：<strong>基本信息</strong>（含测量参数/人员/责任人）、<strong>抽样规则</strong>、<strong>执行状态</strong>。</li>
+<li>字段名不要冒号，字段值左对齐，字段名和值同一行。</li>
+<li>去掉"（取样计划→录入→分析→结论归集）"和"共 N 个分计划，任一不合格则总计划不合格"这两段文字。</li>
+<li>分计划列表标题和上面分组对齐，去掉小蓝条。</li>
+</ul>
+
+<h3>八、详情抽屉加"台账查看"按钮</h3>
+<ul>
+<li>详情页加"台账查看"按钮直接跳台账独立页面，不要内嵌复杂操作。</li>
+</ul>
+
+<h3>九、权限模型</h3>
+<ul>
+<li>分两种录入权限：<strong>"仅录个人"</strong>（默认，只能看自己录入的数据）和<strong>"可录全部"</strong>（管理员权限，能看所有台账）。</li>
+<li>不按责任人字段走，按账号权限配置。</li>
+<li>所有页面按钮都要做权限控制。</li>
+</ul>
+
+<h3>十、人员选择校验</h3>
+<ul>
+<li>人员选择弹窗显示已选人数和要求人数对比（如要求 3 人选了几人）。</li>
+<li>提交时二次校验多选少选。</li>
+</ul>
+
+<h3>十一、样本号录入方式</h3>
+<ul>
+<li>样本号不在计划创建阶段预定义，在数据录入阶段扫描或手动输入。</li>
+</ul>
+
+<h3>十二、台账列表三字段显示规则</h3>
+<ul>
+<li>GRR/KAPPA：只显示人员字段。</li>
+<li>线性/偏倚：显示样本和人员字段。</li>
+<li>Cg/Cgk：显示人员和样本字段。</li>
+<li>稳定性：显示人员和工位（单选各一个）。</li>
+</ul>
+</div>
+
+<!-- ============ 会议3 ============ -->
+<h2>第三场：15:37–16:37 MSA系统功能逻辑与界面交互评审</h2>
+<div class="meeting-card">
+<h3>基本信息</h3>
+<p><span class="tag tag-blue">主题</span>MSA系统功能逻辑与界面交互评审</p>
+<p><span class="tag tag-green">参会人</span>张会娟、yy（杨姐）、高国翔、张韫仪、元工_刘科壮</p>
+<p><span class="tag tag-orange">时长</span>约 60 分钟</p>
+
+<h3>一、样本选择逻辑统一</h3>
+<ul>
+<li><strong>生产件</strong>（GRR、Kappa）不选样本，样本号在录入阶段扫描。</li>
+<li><strong>标准件</strong>（线性、偏倚性）必须在计划阶段提前选好样本。</li>
+<li>yy（杨姐）确认：凡是生产件都不选样本，凡是标准件都要提前把样本选好。</li>
+<li>GRR/Kappa 录入时要求盲测乱序、随机，所以不预定义样本号。</li>
+</ul>
+
+<h3>二、人员选择交互优化</h3>
+<ul>
+<li>人员选择弹窗增加部门和岗位筛选条件，避免人员列表过长。</li>
+</ul>
+
+<h3>三、工位取值来源</h3>
+<ul>
+<li>工位数据来源于 Work Post 表（不是 Work Center 表）。</li>
+<li>若计划中未填写工厂和车间，则拉取全部产线；若已填写，则仅拉取对应工厂和车间下的产线。</li>
+<li>工位选择只需要"产线"一个筛选条件。</li>
+<li>Work Center 是工序表，Work Post 是工位表，刘科壮去跟周明鹏确认到底用哪个。</li>
+</ul>
+
+<h3>四、样本库与特殊特性</h3>
+<ul>
+<li>样本库选择被测参数后，<strong>不需要</strong>再带出特殊特性字段（yy 确认）。</li>
+<li>样本库有样本编号直接关联被测参数就够了。</li>
+</ul>
+
+<h3>五、样本状态字段</h3>
+<ul>
+<li>原"判定状态"字段改名为<strong>"样本状态"</strong>。</li>
+<li>下拉值：合格/不合格，以及 1/2/3/4/5 等级序列。</li>
+<li>不同零件等级序列不同（有的零件用 0/1，有的用 1/2/3/4/5），由代码表维护。</li>
+<li>下拉框列出所有可能值，由用户自己选。</li>
+</ul>
+
+<h3>六、被测参数升版与历史计划处理</h3>
+<ul>
+<li>新版本发布后旧版本自动作废，但<strong>新版本需手动启用</strong>（不是自动启用）。</li>
+<li>新版本启用后，旧版本自动停用。</li>
+<li>已生成的旧版计划不受影响，继续按旧版执行。</li>
+<li>新版本启用时，若有未完成的旧版计划，系统只做提示，不强制更新。</li>
+<li>提示语："被测参数升版后，已创建的 MSA 计划仍关联旧版本参数；如需使用新版本，请重新创建计划。"</li>
+<li>已完成的计划/台账不动。</li>
+</ul>
+
+<h3>七、Kappa交叉分析表取消</h3>
+<ul>
+<li>Minitab 算法（基于 Pi 平均值）与 Excel 简易算法（Po/Pe）存在差异。</li>
+<li>用户实际测量次数通常大于 3 次，Po/Pe 算法不适用。</li>
+<li>决定取消 Kappa 交叉分析表展示，最终报告只保留 Minitab 计算结果。</li>
+<li>删除交叉表及 Po/Pe 相关字段。</li>
+</ul>
+
+<h3>八、GRR字段位置修正</h3>
+<ul>
+<li>"默认GRR结构"和"计算方法"字段不应加在"检验标准"表，应加在"分析方法"表（方法层）。</li>
+<li>删除冗余的"默认结构"和"是否强制交叉"字段。</li>
+<li>"GRR方法"字段改名为<strong>"计算方法"</strong>，值为：均值极差法 / 方差分析法。</li>
+<li>"默认GRR结构"值为：交叉CROSSED / 嵌套NESTED / 扩展EXPANDED。</li>
+<li>这两个字段是单选下拉框。</li>
+</ul>
+
+<h3>九、列表操作按钮数量控制</h3>
+<ul>
+<li>列表页操作按钮控制在 2–3 个以内。</li>
+<li>取消"更多"折叠菜单设计，常用功能按钮直接外露，低频操作移至页面顶部。</li>
+<li>高国翔向周明鹏确认用户电脑分辨率及按钮数量规范。</li>
+</ul>
+</div>
+
+<!-- ============ 会议4 ============ -->
+<h2>第四场：16:18–17:18 质量检测系统交互优化与数据规范研讨会</h2>
+<div class="meeting-card">
+<h3>基本信息</h3>
+<p><span class="tag tag-blue">主题</span>质量检测系统交互优化与数据规范研讨会</p>
+<p><span class="tag tag-green">参会人</span>张会娟、高国翔、yy（杨姐）、元工_刘科壮</p>
+<p><span class="tag tag-orange">时长</span>约 60 分钟</p>
+
+<h3>一、台账确认交互重构</h3>
+<ul>
+<li>废弃行内下拉框操作方式，确认操作统一移至页面顶部。</li>
+<li>通过弹窗进行"同意"或"驳回"操作。</li>
+<li>状态流转：确认即代表计划闭环；驳回需填写驳回原因，支持二次发起确认。</li>
+<li>状态值：<strong>确认 / 驳回</strong>（不是未确认/已确认）。</li>
+<li>被驳回的和未确认的都可以再次发起确认。</li>
+</ul>
+
+<h3>二、GRR/Kappa数据录入界面</h3>
+<ul>
+<li>采用交叉表（DSO）样式：左侧样本号，上方操作员（A/B/C），中间测量值。</li>
+<li>支持合并单元格（同一样本多人测量时样本号合并显示）。</li>
+<li>人员选择在页面顶部下拉框，不在行内。</li>
+<li>默认选中当前登录人，管理员可见全部人员（全部/A/B...）。</li>
+<li>普通操作员登录时，DSO where 条件自动过滤，只显示该操作员的数据行。</li>
+<li>一进界面就默认闪编（编辑）状态，关闭界面自动提交。</li>
+</ul>
+
+<h3>三、盲测与数据排序</h3>
+<ul>
+<li>GRR 分析需遵循盲测和随机性原则，录入时数据顺序是打乱的。</li>
+<li>提交至后端模型前，必须按照<strong>样本编号（Sample ID）</strong>重新排序。</li>
+<li>排序后按操作员+样本编号顺序提供给丁宁（算法端），确保控制图绘制正确。</li>
+<li>刘科壮已按样本ID+操作员ID排序。</li>
+</ul>
+
+<h3>四、线性/偏倚录入</h3>
+<ul>
+<li>在线性分析中，除标准件、实测值外，必须增加<strong>"偏移"</strong>字段。</li>
+<li>字段顺序：样本号、测量值、偏移。</li>
+<li>线性/偏倚在样本选择时同时绑定操作员（选样本时加人员选择）。</li>
+<li>偏移分析是同一个操作员，线性不一定（5 件按不同量程）。</li>
+<li>偏移和实测值是分开录的（不是合并成一列）。</li>
+</ul>
+
+<h3>五、稳定性分析简化</h3>
+<ul>
+<li>稳定性（SPC）仅需录入<strong>子组号、样本号、样本值</strong>三个核心字段。</li>
+<li>剔除产线、机台、供应商、客户等冗余信息。</li>
+<li>子组号即测量次数（第1次、第2次...）。</li>
+<li>控制图号等字段自动生成，不需用户录入。</li>
+</ul>
+
+<h3>六、各录入页面字段汇总</h3>
+<table>
+<tr><th>分析类型</th><th>录入字段</th></tr>
+<tr><td>GRR</td><td>样本号（合并单元格）、人员（A/B/C）、测1/测2/测3、录入人、录入时间</td></tr>
+<tr><td>Kappa</td><td>样本号、人员、测1/测2/测3（同GRR交叉表样式）</td></tr>
+<tr><td>线性/偏倚</td><td>样本号、测量值、偏移、录入人、录入时间</td></tr>
+<tr><td>稳定性</td><td>子组号、样本号、样本值</td></tr>
+<tr><td>Cg/Cgk</td><td>样本号、人员、测量值（类似GRR但单人）</td></tr>
+</table>
+
+<h3>七、录入时间字段</h3>
+<ul>
+<li>所有数据录入页面都要有录入时间字段，默认当前时间。</li>
+<li>录入时间跟在每一行数据上，不显示在顶部。</li>
+<li>未录入数据时录入时间为空。</li>
+</ul>
+</div>
+
+<!-- ============ 会议5 ============ -->
+<h2>第五场：16:58–17:58 MSA报告生成与原型工具选型研讨</h2>
+<div class="meeting-card">
+<h3>基本信息</h3>
+<p><span class="tag tag-blue">主题</span>MSA报告生成与原型工具选型研讨</p>
+<p><span class="tag tag-green">参会人</span>张会娟、高国翔</p>
+<p><span class="tag tag-orange">时长</span>约 4 分钟</p>
+
+<h3>会议结论</h3>
+<ul>
+<li>放弃 AI 直接生成终版报告的方案，AI 在细节调整（字段位置、名称变更）上表现不佳，容易遗漏指令。</li>
+<li>采用<strong>"AI 初稿 + 人工 Excel 复核"</strong>模式：AI 生成初版框架，人工在 Excel 中核对修改。</li>
+<li>大框架确定后，人工使用专业原型工具做细节调整效率更高。</li>
+<li>当前重点：从台账到录入环节的所有数据都要改到位。</li>
+<li>报告部分后续再处理，先把台账和录入页面改好。</li>
+</ul>
+</div>
+
+<!-- ============ 待办汇总 ============ -->
+<h2>待办事项汇总</h2>
+<div class="todo">
+<strong>高国翔：</strong>
+<ul>
+<li>调整台账确认交互逻辑为顶部弹窗模式，增加驳回原因填写</li>
+<li>修改 GRR/Kappa 数据录入界面为 DSO 交叉表样式，实现人员权限过滤</li>
+<li>在线性偏移模块增加"偏移"字段，调整表结构</li>
+<li>简化稳定性分析录入界面，仅保留子组号、样本号、样本值</li>
+<li>确认线性偏移模块的人员录入方式（选人+选样本）</li>
+<li>确认二维码打印纸张规格并按规格排版</li>
+<li>在计划详情页增加"台账查看"按钮跳转台账独立页面</li>
+<li>向周明鹏确认用户电脑分辨率及操作按钮数量规范</li>
+<li>调整 GRR 相关字段至"分析方法"表，修正字段命名</li>
+<li>将 AI 生成的 MSA 报告初版导入 Excel 人工核对修改</li>
+</ul>
+</div>
+<div class="todo">
+<strong>元工_刘科壮：</strong>
+<ul>
+<li>确认 Work Post 与 Work Center 表的具体使用场景及数据来源</li>
+<li>确认 GRR/Kappa 数据提交模型前的排序逻辑（按样本编号排序）</li>
+<li>调整计划创建页面，将"确定"按钮拆分为"增加"与"提交"，实现 DSO 刷新逻辑</li>
+<li>梳理并配置"仅录个人"与"可录全部"的权限菜单</li>
+<li>调整表日志触发器逻辑，增加"新值/旧值不为空且不一致"判断</li>
+</ul>
+</div>
+<div class="todo">
+<strong>张会娟：</strong>
+<ul>
+<li>确认 Kappa 样件维护的具体字段清单，核对标准值维护逻辑</li>
+<li>确认被测参数与特殊特性是否一对一</li>
+</ul>
+</div>
+
+</div>
+</body>
+</html>

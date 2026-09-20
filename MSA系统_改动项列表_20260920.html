@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>MSA系统改动项列表 2026-09-20</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.21.6/dist/reset.css">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #f5f5f5; margin: 0; padding: 24px; color: rgba(0,0,0,0.88); }
+  .container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+  h1 { font-size: 26px; margin: 0 0 8px; }
+  .meta { color: rgba(0,0,0,0.45); font-size: 14px; margin-bottom: 32px; }
+  h2 { font-size: 18px; margin: 32px 0 16px; padding-left: 12px; border-left: 4px solid #1677ff; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th, td { border: 1px solid #f0f0f0; padding: 10px 12px; text-align: left; vertical-align: top; }
+  th { background: #fafafa; font-weight: 600; white-space: nowrap; }
+  td.num { width: 50px; text-align: center; color: rgba(0,0,0,0.45); }
+  .tag { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12px; }
+  .tag-p0 { background: #fff2f0; color: #ff4d4f; }
+  .tag-p1 { background: #fff7e6; color: #fa8c16; }
+  .tag-p2 { background: #e6f4ff; color: #1677ff; }
+  .tag-done { background: #f6ffed; color: #52c41a; }
+  .tag-partial { background: #fffbe6; color: #faad14; }
+  .tag-todo { background: #f5f5f5; color: rgba(0,0,0,0.45); }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>MSA系统改动项列表</h1>
+<div class="meta">来源：2026-09-20 下午五场会议 ｜ 整理时间：2026-09-20</div>
+
+<h2>一、基础数据维护</h2>
+<table>
+<tr><th>#</th><th>页面/模块</th><th>改动项</th><th>优先级</th><th>状态</th></tr>
+<tr><td class="num">1</td><td>被测参数维护</td><td>检验标准列表改为弹窗化，从主页面移到被测参数列表操作列"检验标准"按钮触发</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">2</td><td>被测参数维护</td><td>器具组与检验标准一对一绑定（非一对多），检验标准列表加工厂组字段（单选下拉）</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">3</td><td>被测参数维护</td><td>检验标准号自动生成</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-todo">未做</span></td></tr>
+<tr><td class="num">4</td><td>被测参数维护</td><td>被测参数加版本号字段（车间后面），版本从v1开始；操作列加"升版"按钮（复制当前行，版本+1）</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">5</td><td>被测参数维护</td><td>同一参数编号只能有一个启用版本；停用版本改启用时自动停用其他版本；列表默认查启用状态</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">6</td><td>被测参数维护</td><td>升版后需手动启用（非自动）；启用时弹提示语"被测参数升版后，已创建的MSA计划仍关联旧版本参数；如需使用新版本，请重新创建计划"</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">7</td><td>被测参数维护</td><td>所有引用被测参数的地方都显示版本号（列表加版本号字段，弹窗加版本字段不可编辑）</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-partial">部分改</span></td></tr>
+<tr><td class="num">8</td><td>被测参数维护</td><td>删除按钮只删当前版本；操作列去掉查看按钮；列表最后列改名为创建人/创建时间</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">9</td><td>被测参数维护</td><td>检验标准弹窗里检验方法改为单选下拉（值：均值极差法/方差分析法）</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">10</td><td>被测参数维护</td><td>特殊特性下拉只显示名称不显示代码；特性类型改名为特性等级</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-done">已改</span></td></tr>
+</table>
+
+<h2>二、抽样方法维护</h2>
+<table>
+<tr><th>#</th><th>页面/模块</th><th>改动项</th><th>优先级</th><th>状态</th></tr>
+<tr><td class="num">11</td><td>抽样方法维护</td><td>方法作为代码表管理，页面重点维护抽样规则（工厂+车间维度）</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">12</td><td>抽样方法维护</td><td>分析方法列表加工厂、车间字段（方法名前面，不可编辑）</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">13</td><td>抽样方法维护</td><td>方法代码列去掉；方法名称不可编辑，其他列可编辑；去掉状态列默认全部启用</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">14</td><td>抽样方法维护</td><td>分析方法列表加"默认GRR结构"和"计算方法"单选下拉字段</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">15</td><td>抽样方法维护</td><td>抽样规则/判断规则/计算参数三个页签放到弹窗里，分析方法列表操作列加按钮打开</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">16</td><td>抽样方法维护</td><td>判断规则页签：方法/工厂/车间不在列表显示，放页签上面纯文本label</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">17</td><td>抽样方法维护</td><td>计算参数页签和判断规则页签位置互换（先计算参数后判断规则）</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">18</td><td>抽样方法维护</td><td>计算参数：参数编号和参数名称不可编辑（仅系统管理员可改），用户只改参数值和默认值</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">19</td><td>抽样方法维护</td><td>判定结论改下拉单选：可接受/不可接受/有条件接受</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">20</td><td>抽样方法维护</td><td>同一方法+工厂+车间只能创建一条抽样规则</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-partial">部分改</span></td></tr>
+<tr><td class="num">21</td><td>抽样方法维护</td><td>JR选中时后台自动写分辨率数据；前台不自动勾选用checkbox</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-todo">未做</span></td></tr>
+<tr><td class="num">22</td><td>抽样方法维护</td><td>判定结论分四级：非常理想/理想/可接受/不接受(NG)</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-partial">部分改</span></td></tr>
+<tr><td class="num">23</td><td>抽样方法维护</td><td>表日志触发器：新值旧值都空不记，不一致才记</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-todo">未做</span></td></tr>
+</table>
+
+<h2>三、器具组维护</h2>
+<table>
+<tr><th>#</th><th>页面/模块</th><th>改动项</th><th>优先级</th><th>状态</th></tr>
+<tr><td class="num">24</td><td>器具组维护</td><td>检验周期后面加周期单位字段（下拉：月/年，默认月）</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">25</td><td>器具组维护</td><td>检验周期（月）去掉"月"字；提醒周期(天)改名为"提前提醒天数"</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">26</td><td>器具组维护</td><td>下次提醒时间改名为"下次提醒日期"，只显示日期不显示时间，不可编辑</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">27</td><td>器具组维护</td><td>上次执行时间和下次计划日期改为不可编辑，只到日期不到时间</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">28</td><td>器具组维护</td><td>列表最后加创建人、创建时间字段</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">29</td><td>器具组维护</td><td>查询条件里检验周期改为文本框</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-done">已改</span></td></tr>
+</table>
+
+<h2>四、样本库管理</h2>
+<table>
+<tr><th>#</th><th>页面/模块</th><th>改动项</th><th>优先级</th><th>状态</th></tr>
+<tr><td class="num">30</td><td>样本库管理</td><td>样本列表加创建人/创建时间（不可编辑）</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">31</td><td>样本库管理</td><td>"判定状态"改名为"样本状态"，下拉值：合格/不合格/1/2/3/4/5</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">32</td><td>样本库管理</td><td>标准值和真值列去掉"待维护""合格"文字</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">33</td><td>样本库管理</td><td>样本号扫描录入，不预定义</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-todo">未做</span></td></tr>
+<tr><td class="num">34</td><td>样本库管理</td><td>支持补打二维码，打印样式含零件名称及编号</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-todo">未做</span></td></tr>
+</table>
+
+<h2>五、MSA计划</h2>
+<table>
+<tr><th>#</th><th>页面/模块</th><th>改动项</th><th>优先级</th><th>状态</th></tr>
+<tr><td class="num">35</td><td>MSA计划</td><td>创建MSA弹窗分析方法区：勾选框行+右侧"增加"按钮，下面列表默认空、默认编辑模式、行保存</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">36</td><td>MSA计划</td><td>选完被测参数自动带出支持的方法但不自动勾选；手动勾选后点"增加"加入列表</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">37</td><td>MSA计划</td><td>已加入列表的方法不可重复添加；行删除时对应勾选框自动取消；切换被测参数/器具组清空列表</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">38</td><td>MSA计划</td><td>计划填写信息模块：责任人移到最前，质量特性不可编辑由被测参数带出</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">39</td><td>MSA计划</td><td>MSA计划列表只能改责任人，其他字段不可修改；去掉计划类型字段</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">40</td><td>MSA计划</td><td>操作列加"追加"按钮，追加弹窗与创建弹窗一致，已勾选的器具和方法不能取消只能继续加</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">41</td><td>MSA计划</td><td>详情抽屉纯文字展示，字段分三组（基本信息/抽样规则/执行状态），去掉背景边框标签</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">42</td><td>MSA计划</td><td>详情抽屉字段名不要冒号、字段值左对齐、字段名和值同一行</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">43</td><td>MSA计划</td><td>详情抽屉加"台账查看"按钮跳转台账独立页面</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-todo">未做</span></td></tr>
+<tr><td class="num">44</td><td>MSA计划</td><td>分析方法使用临时表，统领单号传入创建函数查询</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-todo">未做</span></td></tr>
+<tr><td class="num">45</td><td>MSA计划</td><td>人员选择弹窗显示已选/要求人数对比，提交二次校验</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-todo">未做</span></td></tr>
+</table>
+
+<h2>六、五个台账页面</h2>
+<table>
+<tr><th>#</th><th>页面/模块</th><th>改动项</th><th>优先级</th><th>状态</th></tr>
+<tr><td class="num">46</td><td>台账确认流程</td><td>确认操作移到页面顶部按钮"发起确认"（弹窗选确认人），确认按钮弹窗含确认状态Radio+驳回说明</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">47</td><td>台账确认流程</td><td>确认人/确认状态改纯文本只读；列表末尾字段：审核时间/发起人/发起时间/确认人/确认时间/确认状态/驳回说明</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">48</td><td>台账确认流程</td><td>确认人单选每人一个；确认状态由确认人账号操作，分权限控制</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">49</td><td>台账列表</td><td>人员/样本/工位三字段按台账类型显示：GRR/KAPPA只人员；线性/偏倚样本+人员；Cg/Cgk人员+样本；稳定性人员+工位（单选各一）</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">50</td><td>台账列表</td><td>无数据字段显示"无"不显示"—"；编号和时间字段不换行；台账编号和关联计划去掉超链接</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">51</td><td>台账列表</td><td>分析、数据录入按钮移到操作列（样本/人员选择后面）；操作人按钮去掉；导入导出放按钮版最右</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">52</td><td>台账列表</td><td>默认开启编辑模式，行内保存按钮</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">53</td><td>样本/人员选择</td><td>人员列表加查询条件（人员/部门/岗位）；稳定性工位做成列表带产线过滤</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">54</td><td>样本/人员选择</td><td>线性/偏倚从只选样本改为同时选样本和人员；按钮文字改"样本/人员选择"</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">55</td><td>权限模型</td><td>"仅录个人"（默认只能看自己数据）和"可录全部"（管理员看所有）两种录入权限</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-todo">未做</span></td></tr>
+</table>
+
+<h2>七、数据录入页面</h2>
+<table>
+<tr><th>#</th><th>页面/模块</th><th>改动项</th><th>优先级</th><th>状态</th></tr>
+<tr><td class="num">56</td><td>GRR/Kappa录入</td><td>交叉表改列表，样本号合并单元格，样本号后加录入人下拉（默认当前登录人），测1/测2/测3列名</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">57</td><td>GRR/Kappa录入</td><td>人员选择放顶部，管理员可见全部；普通操作员DSO where自动过滤只显示自己数据行</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-partial">部分改</span></td></tr>
+<tr><td class="num">58</td><td>GRR/Kappa录入</td><td>一进界面默认闪编状态，关闭自动提交；行保存+顶部整页保存按钮保留</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">59</td><td>GRR/Kappa录入</td><td>列表右侧加录入时间字段（每行，默认当前时间）</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">60</td><td>GRR/Kappa录入</td><td>同一样本两人录入时样本号合并单元格（两行合并一格），保存按钮每行单独保存放最左</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">61</td><td>线性/偏倚录入</td><td>数据录入矩阵改行内编辑列表（行保存按钮）；加"偏移"字段；字段：样本号/测量值/偏移/录入人/录入时间</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-partial">部分改</span></td></tr>
+<tr><td class="num">62</td><td>稳定性录入</td><td>改行内编辑列表；仅录入子组号、样本号、样本值三个字段</td><td><span class="tag tag-p0">P0</span></td><td><span class="tag tag-partial">部分改</span></td></tr>
+<tr><td class="num">63</td><td>Cg/Cgk录入</td><td>改行内编辑列表</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-partial">部分改</span></td></tr>
+<tr><td class="num">64</td><td>数据排序</td><td>盲测乱序录入，提交模型前按样本编号排序</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-todo">未做</span></td></tr>
+<tr><td class="num">65</td><td>Kappa算法</td><td>取消交叉分析表，只保留Minitab计算结果</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-todo">未做</span></td></tr>
+</table>
+
+<h2>八、通用/UI规范</h2>
+<table>
+<tr><th>#</th><th>页面/模块</th><th>改动项</th><th>优先级</th><th>状态</th></tr>
+<tr><td class="num">66</td><td>全局UI</td><td>多选下拉框显示checkbox（单选保持现状右侧打勾）</td><td><span class="tag tag-p1">P1</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">67</td><td>全局UI</td><td>去掉页面右上角面包屑、小铃铛等多余元素</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">68</td><td>全局UI</td><td>去掉模块标题（查询条件/操作/列表等）和前面小蓝条；去掉页面说明下面的页面标题</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">69</td><td>页面说明</td><td>每个页面顶部说明加"仅作为开发备注使用，页面开发时不要此模块"</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td class="num">70</td><td>页面说明</td><td>查询条件关键词文本框写支持哪些字段</td><td><span class="tag tag-p2">P2</span></td><td><span class="tag tag-done">已改</span></td></tr>
+</table>
+
+</div>
+</body>
+</html>

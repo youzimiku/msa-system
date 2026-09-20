@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>MSA系统改动对比报告 2026-09-20</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.21.6/dist/reset.css">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #f5f5f5; margin: 0; padding: 24px; color: rgba(0,0,0,0.88); }
+  .container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+  h1 { font-size: 26px; margin: 0 0 8px; }
+  .meta { color: rgba(0,0,0,0.45); font-size: 14px; margin-bottom: 24px; }
+  h2 { font-size: 18px; margin: 32px 0 16px; padding-left: 12px; border-left: 4px solid #1677ff; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th, td { border: 1px solid #f0f0f0; padding: 10px 12px; text-align: left; vertical-align: top; }
+  th { background: #fafafa; font-weight: 600; }
+  td.num { width: 50px; text-align: center; color: rgba(0,0,0,0.45); }
+  .tag { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12px; white-space: nowrap; }
+  .tag-done { background: #f6ffed; color: #52c41a; }
+  .tag-partial { background: #fffbe6; color: #faad14; }
+  .tag-todo { background: #fff2f0; color: #ff4d4f; }
+  .tag-new { background: #e6f4ff; color: #1677ff; }
+  .stats { display: flex; gap: 16px; margin: 20px 0; }
+  .stat-card { flex: 1; padding: 20px; border-radius: 8px; text-align: center; }
+  .stat-done { background: #f6ffed; border: 1px solid #b7eb8f; }
+  .stat-partial { background: #fffbe6; border: 1px solid #ffe58f; }
+  .stat-todo { background: #fff2f0; border: 1px solid #ffccc7; }
+  .stat-num { font-size: 32px; font-weight: 700; }
+  .stat-label { font-size: 13px; color: rgba(0,0,0,0.65); margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>MSA系统改动对比报告</h1>
+<div class="meta">对比基准：2026-09-20 下午五场会议提到的改动 ｜ 实际执行：16:45 后用户指令 ｜ 生成时间：2026-09-20</div>
+
+<div class="stats">
+  <div class="stat-card stat-done"><div class="stat-num">52</div><div class="stat-label">已完成</div></div>
+  <div class="stat-card stat-partial"><div class="stat-num">8</div><div class="stat-label">部分完成</div></div>
+  <div class="stat-card stat-todo"><div class="stat-num">15</div><div class="stat-label">未完成</div></div>
+</div>
+
+<h2>一、已完成项（会议提到且已按会议要求改完）</h2>
+<table>
+<tr><th>#</th><th>改动项</th><th>会议来源</th><th>实际执行</th></tr>
+<tr><td class="num">1</td><td>检验标准列表弹窗化，从主页面移到被测参数操作列按钮</td><td>会议1</td><td>已完成</td></tr>
+<tr><td class="num">2</td><td>被测参数加版本号、升版按钮、手动启用、旧版自动停用、列表默认查启用</td><td>会议1/3</td><td>已完成</td></tr>
+<tr><td class="num">3</td><td>升版提示语"被测参数升版后，已创建的MSA计划仍关联旧版本参数..."</td><td>会议3</td><td>已完成</td></tr>
+<tr><td class="num">4</td><td>抽样方法加工厂车间维度，分析方法列表加工厂车间字段</td><td>会议1</td><td>已完成</td></tr>
+<tr><td class="num">5</td><td>抽样规则/判断规则/计算参数三个页签放弹窗里</td><td>会议3</td><td>已完成</td></tr>
+<tr><td class="num">6</td><td>判断规则页签方法/工厂/车间放页签上面纯文本label</td><td>会议1</td><td>已完成</td></tr>
+<tr><td class="num">7</td><td>计算参数和判断规则页签位置互换</td><td>会议1</td><td>已完成</td></tr>
+<tr><td class="num">8</td><td>计算参数编号/名称不可编辑（仅管理员可改）</td><td>会议1</td><td>已完成</td></tr>
+<tr><td class="num">9</td><td>判定结论改下拉：可接受/不可接受/有条件接受</td><td>会议1</td><td>已完成</td></tr>
+<tr><td class="num">10</td><td>分析方法列表加"默认GRR结构"和"计算方法"单选下拉</td><td>会议3</td><td>已完成</td></tr>
+<tr><td class="num">11</td><td>样本库加创建人/创建时间（不可编辑）</td><td>会议1/2</td><td>已完成</td></tr>
+<tr><td class="num">12</td><td>"判定状态"改"样本状态"，下拉值合格/不合格/1/2/3/4/5</td><td>会议3</td><td>已完成</td></tr>
+<tr><td class="num">13</td><td>MSA计划：分析方法勾选框+"增加"按钮+列表行编辑模式</td><td>会议2</td><td>已完成</td></tr>
+<tr><td class="num">14</td><td>MSA计划列表只能改责任人，其他字段不可改</td><td>会议2</td><td>已完成</td></tr>
+<tr><td class="num">15</td><td>详情抽屉纯文字、三组分组、字段名无冒号、值左对齐</td><td>会议2</td><td>已完成</td></tr>
+<tr><td class="num">16</td><td>详情抽屉去掉两段说明文字、去掉小蓝条</td><td>会议2</td><td>已完成</td></tr>
+<tr><td class="num">17</td><td>台账确认流程：顶部"发起确认"按钮+弹窗选确认人+确认状态Radio+驳回说明</td><td>会议4</td><td>已完成</td></tr>
+<tr><td class="num">18</td><td>台账列表确认人/确认状态改纯文本只读，末尾字段重组</td><td>会议4</td><td>已完成</td></tr>
+<tr><td class="num">19</td><td>台账列表人员/样本/工位按台账类型显示隐藏</td><td>会议2</td><td>已完成</td></tr>
+<tr><td class="num">20</td><td>线性/偏倚从只选样本改为同时选样本和人员</td><td>会议4</td><td>已完成</td></tr>
+<tr><td class="num">21</td><td>人员列表加查询条件（人员/部门/岗位）</td><td>会议3</td><td>已完成</td></tr>
+<tr><td class="num">22</td><td>稳定性工位做成列表带产线过滤</td><td>会议3</td><td>已完成</td></tr>
+<tr><td class="num">23</td><td>GRR/Kappa录入改列表、样本号合并单元格、加录入人下拉、测1/2/3列名</td><td>会议4</td><td>已完成</td></tr>
+<tr><td class="num">24</td><td>GRR/Kappa录入加录入时间字段</td><td>会议4</td><td>已完成</td></tr>
+<tr><td class="num">25</td><td>多选下拉框显示checkbox（单选保持右侧打勾）</td><td>通用</td><td>已完成</td></tr>
+<tr><td class="num">26</td><td>去掉页面右上角面包屑、小铃铛</td><td>通用</td><td>已完成</td></tr>
+<tr><td class="num">27</td><td>去掉模块标题和小蓝条、去掉页面标题</td><td>通用</td><td>已完成</td></tr>
+<tr><td class="num">28</td><td>页面说明加"仅作为开发备注使用，页面开发时不要此模块"</td><td>通用</td><td>已完成</td></tr>
+<tr><td class="num">29</td><td>无数据显示"无"不显示"—"；编号时间不换行；编号去掉超链接</td><td>通用</td><td>已完成</td></tr>
+<tr><td class="num">30</td><td>MSA计划列表操作列加"追加"按钮</td><td>会议2</td><td>已完成</td></tr>
+<tr><td class="num">31</td><td>器具组维护：周期单位、提前提醒天数、下次提醒日期只到日期、创建人时间</td><td>通用</td><td>已完成</td></tr>
+<tr><td class="num">32</td><td>台账列表操作按钮精简：分析/数据录入移操作列、操作人去掉、导入导出靠右</td><td>会议3</td><td>已完成</td></tr>
+<tr><td class="num">33</td><td>稳定性台账人员和工位各只能选一个</td><td>会议3</td><td>已完成</td></tr>
+<tr><td class="num">34</td><td>被测参数列表操作列加检验标准弹窗按钮</td><td>会议1</td><td>已完成</td></tr>
+<tr><td class="num">35</td><td>检验标准弹窗器具组改单选下拉</td><td>会议1</td><td>已完成</td></tr>
+<tr><td class="num">36</td><td>仪器/设备名称改为设备名称</td><td>会议2</td><td>已完成</td></tr>
+<tr><td class="num">37</td><td>计划填写信息模块责任人移最前、质量特性不可编辑</td><td>会议2</td><td>已完成</td></tr>
+<tr><td class="num">38</td><td>追加弹窗已勾选项不能取消只能继续加</td><td>会议2</td><td>已完成</td></tr>
+<tr><td class="num">39</td><td>五个台账页面去掉"操作人（待定）"按钮</td><td>通用</td><td>已完成</td></tr>
+<tr><td class="num">40</td><td>台账列表默认开启编辑模式、行内保存</td><td>通用</td><td>已完成</td></tr>
+<tr><td class="num">41</td><td>GRR/Kappa录入样本号改文本框、录入人下拉默认当前登录人</td><td>会议4</td><td>已完成</td></tr>
+<tr><td class="num">42</td><td>同一样本两人录入时样本号合并单元格、行保存按钮放最左</td><td>会议4</td><td>已完成</td></tr>
+<tr><td class="num">43</td><td>被测参数列表最后列改名创建人/创建时间</td><td>通用</td><td>已完成</td></tr>
+<tr><td class="num">44</td><td>被测参数特性类型改特性等级；特殊特性只显示名称</td><td>会议1</td><td>已完成</td></tr>
+<tr><td class="num">45</td><td>MSA计划去掉计划类型字段</td><td>会议2</td><td>已完成</td></tr>
+<tr><td class="num">46</td><td>详情抽屉"仪器/设备名称"改"设备名称"</td><td>会议2</td><td>已完成</td></tr>
+<tr><td class="num">47</td><td>人员选择弹窗标题简化（去掉"可多选"等描述）</td><td>通用</td><td>已完成</td></tr>
+<tr><td class="num">48</td><td>样本库标准值/真值去掉"待维护""合格"文字</td><td>会议3</td><td>已完成</td></tr>
+<tr><td class="num">49</td><td>器具组维护查询条件检验周期改文本框</td><td>通用</td><td>已完成</td></tr>
+<tr><td class="num">50</td><td>样本库查询关键词加零件名称</td><td>通用</td><td>已完成</td></tr>
+<tr><td class="num">51</td><td>MSA计划判定状态加"有条件接受"黄色标识；文字精简为可接受/不可接受/待采集/有条件接受</td><td>会议1</td><td>已完成</td></tr>
+<tr><td class="num">52</td><td>维度列状态标识放大</td><td>通用</td><td>已完成</td></tr>
+</table>
+
+<h2>二、部分完成项（方向对了但细节未完全落地）</h2>
+<table>
+<tr><th>#</th><th>改动项</th><th>已做部分</th><th>缺失部分</th></tr>
+<tr><td class="num">1</td><td>所有引用被测参数处显示版本号</td><td>被测参数列表加了版本号列</td><td>MSA计划、台账等引用点的版本号字段未全部加</td></tr>
+<tr><td class="num">2</td><td>判定结论分四级（非常理想/理想/可接受/不接受）</td><td>做了可接受/不可接受/有条件接受</td><td>"非常理想/理想"两个等级未做</td></tr>
+<tr><td class="num">3</td><td>GRR/Kappa录入人员权限过滤</td><td>做了顶部人员下拉</td><td>普通操作员DSO where条件自动过滤未实现</td></tr>
+<tr><td class="num">4</td><td>线性/偏倚录入加"偏移"字段、改行内编辑列表</td><td>改了行内编辑列表</td><td>"偏移"字段未加</td></tr>
+<tr><td class="num">5</td><td>稳定性录入仅子组号/样本号/样本值三字段</td><td>改了行内编辑列表</td><td>未精简到三字段，仍有冗余字段</td></tr>
+<tr><td class="num">6</td><td>Cg/Cgk录入改行内编辑列表</td><td>改了行内编辑列表</td><td>字段精简和录入人/录入时间未加</td></tr>
+<tr><td class="num">7</td><td>同一方法+工厂+车间唯一抽样规则</td><td>做了按方法过滤</td><td>唯一性校验未做</td></tr>
+<tr><td class="num">8</td><td>升版时旧版本计划提醒</td><td>做了手动启用弹窗提示</td><td>未检查未完成计划并提示同步升版</td></tr>
+</table>
+
+<h2>三、未完成项（会议提到但尚未改）</h2>
+<table>
+<tr><th>#</th><th>改动项</th><th>会议来源</th><th>说明</th></tr>
+<tr><td class="num">1</td><td>检验标准号自动生成</td><td>会议1</td><td>需后端配合</td></tr>
+<tr><td class="num">2</td><td>批量绑定检验标准</td><td>会议1</td><td>高国翔跟万小云确认后再做</td></tr>
+<tr><td class="num">3</td><td>JR选中后台自动写分辨率数据</td><td>会议1</td><td>后端逻辑，前台只做checkbox样式</td></tr>
+<tr><td class="num">4</td><td>判断规则表达式整体式(and/or/括号) vs 拆条件</td><td>会议1</td><td>刘科壮考虑中，按石阳黄色文件走</td></tr>
+<tr><td class="num">5</td><td>表日志触发器（新旧值不空且不一致才记）</td><td>会议1/2</td><td>后端配置，前台不涉及</td></tr>
+<tr><td class="num">6</td><td>样本号扫描录入（不预定义）</td><td>会议2/4</td><td>需扫码枪集成，当前为手动输入</td></tr>
+<tr><td class="num">7</td><td>二维码补打功能（含零件名称编号）</td><td>会议2</td><td>纸张规格待确认，打印功能未做</td></tr>
+<tr><td class="num">8</td><td>详情抽屉"台账查看"按钮跳转台账独立页</td><td>会议2</td><td>未做</td></tr>
+<tr><td class="num">9</td><td>分析方法临时表+统领单号机制</td><td>会议2</td><td>已写页面说明，未实际实现临时表逻辑</td></tr>
+<tr><td class="num">10</td><td>人员选择弹窗已选/要求人数对比+二次校验</td><td>会议2</td><td>未做</td></tr>
+<tr><td class="num">11</td><td>"仅录个人"/"可录全部"两种录入权限</td><td>会议2</td><td>未做，当前无权限模型</td></tr>
+<tr><td class="num">12</td><td>GRR数据提交前按样本编号排序</td><td>会议4</td><td>后端逻辑，刘科壮处理</td></tr>
+<tr><td class="num">13</td><td>Kappa取消交叉分析表只保留Minitab结果</td><td>会议3</td><td>未做，当前仍有交叉表展示</td></tr>
+<tr><td class="num">14</td><td>工位数据来源Work Post表（非Work Center）</td><td>会议3</td><td>刘科壮跟周明鹏确认中</td></tr>
+<tr><td class="num">15</td><td>样本库被测参数不带出特殊特性字段</td><td>会议3</td><td>yy确认不需要，但当前页面仍显示</td></tr>
+</table>
+
+<h2>四、用户16:45后额外要求但会议未提到的项</h2>
+<table>
+<tr><th>#</th><th>改动项</th><th>说明</th></tr>
+<tr><td class="num">1</td><td>所有页面页面说明完整操作逻辑+权限+数据校验</td><td>用户要求写清楚每个按钮干什么、权限怎么控、校验怎么做</td></tr>
+<tr><td class="num">2</td><td>页面说明文字格式优化（方便阅读）</td><td>用户反馈文字堆一起可读性差</td></tr>
+<tr><td class="num">3</td><td>角色权限描述去掉只读用户，只留字段权限（数据状态决定可改内容）</td><td>用户不关心角色，关心什么状态下能改什么</td></tr>
+<tr><td class="num">4</td><td>行内保存按钮数据校验逻辑写进页面说明</td><td>用户要求</td></tr>
+<tr><td class="num">5</td><td>所有页面查询条件关键词写支持字段</td><td>用户要求</td></tr>
+<tr><td class="num">6</td><td>多选下拉框checkbox样式（反复调试多次）</td><td>用户多次反馈没生效，最终修复</td></tr>
+<tr><td class="num">7</td><td>样本/人员选择弹窗标题简化（去掉描述文字）</td><td>用户要求</td></tr>
+<tr><td class="num">8</td><td>GRR/Kappa录入顶部操作信息移到左侧</td><td>用户要求</td></tr>
+<tr><td class="num">9</td><td>被测参数维护页面操作列去掉查看按钮</td><td>用户要求</td></tr>
+<tr><td class="num">10</td><td>器具组维护上次执行时间/下次计划日期不可编辑只到日期</td><td>用户要求</td></tr>
+<tr><td class="num">11</td><td>五个台账页面操作列宽度问题（删除按钮后空白）</td><td>用户反馈</td></tr>
+<tr><td class="num">12</td><td>MSA计划列表undefined值改空或"-"后改"无"</td><td>用户反馈bug</td></tr>
+<tr><td class="num">13</td><td>报告页面独立菜单层级</td><td>用户要求，但第五场会议决定报告暂不做</td></tr>
+</table>
+
+<h2>五、总结</h2>
+<p><strong>整体完成度约 70%。</strong>UI层面前端能改的基本都改了，主要差距在：</p>
+<ol>
+<li><strong>后端逻辑类</strong>（表日志触发器、数据排序、临时表机制、JR自动写分辨率）——这些需要研发/刘科壮处理，前台原型不涉及。</li>
+<li><strong>权限模型</strong>——"仅录个人/可录全部"和GRR人员过滤未实现，当前原型无登录态。</li>
+<li><strong>字段精简类</strong>——稳定性三字段、线性偏倚偏移字段、Cg/Cgk录入字段精简未完全落地。</li>
+<li><strong>待确认项</strong>——判断规则表达式形式、工位表来源、二维码纸张规格、批量绑定检验标准等需跟对应人确认后再定。</li>
+<li><strong>报告部分</strong>——第五场会议明确决定报告暂不做，先把台账和录入改完。</li>
+</ol>
+
+</div>
+</body>
+</html>
