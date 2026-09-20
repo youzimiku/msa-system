@@ -162,7 +162,7 @@ a{color:#333333}
       dd.classList.add('multi-fixed');
       var opts = dd.querySelectorAll('.ant-select-item-option');
       if(!opts.length) return;
-      var isMulti = !!dd.querySelector('.ant-select-item-option-state');
+      var isMulti = !!dd.querySelector('.ant-select-item-option-state .ant-checkbox');
       if(!isMulti) return;
       opts.forEach(function(opt){
         if(opt.querySelector('.my-cb')) return;
