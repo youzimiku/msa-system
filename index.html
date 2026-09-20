@@ -4668,6 +4668,8 @@ function SamplePersonModal({kind, rec, picked, onOk, onClose}){
   const onlySamples=false;
   const needStation=(kind==='stability');
   const [kw,setKw]=useState('');
+  const [pkw,setPkw]=useState('');
+  const [pline,setPline]=useState(undefined);
   const [selS,setSelS]=useState((picked&&picked.samples?picked.samples:[]).map(s=>s.id));
   const [selP,setSelP]=useState(picked&&picked.ops? (needStation?picked.ops.slice(0,1):picked.ops).map(n=>{const p=(d.personnel||[]).find(x=>x.name===n); return p?p.empNo:null;}).filter(Boolean) : []);
   const [selSt,setSelSt]=useState(picked&&picked.stations?(needStation?picked.stations.slice(0,1):picked.stations.slice()):[]);
