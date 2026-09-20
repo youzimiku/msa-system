@@ -2423,7 +2423,7 @@ function PlanPage(){
     {title:'任务来源', width:100, render:(_,r)=><span>{r.source==='周期任务'?'周期任务':'临时任务'}</span>},
     {title:'仪器/设备名称', width:160, render:(_,r)=>instCell(r,it=>it?it.name:'')},
     {title:'量具编号', width:110, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.id}</span>:'')},
-    {title:'零件号', width:110, dataIndex:'partNo', render:(_,r)=><PartSelect value={r.partNo} width={100} onChange={(no,name)=>{setF(r,'partNo',no); setF(r,'partName',name);}}/>},
+    {title:'零件号', width:110, dataIndex:'partNo', render:(_,r)=><span className="mono">{r.partNo||'—'}</span>},
     {title:'零件名称', width:120, dataIndex:'partName', render:(_,r)=><span>{r.partName||'—'}</span>},
     {title:'被测参数', width:190, ellipsis:true, render:(_,r)=>{ const recs=planRecords(d,r.id); const cur=(r.instIds||[]).length>1? recs.map(x=>x.object).filter(Boolean).join('、') : (r.object||''); return <span>{cur||'—'}</span>; }},
     {title:'版本', width:70, render:(_,r)=>{ const cid=r.charId||''; const c=cid?(d.characteristics||[]).find(x=>x.id===cid&&x.status==='启用')||(d.characteristics||[]).find(x=>x.id===cid):null; return <span className="mono">{c?(c.version||'V1'):'—'}</span>; }},
@@ -2443,10 +2443,10 @@ function PlanPage(){
     {title:'样本数量', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); const v=recs.length&&recs[0].numParts!=null? recs[0].numParts : (r.params&&r.params.parts!=null? r.params.parts : ''); return <span className="mono">{v===''?'-':v}</span>; }},
     {title:'工序', width:84, render:(_,r)=>instCell(r,it=>it?<span>{it.process||'暂无'}</span>:'')},
     {title:'分辨力', width:86, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.res||'暂无'}</span>:'')},
-    {title:'数据类型', width:102, render:(_,r)=><Select size="small" value={r.dataType||'计量型'} style={{width:92}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setF(r,'dataType',x)}/>},
-    {title:'部门', dataIndex:'dept', width:104, render:(_,r)=><Select size="small" value={r.dept||undefined} style={{width:94}} options={DEPT_OPT} onChange={x=>setF(r,'dept',x)}/>},
-    {title:'工厂', width:100, dataIndex:'plant', render:(_,r)=><Select size="small" value={r.plant||undefined} style={{width:90}} options={PLANTS_OPT} onChange={x=>setF(r,'plant',x)}/>},
-    {title:'计划完成时间', dataIndex:'planDate', width:120, render:(_,r)=><Input size="small" className="mono" value={r.planDate||''} onChange={e=>setF(r,'planDate',e.target.value)}/>},
+    {title:'数据类型', width:102, render:(_,r)=><span>{r.dataType||'计量型'}</span>},
+    {title:'部门', dataIndex:'dept', width:104, render:(_,r)=><span>{r.dept||'—'}</span>},
+    {title:'工厂', width:100, dataIndex:'plant', render:(_,r)=><span>{r.plant||'—'}</span>},
+    {title:'计划完成时间', dataIndex:'planDate', width:120, render:(_,r)=><span className="mono">{r.planDate||'—'}</span>},
     {title:'实际完成时间', dataIndex:'actualDate', width:116, render:v=><span className="mono">{v||'—'}</span>},
     {title:'录入人', dataIndex:'editor', width:100, ellipsis:true, render:v=><span>{v||'—'}</span>},
     {title:'录入时间', dataIndex:'editorDate', width:115, render:v=><span className="mono">{v||'—'}</span>}
@@ -2768,7 +2768,7 @@ function BatchPlanModal({value, onClose}){
       {charSel && <>
         <div style={{marginBottom:8, display:'flex', alignItems:'center', gap:12, flexWrap:'wrap'}}>
           <Checkbox.Group size="small" value={checked} options={methodList.map(m=>({value:m,label:ANAL_SHORT[m]+'（'+subRuleText(m)+'）', disabled:methodRows.some(r=>r.method===m)}))} onChange={setChecked}/>
-          <Button size="small" type="primary" onClick={addMethods}>确定</Button>
+          <Button size="small" type="primary" onClick={addMethods}>增加</Button>
         </div>
         <Table size="small" rowKey="method" pagination={false} dataSource={methodRows}
           locale={{emptyText:'未添加分析方法，请在上方勾选后点击「确定」'}}
@@ -2993,7 +2993,7 @@ function AppendPlanModal({plan, onClose}){
         <Checkbox.Group size="small" value={checked}
           options={charMethods.map(m=>({value:m,label:ANAL_SHORT[m], disabled: existing.indexOf(m)>=0 }))}
           onChange={setChecked}/>
-        <Button size="small" type="primary" onClick={addRows}>确定</Button>
+        <Button size="small" type="primary" onClick={addRows}>增加</Button>
       </div>
       <Table size="small" rowKey="method" pagination={false} dataSource={rows}
         locale={{emptyText:'未添加分析方法，请在上方勾选后点击「确定」'}}
@@ -3097,39 +3097,52 @@ function PlanDetail({plan, onClose, onConvert}){
   const instIds=(plan.instIds||[plan.instId]);
   const instCell=(fn)=>instIds.map(id=>{ const it=d.instruments.find(i=>i.id===id); return <div key={id}>{fn(it)}</div>; });
   return <Drawer title={<span>{plan.id} {plan.instName} <StatusTag s={plan.status}/></span>} width={900} open onClose={onClose}>
-    <Descriptions column={3} size="small" bordered items={[
-      {key:'id', label:'MSA计划号', children:<span className="mono">{plan.id}</span>},
-      {key:'analyst', label:'责任人', children:plan.analyst||plan.observer||'暂无'},
-      {key:'planType', label:'计划类型', children:<Tag color={(plan.planType||'器具MSA')==='人员MSA'?'purple':'blue'} style={{marginRight:0}}>{plan.planType||'器具MSA'}</Tag>},
-      {key:'source', label:'任务来源', children:plan.source==='周期任务'? <Tag color="geekblue" style={{marginRight:0}}>周期任务</Tag> : <Tag style={{marginRight:0}}>临时任务</Tag>},
-      {key:'instName', label:'仪器/设备名称', children:instCell(it=>it?it.name:'暂无')},
-      {key:'instId', label:'量具编号', children:instCell(it=>it?<span className="mono">{it.id}</span>:'暂无')},
-      {key:'partNo', label:'零件号', children:<span className="mono">{plan.partNo||'—'}</span>},
-      {key:'object', label:'测量特性', children: multi? <span className="tiny">{recs.map(x=>x.object).filter(Boolean).join('、')}</span> : <span>{plan.object||'暂无'}</span>, span:2},
-      {key:'charVer', label:'被测参数版本', children: (()=>{ const cid=plan.charId||''; const c=cid?(d.characteristics||[]).find(x=>x.id===cid&&x.status==='启用')||(d.characteristics||[]).find(x=>x.id===cid):null; return <span className="mono">{c?(c.version||'V1'):'—'}</span>; })()},
-      {key:'standard', label:'检验标准', children:stdOf? <span className="mono">{stdOf}</span> : <span>暂无</span>},
-      {key:'cgcgk', label:'CG/CGK', children:dimTag('cgcgk','CG/CGK')},
-      {key:'bias', label:'偏倚', children:dimTag('linear','偏倚')},
-      {key:'linear', label:'线性', children:dimTag('linear','线性')},
-      {key:'stability', label:'稳定性', children:dimTag('stability','稳定性')},
-      {key:'repeat', label:'重复性', children:dimTag('GRR','重复性')},
-      {key:'repro', label:'再现性', children:dimTag('GRR','再现性')},
-      {key:'kappa', label:'KAPPA', children:dimTag('KAPPA','KAPPA')},
-      {key:'verdict', label:'判定结果', children: recs.length? <VerdictTag v={sumVerdict(recs)}/> : (plan.result&&plan.result!=='-'?<VerdictTag v={plan.result}/>:<VerdictTag v="待采集"/>)},
-      {key:'status', label:'状态', children:<Tag color={planStatusView(plan.status).color} style={{marginRight:0}}>{planStatusView(plan.status).text}</Tag>},
-      {key:'numOps', label:'测量人数', children: recs.length? recs[0].numOps+' 人' : (plan.params?plan.params.ops+' 人':'待定型')},
-      {key:'numTrials', label:'测量次数', children: recs.length? recs[0].numTrials+' 次' : (plan.params?plan.params.trials+' 次':'待定型')},
-      {key:'numParts', label:'样本数量', children: recs.length? recs[0].numParts+' 件' : (plan.params?plan.params.parts+' 件':'待定型')},
-      {key:'process', label:'工序', children:instCell(it=>it?<span>{it.process||'暂无'}</span>:'暂无')},
-      {key:'res', label:'分辨力', children:instCell(it=>it?<span className="mono">{it.res||'暂无'}</span>:'暂无')},
-      {key:'dataType', label:'数据类型', children:<Tag color={(plan.dataType||'计量型')==='计数型'?'purple':'blue'} style={{marginRight:0}}>{plan.dataType||'计量型'}</Tag>},
-      {key:'opMethod', label:'操作方法', children:plan.opMethod||'《测量系统分析操作指导书》'},
-      {key:'dept', label:'部门', children:plan.dept||'暂无'},
-      {key:'subplant', label:'分厂', children:plan.subplant||'—'},
-      {key:'planDate', label:'计划完成时间', children:<span className="mono tiny">{plan.planDate||'暂无'}</span>},
-      {key:'actualDate', label:'实际完成时间', children:<span className="mono tiny">{plan.actualDate||'暂无'}</span>},
-      {key:'editor', label:'录入人', children:plan.editor||'暂无'}
-    ]}/>
+    <div style={{marginBottom:16}}>
+      <div style={{fontWeight:600,fontSize:14,marginBottom:8,paddingLeft:8,borderLeft:'3px solid #1677ff'}}>基本信息</div>
+      <Descriptions column={3} size="small" items={[
+        {key:'id', label:'MSA计划号', children:<span className="mono">{plan.id}</span>},
+        {key:'analyst', label:'责任人', children:plan.analyst||plan.observer||'暂无'},
+        {key:'planType', label:'计划类型', children:<Tag color={(plan.planType||'器具MSA')==='人员MSA'?'purple':'blue'} style={{marginRight:0}}>{plan.planType||'器具MSA'}</Tag>},
+        {key:'source', label:'任务来源', children:plan.source==='周期任务'? <Tag color="geekblue" style={{marginRight:0}}>周期任务</Tag> : <Tag style={{marginRight:0}}>临时任务</Tag>},
+        {key:'instName', label:'仪器/设备名称', children:instCell(it=>it?it.name:'暂无')},
+        {key:'instId', label:'量具编号', children:instCell(it=>it?<span className="mono">{it.id}</span>:'暂无')},
+        {key:'partNo', label:'零件号', children:<span className="mono">{plan.partNo||'—'}</span>},
+        {key:'object', label:'测量特性', children: multi? <span className="tiny">{recs.map(x=>x.object).filter(Boolean).join('、')}</span> : <span>{plan.object||'暂无'}</span>, span:2},
+        {key:'charVer', label:'被测参数版本', children: (()=>{ const cid=plan.charId||''; const c=cid?(d.characteristics||[]).find(x=>x.id===cid&&x.status==='启用')||(d.characteristics||[]).find(x=>x.id===cid):null; return <span className="mono">{c?(c.version||'V1'):'—'}</span>; })()},
+        {key:'standard', label:'检验标准', children:stdOf? <span className="mono">{stdOf}</span> : <span>暂无</span>},
+        {key:'process', label:'工序', children:instCell(it=>it?<span>{it.process||'暂无'}</span>:'暂无')},
+        {key:'res', label:'分辨力', children:instCell(it=>it?<span className="mono">{it.res||'暂无'}</span>:'暂无')},
+        {key:'dataType', label:'数据类型', children:<Tag color={(plan.dataType||'计量型')==='计数型'?'purple':'blue'} style={{marginRight:0}}>{plan.dataType||'计量型'}</Tag>},
+        {key:'opMethod', label:'操作方法', children:plan.opMethod||'《测量系统分析操作指导书》'},
+        {key:'dept', label:'部门', children:plan.dept||'暂无'},
+        {key:'subplant', label:'分厂', children:plan.subplant||'—'}
+      ]}/>
+    </div>
+    <div style={{marginBottom:16}}>
+      <div style={{fontWeight:600,fontSize:14,marginBottom:8,paddingLeft:8,borderLeft:'3px solid #1677ff'}}>抽样规则</div>
+      <Descriptions column={3} size="small" items={[
+        {key:'numOps', label:'测量人数', children: recs.length? recs[0].numOps+' 人' : (plan.params?plan.params.ops+' 人':'待定型')},
+        {key:'numTrials', label:'测量次数', children: recs.length? recs[0].numTrials+' 次' : (plan.params?plan.params.trials+' 次':'待定型')},
+        {key:'numParts', label:'样本数量', children: recs.length? recs[0].numParts+' 件' : (plan.params?plan.params.parts+' 件':'待定型')},
+        {key:'cgcgk', label:'CG/CGK', children:dimTag('cgcgk','CG/CGK')},
+        {key:'bias', label:'偏倚', children:dimTag('linear','偏倚')},
+        {key:'linear', label:'线性', children:dimTag('linear','线性')},
+        {key:'stability', label:'稳定性', children:dimTag('stability','稳定性')},
+        {key:'repeat', label:'重复性', children:dimTag('GRR','重复性')},
+        {key:'repro', label:'再现性', children:dimTag('GRR','再现性')},
+        {key:'kappa', label:'KAPPA', children:dimTag('KAPPA','KAPPA')}
+      ]}/>
+    </div>
+    <div>
+      <div style={{fontWeight:600,fontSize:14,marginBottom:8,paddingLeft:8,borderLeft:'3px solid #1677ff'}}>执行状态</div>
+      <Descriptions column={3} size="small" items={[
+        {key:'verdict', label:'判定结果', children: recs.length? <VerdictTag v={sumVerdict(recs)}/> : (plan.result&&plan.result!=='-'?<VerdictTag v={plan.result}/>:<VerdictTag v="待采集"/>)},
+        {key:'status', label:'状态', children:<Tag color={planStatusView(plan.status).color} style={{marginRight:0}}>{planStatusView(plan.status).text}</Tag>},
+        {key:'planDate', label:'计划完成时间', children:<span className="mono tiny">{plan.planDate||'暂无'}</span>},
+        {key:'actualDate', label:'实际完成时间', children:<span className="mono tiny">{plan.actualDate||'暂无'}</span>},
+        {key:'editor', label:'录入人', children:plan.editor||'暂无'}
+      ]}/>
+    </div>
     <div className="panel mt12" style={{marginBottom:0}}>
       <div className="panel-title"><span className="t"><span className="bar"/>分计划列表（取样计划 → 录入 → 分析 → 结论归集）</span>{recs.length? <span className="tiny">共 {recs.length} 个分计划，任一不合格则总计划不合格</span> : <span className="tiny">未定型，无分计划</span>}</div>
       <Table rowKey="id" size="small" dataSource={recs} columns={subPlanCols()} pagination={false} scroll={{x:960}}/>
