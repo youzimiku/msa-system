@@ -3390,7 +3390,7 @@ function CharPage(){
     </Space>},
     {title:'被测参数编号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
     {title:'被测参数名称', dataIndex:'name', width:170, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
-    {title:'特性类型', dataIndex:'type', width:110, render:(_,r)=><Select size="small" value={r.type||'普通'} style={{width:100}} options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]} onChange={x=>setF(r,'type',x)}/>},
+    {title:'特性等级', dataIndex:'type', width:110, render:(_,r)=><Select size="small" value={r.type||'普通'} style={{width:100}} options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]} onChange={x=>setF(r,'type',x)}/>},
     {title:'特殊特性', width:176, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" placeholder="选择特殊特性" value={r.specialCharId||undefined} style={{width:166}} options={(d.specialChars||[]).map(s=>({value:s.id,label:s.name}))} onChange={x=>setF(r,'specialCharId',x)}/>},
     {title:'零件号', dataIndex:'partNo', width:110, render:(_,r)=><PartSelect value={r.partNo} width={100} onChange={(no,name)=>{setF(r,'partNo',no); setF(r,'partName',name);}}/>},
     {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><span>{r.partName||'—'}</span>},
@@ -3439,7 +3439,7 @@ function CharPage(){
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="参数编号/参数名称/零件号/零件名称/工序名称" style={{width:220}} value={fkw2} onChange={e=>setFkw2(e.target.value)}/>
-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>特性类型</span><Select allowClear style={{width:140}} options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]} value={ft2} onChange={setFt2}/>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>特性等级</span><Select allowClear style={{width:140}} options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]} value={ft2} onChange={setFt2}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>特性类别</span><Select allowClear style={{width:140}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} value={fCat2} onChange={setFCat2}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工序</span><Select allowClear style={{width:140}} options={[...new Set((d.characteristics||[]).map(r=>r.processName).filter(Boolean))].map(c=>({value:c,label:c}))} value={fProc2} onChange={setFProc2}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fs2||''} onChange={e=>setFs2(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="启用">启用</Radio><Radio value="停用">停用</Radio></Radio.Group>
@@ -3512,7 +3512,7 @@ function CharDetail({rec,onClose,onEdit}){
     <Descriptions column={2} size="small" bordered items={[
       {key:'id',label:'被测参数编号',children:<span className="mono">{rec.id}</span>},
       {key:'name',label:'被测参数名称',children:rec.name},
-      {key:'type',label:'特性类型',children:<Tag color={rec.type==='SC'?'red':rec.type==='CC'?'orange':'default'}>{rec.type}</Tag>},
+      {key:'type',label:'特性等级',children:<Tag color={rec.type==='SC'?'red':rec.type==='CC'?'orange':'default'}>{rec.type}</Tag>},
       {key:'category',label:'特性类别',children:rec.category},
       {key:'specialChar',label:'特殊特性',children:(()=>{ const s=(d.specialChars||[]).find(x=>x.id===rec.specialCharId); return s? (s.id+' '+s.name) : '—'; })()},
       {key:'partName',label:'零件名称',children:rec.partName||'—'},
@@ -3567,7 +3567,7 @@ function CharModal({value,onClose}){
       <Row gutter={12}>
         <Col span={6}><Form.Item name="id" label="被测参数编号"><Input disabled={revise}/></Form.Item></Col>
         <Col span={12}><Form.Item name="name" label="被测参数名称" rules={[{required:true}]}><Input/></Form.Item></Col>
-        <Col span={6}><Form.Item name="type" label="特性类型" rules={[{required:true}]}><Select options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]}/></Form.Item></Col>
+        <Col span={6}><Form.Item name="type" label="特性等级" rules={[{required:true}]}><Select options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]}/></Form.Item></Col>
         <Col span={6}><Form.Item name="partName" label="零件名称"><Input/></Form.Item></Col>
         <Col span={6}><Form.Item name="partNo" label="零件编号"><Input placeholder="如 PN-1001"/></Form.Item></Col>
         <Col span={6}><Form.Item name="processName" label="工序"><Input/></Form.Item></Col>
@@ -3931,7 +3931,7 @@ function SampleLibPage(){
     {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><span>{r.partName||'—'}</span>},
     {title:'被测参数', dataIndex:'charDim', width:170, render:(_,r)=><Select size="small" showSearch value={r.charDim||undefined} style={{width:160}} options={(d.characteristics||[]).filter(c=>c.status==='启用').map(c=>({value:c.name,label:c.name}))} onChange={x=>setF(r,'charDim',x)}/>},
     {title:'版本', width:70, render:(_,r)=>{ const c=(d.characteristics||[]).find(x=>x.name===r.charDim&&x.status==='启用')||(d.characteristics||[]).find(x=>x.name===r.charDim); return <span className="mono">{c?(c.version||'V1'):'—'}</span>; }},
-    {title:'判定状态', dataIndex:'verdict', width:104, render:(_,r)=><Select size="small" value={r.verdict||undefined} style={{width:92}} options={[{value:'合格',label:'合格'},{value:'不合格',label:'不合格'}]} onChange={x=>setF(r,'verdict',x)}/>},
+    {title:'样本状态', dataIndex:'verdict', width:104, render:(_,r)=><Select size="small" value={r.verdict||undefined} style={{width:92}} options={[{value:'合格',label:'合格'},{value:'不合格',label:'不合格'},{value:'1',label:'1'},{value:'2',label:'2'},{value:'3',label:'3'},{value:'4',label:'4'},{value:'5',label:'5'}]} onChange={x=>setF(r,'verdict',x)}/>},
     {title:'标准值', dataIndex:'nominal', width:100, render:(_,r)=><Input size="small" className="mono" value={cleanV(r.nominal)} onChange={e=>setF(r,'nominal',e.target.value)}/>},
     {title:'真值', dataIndex:'refValue', width:110, render:(_,r)=><Input size="small" className="mono" value={cleanV(r.refValue)} onChange={e=>setF(r,'refValue',e.target.value)}/>},
     {title:'单位', dataIndex:'unit', width:86, render:(_,r)=><Select size="small" value={r.unit||undefined} style={{width:76}} options={UNIT_OPT} onChange={x=>setF(r,'unit',x)}/>},
@@ -3939,7 +3939,9 @@ function SampleLibPage(){
     {title:'工厂', dataIndex:'plant', width:110, render:(_,r)=><Select size="small" value={r.plant||''} style={{width:100}} options={PLANTS_OPT} onChange={x=>setF(r,'plant',x)}/>},
     {title:'车间', dataIndex:'subplant', width:100, render:(_,r)=><Select size="small" value={r.subplant||''} style={{width:90}} options={SUBPLANTS_OPT} onChange={x=>setF(r,'subplant',x)}/>},
     {title:'状态', dataIndex:'status', width:86, render:(_,r)=><Switch size="small" checked={r.status==='启用'} onChange={x=>setF(r,'status',x?'启用':'停用')}/>},
-    {title:'说明', dataIndex:'note', width:240, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setF(r,'note',e.target.value)}/>}
+    {title:'说明', dataIndex:'note', width:240, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setF(r,'note',e.target.value)}/>},
+    {title:'创建人', dataIndex:'creator', width:100, render:v=><span>{v||'无'}</span>},
+    {title:'创建时间', dataIndex:'createDate', width:150, render:v=><span className="mono">{v||'无'}</span>}
   ];
   return <div>
     <PageHead title="样本库管理"/>
