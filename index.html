@@ -4130,20 +4130,21 @@ function GrrEntry({rec, onClose}){
     toast.ok('数据已保存（待分析），请到台账页「手动分析」计算并提交审核');
   };
   const curOpSafe=Math.min(curOp, Math.max(0, opsNames.length-1));
+  const d0=Store.get();
   const refCols=[
-    {title:'样本编号', width:110, fixed:'left', render:(_,row)=><span className="mono">{items[row.i]?items[row.i].id:'样本'+String(row.i+1)}</span>}
+    {title:'样本编号', width:130, fixed:'left', render:(_,row)=><Input size="small" defaultValue={items[row.i]?items[row.i].id:('样本'+String(row.i+1))} className="data-cell"/>},
+    {title:'录入人', width:140, render:(_,row)=><Select size="small" defaultValue={d0.me.name} style={{width:120}} options={PEOPLE_OPT}/>}
   ];
   for(let t=0;t<trialsN;t++){
-    refCols.push({title:(opsNames[curOpSafe]||('操作员'+curOpSafe))+'·试验'+(t+1), dataIndex:'c'+t, width:130,
+    refCols.push({title:'试验'+(t+1), dataIndex:'c'+t, width:130,
       render:(v,row)=><Input size="small" value={row.c[t]==null?'':row.c[t]} onChange={e=>setCell(curOpSafe,row.i,t,e.target.value)} className="data-cell"/>});
   }
   const ds=Array.from({length:partsN},(_,i)=>({i, c:(raw[curOpSafe]||[])[i]||[]}));
   return <Panel
-    extra={<Space><span style={{color:'#333',fontWeight:600}}>GRR 数据采集 · {rec.id} · {rec.instName}</span><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button><Button size="small" type="link" onClick={clearAll}>清空</Button>
+    title={<span style={{color:'#333',fontWeight:600}}>GRR 数据采集 · {rec.id} · {rec.instName}</span>}
+    extra={<Space><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button><Button size="small" type="link" onClick={clearAll}>清空</Button>
     <Button type="primary" size="small" disabled={!complete} onClick={submit}>保存数据（待分析）</Button></Space>}>
-    <Tabs size="small" activeKey={String(curOpSafe)} onChange={v=>setCurOp(Number(v))} items={opsNames.map((n,i)=>({key:String(i), label:n}))}/>
-    <div className="grp-label">测量数据矩阵 · {opsNames[curOpSafe]||('操作员'+curOpSafe)}</div>
-    <Table size="small" rowKey="i" dataSource={ds} columns={refCols} pagination={false} scroll={{x:trialsN*130+140}}/>
+    <Table size="small" rowKey="i" dataSource={ds} columns={refCols} pagination={false} scroll={{x:trialsN*130+300}}/>
   </Panel>;
 }
 
@@ -4182,19 +4183,20 @@ function KappaEntry({rec, onClose}){
     toast.ok('数据已保存（待分析），请到台账页「手动分析」计算并提交审核');
   };
   const curAppSafe=Math.min(curApp, Math.max(0, appNames.length-1));
+  const d0=Store.get();
   const cols=[
-    {title:'样本编号', width:110, fixed:'left', render:(_,row)=><span className="mono">{items[row.i]?items[row.i].id:'样本'+String(row.i+1)}</span>}
+    {title:'样本编号', width:130, fixed:'left', render:(_,row)=><Input size="small" defaultValue={items[row.i]?items[row.i].id:('样本'+String(row.i+1))} className="data-cell"/>},
+    {title:'录入人', width:140, render:(_,row)=><Select size="small" defaultValue={d0.me.name} style={{width:120}} options={PEOPLE_OPT}/>}
   ];
-  for(let tt=0;tt<trialsN;tt++) cols.push({title:(appNames[curAppSafe]||('检验员'+curAppSafe))+'·第'+(tt+1)+'判', dataIndex:'t'+tt, width:110,
+  for(let tt=0;tt<trialsN;tt++) cols.push({title:'第'+(tt+1)+'判', dataIndex:'t'+tt, width:110,
     render:(v,row)=><Select size="small" style={{width:64}} value={row.j[tt]===''?undefined:row.j[tt]}
       options={[{value:1,label:'合格'},{value:0,label:'不合格'}]} onChange={v=>setCell(curAppSafe,row.i,tt,v)} placeholder={String(tt+1)}/>});
   const ds=Array.from({length:samplesN},(_,i)=>({i, j:(judg[curAppSafe]||[])[i]||[]}));
   return <Panel
-    extra={<Space><span style={{color:'#333',fontWeight:600}}>KAPPA 数据采集 · {rec.id} · {rec.instName}</span><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button>
+    title={<span style={{color:'#333',fontWeight:600}}>KAPPA 数据采集 · {rec.id} · {rec.instName}</span>}
+    extra={<Space><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button>
     <Button type="primary" size="small" disabled={!complete} onClick={submit}>保存数据（待分析）</Button></Space>}>
-    <Tabs size="small" activeKey={String(curAppSafe)} onChange={v=>setCurApp(Number(v))} items={appNames.map((n,i)=>({key:String(i), label:n}))}/>
-    <div className="grp-label">判定矩阵（合格/不合格，每件 {trialsN} 判 · 多数裁决）· {appNames[curAppSafe]||('检验员'+curAppSafe)}</div>
-    <Table size="small" rowKey="i" dataSource={ds} columns={cols} pagination={false} scroll={{x:trialsN*110+140}}/>
+    <Table size="small" rowKey="i" dataSource={ds} columns={cols} pagination={false} scroll={{x:trialsN*110+300}}/>
   </Panel>;
 }
 /* ================= GRR 台账 ================= */
@@ -4676,7 +4678,7 @@ function DataEntryPage({kind}){
         <span className="tiny">共 {pending.length} 条待处理记录</span>
       </Space>
     </Panel>
-    {cur ? <Panel extra={<Space><span style={{color:'#333',fontWeight:600}}>{cur.id} · {cur.instName} · {CFG.name} 数据录入</span><StatusTag s={cur.reviewStatus}/></Space>}>
+    {cur ? <Panel title={<span style={{color:'#333',fontWeight:600}}>{cur.id} · {cur.instName} · {CFG.name} 数据录入</span>} extra={<Space><StatusTag s={cur.reviewStatus}/></Space>}>
       {CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); })}
     </Panel> : null}
   </div>;
