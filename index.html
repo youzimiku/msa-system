@@ -3097,7 +3097,7 @@ function PlanDetail({plan, onClose, onConvert}){
   const instIds=(plan.instIds||[plan.instId]);
   const instCell=(fn)=>instIds.map(id=>{ const it=d.instruments.find(i=>i.id===id); return <div key={id}>{fn(it)}</div>; });
   const charVer = (()=>{ const cid=plan.charId||''; const c=cid?(d.characteristics||[]).find(x=>x.id===cid&&x.status==='启用')||(d.characteristics||[]).find(x=>x.id===cid):null; return c?(c.version||'V1'):'—'; })();
-  const item = (k,v) => <div style={{padding:'4px 0',textAlign:'left'}}><span style={{color:'#999',marginRight:4}}>{k}</span>{v}</div>;
+  const item = (k,v) => <div style={{padding:'4px 0',textAlign:'left',display:'flex'}}><span style={{color:'#999',width:90,flexShrink:0}}>{k}</span><span>{v}</span></div>;
   const grp = (title, nodes) => <div style={{marginBottom:16}}>
     <div style={{fontWeight:600,fontSize:14,marginBottom:8}}>{title}</div>
     <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'0 24px',textAlign:'left'}}>{nodes}</div>
