@@ -4574,6 +4574,7 @@ function doImport(rec, kind){
 }
 const ENTRY_PAGE = { grr:'entry_grr', kappa:'entry_kappa', linear:'entry_linear', stability:'entry_stability', cgcgk:'entry_cgcgk' };
 let DataOpen=null;
+const PEOPLE_OPT=['王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(n=>({value:n,label:n}));
 function EntryPage({kind}){
   const CFG=ENTRY_CFG[kind];
   const d=Store.get();
@@ -4595,7 +4596,6 @@ function EntryPage({kind}){
     const [confirmTarget,setConfirmTarget]=useState(null); const [pickedMap,setPickedMap]=useState({});
   const [selKeys,setSelKeys]=useState([]);
   const selRows=rows.filter(r=>selKeys.includes(r.id));
-  const PEOPLE_OPT=['王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(n=>({value:n,label:n}));
   const setRecF=(r,k,v)=>{ mut(s=>{ const arr=kind==='grr'?s.grr:kind==='kappa'?s.kappa:s[ANA_CFG[kind].arr]; const g=arr.find(x=>x.id===r.id); if(g) g[k]=v; }); };
   const saveRow=(r)=>{ mut(s=>{ logAction(s.me.name,'编辑台账',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
   const canDel=(r)=>['待采集','待分析'].includes(r.reviewStatus);
