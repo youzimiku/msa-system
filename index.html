@@ -155,20 +155,41 @@ a{color:#333333}
 .msa-method-select .ant-select-selection-overflow-item + .ant-select-selection-overflow-item::before{content:'；';margin-right:2px}
 .msa-method-select .ant-select-selection-overflow-item.ant-select-selection-overflow-item-suffix{min-width:4px}
 <script>
-// 自动识别多选下拉面板并加.multi-dropdown class
+// 多选下拉：手动在每个选项前注入checkbox（不依赖antd内部DOM结构）
 (function(){
-  function tagDropdowns(){
-    document.querySelectorAll('.ant-select-dropdown:not(.multi-dropdown-tagged)').forEach(function(dd){
-      dd.classList.add('multi-dropdown-tagged');
-      // 多选面板：选项里有 option-state（checkbox容器）就是多选
-      if(dd.querySelector('.ant-select-item-option-state')){
-        dd.classList.add('multi-dropdown');
-      }
+  function fixMultiDropdowns(){
+    document.querySelectorAll('.ant-select-dropdown:not(.multi-fixed)').forEach(function(dd){
+      dd.classList.add('multi-fixed');
+      // 判断是否多选：选项里有 .ant-select-item-option-state 就是多选
+      var opts = dd.querySelectorAll('.ant-select-item-option');
+      if(!opts.length) return;
+      var isMulti = !!dd.querySelector('.ant-select-item-option-state');
+      if(!isMulti) return;
+      dd.classList.add('multi-dropdown');
+      // 给每个选项加checkbox
+      opts.forEach(function(opt){
+        if(opt.querySelector('.my-cb')) return;
+        var cb = document.createElement('span');
+        cb.className = 'my-cb';
+        cb.style.cssText = 'display:inline-block;width:14px;height:14px;border:1px solid #d9d9d9;border-radius:2px;margin-right:8px;vertical-align:middle;position:relative;flex-shrink:0;background:#fff';
+        opt.style.paddingLeft = '26px';
+        opt.style.position = 'relative';
+        opt.insertBefore(cb, opt.firstChild);
+        // 已选中的加对勾
+        if(opt.classList.contains('ant-select-item-option-selected')){
+          cb.style.background = '#1677ff';
+          cb.style.borderColor = '#1677ff';
+          cb.innerHTML = '<span style="position:absolute;left:3px;top:0px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)"></span>';
+        }
+      });
     });
   }
-  var mo = new MutationObserver(function(){ tagDropdowns(); });
+  // 选中状态变化时重绘
+  function onClick(){ setTimeout(fixMultiDropdowns, 50); }
+  document.addEventListener('click', onClick, true);
+  var mo = new MutationObserver(function(){ fixMultiDropdowns(); });
   mo.observe(document.body, {childList:true, subtree:true});
-  tagDropdowns();
+  fixMultiDropdowns();
 })();
 </script>
 </style>
