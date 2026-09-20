@@ -3140,8 +3140,8 @@ function PlanDetail({plan, onClose, onConvert}){
       item('实际完成时间', <span className="mono tiny">{plan.actualDate||'暂无'}</span>),
       item('录入人', plan.editor||'暂无')
     ])}
-    <div className="panel mt12" style={{marginBottom:0}}>
-      <div className="panel-title"><span className="t"><span className="bar"/>分计划列表（取样计划 → 录入 → 分析 → 结论归集）</span>{recs.length? <span className="tiny">共 {recs.length} 个分计划，任一不合格则总计划不合格</span> : <span className="tiny">未定型，无分计划</span>}</div>
+    <div style={{marginBottom:0}}>
+      <div style={{fontWeight:600,fontSize:14,marginBottom:8}}>分计划列表</div>
       <Table rowKey="id" size="small" dataSource={recs} columns={subPlanCols()} pagination={false} scroll={{x:960}}/>
     </div>
     {recs.filter(r=>r.reviewStatus==='待采集').length>0 && <Alert className="mt12" type="warning" showIcon message="存在待采集分计划，请点击「录入数据」完成样本采集并提交审核。" />}
