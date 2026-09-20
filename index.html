@@ -4516,7 +4516,7 @@ function OpsModal({rec, kind, onClose}){
   };
   return <Modal cancelText="取消" title={'设置操作人 / 对象 · '+rec.id} open onOk={save} okText="保存" onCancel={onClose} destroyOnClose width={480}>
     {kind==='grr'||kind==='kappa' ? sel('操作人（多选）',ops,setOps,OPS_PEOPLE,'选择操作人')
-      : kind==='linear' ? sel('样本件（多选）',parts,setParts,ALL_PART,'选择样本件（标准件/生产件）')
+      : kind==='linear' ? <div>{sel('样本件（多选）',parts,setParts,ALL_PART,'选择样本件')}{sel('操作人（多选）',ops,setOps,OPS_PEOPLE,'选择操作人')}</div>
       : kind==='stability' ? <div>
           {selOne('标准件', stdPart, setStdPart, STD_PART, '选择标准件')}
           {selOne('操作人', ops.length? ops[0] : '', (v)=>setOps(v?[v]:[]), OPS_PEOPLE, '选择操作人')}
@@ -4592,7 +4592,7 @@ function EntryPage({kind}){
   const delRow=(r)=>{ Modal.confirm({ title:'删除台账记录 — '+r.id, content:'删除后该台账记录将从列表移除（仅允许删除「待采集/待分析」状态记录）。确认删除？', okText:'删除', okType:'danger', cancelText:'取消', onOk:()=>{ mut(s=>{ const arr=kind==='grr'?s.grr:kind==='kappa'?s.kappa:s[ANA_CFG[kind].arr]; const i=arr.findIndex(x=>x.id===r.id); if(i>=0) arr.splice(i,1); logAction(s.me.name,'删除台账',r.id,'删除台账记录 '+r.id); }); toast.ok('已删除'); } }); };
   const cols=[
     {title:'操作', width:460, fixed:'left', render:(_,r)=><Space size={0} wrap>
-      <Button size="small" type="link" onClick={()=>setPickRec(r)}>{(kind==='grr'||kind==='kappa')?'人员选择':(kind==='linear')?'样本选择':'样本/人员选择'}</Button>
+      <Button size="small" type="link" onClick={()=>setPickRec(r)}>{(kind==='grr'||kind==='kappa')?'人员选择':'样本/人员选择'}</Button>
       <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>{ if(r.reviewStatus!=='待分析'){ toast.warn('仅「待分析」状态可执行分析'); return; } setAnlRec(r); }}>分析</Button>
       <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>{ if(r.reviewStatus!=='待采集'&&r.reviewStatus!=='待分析'){ toast.warn('仅「待采集/待分析」状态可录入数据'); return; } DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind); }}>数据录入</Button>
       <Button size="small" type="link" onClick={()=>goResult(r)}>查看结果</Button>
@@ -4601,7 +4601,7 @@ function EntryPage({kind}){
     </Space>},
     {title:'台账编号', dataIndex:'id', width:115, render:v=><span className="mono">{v}</span>},
     {title:'责任人', width:110, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" placeholder="选择责任人" value={r.analyst||undefined} style={{width:100}} options={PEOPLE_OPT} onChange={x=>setRecF(r,'analyst',x)}/>},
-    ...(kind==='linear' ? [] : [{title:'人员', width:180, ellipsis:true, render:(_,r)=>{ const nm=(r.opsNames||r.operators||r.appNames||[]).map(n=>String(n).split('·').pop()).filter(n=>!/^(操作员[ABCDE]|检验员[甲乙丙丁戊])$/.test(n)); return <span className="tiny">{nm.length? nm.join('、') : '无'}</span>; }}]),
+    ...(kind==='grr'||kind==='kappa' ? [] : [{title:'人员', width:180, ellipsis:true, render:(_,r)=>{ const nm=(r.opsNames||r.operators||r.appNames||[]).map(n=>String(n).split('·').pop()).filter(n=>!/^(操作员[ABCDE]|检验员[甲乙丙丁戊])$/.test(n)); return <span className="tiny">{nm.length? nm.join('、') : '无'}</span>; }}]),
     ...(kind==='grr'||kind==='kappa' ? [] : [{title:'样本', width:200, ellipsis:true, render:(_,r)=>{ const pt=(kind==='linear'||kind==='cgcgk')?(r.parts||[]):(r.sampleNames||[]); return <span className="tiny">{pt.length? pt.join('、') : '无'}</span>; }}]),
     ...(kind==='stability' ? [{title:'工位', width:120, ellipsis:true, render:(_,r)=>{ const st=(r.stations||[]); return <span className="tiny">{st.length? st.join('、') : '无'}</span>; }}] : []),
     {title:'关联计划', dataIndex:'planId', width:110, render:v=><span className="mono">{v||'暂无'}</span>},
