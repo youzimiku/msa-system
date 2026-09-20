@@ -3398,7 +3398,7 @@ function CharPage(){
     </Space>},
     {title:'检验标准号', dataIndex:'id', width:120, render:v=><span className="mono">{v}</span>},
     {title:'检验标准', dataIndex:'basis', width:220, ellipsis:true, render:(_,r)=><Input size="small" value={r.basis||''} onChange={e=>setStdF(r,'basis',e.target.value)}/>},
-    {title:'检验方法', dataIndex:'method', width:150, ellipsis:true, render:(_,r)=><Select size="small" value={r.method||undefined} style={{width:140}} options={(d.anMethods||[]).map(m=>({value:m.code,label:m.name}))} onChange={x=>setStdF(r,'method',x)}/>},
+    {title:'检验方法', dataIndex:'method', width:150, ellipsis:true, render:(_,r)=><Select size="small" value={r.method||undefined} style={{width:140}} options={[{value:'均值极差法',label:'均值极差法'},{value:'方差分析法',label:'方差分析法'}]} onChange={x=>setStdF(r,'method',x)}/>},
     {title:'测量人数', dataIndex:'numOps', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numOps||''} style={{width:70}} onChange={x=>setStdF(r,'numOps',x)}/>},
     {title:'测量次数', dataIndex:'numTrials', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numTrials||''} style={{width:70}} onChange={x=>setStdF(r,'numTrials',x)}/>},
     {title:'样本数量', dataIndex:'numParts', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numParts||''} style={{width:70}} onChange={x=>setStdF(r,'numParts',x)}/>},
