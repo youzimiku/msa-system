@@ -4435,23 +4435,36 @@ function AnlEntry({rec, kind, onClose}){
       reviewStatus:'待分析', conclusion:'', analyst:'', analysisDate:'' }); syncPlanFromRecord(s,g.planId); logAction(s.me.name,'样本录入保存',g.id,CFG.name+'测量数据已保存（待分析）'); });
     toast.ok('数据已保存（待分析），请到台账页「手动分析」计算并提交审核'); onClose();
   };
-  const cell=(i,j,v,onChange)=> <Input size="small" style={{width:78}} value={v} onChange={e=>onChange(e.target.value)}/>;
   const label=(txt,desc)=> <div style={{marginBottom:6}}><span className="flt-label">{txt}</span>{desc?<span className="tiny" style={{marginLeft:8}}>{desc}</span>:null}</div>;
+  const inputW=78;
+  const saveRow=(i,name)=>{ mut(s=>{ const g=s[CFG.arr].find(x=>x.id===rec.id); if(g){ g.raw=st.raw; if(kind==='linear') g.refs=st.refs; if(kind==='cgcgk') g.refValue=st.refValue; } }); toast.ok(name+' 已保存'); };
+  const inp=(v,onChange)=> <Input size="small" style={{width:inputW}} value={v} onChange={e=>onChange(e.target.value)}/>;
+  const opCol={title:'操作', width:70, fixed:'left', render:(_,r)=><Button size="small" type="link" onClick={()=>saveRow(r._i,'第'+(r._i+1)+'行')}>保存</Button>};
+  let cols=[], data=[];
+  if(kind==='linear'){
+    cols=[opCol,{title:'标准件',width:180,render:(_,r)=><span>{r._code}<span className="tiny" style={{marginLeft:6}}>{r._pct}%量程</span></span>}];
+    for(let j=0;j<(perN||12);j++) cols.push({title:'测'+(j+1),width:inputW+16,render:(_,r)=>inp(st.raw[r._i]?st.raw[r._i][j]:'',v=>setCell('raw',r._i,j,v))});
+    data=st.raw.map((row,i)=>({_i:i,_code:'STD-'+String(i+1).padStart(2,'0'),_pct:Math.round(100*i/Math.max(1,(cnt||5)-1))}));
+  } else if(kind==='stability'){
+    cols=[opCol,{title:'子组',width:100,render:(_,r)=><span className="mono">{r._code}</span>}];
+    for(let j=0;j<(perN||5);j++) cols.push({title:'测'+(j+1),width:inputW+16,render:(_,r)=>inp(st.raw[r._i]?st.raw[r._i][j]:'',v=>setCell('raw',r._i,j,v))});
+    cols.push({title:'X̄',width:80,render:(_,r)=>{const vals=(st.raw[r._i]||[]).map(Number).filter(v=>!isNaN(v)); const m=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0; return <span className="tiny">{vals.length?fmt(m,3):'暂无'}</span>;}});
+    cols.push({title:'R',width:80,render:(_,r)=>{const vals=(st.raw[r._i]||[]).map(Number).filter(v=>!isNaN(v)); const rg=vals.length?Math.max.apply(null,vals)-Math.min.apply(null,vals):0; return <span className="tiny">{vals.length?fmt(rg,3):'暂无'}</span>;}});
+    data=st.raw.map((row,i)=>({_i:i,_code:'G'+String(i+1).padStart(2,'0')}));
+  } else if(kind==='cgcgk'){
+    cols=[opCol,{title:'测量序号',width:100,render:(_,r)=><span className="mono">测{r._i+1}</span>},{title:'测量值',width:140,render:(_,r)=>inp(st.raw[r._i]||'',v=>setCell('raw',r._i,0,v))}];
+    data=st.raw.map((v,i)=>({_i:i}));
+  }
   return <div>
     <div style={{display:'flex', justifyContent:'flex-end', marginBottom:12}}>
       <Button type="primary" size="small" onClick={submit}>保存数据（待分析）</Button>
     </div>
-    {kind==='linear' && <div style={{maxHeight:430, overflow:'auto'}}>{label('标准件测量（每件 '+perN+' 次，覆盖 0~100% 量程）')}
-      <table className="mono-grid"><thead><tr><th>标准件</th>{Array.from({length:perN||12},(_,j)=><th key={j}>测{j+1}</th>)}</tr></thead>
-      <tbody>{st.raw.map((row,i)=><tr key={i}><td>{'STD-'+String(i+1).padStart(2,'0')}（{Math.round(100*i/(Math.max(1,(cnt||5)-1)))}%量程）</td>
-        {row.map((c,j)=><td key={j}>{cell(i,j,c,v=>setCell('raw',i,j,v))}</td>)}</tr>)}</tbody></table></div>}
-    {kind==='stability' && <div style={{maxHeight:430, overflow:'auto'}}>{label('稳定性子组测量（'+cnt+' 子组 × 每期 '+perN+' 次，跨 4 周~3 个月）','固定参照仪/工位，SPC 判异模型')}
-      <table className="mono-grid"><thead><tr><th>子组</th>{Array.from({length:perN||5},(_,j)=><th key={j}>测{j+1}</th>)}<th>X̄</th><th>R</th></tr></thead>
-      <tbody>{st.raw.map((row,i)=>{ const vals=row.map(Number).filter(v=>!isNaN(v)); const m=vals.length? vals.reduce((a,b)=>a+b,0)/vals.length:0; const rg=vals.length? (Math.max.apply(null,vals)-Math.min.apply(null,vals)):0;
-        return <tr key={i}><td>{'G'+String(i+1).padStart(2,'0')}</td>{row.map((c,j)=><td key={j}>{cell(i,j,c,v=>setCell('raw',i,j,v))}</td>)}<td>{vals.length?fmt(m,3):'暂无'}</td><td>{vals.length?fmt(rg,3):'暂无'}</td></tr>; })}</tbody></table></div>}
+    {kind==='linear' && <div>{label('标准件测量（每件 '+perN+' 次，覆盖 0~100% 量程）')}
+      <Table size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{y:430,x:1200}} size="small"/></div>}
+    {kind==='stability' && <div>{label('稳定性子组测量（'+cnt+' 子组 × 每期 '+perN+' 次，跨 4 周~3 个月）','固定参照仪/工位，SPC 判异模型')}
+      <Table size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{y:430,x:1200}}/></div>}
     {kind==='cgcgk' && <div>{label('Cg/Cgk 测量（标准件连续 '+st.raw.length+' 次）','参考值 ±10% 公差控制线（VDA Type1）')}
-      <div style={{maxHeight:400, overflow:'auto'}}><table className="mono-grid"><thead><tr>{Array.from({length:Math.min(10,st.raw.length)},(_,i)=><th key={i}>测{i+1}</th>)}</tr></thead>
-      <tbody>{Array.from({length:Math.ceil(st.raw.length/10)},(_,r0)=><tr key={r0}>{Array.from({length:Math.min(10,st.raw.length-r0*10)},(_,i)=>{ const idx=r0*10+i; return <td key={idx}>{cell(idx,0,st.raw[idx],v=>setCell('raw',idx,0,v))}</td>; })}</tr>)}</tbody></table></div></div>}
+      <Table size="small" rowKey="_i" dataSource={data} columns={cols} pagination={{pageSize:20,showTotal:t=>'共 '+t+' 条'}} scroll={{y:400}}/></div>}
   </div>;
 }
 
