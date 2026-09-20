@@ -4675,8 +4675,7 @@ function SamplePersonModal({kind, rec, picked, onOk, onClose}){
   };
   return <Modal cancelText="取消" title={title+' · '+(rec?rec.id:'')} open width={onlyPeople?560:900} okText="确定" destroyOnClose
     onOk={doOk} onCancel={onClose}>
-    {!onlyPeople && <div style={{marginBottom:8,fontSize:14,color:'#333333'}}>选择样本</div>}
-    {!onlyPeople && <Input.Search allowClear placeholder="搜索 样本编号/名称/零件号/被测参数" style={{width:340,marginBottom:8}} value={kw} onChange={e=>setKw(e.target.value)}/>}
+        {!onlyPeople && <Input.Search allowClear placeholder="搜索 样本编号/名称/零件号/被测参数" style={{width:340,marginBottom:8}} value={kw} onChange={e=>setKw(e.target.value)}/>}
     {!onlyPeople && <Table size="small" rowKey="id" dataSource={samples} pagination={{pageSize:5,showTotal:t=>'共 '+t+' 条'}} scroll={{y:210}}
       rowSelection={{selectedRowKeys:selS, onChange:setSelS}}
       columns={[
@@ -4690,8 +4689,7 @@ function SamplePersonModal({kind, rec, picked, onOk, onClose}){
         {title:'状态', dataIndex:'status', width:70, render:(v)=><Tag color={v==='启用'?'green':'default'}>{v}</Tag>}
       ]}/>}
     {!onlyPeople && !onlySamples && <Divider style={{margin:'12px 0'}}/>}
-    {!onlySamples && <div style={{marginBottom:8,fontSize:14,color:'#333333'}}>选择操作人</div>}
-    {!onlySamples && <Table size="small" rowKey="empNo" dataSource={(d.personnel||[])} pagination={{pageSize:5,showTotal:t=>'共 '+t+' 人'}} scroll={{y:170}}
+        {!onlySamples && <Table size="small" rowKey="empNo" dataSource={(d.personnel||[])} pagination={{pageSize:5,showTotal:t=>'共 '+t+' 人'}} scroll={{y:170}}
       rowSelection={{type:needStation?'radio':'checkbox', selectedRowKeys:selP, onChange:setSelP}}
       columns={[
         {title:'人员编号', dataIndex:'empNo', width:90},
