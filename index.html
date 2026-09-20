@@ -4590,7 +4590,9 @@ function EntryPage({kind}){
   const goResult=(r)=>{ if(kind==='grr'){ GrrOpenId=r.id; NavAPI.go('grr'); } else if(kind==='kappa'){ KpaOpenId=r.id; NavAPI.go('kappa'); } else { AnlOpen={kind,id:r.id}; NavAPI.go(CFG.result); } };
   const recParams=(r)=> kind==='grr'? (r.numOps+'人 × '+r.numTrials+'次 × '+r.numParts+'件') : kind==='kappa'? (r.numApp+'人 × '+r.numSamples+'件') : ANA_CFG[kind].params(r);
   const [anlRec,setAnlRec]=useState(null); const [opsRec,setOpsRec]=useState(null); const [prevRec,setPrevRec]=useState(null);
-  const [pickRec,setPickRec]=useState(null); const [pickedMap,setPickedMap]=useState({});
+  const [pickRec,setPickRec]=useState(null);
+    const [initiateTarget,setInitiateTarget]=useState(null);
+    const [confirmTarget,setConfirmTarget]=useState(null); const [pickedMap,setPickedMap]=useState({});
   const [selKeys,setSelKeys]=useState([]);
   const selRows=rows.filter(r=>selKeys.includes(r.id));
   const PEOPLE_OPT=['王强','李娜','张伟','刘洋','陈静','赵磊','孙丽','周涛','吴敏','郑凯'].map(n=>({value:n,label:n}));
@@ -4629,9 +4631,12 @@ function EntryPage({kind}){
     {title:'状态', width:90, render:(_,r)=><StatusTag s={r.reviewStatus}/>},
     {title:'审核人', width:90, render:(_,r)=><span>{r.reviewer||'—'}</span>},
     {title:'审核时间', width:115, render:(_,r)=><span className="mono">{r.reviewDate||'—'}</span>},
-    {title:'确认人', width:110, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" placeholder="选择确认人" value={r.approver||undefined} style={{width:100}} options={PEOPLE_OPT} onChange={x=>setRecF(r,'approver',x)}/>},
-    {title:'确认状态', width:110, render:(_,r)=><Select size="small" value={r.confirmStatus||'未确认'} style={{width:100}} disabled={!r.approver || d.me.name!==r.approver} options={[{value:'已确认',label:'已确认'},{value:'未确认',label:'未确认'}]} onChange={x=>setRecF(r,'confirmStatus',x)}/>},
-    {title:'确认时间', width:115, render:(_,r)=><span className="mono">{r.approveDate||'—'}</span>}
+    {title:'发起人', width:100, render:(_,r)=><span>{r.initiator||'—'}</span>},
+    {title:'发起时间', width:115, render:(_,r)=><span className="mono">{r.initiateDate||'—'}</span>},
+    {title:'确认人', width:100, render:(_,r)=><span>{r.approver||'—'}</span>},
+    {title:'确认时间', width:115, render:(_,r)=><span className="mono">{r.approveDate||'—'}</span>},
+    {title:'确认状态', width:90, render:(_,r)=><span>{r.confirmStatus||'未确认'}</span>},
+    {title:'驳回说明', width:160, ellipsis:true, render:(_,r)=><span>{r.rejectReason||'—'}</span>}
   ];
   return <div>
     <Panel title="查询条件">
@@ -4647,7 +4652,8 @@ function EntryPage({kind}){
       <Space wrap>
         <Button type="primary" onClick={()=>setQ({kw:fkw,status:fstatus,concl:fconcl})}>查询</Button>
         <Button onClick={resetQ}>重置</Button>
-        <Button onClick={()=>{ if(!selRows.length){ toast.warn('请先在列表中勾选记录'); return; } toast.ok('已确认所选 '+selRows.length+' 条记录'); }}>确认</Button>
+        <Button onClick={()=>{ if(!selRows.length){ toast.warn('请先在列表中勾选记录'); return; } setInitiateTarget(selRows.slice()); }}>发起确认</Button>
+        <Button onClick={()=>{ if(!selRows.length){ toast.warn('请先在列表中勾选记录'); return; } setConfirmTarget(selRows.slice()); }}>确认</Button>
         <Button disabled={!canDo(d.me.role,'edit')} onClick={()=>{}}>导入</Button>
         <Button disabled={!canDo(d.me.role,'edit')}>导出</Button>
       </Space>
@@ -4659,8 +4665,33 @@ function EntryPage({kind}){
     {opsRec && <OpsModal rec={opsRec} kind={kind} onClose={()=>setOpsRec(null)}/>}
     {prevRec && <ImportPreviewModal rec={prevRec} kind={kind} onClose={()=>setPrevRec(null)}/>}
     {pickRec && <SamplePersonModal kind={kind} rec={pickRec} picked={pickedMap[pickRec.id]} onOk={(samples,ops,stations)=>{ setPickedMap(p=>{const n={...p}; n[pickRec.id]={samples:samples||[],ops:ops||[],stations:stations||[]}; return n;}); setPickRec(null); }} onClose={()=>setPickRec(null)}/>}
-    {/* 审核入口已移除：审核流程经「分析」弹窗提交审核 */}
+    {initiateTarget && <InitiateModal rows={initiateTarget} onClose={()=>setInitiateTarget(null)} onOk={(approver)=>{ mut(st=>{ initiateTarget.forEach(rid=>{ const rr=(st.grr.concat(st.kappa,st.linear,st.stability,st.cgcgk)).find(x=>x.id===rid); if(rr){ rr.approver=approver; rr.initiator=d.me.name; rr.initiateDate=NOW; rr.confirmStatus='未确认'; rr.approveDate=''; rr.rejectReason=''; } }); }); toast.ok('已发起确认，确认人：'+approver); setInitiateTarget(null); }}/>}
+    {confirmTarget && <ConfirmModal rows={confirmTarget} onClose={()=>setConfirmTarget(null)} onOk={(st,reson)=>{ mut(st=>{ confirmTarget.forEach(rid=>{ const rr=(st.grr.concat(st.kappa,st.linear,st.stability,st.cgcgk)).find(x=>x.id===rid); if(rr){ rr.confirmStatus=st; rr.approveDate=NOW; rr.rejectReason=st==='驳回'?reson:''; } }); }); toast.ok(st==='确认'?'已确认':'已驳回'); setConfirmTarget(null); }}/>}
   </div>;
+}
+function InitiateModal({rows,onClose,onOk}){
+  const [approver,setApprover]=useState(undefined);
+  return <Modal title="发起确认" open onCancel={onClose} onOk={()=>{ if(!approver){ toast.warn('请选择确认人'); return; } onOk(approver); }} okText="确定" cancelText="取消" destroyOnClose>
+    <div style={{marginBottom:8,color:'#666'}}>已选 {rows.length} 条台账记录</div>
+    <div style={{marginBottom:8}}>确认人</div>
+    <Select showSearch optionFilterProp="label" style={{width:'100%'}} placeholder="选择确认人" value={approver} onChange={setApprover} options={PEOPLE_OPT}/>
+  </Modal>;
+}
+function ConfirmModal({rows,onClose,onOk}){
+  const [st,setSt]=useState('确认');
+  const [reason,setReason]=useState('');
+  return <Modal title="确认" open onCancel={onClose} onOk={()=>{ if(st==='驳回'&&!reason.trim()){ toast.warn('驳回必须填写驳回说明'); return; } onOk(st,reason.trim()); }} okText="确定" cancelText="取消" destroyOnClose>
+    <div style={{marginBottom:8,color:'#666'}}>已选 {rows.length} 条台账记录</div>
+    <div style={{marginBottom:8}}>确认状态</div>
+    <Radio.Group value={st} onChange={e=>setSt(e.target.value)} style={{marginBottom:16}}>
+      <Radio value="确认">确认</Radio>
+      <Radio value="驳回">驳回</Radio>
+    </Radio.Group>
+    {st==='驳回' && <div>
+      <div style={{marginBottom:8}}>驳回说明（必填）</div>
+      <Input.TextArea rows={3} placeholder="请填写驳回原因" value={reason} onChange={e=>setReason(e.target.value)}/>
+    </div>}
+  </Modal>;
 }
 function SamplePersonModal({kind, rec, picked, onOk, onClose}){
   const d=Store.get();
