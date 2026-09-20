@@ -4137,7 +4137,7 @@ function GrrEntry({rec, onClose}){
   const PEOPLE_LIST=[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}];
   const refCols=[
     {title:'操作', width:80, fixed:'left', render:(_,row)=><Button size="small" type="link" onClick={()=>toast.ok('行已保存：'+row.sid)}>保存</Button>},
-    {title:'样本编号', width:130, render:(_,row)=><Input size="small" value={row.sid} className="data-cell"/>,
+    {title:'样本编号', width:130, render:(_,row)=><Input size="small" value={row.sid} className="data-cell" style={{height:64}}/>,
       onCell:(_,idx)=>({rowSpan: idx%2===0 ? 2 : 0})},
     {title:'录入人', width:110, render:(_,row)=><Select size="small" defaultValue={d0.me.name} style={{width:100}} options={PEOPLE_LIST}/>}
   ];
@@ -4200,7 +4200,7 @@ function KappaEntry({rec, onClose}){
   const PEOPLE_LIST=[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}];
   const cols=[
     {title:'操作', width:80, fixed:'left', render:(_,row)=><Button size="small" type="link" onClick={()=>toast.ok('行已保存：'+row.sid)}>保存</Button>},
-    {title:'样本编号', width:130, render:(_,row)=><Input size="small" value={row.sid} className="data-cell"/>,
+    {title:'样本编号', width:130, render:(_,row)=><Input size="small" value={row.sid} className="data-cell" style={{height:64}}/>,
       onCell:(_,idx)=>({rowSpan: idx%2===0 ? 2 : 0})},
     {title:'录入人', width:110, render:(_,row)=><Select size="small" defaultValue={d0.me.name} style={{width:100}} options={PEOPLE_LIST}/>}
   ];
