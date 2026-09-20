@@ -4238,7 +4238,7 @@ function AnlPage({kind}){
       {label:'器具',onClick:()=>NavAPI.openInst(r.instId)}
     ]}/>},
     {title:CFG.idPref+'编号', dataIndex:'id', width:115, render:(v,r)=><span className="row-link mono" onClick={()=>setDetail(r)}>{v}</span>},
-    {title:'关联计划', dataIndex:'planId', width:110, render:(v)=><span className="row-link mono" onClick={()=>NavAPI.go('plan')}>{v||'暂无'}</span>},
+    {title:'关联计划', dataIndex:'planId', width:110, render:v=><span className="mono">{v||'暂无'}</span>},
     {title:'器具名称', width:150, render:(_,r)=>{ const it=d.instruments.find(i=>i.id===r.instId); return <span>{it?it.name:r.instName}</span>; }, ellipsis:true},
     {title:'测量对象', dataIndex:'object', width:160, ellipsis:true},
     {title:'版本', width:70, render:(_,r)=><span className="mono">{charVerOf(r)||'—'}</span>},
@@ -4515,7 +4515,7 @@ function EntryPage({kind}){
       <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
       <Button size="small" type="link" danger disabled={!canDo(d.me.role,'edit')||!canDel(r)} onClick={()=>delRow(r)}>删除</Button>
     </Space>},
-    {title:'台账编号', dataIndex:'id', width:115, render:(v,r)=><span className="row-link mono" onClick={()=>goResult(r)}>{v}</span>},
+    {title:'台账编号', dataIndex:'id', width:115, render:v=><span className="mono">{v}</span>},
     {title:'责任人', width:110, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" placeholder="选择责任人" value={r.analyst||undefined} style={{width:100}} options={PEOPLE_OPT} onChange={x=>setRecF(r,'analyst',x)}/>},
     ...(kind==='linear' ? [] : [{title:'人员', width:180, ellipsis:true, render:(_,r)=>{ const nm=(r.opsNames||r.operators||r.appNames||[]).map(n=>String(n).split('·').pop()).filter(n=>!/^(操作员[ABCDE]|检验员[甲乙丙丁戊])$/.test(n)); return <span className="tiny">{nm.length? nm.join('、') : '无'}</span>; }}]),
     ...(kind==='grr'||kind==='kappa' ? [] : [{title:'样本', width:200, ellipsis:true, render:(_,r)=>{ const pt=(kind==='linear'||kind==='cgcgk')?(r.parts||[]):(r.sampleNames||[]); return <span className="tiny">{pt.length? pt.join('、') : '无'}</span>; }}]),
