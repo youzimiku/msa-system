@@ -3342,14 +3342,20 @@ function CharPage(){
     .filter(r=>!fQPlant || r.plant===fQPlant).filter(r=>!fQSub || r.subplant===fQSub);
   const methodView=(r)=>{ const ms=r.methods||[]; return ms.length? <Space size={2} wrap>{ms.map(m=><Tag key={m.method} color="blue" style={{marginRight:0}}>{METHOD_NAME(m.method)}</Tag>)}</Space> : <span className="tiny">—</span>; };
   /* 行内字段即时写 store；只读字段渲染为禁用控件；保存常驻操作列；启用/停用用 Switch */
-  const setF=(r,k,v)=>{ mut(s=>{ const rec=s.characteristics.find(x=>x.id===r.id&&(x.version||'V1')===(r.version||'V1')); if(rec){ if(k==='status'&&v==='启用'){ s.characteristics.forEach(x=>{ if(x.id===r.id&&x!==rec) x.status='停用'; }); } rec[k]=v; } }); };
+  const setF=(r,k,v)=>{
+    if(k==='status'&&v==='启用'){
+      Modal.confirm({title:'启用确认', content:'被测参数升版后，已创建的 MSA 计划仍关联旧版本参数；如需使用新版本，请重新创建计划。', okText:'确认启用', onOk:()=>{ mut(s=>{ const rec=s.characteristics.find(x=>x.id===r.id&&(x.version||'V1')===(r.version||'V1')); if(rec){ s.characteristics.forEach(x=>{ if(x.id===r.id&&x!==rec) x.status='停用'; }); rec.status='启用'; } }); }});
+      return;
+    }
+    mut(s=>{ const rec=s.characteristics.find(x=>x.id===r.id&&(x.version||'V1')===(r.version||'V1')); if(rec){ rec[k]=v; } });
+  };
   const setStdF=(r,k,v)=>{ mut(s=>{ const rec=s.standards.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
   const saveRow=(r)=>{ mut(s=>{ const rec=s.characteristics.find(x=>x.id===r.id&&(x.version||'V1')===(r.version||'V1')); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑被测参数',r.id,'行内编辑 '+r.id+' '+(r.name||'')); }); toast.ok('已保存'); };
   const saveStdRow=(r)=>{ mut(s=>{ const rec=s.standards.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'修订检验标准',r.id,'行内修订 '+r.id); }); toast.ok('已保存'); };
   const addCharRow=()=>{ const id='CHAR-2026-'+(d.characteristics.length+1); mut(s=>{ s.characteristics.unshift({id, name:'', type:'普通', category:'计量型', status:'启用', version:'V1', editor:s.me.name, editorDate:NOW, plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, methods:[], partName:'', partNo:'', processName:'', unit:'', target:'', usl:'', lsl:''}); logAction(s.me.name,'新增被测参数',id,'列表新增空白行'); }); };
   const addStdRow=()=>{ const id='STD-2026-'+(d.standards.length+1); mut(s=>{ s.standards.unshift({id, name:'', basis:'', method:'', type:'GRR判定', numOps:3, numTrials:3, numParts:10, version:'V1.0', status:'启用', editor:s.me.name, editorDate:NOW, groupIds:[], note:''}); logAction(s.me.name,'新增检验标准',id,'列表新增空白行'); }); };
   const addStdRowFor=(rec)=>{ const id='STD-2026-'+(d.standards.length+1); mut(s=>{ s.standards.unshift({id, name:'', basis:'', method:'', type:'GRR判定', numOps:3, numTrials:3, numParts:10, version:'V1.0', status:'启用', editor:s.me.name, editorDate:NOW, groupIds:[], note:''}); const c=s.characteristics.find(x=>x.id===rec.id&&(x.version||'V1')===(rec.version||'V1')); if(c) c.methods=[...(c.methods||[]), {method:'', standardId:id}]; logAction(s.me.name,'新增检验标准',id,'检验标准弹窗新增并关联被测参数 '+rec.id); }); };
-  const upgradeChar=(r)=>{ Modal.confirm({title:'升版 — '+(r.name||r.id), content:'复制当前行生成新版本（版本号 +1、状态启用），同编号其他版本自动停用。确认升版？', okText:'升版', onOk:()=>{ const cv=r.version||'V1'; const num=parseInt(cv.replace(/[^0-9]/g,''))||1; const nv='V'+(num+1); mut(s=>{ const rec=s.characteristics.find(x=>x.id===r.id&&(x.version||'V1')===cv); if(rec){ const copy=Object.assign({}, rec, {version:nv, status:'启用', editor:s.me.name, editorDate:NOW}); s.characteristics.forEach(x=>{ if(x.id===r.id&&x!==copy) x.status='停用'; }); const idx=s.characteristics.findIndex(x=>x.id===r.id&&(x.version||'V1')===cv); s.characteristics.splice(idx+1, 0, copy); logAction(s.me.name,'升版被测参数',r.id,'升版 '+cv+' → '+nv); } }); toast.ok('已升版至 '+nv); } }); };
+  const upgradeChar=(r)=>{ Modal.confirm({title:'升版 — '+(r.name||r.id), content:'复制当前行生成新版本（版本号 +1、状态为停用）。确认升版？', okText:'升版', onOk:()=>{ const cv=r.version||'V1'; const num=parseInt(cv.replace(/[^0-9]/g,''))||1; const nv='V'+(num+1); mut(s=>{ const rec=s.characteristics.find(x=>x.id===r.id&&(x.version||'V1')===cv); if(rec){ const copy=Object.assign({}, rec, {version:nv, status:'停用', editor:s.me.name, editorDate:NOW}); const idx=s.characteristics.findIndex(x=>x.id===r.id&&(x.version||'V1')===cv); s.characteristics.splice(idx+1, 0, copy); logAction(s.me.name,'升版被测参数',r.id,'升版 '+cv+' → '+nv+'（停用，待手动启用）'); } }); toast.ok('已升版至 '+nv+'（状态：停用，需手动启用）'); } }); };
   const charRef=(r)=>(d.plans||[]).some(p=>p.charId===r.id);
   const stdRef=(r)=> (d.characteristics||[]).some(c=>(c.methods||[]).some(m=>m.standardId===r.id)) || (d.plans||[]).some(p=>p.standard===r.id);
   const delChar=(r)=>{ Modal.confirm({title:'删除被测参数 — '+(r.name||r.id)+(r.version?'（'+r.version+'）':''), content:'仅删除当前版本，其他版本不受影响。确认删除？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.characteristics=s.characteristics.filter(x=>!(x.id===r.id&&(x.version||'V1')===(r.version||'V1'))); logAction(s.me.name,'删除被测参数',r.id,'删除被测参数 '+(r.name||'')+'（'+(r.version||'V1')+'）'); }); toast.ok('已删除'); } }); };
@@ -3392,7 +3398,7 @@ function CharPage(){
     </Space>},
     {title:'检验标准号', dataIndex:'id', width:120, render:v=><span className="mono">{v}</span>},
     {title:'检验标准', dataIndex:'basis', width:220, ellipsis:true, render:(_,r)=><Input size="small" value={r.basis||''} onChange={e=>setStdF(r,'basis',e.target.value)}/>},
-    {title:'检验方法', dataIndex:'method', width:150, ellipsis:true, render:(_,r)=><Input size="small" value={r.method||''} onChange={e=>setStdF(r,'method',e.target.value)}/>},
+    {title:'检验方法', dataIndex:'method', width:150, ellipsis:true, render:(_,r)=><Select size="small" value={r.method||undefined} style={{width:140}} options={(d.anMethods||[]).map(m=>({value:m.code,label:m.name}))} onChange={x=>setStdF(r,'method',x)}/>},
     {title:'测量人数', dataIndex:'numOps', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numOps||''} style={{width:70}} onChange={x=>setStdF(r,'numOps',x)}/>},
     {title:'测量次数', dataIndex:'numTrials', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numTrials||''} style={{width:70}} onChange={x=>setStdF(r,'numTrials',x)}/>},
     {title:'样本数量', dataIndex:'numParts', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numParts||''} style={{width:70}} onChange={x=>setStdF(r,'numParts',x)}/>},
