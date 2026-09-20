@@ -3360,8 +3360,8 @@ function CharPage(){
     {title:'车间', dataIndex:'subplant', width:100, render:(_,r)=><Select size="small" value={r.subplant||''} style={{width:90}} options={SUBPLANTS_OPT} onChange={x=>setF(r,'subplant',x)}/>},
     {title:'版本号', dataIndex:'version', width:80, render:v=><span className="mono">{v||'V1'}</span>},
     {title:'状态', dataIndex:'status', width:100, render:(_,r)=><Switch size="small" checked={r.status==='启用'} onChange={x=>setF(r,'status',x?'启用':'停用')}/>},
-    {title:'录入人', dataIndex:'editor', width:100, render:v=><span>{v||'—'}</span>},
-    {title:'录入时间', dataIndex:'editorDate', width:100, render:v=><span className="mono">{v||'—'}</span>}
+    {title:'创建人', dataIndex:'editor', width:100, render:v=><span>{v||'—'}</span>},
+    {title:'创建时间', dataIndex:'editorDate', width:100, render:v=><span className="mono">{v||'—'}</span>}
   ];
   const stdRows=d.standards.filter(s=>
     (!sq.kw || (s.id+s.name+(s.partName||'')+(s.processName||'')+(s.basis||'')).toLowerCase().includes(sq.kw.toLowerCase())) &&
