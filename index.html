@@ -3614,12 +3614,17 @@ function SamplingPage(){
     .filter(m=>!fQSub || !m.rule || m.rule.subplant===fQSub);
   const mergeCols=[
     {title:'操作', width:140, fixed:'left', render:(_,r)=><Space size={0}><Button size="small" type="link" onClick={()=>saveMRow(r)}>保存</Button><Button size="small" type="link" onClick={()=>setRuleModal(r)}>规则配置</Button></Space>},
-    {title:'方法代码', dataIndex:'code', width:110, render:v=><span className="mono">{v}</span>},
     {title:'方法名称', dataIndex:'name', width:230, render:v=><span>{STRIP_PAREN(v)}</span>},
     {title:'是否需要取样', dataIndex:'needSample', width:104, render:(_,r)=><Select size="small" value={r.needSample||'是'} style={{width:92}} options={[{value:'是',label:'是'},{value:'否',label:'否'}]} onChange={x=>setMF(r,'needSample',x)}/>},
     {title:'方法组', dataIndex:'mergeWith', width:130, render:(_,r)=><Input size="small" value={r.mergeWith||''} onChange={e=>setMF(r,'mergeWith',e.target.value)}/>},
     {title:'数据类型', dataIndex:'defaultType', width:108, render:(_,r)=><Select size="small" value={r.defaultType||'计量型'} style={{width:98}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setMF(r,'defaultType',x)}/>},
-    {title:'方法备注', dataIndex:'note', width:360, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setMF(r,'note',e.target.value)}/>}
+    {title:'默认样品数', width:96, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.sampleDefault:undefined} style={{width:86}} onChange={x=>setRF(r,'sampleDefault',x)}/>},
+    {title:'默认人数', width:88, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.opsDefault:undefined} style={{width:78}} onChange={x=>setRF(r,'opsDefault',x)}/>},
+    {title:'默认次数', width:88, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.trialsDefault:undefined} style={{width:78}} onChange={x=>setRF(r,'trialsDefault',x)}/>},
+    {title:'样品数范围', width:140, render:(_,r)=><Space size={2}><InputNumber size="small" min={0} value={r.rule?r.rule.sampleMin:undefined} style={{width:58}} onChange={x=>setRF(r,'sampleMin',x)}/><span style={{color:'#999'}}>~</span><InputNumber size="small" min={0} value={r.rule?r.rule.sampleMax:undefined} style={{width:58}} onChange={x=>setRF(r,'sampleMax',x)}/></Space>},
+    {title:'人数范围', width:132, render:(_,r)=><Space size={2}><InputNumber size="small" min={0} value={r.rule?r.rule.opsMin:undefined} style={{width:54}} onChange={x=>setRF(r,'opsMin',x)}/><span style={{color:'#999'}}>~</span><InputNumber size="small" min={0} value={r.rule?r.rule.opsMax:undefined} style={{width:54}} onChange={x=>setRF(r,'opsMax',x)}/></Space>},
+    {title:'次数范围', width:132, render:(_,r)=><Space size={2}><InputNumber size="small" min={0} value={r.rule?r.rule.trialsMin:undefined} style={{width:54}} onChange={x=>setRF(r,'trialsMin',x)}/><span style={{color:'#999'}}>~</span><InputNumber size="small" min={0} value={r.rule?r.rule.trialsMax:undefined} style={{width:54}} onChange={x=>setRF(r,'trialsMax',x)}/></Space>},
+    {title:'方法备注', dataIndex:'note', width:260, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setMF(r,'note',e.target.value)}/>}
   ];
   /* 抽样规则：方法+工厂+车间 唯一；同一组合重复时保存拦截 */
   const addRuleRow=()=>{ const m=ruleModal||{}; const id='SR-0'+(d.samplingRules.length+1); mut(st=>{ st.samplingRules.unshift({id, method:m.code, category:'其他', sampleDefault:'', sampleMin:'', sampleMax:'', opsDefault:'', opsMin:'', opsMax:'', trialsDefault:'', trialsMin:'', trialsMax:'', useOps:true, readingsMin:'', readingsMax:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, note:''}); logAction(st.me.name,'新增抽样规则',id,'方法 '+m.code); }); };
@@ -3649,20 +3654,17 @@ function SamplingPage(){
       <Button size="small" type="link" danger onClick={()=>delJRow(r)}>删除</Button>
     </Space>},
     {title:'规则编号', dataIndex:'id', width:100, render:v=><span className="mono">{v}</span>},
-    {title:'所属方法', dataIndex:'method', width:130, render:(_,r)=><Select size="small" value={r.method||undefined} style={{width:110}} options={(d.anMethods||[]).map(m=>({value:m.code,label:STRIP_PAREN(m.name)}))} onChange={x=>setJF(r,'method',x)}/>},
-    {title:'工厂', dataIndex:'plant', width:100, render:(_,r)=><Select size="small" value={r.plant||''} style={{width:90}} options={PLANTS_OPT} onChange={x=>setJF(r,'plant',x)}/>},
-    {title:'车间', dataIndex:'subplant', width:92, render:(_,r)=><Select size="small" value={r.subplant||''} style={{width:82}} options={SUBPLANTS_OPT} onChange={x=>setJF(r,'subplant',x)}/>},
-    {title:'判定条件', dataIndex:'condition', width:300, ellipsis:true, render:(_,r)=><Input size="small" value={r.condition||''} onChange={e=>setJF(r,'condition',e.target.value)}/>},
-    {title:'判定结论', dataIndex:'verdict', width:130, render:(_,r)=><Select size="small" value={r.verdict||undefined} style={{width:110}} options={[{value:'可接受',label:'可接受'},{value:'有条件接受',label:'有条件接受'},{value:'不可接受',label:'不可接受'}]} onChange={x=>setJF(r,'verdict',x)}/>},
-    {title:'说明', dataIndex:'note', width:360, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setJF(r,'note',e.target.value)}/>}
+    {title:'判定条件', dataIndex:'condition', width:400, ellipsis:true, render:(_,r)=><Input size="small" value={r.condition||''} onChange={e=>setJF(r,'condition',e.target.value)}/>},
+    {title:'判定结论', dataIndex:'verdict', width:140, render:(_,r)=><Select size="small" value={r.verdict||undefined} style={{width:120}} options={[{value:'可接受',label:'可接受'},{value:'有条件接受',label:'有条件接受'},{value:'不可接受',label:'不可接受'}]} onChange={x=>setJF(r,'verdict',x)}/>},
+    {title:'说明', dataIndex:'note', width:400, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setJF(r,'note',e.target.value)}/>}
   ];
   const calCols=[
     {title:'操作', width:110, fixed:'left', render:(_,r)=><Space size={0}>
       <Button size="small" type="link" onClick={()=>saveCRow(r)}>保存</Button>
       <Button size="small" type="link" danger onClick={()=>delCRow(r)}>删除</Button>
     </Space>},
-    {title:'参数编号', dataIndex:'id', width:110, render:v=><span className="mono">{v}</span>},
-    {title:'参数名称', dataIndex:'name', width:320, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setCF(r,'name',e.target.value)}/>},
+    {title:'参数编号', dataIndex:'id', width:110, render:v=><Input size="small" value={v} disabled/>},
+    {title:'参数名称', dataIndex:'name', width:320, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} disabled/>},
     {title:'参数值', dataIndex:'value', width:160, render:(_,r)=><Input size="small" className="mono" value={r.value||''} onChange={e=>setCF(r,'value',e.target.value)}/>}
   ];
   return <div>
@@ -3684,21 +3686,20 @@ function SamplingPage(){
       </Space>
     </Panel>
     <Panel title="分析方法（固定代码表）">
-      <Table rowKey="code" size="small" dataSource={mRows} scroll={{x:1180}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}} columns={mergeCols}/>
+      <Table rowKey="code" size="small" dataSource={mRows} scroll={{x:1500}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}} columns={mergeCols}/>
     </Panel>
-    <Modal open={!!ruleModal} onCancel={()=>setRuleModal(null)} title={'规则配置 — '+(ruleModal?ruleModal.code+' '+(STRIP_PAREN(ruleModal.name)||''):'')} width={1180} footer={null} destroyOnClose>
-      <Tabs defaultActiveKey="sample" items={[
-        {key:'sample', label:'抽样规则', children:<>
-          <div style={{marginBottom:8, textAlign:'left'}}><Button type="primary" onClick={addRuleRow}>新增抽样规则</Button></div>
-          <Table rowKey="id" size="small" dataSource={(d.samplingRules||[]).filter(r=>ruleModal && String(r.method).toLowerCase()===String(ruleModal.code).toLowerCase())} scroll={{x:1500}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}} columns={samplingCols}/>
-        </>},
-        {key:'judge', label:'判断规则', children:<>
-          <div style={{marginBottom:8, textAlign:'left'}}><Button type="primary" onClick={addJudgeRow}>新增判断规则</Button></div>
-          <Table rowKey="id" size="small" dataSource={(d.judgeRules||[]).filter(r=>ruleModal && String(r.method).toLowerCase()===String(ruleModal.code).toLowerCase())} scroll={{x:1350}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}} columns={judgeCols}/>
-        </>},
+    <Modal open={!!ruleModal} onCancel={()=>setRuleModal(null)} title={'规则配置 — '+(ruleModal?ruleModal.code+' '+(STRIP_PAREN(ruleModal.name)||''):'')} width={1100} footer={null} destroyOnClose>
+      <Tabs defaultActiveKey="cal" items={[
         {key:'cal', label:'计算参数', children:<>
           <div style={{marginBottom:8, textAlign:'left'}}><Button type="primary" onClick={addParamRow}>新增计算参数</Button></div>
           <Table rowKey="id" size="small" dataSource={d.calParams||[]} scroll={{x:700}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}} columns={calCols}/>
+        </>},
+        {key:'judge', label:'判断规则', children:<>
+          <div style={{marginBottom:10, padding:8, background:'#f5f5f5', borderRadius:4, fontSize:13, color:'#333'}}>
+            当前方法：<b>{ruleModal?STRIP_PAREN(ruleModal.name):''}</b>　|　工厂：<b>{ruleModal&&ruleModal.rule?ruleModal.rule.plant||'—':'—'}</b>　|　车间：<b>{ruleModal&&ruleModal.rule?ruleModal.rule.subplant||'—':'—'}</b>
+          </div>
+          <div style={{marginBottom:8, textAlign:'left'}}><Button type="primary" onClick={addJudgeRow}>新增判断规则</Button></div>
+          <Table rowKey="id" size="small" dataSource={(d.judgeRules||[]).filter(r=>ruleModal && String(r.method).toLowerCase()===String(ruleModal.code).toLowerCase())} scroll={{x:900}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}} columns={judgeCols}/>
         </>}
       ]}/>
     </Modal>
