@@ -1584,7 +1584,10 @@ function StatCard({icon,color,label,value,extra}){
 }
 function Panel({title, extra, children, bodyStyle}){
   return <div className="panel">
-    {extra ? <div className="panel-extra">{extra}</div> : null}
+    {(title||extra) ? <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8,gap:12}}>
+      <div style={{fontSize:14,fontWeight:600,color:'#1f2937'}}>{title}</div>
+      <div>{extra}</div>
+    </div> : null}
     <div style={bodyStyle}>{children}</div>
   </div>;
 }
