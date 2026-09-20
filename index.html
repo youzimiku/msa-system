@@ -686,7 +686,13 @@ function buildSeed(){
   ];
 
   /* MES 工位主数据（稳定性台账工位下拉来源；MES 无数据时手填兜底） */
-  const mesStations = ['1号工位','2号工位','3号工位','4号工位','5号工位'];
+  const mesStations = [
+    {id:'WS-01', name:'1号工位', line:'一号线'},
+    {id:'WS-02', name:'2号工位', line:'一号线'},
+    {id:'WS-03', name:'3号工位', line:'二号线'},
+    {id:'WS-04', name:'4号工位', line:'二号线'},
+    {id:'WS-05', name:'5号工位', line:'三号线'}
+  ];
 
   /* 抽样判断规则（按分析方法：判定条件→判定结论，供抽样方法维护页「判断规则」页签维护） */
   const judgeRules = [
@@ -1053,6 +1059,8 @@ const PART_PAIRS=['PN-1000','PN-1001','PN-1002','PN-1003','PN-1004','PN-1005','P
 function PartSelect({value, onChange, width}){
   const [open,setOpen]=useState(false);
   const [kw,setKw]=useState('');
+  const [pkw,setPkw]=useState('');
+  const [pline,setPline]=useState(undefined);
   const list=PART_PAIRS.filter(p=>!kw||(p.no+p.name).toLowerCase().includes(kw.toLowerCase()));
   return <Popover trigger="click" open={open} onOpenChange={o=>{setOpen(o); if(o) setKw('');}} placement="bottomLeft" content={<div style={{width:240}}>
     <Input size="small" autoFocus allowClear placeholder="搜索零件号 / 零件名称" value={kw} onChange={e=>setKw(e.target.value)}/>
@@ -4664,6 +4672,9 @@ function SamplePersonModal({kind, rec, picked, onOk, onClose}){
   const [selP,setSelP]=useState(picked&&picked.ops? (needStation?picked.ops.slice(0,1):picked.ops).map(n=>{const p=(d.personnel||[]).find(x=>x.name===n); return p?p.empNo:null;}).filter(Boolean) : []);
   const [selSt,setSelSt]=useState(picked&&picked.stations?(needStation?picked.stations.slice(0,1):picked.stations.slice()):[]);
   const samples=(d.sampleLib||[]).filter(s=>!kw||(s.id+s.name+(s.partNo||'')+(s.charDim||'')).toLowerCase().includes(kw.toLowerCase()));
+  const allPeople=(d.personnel||[]);
+  const people=allPeople.filter(x=>!pkw||(x.empNo+x.name+(x.dept||'')+(x.postName||'')).toLowerCase().includes(pkw.toLowerCase()));
+  const lineOptions=[...new Set((d.mesStations||[]).map(x=>typeof x==='object'?(x.line||x.name):x))].filter(Boolean);
   const title= onlyPeople?('人员选择'):onlySamples?('样本选择'):('样本/人员选择');
   const doOk=()=>{
     if(!onlyPeople && !selS.length){ toast.warn('请至少选择一个样本'); return; }
@@ -4689,19 +4700,30 @@ function SamplePersonModal({kind, rec, picked, onOk, onClose}){
         {title:'状态', dataIndex:'status', width:70, render:(v)=><Tag color={v==='启用'?'green':'default'}>{v}</Tag>}
       ]}/>}
     {!onlyPeople && !onlySamples && <Divider style={{margin:'12px 0'}}/>}
-        {!onlySamples && <Table size="small" rowKey="empNo" dataSource={(d.personnel||[])} pagination={{pageSize:5,showTotal:t=>'共 '+t+' 人'}} scroll={{y:170}}
-      rowSelection={{type:needStation?'radio':'checkbox', selectedRowKeys:selP, onChange:setSelP}}
-      columns={[
-        {title:'人员编号', dataIndex:'empNo', width:90},
-        {title:'姓名', dataIndex:'name', width:90},
-        {title:'部门', dataIndex:'dept', width:120},
-        {title:'岗位', dataIndex:'postName', width:120}
-      ]}/>}
+        {!onlySamples && <div>
+      <Input.Search allowClear placeholder="搜索 人员编号/姓名/部门/岗位" style={{width:340,marginBottom:8}} value={pkw} onChange={e=>setPkw(e.target.value)}/>
+      <Table size="small" rowKey="empNo" dataSource={people} pagination={{pageSize:5,showTotal:t=>'共 '+t+' 人'}} scroll={{y:170}}
+        rowSelection={{type:needStation?'radio':'checkbox', selectedRowKeys:selP, onChange:setSelP}}
+        columns={[
+          {title:'人员编号', dataIndex:'empNo', width:90},
+          {title:'姓名', dataIndex:'name', width:90},
+          {title:'部门', dataIndex:'dept', width:120},
+          {title:'岗位', dataIndex:'postName', width:120}
+        ]}/>
+    </div>}
     {needStation && <div>
       <Divider style={{margin:'12px 0'}}/>
-      <div style={{marginBottom:8,fontSize:14,color:'#333333'}}>第三步：选择工位（单选）</div>
-      <Select showSearch style={{width:'100%'}} placeholder="选择工位" value={selSt[0]} onChange={v=>setSelSt(v?[v]:[])}
-        options={((d.mesStations&&d.mesStations.length)? d.mesStations : ['1号工位','2号工位','3号工位','4号工位','5号工位']).map(x=>({value:x,label:x}))}/>
+      <div style={{marginBottom:8,display:'flex',gap:8,alignItems:'center'}}>
+        <span style={{color:'#666'}}>产线</span>
+        <Select allowClear style={{width:180}} placeholder="全部产线" value={pline} onChange={setPline} options={lineOptions.map(x=>({value:x,label:x}))}/>
+      </div>
+      <Table size="small" rowKey="name" dataSource={(d.mesStations||[]).filter(x=>!pline||x.line===pline)} pagination={{pageSize:5,showTotal:t=>'共 '+t+' 个工位'}} scroll={{y:170}}
+        rowSelection={{type:'radio', selectedRowKeys:selSt, onChange:(k)=>setSelSt(k)}}
+        columns={[
+          {title:'工位编号', dataIndex:'id', width:100, render:(_,r)=><span className="mono">{r.id||r.name}</span>},
+          {title:'工位名称', dataIndex:'name', width:140},
+          {title:'产线', dataIndex:'line', width:120}
+        ]}/>
     </div>}
   </Modal>;
 }
