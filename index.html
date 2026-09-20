@@ -4134,20 +4134,30 @@ function GrrEntry({rec, onClose}){
   };
   const curOpSafe=Math.min(curOp, Math.max(0, opsNames.length-1));
   const d0=Store.get();
+  const PEOPLE_LIST=[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}];
   const refCols=[
-    {title:'样本编号', width:130, fixed:'left', render:(_,row)=><Input size="small" defaultValue={items[row.i]?items[row.i].id:('样本'+String(row.i+1))} className="data-cell"/>},
-    {title:'录入人', width:110, render:(_,row)=><Select size="small" defaultValue={d0.me.name} style={{width:100}} options={[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}]}/>}
+    {title:'操作', width:80, fixed:'left', render:(_,row)=><Button size="small" type="link" onClick={()=>toast.ok('行已保存：'+row.sid)}>保存</Button>},
+    {title:'样本编号', width:130, render:(_,row)=><Input size="small" value={row.sid} className="data-cell"/>,
+      onCell:(_,idx)=>({rowSpan: idx%2===0 ? 2 : 0})},
+    {title:'录入人', width:110, render:(_,row)=><Select size="small" defaultValue={d0.me.name} style={{width:100}} options={PEOPLE_LIST}/>}
   ];
   for(let t=0;t<trialsN;t++){
-    refCols.push({title:'测'+(t+1), dataIndex:'c'+t, width:130,
-      render:(v,row)=><Input size="small" value={row.c[t]==null?'':row.c[t]} onChange={e=>setCell(curOpSafe,row.i,t,e.target.value)} className="data-cell"/>});
+    refCols.push({title:'测'+(t+1), dataIndex:'c'+t, width:110,
+      render:(v,row)=><Input size="small" value={row.c&&row.c[t]!=null?row.c[t]:''} className="data-cell"/>});
   }
-  const ds=Array.from({length:partsN},(_,i)=>({i, c:(raw[curOpSafe]||[])[i]||[]}));
+  refCols.push({title:'录入时间', width:150, render:()=><span className="mono" style={{color:'#999'}}>待保存</span>});
+  const ds=[];
+  for(let i=0;i<partsN;i++){
+    const sid=items[i]?items[i].id:('样本'+String(i+1));
+    for(let op=0;op<2;op++){
+      ds.push({key:i+'-'+op, sid:sid, c:(raw[op]||[])[i]||[]});
+    }
+  }
   return <Panel
     title={<span style={{color:'#333',fontWeight:600}}>GRR 数据采集 · {rec.id} · {rec.instName}</span>}
     extra={<Space><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button><Button size="small" type="link" onClick={clearAll}>清空</Button>
     <Button type="primary" size="small" disabled={!complete} onClick={submit}>保存数据（待分析）</Button></Space>}>
-    <Table size="small" rowKey="i" dataSource={ds} columns={refCols} pagination={false} scroll={{x:trialsN*130+300}}/>
+    <Table size="small" rowKey="key" dataSource={ds} columns={refCols} pagination={false} scroll={{x:trialsN*110+500}}/>
   </Panel>;
 }
 
@@ -4187,19 +4197,29 @@ function KappaEntry({rec, onClose}){
   };
   const curAppSafe=Math.min(curApp, Math.max(0, appNames.length-1));
   const d0=Store.get();
+  const PEOPLE_LIST=[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}];
   const cols=[
-    {title:'样本编号', width:130, fixed:'left', render:(_,row)=><Input size="small" defaultValue={items[row.i]?items[row.i].id:('样本'+String(row.i+1))} className="data-cell"/>},
-    {title:'录入人', width:110, render:(_,row)=><Select size="small" defaultValue={d0.me.name} style={{width:100}} options={[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}]}/>}
+    {title:'操作', width:80, fixed:'left', render:(_,row)=><Button size="small" type="link" onClick={()=>toast.ok('行已保存：'+row.sid)}>保存</Button>},
+    {title:'样本编号', width:130, render:(_,row)=><Input size="small" value={row.sid} className="data-cell"/>,
+      onCell:(_,idx)=>({rowSpan: idx%2===0 ? 2 : 0})},
+    {title:'录入人', width:110, render:(_,row)=><Select size="small" defaultValue={d0.me.name} style={{width:100}} options={PEOPLE_LIST}/>}
   ];
   for(let tt=0;tt<trialsN;tt++) cols.push({title:'第'+(tt+1)+'判', dataIndex:'t'+tt, width:110,
-    render:(v,row)=><Select size="small" style={{width:64}} value={row.j[tt]===''?undefined:row.j[tt]}
-      options={[{value:1,label:'合格'},{value:0,label:'不合格'}]} onChange={v=>setCell(curAppSafe,row.i,tt,v)} placeholder={String(tt+1)}/>});
-  const ds=Array.from({length:samplesN},(_,i)=>({i, j:(judg[curAppSafe]||[])[i]||[]}));
+    render:(v,row)=><Select size="small" style={{width:64}} value={row.j&&row.j[tt]!=null?row.j[tt]:undefined}
+      options={[{value:1,label:'合格'},{value:0,label:'不合格'}]} placeholder={String(tt+1)}/>});
+  cols.push({title:'录入时间', width:150, render:()=><span className="mono" style={{color:'#999'}}>待保存</span>});
+  const ds=[];
+  for(let i=0;i<samplesN;i++){
+    const sid=items[i]?items[i].id:('样本'+String(i+1));
+    for(let app=0;app<2;app++){
+      ds.push({key:i+'-'+app, sid:sid, j:(judg[app]||[])[i]||[]});
+    }
+  }
   return <Panel
     title={<span style={{color:'#333',fontWeight:600}}>KAPPA 数据采集 · {rec.id} · {rec.instName}</span>}
     extra={<Space><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button>
     <Button type="primary" size="small" disabled={!complete} onClick={submit}>保存数据（待分析）</Button></Space>}>
-    <Table size="small" rowKey="i" dataSource={ds} columns={cols} pagination={false} scroll={{x:trialsN*110+300}}/>
+    <Table size="small" rowKey="key" dataSource={ds} columns={cols} pagination={false} scroll={{x:trialsN*110+500}}/>
   </Panel>;
 }
 /* ================= GRR 台账 ================= */
