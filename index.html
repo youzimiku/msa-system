@@ -68,11 +68,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',R
 .ledger-group-active{background:#e6f4ff !important}
 .row-link:hover{text-decoration:underline}
 .mono{font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;white-space:nowrap}
-/* 多选下拉选项显示左侧checkbox */
-.ant-select-dropdown-multiple .ant-select-item-option-content{padding-left:4px}
-.ant-select-dropdown-multiple .ant-select-item-option{padding-left:24px}
-.ant-select-dropdown-multiple .ant-select-item-option-state{display:inline-flex !important;opacity:1 !important;visibility:visible !important;left:6px;top:50%;transform:translateY(-50%);position:absolute}
-.ant-select-dropdown-multiple .ant-select-item-option-state .ant-select-checkbox{display:inline-block !important}
+/* 多选下拉选项显示左侧checkbox（JS自动给多选面板加.multi-dropdown） */
+.multi-dropdown .ant-select-item-option{padding-left:26px !important}
+.multi-dropdown .ant-select-item-option-state{display:inline-flex !important;opacity:1 !important;visibility:visible !important;left:8px;top:50%;transform:translateY(-50%);position:absolute !important}
+.multi-dropdown .ant-select-item-option-state .ant-select-checkbox{display:inline-block !important}
 /* ---------- misc ---------- */
 .grp-label{font-size:14px;color:#666666;margin:14px 0 6px;font-weight:600}
 .mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}
@@ -155,6 +154,23 @@ a{color:#333333}
 .msa-method-select .ant-select-selection-overflow-item{margin-inline-end:0!important;padding:0!important}
 .msa-method-select .ant-select-selection-overflow-item + .ant-select-selection-overflow-item::before{content:'；';margin-right:2px}
 .msa-method-select .ant-select-selection-overflow-item.ant-select-selection-overflow-item-suffix{min-width:4px}
+<script>
+// 自动识别多选下拉面板并加.multi-dropdown class
+(function(){
+  function tagDropdowns(){
+    document.querySelectorAll('.ant-select-dropdown:not(.multi-dropdown-tagged)').forEach(function(dd){
+      dd.classList.add('multi-dropdown-tagged');
+      // 多选面板：选项里有 option-state（checkbox容器）就是多选
+      if(dd.querySelector('.ant-select-item-option-state')){
+        dd.classList.add('multi-dropdown');
+      }
+    });
+  }
+  var mo = new MutationObserver(function(){ tagDropdowns(); });
+  mo.observe(document.body, {childList:true, subtree:true});
+  tagDropdowns();
+})();
+</script>
 </style>
 </head>
 <body>
