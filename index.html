@@ -154,19 +154,16 @@ a{color:#333333}
 .msa-method-select .ant-select-selection-overflow-item{margin-inline-end:0!important;padding:0!important}
 .msa-method-select .ant-select-selection-overflow-item + .ant-select-selection-overflow-item::before{content:'；';margin-right:2px}
 .msa-method-select .ant-select-selection-overflow-item.ant-select-selection-overflow-item-suffix{min-width:4px}
+</style>
 <script>
-// 多选下拉：手动在每个选项前注入checkbox（不依赖antd内部DOM结构）
 (function(){
   function fixMultiDropdowns(){
     document.querySelectorAll('.ant-select-dropdown:not(.multi-fixed)').forEach(function(dd){
       dd.classList.add('multi-fixed');
-      // 判断是否多选：选项里有 .ant-select-item-option-state 就是多选
       var opts = dd.querySelectorAll('.ant-select-item-option');
       if(!opts.length) return;
       var isMulti = !!dd.querySelector('.ant-select-item-option-state');
       if(!isMulti) return;
-      dd.classList.add('multi-dropdown');
-      // 给每个选项加checkbox
       opts.forEach(function(opt){
         if(opt.querySelector('.my-cb')) return;
         var cb = document.createElement('span');
@@ -175,7 +172,6 @@ a{color:#333333}
         opt.style.paddingLeft = '26px';
         opt.style.position = 'relative';
         opt.insertBefore(cb, opt.firstChild);
-        // 已选中的加对勾
         if(opt.classList.contains('ant-select-item-option-selected')){
           cb.style.background = '#1677ff';
           cb.style.borderColor = '#1677ff';
@@ -184,9 +180,7 @@ a{color:#333333}
       });
     });
   }
-  // 选中状态变化时重绘
-  function onClick(){ setTimeout(fixMultiDropdowns, 50); }
-  document.addEventListener('click', onClick, true);
+  document.addEventListener('click', function(){ setTimeout(fixMultiDropdowns, 50); }, true);
   var mo = new MutationObserver(function(){ fixMultiDropdowns(); });
   mo.observe(document.body, {childList:true, subtree:true});
   fixMultiDropdowns();
