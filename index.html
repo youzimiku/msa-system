@@ -4139,7 +4139,7 @@ function GrrEntry({rec, onClose}){
     {title:'录入人', width:140, render:(_,row)=><Select size="small" defaultValue={d0.me.name} style={{width:120}} options={[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}]}/>}
   ];
   for(let t=0;t<trialsN;t++){
-    refCols.push({title:'试验'+(t+1), dataIndex:'c'+t, width:130,
+    refCols.push({title:'测'+(t+1), dataIndex:'c'+t, width:130,
       render:(v,row)=><Input size="small" value={row.c[t]==null?'':row.c[t]} onChange={e=>setCell(curOpSafe,row.i,t,e.target.value)} className="data-cell"/>});
   }
   const ds=Array.from({length:partsN},(_,i)=>({i, c:(raw[curOpSafe]||[])[i]||[]}));
