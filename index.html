@@ -4460,7 +4460,7 @@ function AnlEntry({rec, kind, onClose}){
   const opCol={title:'操作', width:70, fixed:'left', render:(_,r)=><Button size="small" type="link" onClick={()=>saveRow(r._i,'第'+(r._i+1)+'行')}>保存</Button>};
   let cols=[], data=[];
   if(kind==='linear'){
-    cols=[opCol,{title:'样品号',width:160,render:(_,r)=><span className="mono">{r._code}<span className="tiny" style={{marginLeft:6}}>{r._pct}%量程</span></span>},{title:'标准值',width:120,render:(_,r)=><span className="mono">{st.refs&&st.refs[r._i]!==undefined?st.refs[r._i]:'无'}</span>},{title:'实测值',width:140,render:(_,r)=>inp(st.raw[r._i]?st.raw[r._i][0]:'',v=>setCell('raw',r._i,0,v))}];
+    cols=[opCol,{title:'样品号',width:160,render:(_,r)=><span className="mono">{r._code}</span>},{title:'标准值',width:120,render:(_,r)=><span className="mono">{st.refs&&st.refs[r._i]!==undefined?st.refs[r._i]:'无'}</span>},{title:'实测值',width:140,render:(_,r)=>inp(st.raw[r._i]?st.raw[r._i][0]:'',v=>setCell('raw',r._i,0,v))}];
     data=st.raw.map((row,i)=>({_i:i,_code:'STD-'+String(i+1).padStart(2,'0'),_pct:Math.round(100*i/Math.max(1,(cnt||5)-1))}));
   } else if(kind==='stability'){
     const sampleNo=(rec.sampleNames&&rec.sampleNames[0])||'—';
