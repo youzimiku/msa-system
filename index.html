@@ -4317,7 +4317,7 @@ function KappaEntry({rec, onClose, curEditor}){
       onCell:(_,idx)=>({rowSpan: idx%2===0 ? 2 : 0})},
     {title:'录入人', width:110, render:()=><span>{curEditor||'无'}</span>}
   ];
-  for(let tt=0;tt<trialsN;tt++) cols.push({title:'第'+(tt+1)+'判', dataIndex:'t'+tt, width:110,
+  for(let tt=0;tt<trialsN;tt++) cols.push({title:'实测值'+(tt+1), dataIndex:'t'+tt, width:110,
     render:(v,row)=><Select size="small" style={{width:64}} value={row.j&&row.j[tt]!=null?row.j[tt]:undefined}
       options={[{value:1,label:'合格'},{value:0,label:'不合格'}]} placeholder={String(tt+1)}/>});
   cols.push({title:'录入时间', width:150, render:()=><span className="mono" style={{color:'#999'}}>待保存</span>});
