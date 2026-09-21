@@ -4501,7 +4501,7 @@ function AnlEntry({rec, kind, onClose}){
     {kind==='stability' && <div>
       <Table size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{y:430,x:1200}}/></div>}
     {kind==='cgcgk' && <div>
-      <Table size="small" rowKey="_i" dataSource={data} columns={cols} pagination={{pageSize:20,showTotal:t=>'共 '+t+' 条'}} scroll={{y:400}}/></div>}
+      <Table size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{y:400}}/></div>}
   </div>;
 }
 
