@@ -3421,6 +3421,7 @@ function CharPage(){
     {title:'下限LSL', dataIndex:'lsl', width:90, render:(_,r)=><Input size="small" className="mono" value={r.lsl||''} onChange={e=>setF(r,'lsl',e.target.value)}/>},
     {title:'工厂', dataIndex:'plant', width:110, render:(_,r)=><Select size="small" value={r.plant||''} style={{width:100}} options={PLANTS_OPT} onChange={x=>setF(r,'plant',x)}/>},
     {title:'车间', dataIndex:'subplant', width:100, render:(_,r)=><Select size="small" value={r.subplant||''} style={{width:90}} options={SUBPLANTS_OPT} onChange={x=>setF(r,'subplant',x)}/>},
+    {title:'检验标准', dataIndex:'basis', width:200, ellipsis:true, render:(_,r)=><Input size="small" placeholder="引用文件/标准号" value={r.basis||''} onChange={e=>setF(r,'basis',e.target.value)}/>},
     {title:'版本号', dataIndex:'version', width:80, render:v=><span className="mono">{v||'V1'}</span>},
     {title:'状态', dataIndex:'status', width:100, render:(_,r)=><Switch size="small" checked={r.status==='启用'} onChange={x=>setF(r,'status',x?'启用':'停用')}/>},
     {title:'创建人', dataIndex:'editor', width:100, render:v=><span>{v||'—'}</span>},
@@ -3436,7 +3437,7 @@ function CharPage(){
       <Button size="small" type="link" danger disabled={stdRef(r)} onClick={()=>delStd(r)}>删除</Button>
     </Space>},
     {title:'检验标准号', dataIndex:'id', width:120, render:v=><span className="mono">{v}</span>},
-    {title:'检验标准', dataIndex:'basis', width:220, ellipsis:true, render:(_,r)=><Input size="small" value={r.basis||''} onChange={e=>setStdF(r,'basis',e.target.value)}/>},
+    {title:'检验标准', dataIndex:'basis', width:220, ellipsis:true, render:()=><span>{(stdListFor&&stdListFor.basis)||'无'}</span>},
     {title:'检验方法', dataIndex:'method', width:150, ellipsis:true, render:(_,r)=><Select size="small" value={r.method||undefined} style={{width:140}} options={[{value:'均值极差法',label:'均值极差法'},{value:'方差分析法',label:'方差分析法'}]} onChange={x=>setStdF(r,'method',x)}/>},
     {title:'测量人数', dataIndex:'numOps', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numOps||''} style={{width:70}} onChange={x=>setStdF(r,'numOps',x)}/>},
     {title:'测量次数', dataIndex:'numTrials', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numTrials||''} style={{width:70}} onChange={x=>setStdF(r,'numTrials',x)}/>},
