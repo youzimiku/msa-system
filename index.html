@@ -4512,7 +4512,7 @@ function AnlEntry({rec, kind, onClose}){
     cols=[opCol,{title:'子组',width:100,render:(_,r)=><span className="mono">{r._code}</span>},{title:'样本号',width:140,render:()=><span className="mono">{sampleNo}</span>},{title:'样本值',width:120,render:(_,r)=>inp(st.raw[r._i]?st.raw[r._i][0]:'',v=>setCell('raw',r._i,0,v))}];
     data=st.raw.map((row,i)=>({_i:i,_code:'G'+String(i+1).padStart(2,'0')}));
   } else if(kind==='cgcgk'){
-    cols=[opCol,{title:'测量序号',width:100,render:(_,r)=><span className="mono">测{r._i+1}</span>},{title:'测量值',width:140,render:(_,r)=>inp(st.raw[r._i]||'',v=>setCell('raw',r._i,0,v))}];
+    cols=[opCol,{title:'测量序号',width:100,render:(_,r)=><span className="mono">{r._i+1}</span>},{title:'测量值',width:140,render:(_,r)=>inp(st.raw[r._i]||'',v=>setCell('raw',r._i,0,v))}];
     data=st.raw.map((v,i)=>({_i:i}));
   }
   useEffect(()=>{ if(window.__entrySave) window.__entrySave(submit); return ()=>{ if(window.__entrySave) window.__entrySave(null); } },[submit]);
