@@ -3519,7 +3519,6 @@ function CharPage(){
           <Button type="primary" onClick={()=>setSlq({kw:slkw,type:sltype,status:slstatus})}>查询</Button>
           <Button onClick={()=>{setSlkw('');setSltype(undefined);setSlstatus(undefined);setSlq({kw:'',type:undefined,status:undefined});}}>重置</Button>
           <Button type="primary" onClick={()=>addStdRowFor(stdListFor)}>新增标准</Button>
-          <span className="tiny">共 {slRows.length} 条（仅显示与该被测参数关联的检验标准）</span>
         </Space>
       </div>
       <Table rowKey="id" size="small" dataSource={slRows} scroll={{x:1500}} pagination={false} columns={stdCols}/>
