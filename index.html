@@ -1888,7 +1888,7 @@ function LedgerPage(){
         <Button type="primary" disabled={!canDo(d.me.role,'edit')} onClick={openAdd}>+ 新增器具</Button>
         <Button disabled={!canDo(d.me.role,'edit')} onClick={()=>setCalModal({})}>+ 登记校准</Button>
       </Space>
-      <Table rowKey="id" size="middle" dataSource={rows} columns={columns} scroll={{x:1650}} pagination={{pageSize:8, showSizeChanger:true, showTotal:t=>'共 '+t+' 台'}}/>
+      <Table rowKey="id" size="middle" dataSource={rows} columns={columns} scroll={{x:1650}} pagination={{pageSize:10, showSizeChanger:true}}/>
     </Panel>
 
     {modal && <InstrumentModal value={modal} onClose={()=>setModal(null)}/>}
@@ -2189,7 +2189,7 @@ function InstGroupPage(){
       </Space>
     </Panel>
     <Panel>
-      <Table rowKey="id" size="middle" dataSource={addRow? [{...draft, id:'__NEW__'}, ...rows] : rows} columns={cols} scroll={{x:1750}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 组'}}/>
+      <Table rowKey="id" size="middle" dataSource={addRow? [{...draft, id:'__NEW__'}, ...rows] : rows} columns={cols} scroll={{x:1750}} pagination={{pageSize:10, showSizeChanger:true}}/>
     </Panel>
     {detail && <InstGroupDetail rec={detail} onClose={()=>setDetail(null)}/>}
   </div>;
@@ -2368,7 +2368,7 @@ function CalibPage(){
       </Space>
     </Panel>
     <Panel title={'校准记录台账（'+records.length+' 条）'}>
-      <Table rowKey="id" size="middle" dataSource={records} columns={recCols} scroll={{x:1250}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}}/>
+      <Table rowKey="id" size="middle" dataSource={records} columns={recCols} scroll={{x:1250}} pagination={{pageSize:10, showSizeChanger:true}}/>
     </Panel>
     <Panel title={'到期校准计划（'+planList.length+' 条）'}>
       <Table rowKey="id" size="middle" dataSource={planList} columns={planCols} scroll={{x:1000}} pagination={false}/>
@@ -3496,7 +3496,7 @@ function CharPage(){
       </Space>
     </Panel>
     <Panel>
-      <Table rowKey="id" size="small" dataSource={rows} scroll={{x:1750}} pagination={{pageSize:10,showTotal:t=>'共 '+t+' 条'}} columns={cols}/>
+      <Table rowKey="id" size="small" dataSource={rows} scroll={{x:1750}} pagination={{pageSize:10, showSizeChanger:true}} columns={cols}/>
     </Panel>
 
     {detail && <CharDetail rec={detail} onClose={()=>setDetail(null)}/>}
@@ -3757,20 +3757,20 @@ function SamplingPage(){
       </Space>
     </Panel>
     <Panel title="分析方法（固定代码表）">
-      <Table rowKey="code" size="small" dataSource={mRows} scroll={{x:1500}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}} columns={mergeCols}/>
+      <Table rowKey="code" size="small" dataSource={mRows} scroll={{x:1500}} pagination={{pageSize:10, showSizeChanger:true}} columns={mergeCols}/>
     </Panel>
     <Modal open={!!ruleModal} onCancel={()=>setRuleModal(null)} title={'规则配置 — '+(ruleModal?ruleModal.code+' '+(STRIP_PAREN(ruleModal.name)||''):'')} width={1100} footer={null} destroyOnClose>
       <Tabs defaultActiveKey="cal" items={[
         {key:'cal', label:'计算参数', children:<>
           <div style={{marginBottom:8, textAlign:'left'}}><Button type="primary" onClick={addParamRow}>新增计算参数</Button></div>
-          <Table rowKey="id" size="small" dataSource={d.calParams||[]} scroll={{x:700}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}} columns={calCols}/>
+          <Table rowKey="id" size="small" dataSource={d.calParams||[]} scroll={{x:700}} pagination={{pageSize:10, showSizeChanger:true}} columns={calCols}/>
         </>},
         {key:'judge', label:'判断规则', children:<>
           <div style={{marginBottom:10, padding:8, background:'#f5f5f5', borderRadius:4, fontSize:13, color:'#333'}}>
             当前方法：<b>{ruleModal?STRIP_PAREN(ruleModal.name):''}</b>　|　工厂：<b>{ruleModal&&ruleModal.rule?ruleModal.rule.plant||'—':'—'}</b>　|　车间：<b>{ruleModal&&ruleModal.rule?ruleModal.rule.subplant||'—':'—'}</b>
           </div>
           <div style={{marginBottom:8, textAlign:'left'}}><Button type="primary" onClick={addJudgeRow}>新增判断规则</Button></div>
-          <Table rowKey="id" size="small" dataSource={(d.judgeRules||[]).filter(r=>ruleModal && String(r.method).toLowerCase()===String(ruleModal.code).toLowerCase())} scroll={{x:900}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}} columns={judgeCols}/>
+          <Table rowKey="id" size="small" dataSource={(d.judgeRules||[]).filter(r=>ruleModal && String(r.method).toLowerCase()===String(ruleModal.code).toLowerCase())} scroll={{x:900}} pagination={{pageSize:10, showSizeChanger:true}} columns={judgeCols}/>
         </>}
       ]}/>
     </Modal>
@@ -4012,7 +4012,7 @@ function SampleLibPage(){
       </Space>
     </Panel>
     <Panel>
-      <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:1700}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}}/>
+      <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:1700}} pagination={{pageSize:10, showSizeChanger:true}}/>
     </Panel>
     {modal && <SampleLibModal value={modal} onClose={()=>setModal(null)}/>}
     {logOpen && <SampleLibLogModal sampleId={logOpen} onClose={()=>setLogOpen(null)}/>}
