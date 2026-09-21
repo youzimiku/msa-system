@@ -3934,6 +3934,7 @@ function SampleLibPage(){
   const [q,setQ]=useState({kw:'',type:undefined,st:undefined,plant:undefined,sub:undefined});
   const [modal,setModal]=useState(null);
   const [logOpen,setLogOpen]=useState(null);
+  const [printPreview,setPrintPreview]=useState(null);
   const cleanV=(v)=>(v&&v!=='—'&&v!=='待维护'&&v!=='合格')?v:'';
   /* 行内字段即时写 store；保存常驻操作列；启用/停用用 Switch；日志按钮保留在行上 */
   const setF=(r,k,v)=>{ mut(s=>{ const rec=s.sampleLib.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
@@ -3985,7 +3986,7 @@ function SampleLibPage(){
         <Button type="primary" onClick={()=>setQ({kw:fkw,type:ftype,st:fst,plant:fPlant,sub:fSub})}>查询</Button>
         <Button onClick={resetQ}>重置</Button>
         <Button type="primary" onClick={addRow}>新增样本</Button>
-        <Button onClick={()=>{}}>补打</Button>
+        <Button onClick={()=>setPrintPreview({id:"SPL-001",name:"轴径 φ50 标准件"})}>补打</Button>
         <ImportBtn title="样本库管理"/>
         <Button>导出</Button>
       </Space>
@@ -3995,7 +3996,40 @@ function SampleLibPage(){
     </Panel>
     {modal && <SampleLibModal value={modal} onClose={()=>setModal(null)}/>}
     {logOpen && <SampleLibLogModal sampleId={logOpen} onClose={()=>setLogOpen(null)}/>}
+    {printPreview && <SampleLabelPrintModal sample={printPreview} onClose={()=>setPrintPreview(null)}/>}
   </div>;
+}
+/* 样本标签打印预览（60×45mm） */
+function SampleLabelPrintModal({sample,onClose}){
+  /* 假二维码：用SVG画一个简化的QR占位图案 */
+  const qrCells=[];
+  const grid=21;
+  for(let y=0;y<grid;y++){
+    for(let x=0;x<grid;x++){
+      const finder = (x<7&&y<7)||(x>=grid-7&&y<7)||(x<7&&y>=grid-7);
+      let on=false;
+      if(finder){
+        const fx=x%7, fy=y%7;
+        on = fx===0||fx===6||fy===0||fy===6||(fx>=2&&fx<=4&&fy>=2&&fy<=4);
+      } else {
+        on = ((x*7+y*13+x*y)%5<2);
+      }
+      if(on) qrCells.push(<rect key={x+'-'+y} x={x*4} y={y*4} width={4} height={4} fill="#000"/>);
+    }
+  }
+  return <Modal open title="样本标签打印预览（60×45mm）" onCancel={onClose} footer={<Button type="primary" onClick={()=>{window.print();}}>打印</Button>} width={520}>
+    <div style={{display:'flex',justifyContent:'center',margin:'16px 0'}}>
+      <div style={{width:'60mm',height:'45mm',border:'1px dashed #999',padding:'2mm',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',background:'#fff',boxSizing:'borderBox'}}>
+        <svg width="20mm" height="20mm" viewBox={"0 0 "+(grid*4)+" "+(grid*4)} style={{marginBottom:'1mm'}}>
+          <rect width="100%" height="100%" fill="#fff"/>
+          {qrCells}
+        </svg>
+        <div style={{fontSize:'3.5mm',fontWeight:700,letterSpacing:'0.3mm',lineHeight:1.2}}>{sample.id}</div>
+        <div style={{fontSize:'2.8mm',color:'#333',lineHeight:1.2,maxWidth:'56mm',textAlign:'center',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{sample.name||'—'}</div>
+      </div>
+    </div>
+    <div style={{textAlign:'center',color:'#888',fontSize:12,marginTop:8}}>纸张规格 60×45mm · 标签内容：二维码 + 样本编号 + 样本名称</div>
+  </Modal>;
 }
 function SampleLibLogModal({sampleId,onClose}){
   const d=Store.get();
