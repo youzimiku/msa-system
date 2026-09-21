@@ -4255,7 +4255,7 @@ function GrrEntry({rec, onClose, curEditor}){
     {title:'录入人', width:110, render:()=><span>{curEditor||'无'}</span>}
   ];
   for(let t=0;t<trialsN;t++){
-    refCols.push({title:'测'+(t+1), dataIndex:'c'+t, width:110,
+    refCols.push({title:'实测值'+(t+1), dataIndex:'c'+t, width:110,
       render:(v,row)=><Input size="small" value={row.c&&row.c[t]!=null?row.c[t]:''} className="data-cell"/>});
   }
   refCols.push({title:'录入时间', width:150, render:()=><span className="mono" style={{color:'#999'}}>待保存</span>});
