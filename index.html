@@ -4169,7 +4169,7 @@ function SampleModal({value,onClose}){
 
 /* ================= 台账内样本录入（GRR / KAPPA 数据采集） =================
    样本录入发生在 GRR / KAPPA 台账内：计划定型后生成「待采集」记录，在此录入并提交审核。 */
-function GrrEntry({rec, onClose}){
+function GrrEntry({rec, onClose, curEditor}){
   const d=Store.get();
   const inst=d.instruments.find(i=>i.id===rec.instId);
   const items=d.sampleItems.filter(s=>s.groupId===(rec.sampleGroup||''));
@@ -4209,8 +4209,6 @@ function GrrEntry({rec, onClose}){
   };
   const curOpSafe=Math.min(curOp, Math.max(0, opsNames.length-1));
   const d0=Store.get();
-  const [curEditor,setCurEditor]=useState(d0.me.name);
-  const PEOPLE_LIST=[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}];
   const refCols=[
     {title:'操作', width:80, fixed:'left', render:(_,row)=><Button size="small" type="link" onClick={()=>toast.ok('行已保存：'+row.sid)}>保存</Button>},
     {title:'样本编号', width:130, render:(_,row)=><Input size="small" value={row.sid} className="data-cell" style={{height:64}}/>,
@@ -4233,15 +4231,11 @@ function GrrEntry({rec, onClose}){
     title={<span style={{color:'#333',fontWeight:600}}>GRR 数据采集 · {rec.id} · {rec.instName}</span>}
     extra={<Space><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button><Button size="small" type="link" onClick={clearAll}>清空</Button>
     <Button type="primary" size="small" disabled={!complete} onClick={submit}>保存数据（待分析）</Button></Space>}>
-    <div style={{marginBottom:12,display:'flex',alignItems:'center',gap:8}}>
-      <span style={{fontSize:13,color:'rgba(0,0,0,0.65)'}}>当前录入人</span>
-      <Select size="small" value={curEditor} onChange={setCurEditor} style={{width:140}} options={PEOPLE_LIST}/>
-    </div>
     <Table size="small" rowKey="key" dataSource={ds} columns={refCols} pagination={false} scroll={{x:trialsN*110+500}}/>
   </Panel>;
 }
 
-function KappaEntry({rec, onClose}){
+function KappaEntry({rec, onClose, curEditor}){
   const d=Store.get();
   const items=d.sampleItems.filter(s=>s.groupId===(rec.sampleGroup||''));
   const [appNames,setAppNames]=useState(rec.appNames&&rec.appNames.length? rec.appNames : Array.from({length:Number(rec.numApp)||3},(_,i)=>['检验员甲','检验员乙','检验员丙','检验员丁'][i]));
@@ -4277,8 +4271,7 @@ function KappaEntry({rec, onClose}){
   };
   const curAppSafe=Math.min(curApp, Math.max(0, appNames.length-1));
   const d0=Store.get();
-  const [curEditor,setCurEditor]=useState(d0.me.name);
-  const PEOPLE_LIST=[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}];
+
   const cols=[
     {title:'操作', width:80, fixed:'left', render:(_,row)=><Button size="small" type="link" onClick={()=>toast.ok('行已保存：'+row.sid)}>保存</Button>},
     {title:'样本编号', width:130, render:(_,row)=><Input size="small" value={row.sid} className="data-cell" style={{height:64}}/>,
@@ -4300,10 +4293,6 @@ function KappaEntry({rec, onClose}){
     title={<span style={{color:'#333',fontWeight:600}}>KAPPA 数据采集 · {rec.id} · {rec.instName}</span>}
     extra={<Space><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button>
     <Button type="primary" size="small" disabled={!complete} onClick={submit}>保存数据（待分析）</Button></Space>}>
-    <div style={{marginBottom:12,display:'flex',alignItems:'center',gap:8}}>
-      <span style={{fontSize:13,color:'rgba(0,0,0,0.65)'}}>当前录入人</span>
-      <Select size="small" value={curEditor} onChange={setCurEditor} style={{width:140}} options={PEOPLE_LIST}/>
-    </div>
     <Table size="small" rowKey="key" dataSource={ds} columns={cols} pagination={false} scroll={{x:trialsN*110+500}}/>
   </Panel>;
 }
@@ -4818,6 +4807,8 @@ function ImportPreviewModal({rec, kind, onClose}){
   </Modal>;
 }
 function DataEntryPage({kind}){
+  const PEOPLE_LIST=[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}];
+  const [curEditor,setCurEditor]=useState(Store.get().me.name);
   const [curKind,setCurKind]=useState(kind);
   const kindNow=ENTRY_CFG[curKind]?curKind:kind;
   const CFG=ENTRY_CFG[kindNow];
@@ -4838,18 +4829,19 @@ function DataEntryPage({kind}){
       <Space wrap>
         <Select style={{width:300}} value={kindNow} placeholder="选择台账类型" options={['grr','kappa','linear','stability','cgcgk'].map(k=>({value:k,label:ENTRY_CFG[k].name+'（'+ENTRY_CFG[k].title+'）'}))} onChange={onKindChange}/>
         <Select style={{width:360}} value={cur?cur.id:undefined} placeholder={'选择要录入 / 修改的'+CFG.name+'记录'} options={pending.map(r=>({value:r.id,label:r.id+' · '+r.instName+' · '+(r.reviewStatus==='待分析'?'待分析（可修改）':'待采集')}))} onChange={onPicked}/>
+        {(kindNow==='grr'||kindNow==='kappa') && <Select style={{width:160}} value={curEditor} placeholder="当前录入人" options={PEOPLE_LIST} onChange={setCurEditor}/>}
         <span className="tiny">共 {pending.length} 条待处理记录</span>
       </Space>
     </Panel>
     {cur ? <Panel title={<span style={{color:'#333',fontWeight:600}}>{cur.id} · {cur.instName} · {CFG.name} 数据录入</span>} extra={<Space><StatusTag s={cur.reviewStatus}/></Space>}>
-      {CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); })}
+      {CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); }, curEditor)}
     </Panel> : null}
   </div>;
 }
 
 const ENTRY_CFG = {
-  grr:{arr:'grr', idPref:'GRR', name:'GRR', title:'GRR 台账', desc:'交叉型矩阵：操作员 × 样本 × 试验', entry:(r,c)=><GrrEntry rec={r} onClose={c}/>, result:'grr'},
-  kappa:{arr:'kappa', idPref:'KAPPA', name:'KAPPA', title:'KAPPA 台账', desc:'检验员判定矩阵（合格/不合格，盲测）', entry:(r,c)=><KappaEntry rec={r} onClose={c}/>, result:'kappa'},
+  grr:{arr:'grr', idPref:'GRR', name:'GRR', title:'GRR 台账', desc:'交叉型矩阵：操作员 × 样本 × 试验', entry:(r,c,ce)=><GrrEntry rec={r} onClose={c} curEditor={ce}/>, result:'grr'},
+  kappa:{arr:'kappa', idPref:'KAPPA', name:'KAPPA', title:'KAPPA 台账', desc:'检验员判定矩阵（合格/不合格，盲测）', entry:(r,c,ce)=><KappaEntry rec={r} onClose={c} curEditor={ce}/>, result:'kappa'},
   linear:{arr:'linear', idPref:'LIN', name:'线性/偏倚', title:'线性/偏倚台账', desc:'标准件测量（覆盖量程 0/25/50/75/100%）', entry:(r,c)=><AnlEntry rec={r} kind="linear" onClose={c}/>, result:'anl_linear'},
   stability:{arr:'stability', idPref:'STB', name:'稳定性', title:'稳定性台账', desc:'子组测量（跨 4 周~3 个月，SPC 判异）', entry:(r,c)=><AnlEntry rec={r} kind="stability" onClose={c}/>, result:'anl_stability'},
   cgcgk:{arr:'cgcgk', idPref:'CG', name:'Cg/Cgk', title:'Cg/Cgk 台账', desc:'标准件连续测量（VDA Type1）', entry:(r,c)=><AnlEntry rec={r} kind="cgcgk" onClose={c}/>, result:'anl_cgcgk'},
