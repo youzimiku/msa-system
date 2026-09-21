@@ -4267,7 +4267,6 @@ function GrrEntry({rec, onClose, curEditor}){
     }
   }
   return <Panel
-    title={<span style={{color:'#333',fontWeight:600}}>GRR 数据采集 · {rec.id} · {rec.instName}</span>}
     extra={<Space><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button><Button size="small" type="link" onClick={clearAll}>清空</Button>
     <Button type="primary" size="small" disabled={!complete} onClick={submit}>保存数据（待分析）</Button></Space>}>
     <Table size="small" rowKey="key" dataSource={ds} columns={refCols} pagination={false} scroll={{x:trialsN*110+500}}/>
@@ -4329,7 +4328,7 @@ function KappaEntry({rec, onClose, curEditor}){
     }
   }
   return <Panel
-    title={<span style={{color:'#333',fontWeight:600}}>KAPPA 数据采集 · {rec.id} · {rec.instName}</span>}
+
     extra={<Space><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button>
     <Button type="primary" size="small" disabled={!complete} onClick={submit}>保存数据（待分析）</Button></Space>}>
     <Table size="small" rowKey="key" dataSource={ds} columns={cols} pagination={false} scroll={{x:trialsN*110+500}}/>
@@ -4872,7 +4871,7 @@ function DataEntryPage({kind}){
         <span className="tiny">共 {pending.length} 条待处理记录</span>
       </Space>
     </Panel>
-    {cur ? <Panel title={<span style={{color:'#333',fontWeight:600}}>{cur.id} · {cur.instName} · {CFG.name} 数据录入</span>} extra={<Space><StatusTag s={cur.reviewStatus}/></Space>}>
+    {cur ? <Panel extra={<Space><StatusTag s={cur.reviewStatus}/></Space>}>
       {CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); }, curEditor)}
     </Panel> : null}
   </div>;
