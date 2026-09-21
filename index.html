@@ -1844,7 +1844,7 @@ function LedgerPage(){
   }
 
   return <div>
-    <Panel title="查询条件">
+    <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} value={fPlant} options={PLANTS_OPT} onChange={setFPlant}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} value={fSub} options={SUBPLANTS_OPT} onChange={setFSub}/>
@@ -1858,7 +1858,7 @@ function LedgerPage(){
         <span className="tiny">共 {rows.length} 台</span>
       </Space>
     </Panel>
-    <Panel title="操作">
+    <Panel>
       <Space wrap>
         <Button type="primary" onClick={()=>setQ({kw, cat:fCat, mcat:fMcat, status:fStatus, due:fDue, dueN, plant:fPlant, sub:fSub})}>查询</Button>
         <Button onClick={()=>{ setKw('');setFCat(undefined);setFMcat(undefined);setFStatus(undefined);setFDue(undefined);setDueN('');setFPlant(undefined);setFSub(undefined); setQ({kw:'',cat:undefined,mcat:undefined,status:undefined,due:undefined,dueN:'',plant:undefined,sub:undefined}); }}>重置</Button>
@@ -2153,7 +2153,7 @@ function InstGroupPage(){
     {title:'创建时间', dataIndex:'createDate', width:150, render:v=><span>{v||'—'}</span>}
   ];
   return <div>
-    <Panel title="查询条件">
+    <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
@@ -2163,7 +2163,7 @@ function InstGroupPage(){
         <span className="tiny">共 {rows.length} 组</span>
       </Space>
     </Panel>
-    <Panel title="操作">
+    <Panel>
       <Space wrap>
         <Button type="primary" onClick={()=>setQ({kw,cycle:fCycle,type:fType,plant:fPlant,sub:fSub})}>查询</Button>
         <Button onClick={()=>{setKw('');setFCycle(undefined);setFType(undefined);setFPlant(undefined);setFSub(undefined);setQ({kw:'',cycle:undefined,type:undefined,plant:undefined,sub:undefined});}}>重置</Button>
@@ -2173,7 +2173,7 @@ function InstGroupPage(){
           onImported={()=>toast.ok('器具组导入完成')}/>
       </Space>
     </Panel>
-    <Panel title={'器具组列表（'+rows.length+' 组）'}>
+    <Panel>
       <Table rowKey="id" size="middle" dataSource={addRow? [{...draft, id:'__NEW__'}, ...rows] : rows} columns={cols} scroll={{x:1750}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 组'}}/>
     </Panel>
     {detail && <InstGroupDetail rec={detail} onClose={()=>setDetail(null)}/>}
@@ -2334,7 +2334,7 @@ function CalibPage(){
   ];
 
   return <div>
-    <Panel title="查询条件">
+    <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="器具编号/器具名称/校准机构/证书编号" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>校准结果</span><Select allowClear style={{width:140}} value={fresult} options={['合格','限用','不合格'].map(c=>({value:c,label:c}))} onChange={setFresult}/>
@@ -2343,7 +2343,7 @@ function CalibPage(){
         <span className="tiny">共 {records.length} 条记录 ｜ 到期计划 {planList.length} 条</span>
       </Space>
     </Panel>
-    <Panel title="操作">
+    <Panel>
       <Space wrap>
         <Button type="primary" onClick={()=>setQ({kw:fkw, result:fresult, mode:fmode, state:fstate})}>查询</Button>
         <Button onClick={resetQ}>重置</Button>
@@ -2468,7 +2468,7 @@ function PlanPage(){
   ];
 
   return <div>
-    <Panel title="查询条件">
+    <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
@@ -2479,7 +2479,7 @@ function PlanPage(){
         <span className="tiny">共 {rows.length} 条</span>
       </Space>
     </Panel>
-    <Panel title="操作">
+    <Panel>
       <Space wrap>
         <Button type="primary" onClick={doQuery}>查询</Button>
         <Button onClick={resetQ}>重置</Button>
@@ -2489,7 +2489,7 @@ function PlanPage(){
       </Space>
       </Space>
     </Panel>
-    <Panel title="MSA 计划列表">
+    <Panel>
       <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:4880}} pagination={false}/>
     </Panel>
     {batchModal && <BatchPlanModal value={batchModal} onClose={()=>setBatchModal(null)}/>}
@@ -3248,7 +3248,7 @@ function StandardPage(){
     {title:'录入时间', dataIndex:'editorDate', width:100}
   ];
   return <div>
-    <Panel title="查询条件">
+    <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="标准编号/标准名称/零件名称/工序名称/检验依据" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>分析类型</span><Select allowClear style={{width:140}} value={ftype} options={[{value:'GRR',label:'GRR'},{value:'KAPPA',label:'KAPPA'}]} onChange={setFtype}/>
@@ -3256,7 +3256,7 @@ function StandardPage(){
         <span className="tiny">共 {rows.length} 条</span>
       </Space>
     </Panel>
-    <Panel title="操作">
+    <Panel>
       <Space wrap>
         <Button type="primary" onClick={()=>setQ({kw:fkw, type:ftype, status:fstatus})}>查询</Button>
         <Button onClick={resetQ}>重置</Button>
@@ -3264,7 +3264,7 @@ function StandardPage(){
         <Button disabled={!canDo(d.me.role,'edit')}>导出</Button>
       </Space>
     </Panel>
-    <Panel title="检验标准列表">
+    <Panel>
       <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:1700}} pagination={false}/>
     </Panel>
     {detail && <Drawer title={detail.id+' '+detail.name} width={760} open onClose={()=>setDetail(null)}>
@@ -3460,7 +3460,7 @@ function CharPage(){
     (!slq.status || s.status===slq.status)) : [];
   return <div>
     <PageHead title="被测参数维护"/>
-    <Panel title="查询条件">
+    <Panel>
       <Space wrap size={10}>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
@@ -3471,7 +3471,7 @@ function CharPage(){
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fs2||''} onChange={e=>setFs2(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="启用">启用</Radio><Radio value="停用">停用</Radio></Radio.Group>
       </Space>
     </Panel>
-    <Panel title="操作">
+    <Panel>
       <Space wrap size={10}>
         <Button type="primary" onClick={doQuery}>查询</Button>
         <Button onClick={doReset}>重置</Button>
@@ -3480,7 +3480,7 @@ function CharPage(){
         <Button>导出</Button>
       </Space>
     </Panel>
-    <Panel title={'被测参数列表（'+rows.length+' 条）'}>
+    <Panel>
       <Table rowKey="id" size="small" dataSource={rows} scroll={{x:1750}} pagination={{pageSize:10,showTotal:t=>'共 '+t+' 条'}} columns={cols}/>
     </Panel>
 
@@ -3726,14 +3726,14 @@ function SamplingPage(){
   ];
   return <div>
     <PageHead title="抽样方法维护"/>
-    <Panel title="查询条件">
+    <Panel>
       <Space wrap size={10}>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:120}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="方法代码/方法名称" style={{width:220}} value={fkw2} onChange={e=>setFkw2(e.target.value)}/>
               </Space>
     </Panel>
-    <Panel title="操作">
+    <Panel>
       <Space wrap size={10}>
         <Button type="primary" onClick={doQuery}>查询</Button>
         <Button onClick={doReset}>重置</Button>
@@ -3977,7 +3977,7 @@ function SampleLibPage(){
   ];
   return <div>
     <PageHead title="样本库管理"/>
-    <Panel title="查询条件">
+    <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
@@ -3986,7 +3986,7 @@ function SampleLibPage(){
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fst||''} onChange={e=>setFst(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="启用">启用</Radio><Radio value="停用">停用</Radio></Radio.Group>
       </Space>
     </Panel>
-    <Panel title="操作">
+    <Panel>
       <Space wrap>
         <Button type="primary" onClick={()=>setQ({kw:fkw,type:ftype,st:fst,plant:fPlant,sub:fSub})}>查询</Button>
         <Button onClick={resetQ}>重置</Button>
@@ -3996,7 +3996,7 @@ function SampleLibPage(){
         <Button>导出</Button>
       </Space>
     </Panel>
-    <Panel title={'样本列表（'+rows.length+' 条）'}>
+    <Panel>
       <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:1700}} pagination={{pageSize:8,showTotal:t=>'共 '+t+' 条'}}/>
     </Panel>
     {modal && <SampleLibModal value={modal} onClose={()=>setModal(null)}/>}
@@ -4127,14 +4127,14 @@ function SamplePage(){
     {title:'状态', dataIndex:'status', width:90, render:s=><Tooltip title={TIPS.sample[s]||s}><Tag color={s==='已测量'?'green':s==='待测量'?'orange':'default'} style={{display:'inline-flex',justifyContent:'center',minWidth:78,marginRight:0,textAlign:'center'}}>{s}</Tag></Tooltip>}
   ];
   return <div>
-    <Panel title="查询条件">
+    <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="样本编号/样本名称/器具编号/计划号" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待测量">待测量</Radio><Radio value="已测量">已测量</Radio></Radio.Group>
         <span className="tiny">共 {rows.length} 组</span>
       </Space>
     </Panel>
-    <Panel title="操作">
+    <Panel>
       <Space wrap>
         <Button type="primary" onClick={()=>setQ({kw:fkw, status:fstatus})}>查询</Button>
         <Button onClick={resetQ}>重置</Button>
@@ -4142,7 +4142,7 @@ function SamplePage(){
         <Button disabled={!canDo(d.me.role,'edit')}>导出</Button>
       </Space>
     </Panel>
-    <Panel title="样本组列表">
+    <Panel>
       <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:1300}} pagination={false}/>
     </Panel>
     {detail && <Drawer title={<Space>{detail.id} {detail.name}<Tooltip title={TIPS.sample[detail.status]||detail.status}><Tag color={detail.status==='已测量'?'green':'orange'}>{detail.status}</Tag></Tooltip></Space>} width={760} open onClose={()=>setDetail(null)}>
@@ -4390,7 +4390,7 @@ function AnlPage({kind}){
   ];
   if(detail) return <AnlDetail rec={detail} kind={kind} onBack={()=>setDetail(null)}/>;
   return <div>
-    <Panel title="查询条件">
+    <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="台账编号/计划号/器具编号/器具名称/测量对象" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待分析">待分析</Radio><Radio value="待审核">待审核</Radio><Radio value="已批准">已批准</Radio><Radio value="需整改">需整改</Radio><Radio value="已闭环">已闭环</Radio><Radio value="已关闭">已关闭</Radio></Radio.Group>
@@ -4398,13 +4398,13 @@ function AnlPage({kind}){
         <span className="tiny">共 {rows.length} 条</span>
       </Space>
     </Panel>
-    <Panel title="操作">
+    <Panel>
       <Space wrap>
         <Button type="primary" onClick={()=>setQ({kw:fkw, status:fstatus, concl:fconcl})}>查询</Button>
         <Button onClick={resetQ}>重置</Button>
       </Space>
     </Panel>
-    <Panel title={CFG.name+'分析结果列表（'+rows.length+' 条）'}>
+    <Panel>
       <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:1580}} pagination={false}/>
     </Panel>
     {detail && <AnlDetail rec={detail} kind={kind} onClose={()=>setDetail(null)}/>}
@@ -4695,7 +4695,7 @@ function EntryPage({kind}){
     {title:'驳回说明', width:160, ellipsis:true, render:(_,r)=><span>{r.rejectReason||'—'}</span>}
   ];
   return <div>
-    <Panel title="查询条件">
+    <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="台账编号/计划号/器具编号/器具名称/测量对象" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Select allowClear style={{width:140}} value={fstatus||undefined} options={['待采集','待分析','待审核','已批准','需整改','已闭环','已关闭'].map(c=>({value:c,label:c}))} onChange={v=>setFstatus(v||undefined)}/>
@@ -4704,7 +4704,7 @@ function EntryPage({kind}){
         <span className="tiny">共 {rows.length} 条</span>
       </Space>
     </Panel>
-    <Panel title="操作">
+    <Panel>
       <Space wrap>
         <Button type="primary" onClick={()=>setQ({kw:fkw,status:fstatus,concl:fconcl})}>查询</Button>
         <Button onClick={resetQ}>重置</Button>
@@ -4714,7 +4714,7 @@ function EntryPage({kind}){
         <Button disabled={!canDo(d.me.role,'edit')}>导出</Button>
       </Space>
     </Panel>
-    <Panel title={CFG.title+' · 记录列表（'+rows.length+' 条）'}>
+    <Panel>
       <Table rowKey="id" size="middle" dataSource={rows} columns={cols} rowSelection={{selectedRowKeys:selKeys, onChange:setSelKeys}} scroll={{x:2100}} pagination={false}/>
     </Panel>
     {anlRec && <AnalyzeModal rec={anlRec} kind={kind} onClose={()=>setAnlRec(null)}/>}
@@ -4931,7 +4931,7 @@ function GrrPage(){
   ];
   if(detail) return <GrrDetail rec={detail} onBack={()=>setDetail(null)}/>;
   return <div>
-    <Panel title="查询条件">
+    <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="台账编号/计划号/器具编号/器具名称/测量对象" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待分析">待分析</Radio><Radio value="待审核">待审核</Radio><Radio value="已批准">已批准</Radio><Radio value="需整改">需整改</Radio><Radio value="已闭环">已闭环</Radio><Radio value="已关闭">已关闭</Radio></Radio.Group>
@@ -4939,14 +4939,14 @@ function GrrPage(){
         <span className="tiny">共 {rows.length} 条</span>
       </Space>
     </Panel>
-    <Panel title="操作">
+    <Panel>
       <Space wrap>
         <Button type="primary" onClick={()=>setQ({kw:fkw, status:fstatus, concl:fconcl})}>查询</Button>
         <Button onClick={resetQ}>重置</Button>
         <Button disabled={!canDo(d.me.role,'edit')}>导出</Button>
       </Space>
     </Panel>
-    <Panel title="GRR 分析结果列表">
+    <Panel>
       <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:1650}} pagination={false}/>
     </Panel>
     {detail && <GrrDetail rec={detail} onClose={()=>setDetail(null)}/>}
@@ -5096,7 +5096,7 @@ function KappaPage(){
   ];
   if(detail) return <KappaDetail rec={detail} onBack={()=>setDetail(null)}/>;
   return <div>
-    <Panel title="查询条件">
+    <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="台账编号/计划号/器具编号/器具名称/测量对象" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待分析">待分析</Radio><Radio value="待审核">待审核</Radio><Radio value="已批准">已批准</Radio><Radio value="需整改">需整改</Radio><Radio value="已闭环">已闭环</Radio><Radio value="已关闭">已关闭</Radio></Radio.Group>
@@ -5104,14 +5104,14 @@ function KappaPage(){
         <span className="tiny">共 {rows.length} 条</span>
       </Space>
     </Panel>
-    <Panel title="操作">
+    <Panel>
       <Space wrap>
         <Button type="primary" onClick={()=>setQ({kw:fkw, status:fstatus, concl:fconcl})}>查询</Button>
         <Button onClick={resetQ}>重置</Button>
         <Button disabled={!canDo(d.me.role,'edit')}>导出</Button>
       </Space>
     </Panel>
-    <Panel title="KAPPA 分析结果列表">
+    <Panel>
       <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:1650}} pagination={false}/>
     </Panel>
     {detail && <KappaDetail rec={detail} onClose={()=>setDetail(null)}/>}
