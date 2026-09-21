@@ -3383,7 +3383,7 @@ function CharPage(){
   /* 行内字段即时写 store；只读字段渲染为禁用控件；保存常驻操作列；启用/停用用 Switch */
   const setF=(r,k,v)=>{
     if(k==='status'&&v==='启用'){
-      Modal.confirm({title:'启用确认', content:'被测参数升版后，已创建的 MSA 计划仍关联旧版本参数；如需使用新版本，请重新创建计划。', okText:'确认启用', onOk:()=>{ mut(s=>{ const rec=s.characteristics.find(x=>x.id===r.id&&(x.version||'V1')===(r.version||'V1')); if(rec){ s.characteristics.forEach(x=>{ if(x.id===r.id&&x!==rec) x.status='停用'; }); rec.status='启用'; } }); }});
+      Modal.confirm({title:'启用确认', content:'被测参数新版启用后，已创建的 MSA 计划仍关联旧版本参数；如需使用新版本，请重新创建计划。', okText:'确认启用', onOk:()=>{ mut(s=>{ const rec=s.characteristics.find(x=>x.id===r.id&&(x.version||'V1')===(r.version||'V1')); if(rec){ s.characteristics.forEach(x=>{ if(x.id===r.id&&x!==rec) x.status='停用'; }); rec.status='启用'; } }); }});
       return;
     }
     mut(s=>{ const rec=s.characteristics.find(x=>x.id===r.id&&(x.version||'V1')===(r.version||'V1')); if(rec){ rec[k]=v; } });
