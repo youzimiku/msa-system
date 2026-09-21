@@ -4266,9 +4266,8 @@ function GrrEntry({rec, onClose, curEditor}){
       ds.push({key:i+'-'+op, sid:sid, c:(raw[op]||[])[i]||[]});
     }
   }
-  return <Panel
-    extra={<Space><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button><Button size="small" type="link" onClick={clearAll}>清空</Button>
-    <Button type="primary" size="small" disabled={!complete} onClick={submit}>保存数据（待分析）</Button></Space>}>
+  useEffect(()=>{ if(window.__entrySave) window.__entrySave(submit); return ()=>{ if(window.__entrySave) window.__entrySave(null); } },[submit,complete]);
+  return <Panel>
     <Table size="small" rowKey="key" dataSource={ds} columns={refCols} pagination={false} scroll={{x:trialsN*110+500}}/>
   </Panel>;
 }
@@ -4327,10 +4326,8 @@ function KappaEntry({rec, onClose, curEditor}){
       ds.push({key:i+'-'+app, sid:sid, j:(judg[app]||[])[i]||[]});
     }
   }
-  return <Panel
-
-    extra={<Space><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button>
-    <Button type="primary" size="small" disabled={!complete} onClick={submit}>保存数据（待分析）</Button></Space>}>
+  useEffect(()=>{ if(window.__entrySave) window.__entrySave(submit); return ()=>{ if(window.__entrySave) window.__entrySave(null); } },[submit,complete]);
+  return <Panel>
     <Table size="small" rowKey="key" dataSource={ds} columns={cols} pagination={false} scroll={{x:trialsN*110+500}}/>
   </Panel>;
 }
@@ -4497,10 +4494,8 @@ function AnlEntry({rec, kind, onClose}){
     cols=[opCol,{title:'测量序号',width:100,render:(_,r)=><span className="mono">测{r._i+1}</span>},{title:'测量值',width:140,render:(_,r)=>inp(st.raw[r._i]||'',v=>setCell('raw',r._i,0,v))}];
     data=st.raw.map((v,i)=>({_i:i}));
   }
+  useEffect(()=>{ if(window.__entrySave) window.__entrySave(submit); return ()=>{ if(window.__entrySave) window.__entrySave(null); } },[submit]);
   return <div>
-    <div style={{display:'flex', justifyContent:'flex-end', marginBottom:12}}>
-      <Button type="primary" size="small" onClick={submit}>保存数据（待分析）</Button>
-    </div>
     {kind==='linear' && <div>{label('样品测量（覆盖 0~100% 量程）')}
       <Table size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{y:430,x:1200}} size="small"/></div>}
     {kind==='stability' && <div>{label('稳定性子组测量（'+cnt+' 子组 × 每期 '+perN+' 次，跨 4 周~3 个月）','固定参照仪/工位，SPC 判异模型')}
@@ -4859,19 +4854,19 @@ function DataEntryPage({kind}){
   const [selId,setSelId]=useState(rec?rec.id:null);
   const cur=rec || (d[CFG.arr]||[]).find(g=>g.id===selId) || null;
   const gotoList=()=>NavAPI.go('entry_'+kindNow);
+  window.__entrySave=(fn)=>{ window.__entrySaveFn=fn; };
   const onPicked=(id)=>{ const r=(d[CFG.arr]||[]).find(g=>g.id===id); if(r){ setRec(r); setSelId(id); } };
   const onKindChange=(k)=>{ DataOpen=null; setCurKind(k); setRec(null); setSelId(null); };
   return <div>
     <PageHead title="数据录入"/>
-    <Panel title="选择录入类型">
+    <Panel title="选择录入类型" extra={<Button type="primary" size="middle" onClick={()=>{ if(window.__entrySaveFn) window.__entrySaveFn(); else toast.warn('请先选择记录'); }}>保存数据</Button>}>
       <Space wrap>
         <Select style={{width:300}} value={kindNow} placeholder="选择台账类型" options={['grr','kappa','linear','stability','cgcgk'].map(k=>({value:k,label:ENTRY_CFG[k].name+'（'+ENTRY_CFG[k].title+'）'}))} onChange={onKindChange}/>
-        <Select style={{width:360}} value={cur?cur.id:undefined} placeholder={'选择要录入 / 修改的'+CFG.name+'记录'} options={pending.map(r=>({value:r.id,label:r.id+' · '+r.instName+' · '+(r.reviewStatus==='待分析'?'待分析（可修改）':'待采集')}))} onChange={onPicked}/>
+        <Select style={{width:360}} value={cur?cur.id:undefined} placeholder={'选择要录入 / 修改的'+CFG.name+'记录'} options={pending.map(r=>({value:r.id,label:r.id+' · '+r.instName}))} onChange={onPicked}/>
         {(kindNow==='grr'||kindNow==='kappa') && <Select style={{width:160}} value={curEditor} placeholder="当前录入人" options={PEOPLE_LIST} onChange={setCurEditor}/>}
-        <span className="tiny">共 {pending.length} 条待处理记录</span>
       </Space>
     </Panel>
-    {cur ? <Panel extra={<Space><StatusTag s={cur.reviewStatus}/></Space>}>
+    {cur ? <Panel>
       {CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); }, curEditor)}
     </Panel> : null}
   </div>;
