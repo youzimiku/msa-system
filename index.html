@@ -580,7 +580,14 @@ function buildSeed(){
      analysisDate:'2026-09-12', analyst:'李工程师', reviewStatus:'需整改', conclusion:'不可接受',
      reviewer:'张工', reviewDate:'2026-09-13', approver:'', approveDate:'',
      actions:[{type:'纠正措施', content:'检验员判定标准培训 + 重新确认合格/不合格边界样本', owner:'孙丽', planDate:'2026-09-30', status:'进行中', note:'培训后复测验证'}],
-     note:'误判率过高，KAPPA 值低于可接受下限，测量系统一致性不可接受'}
+     note:'误判率过高，KAPPA 值低于可接受下限，测量系统一致性不可接受'},
+    {id:'KPA-2026-004', planId:'MSAP-2026-013', instId:'JJQ-2024-008', instName:'光滑塞规 φ8H7', object:'孔径 φ8H7 通/止判定（五期复评）', kind:'计数型(合格/不合格)',
+     standard:'STD-MSA-003', numApp:3, numSamples:30, sampleGroup:'SMP-2026-002',
+     appNames:['检验员甲·孙丽','检验员乙·周燕','检验员丙·吴敏'],
+     reference:kRef1,
+     appData:null, rawData:null, numTrials:3,
+     analysisDate:'', analyst:'', reviewStatus:'待采集', conclusion:'',
+     reviewer:'', reviewDate:'', approver:'', approveDate:'', actions:[], note:'五期复评台账，待录入判定数据'}
   ];
 
   /* ---------------- 质量特性基础数据（业务口径：特性主表 + 检验方法子表，一特性多方法；检验标准由特性穿透关联） ---------------- */
