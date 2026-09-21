@@ -3437,7 +3437,7 @@ function CharPage(){
       <Button size="small" type="link" danger disabled={stdRef(r)} onClick={()=>delStd(r)}>删除</Button>
     </Space>},
     {title:'检验标准号', dataIndex:'id', width:120, render:v=><span className="mono">{v}</span>},
-    {title:'检验标准', dataIndex:'basis', width:220, ellipsis:true, render:()=>{ const ss=(d.standards||[]).find(x=>x.id===(stdListFor&&stdListFor.standardId)); return <span>{(ss&&ss.basis)||'无'}</span>; }},
+
     {title:'检验方法', dataIndex:'method', width:150, ellipsis:true, render:(_,r)=><Select size="small" value={r.method||undefined} style={{width:140}} options={[{value:'均值极差法',label:'均值极差法'},{value:'方差分析法',label:'方差分析法'}]} onChange={x=>setStdF(r,'method',x)}/>},
     {title:'测量人数', dataIndex:'numOps', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numOps||''} style={{width:70}} onChange={x=>setStdF(r,'numOps',x)}/>},
     {title:'测量次数', dataIndex:'numTrials', width:80, render:(_,r)=><InputNumber size="small" min={1} value={r.numTrials||''} style={{width:70}} onChange={x=>setStdF(r,'numTrials',x)}/>},
@@ -3499,6 +3499,7 @@ function CharPage(){
     </Drawer>}
     {stdModal && <StandardModal value={stdModal} onClose={()=>setStdModal(null)}/>}
     {stdListFor && <Modal cancelText="关闭" title={'检验标准 · '+stdListFor.id+' '+(stdListFor.name||'')} open width={1320} onCancel={()=>setStdListFor(null)} footer={<Button type="primary" onClick={()=>setStdListFor(null)}>关闭</Button>} destroyOnClose>
+      {(()=>{ const ss=(d.standards||[]).find(x=>x.id===stdListFor.standardId); return ss? <div style={{marginBottom:12,padding:'8px 12px',background:'#fafafa',borderRadius:4,fontSize:13}}><span style={{color:'rgba(0,0,0,0.45)',marginRight:8}}>检验标准</span><span className="mono" style={{marginRight:8}}>{ss.id}</span><span>{ss.basis||''}</span></div> : null; })()}
       <Space wrap style={{marginBottom:10}}>
         <Input allowClear placeholder="标准编号 / 名称 / 检验标准" style={{width:140}} value={slkw} onChange={e=>setSlkw(e.target.value)}/>
         <Select allowClear placeholder="分析类型" style={{width:140}} value={sltype} options={[{value:'GRR',label:'GRR'},{value:'KAPPA',label:'KAPPA'}]} onChange={setSltype}/>
