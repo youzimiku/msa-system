@@ -3718,9 +3718,8 @@ function SamplingPage(){
       <Space wrap size={10}>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:120}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="方法代码/方法名称（判断规则：规则编号/方法/结论）" style={{width:220}} value={fkw2} onChange={e=>setFkw2(e.target.value)}/>
-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>方法名称</span><Select allowClear style={{width:140}} options={(d.anMethods||[]).map(m=>({value:m.code,label:STRIP_PAREN(m.name)}))} value={fMethod2} onChange={setFMethod2}/>
-      </Space>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="方法代码/方法名称" style={{width:220}} value={fkw2} onChange={e=>setFkw2(e.target.value)}/>
+              </Space>
     </Panel>
     <Panel title="操作">
       <Space wrap size={10}>
