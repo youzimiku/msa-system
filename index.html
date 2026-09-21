@@ -186,6 +186,9 @@ a{color:#333333}
   fixMultiDropdowns();
 })();
 </script>
+
+.entry-panel > .ant-card-body { height: 100%; display: flex; flex-direction: column; }
+.entry-panel > .ant-card-body > div { flex: 1; display: flex; flex-direction: column; }
 </style>
 </head>
 <body>
@@ -4866,7 +4869,7 @@ function DataEntryPage({kind}){
         {(kindNow==='grr'||kindNow==='kappa') && <Select style={{width:160}} value={curEditor} placeholder="当前录入人" options={PEOPLE_LIST} onChange={setCurEditor}/>}
       </Space>
     </Panel>
-    {cur ? <Panel style={{flex:1}}>
+    {cur ? <Panel className="entry-panel" style={{flex:1}}>
       {CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); }, curEditor)}
     </Panel> : null}
   </div>;
