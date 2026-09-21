@@ -4496,11 +4496,11 @@ function AnlEntry({rec, kind, onClose}){
   }
   useEffect(()=>{ if(window.__entrySave) window.__entrySave(submit); return ()=>{ if(window.__entrySave) window.__entrySave(null); } },[submit]);
   return <div>
-    {kind==='linear' && <div>{label('样品测量（覆盖 0~100% 量程）')}
+    {kind==='linear' && <div>
       <Table size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{y:430,x:1200}} size="small"/></div>}
-    {kind==='stability' && <div>{label('稳定性子组测量（'+cnt+' 子组 × 每期 '+perN+' 次，跨 4 周~3 个月）','固定参照仪/工位，SPC 判异模型')}
+    {kind==='stability' && <div>
       <Table size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{y:430,x:1200}}/></div>}
-    {kind==='cgcgk' && <div>{label('Cg/Cgk 测量（标准件连续 '+st.raw.length+' 次）','参考值 ±10% 公差控制线（VDA Type1）')}
+    {kind==='cgcgk' && <div>
       <Table size="small" rowKey="_i" dataSource={data} columns={cols} pagination={{pageSize:20,showTotal:t=>'共 '+t+' 条'}} scroll={{y:400}}/></div>}
   </div>;
 }
