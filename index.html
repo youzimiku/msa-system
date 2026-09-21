@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8" />
@@ -4201,12 +4201,13 @@ function GrrEntry({rec, onClose}){
   };
   const curOpSafe=Math.min(curOp, Math.max(0, opsNames.length-1));
   const d0=Store.get();
+  const [curEditor,setCurEditor]=useState(d0.me.name);
   const PEOPLE_LIST=[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}];
   const refCols=[
     {title:'操作', width:80, fixed:'left', render:(_,row)=><Button size="small" type="link" onClick={()=>toast.ok('行已保存：'+row.sid)}>保存</Button>},
     {title:'样本编号', width:130, render:(_,row)=><Input size="small" value={row.sid} className="data-cell" style={{height:64}}/>,
       onCell:(_,idx)=>({rowSpan: idx%2===0 ? 2 : 0})},
-    {title:'录入人', width:110, render:(_,row)=><Select size="small" defaultValue={d0.me.name} style={{width:100}} options={PEOPLE_LIST}/>}
+    {title:'录入人', width:110, render:()=><span>{curEditor||'无'}</span>}
   ];
   for(let t=0;t<trialsN;t++){
     refCols.push({title:'测'+(t+1), dataIndex:'c'+t, width:110,
@@ -4224,6 +4225,10 @@ function GrrEntry({rec, onClose}){
     title={<span style={{color:'#333',fontWeight:600}}>GRR 数据采集 · {rec.id} · {rec.instName}</span>}
     extra={<Space><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button><Button size="small" type="link" onClick={clearAll}>清空</Button>
     <Button type="primary" size="small" disabled={!complete} onClick={submit}>保存数据（待分析）</Button></Space>}>
+    <div style={{marginBottom:12,display:'flex',alignItems:'center',gap:8}}>
+      <span style={{fontSize:13,color:'rgba(0,0,0,0.65)'}}>当前录入人</span>
+      <Select size="small" value={curEditor} onChange={setCurEditor} style={{width:140}} options={PEOPLE_LIST}/>
+    </div>
     <Table size="small" rowKey="key" dataSource={ds} columns={refCols} pagination={false} scroll={{x:trialsN*110+500}}/>
   </Panel>;
 }
@@ -4264,12 +4269,13 @@ function KappaEntry({rec, onClose}){
   };
   const curAppSafe=Math.min(curApp, Math.max(0, appNames.length-1));
   const d0=Store.get();
+  const [curEditor,setCurEditor]=useState(d0.me.name);
   const PEOPLE_LIST=[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}];
   const cols=[
     {title:'操作', width:80, fixed:'left', render:(_,row)=><Button size="small" type="link" onClick={()=>toast.ok('行已保存：'+row.sid)}>保存</Button>},
     {title:'样本编号', width:130, render:(_,row)=><Input size="small" value={row.sid} className="data-cell" style={{height:64}}/>,
       onCell:(_,idx)=>({rowSpan: idx%2===0 ? 2 : 0})},
-    {title:'录入人', width:110, render:(_,row)=><Select size="small" defaultValue={d0.me.name} style={{width:100}} options={PEOPLE_LIST}/>}
+    {title:'录入人', width:110, render:()=><span>{curEditor||'无'}</span>}
   ];
   for(let tt=0;tt<trialsN;tt++) cols.push({title:'第'+(tt+1)+'判', dataIndex:'t'+tt, width:110,
     render:(v,row)=><Select size="small" style={{width:64}} value={row.j&&row.j[tt]!=null?row.j[tt]:undefined}
@@ -4286,6 +4292,10 @@ function KappaEntry({rec, onClose}){
     title={<span style={{color:'#333',fontWeight:600}}>KAPPA 数据采集 · {rec.id} · {rec.instName}</span>}
     extra={<Space><Button size="small" type="link" onClick={fillDemo}>填入演示数据</Button>
     <Button type="primary" size="small" disabled={!complete} onClick={submit}>保存数据（待分析）</Button></Space>}>
+    <div style={{marginBottom:12,display:'flex',alignItems:'center',gap:8}}>
+      <span style={{fontSize:13,color:'rgba(0,0,0,0.65)'}}>当前录入人</span>
+      <Select size="small" value={curEditor} onChange={setCurEditor} style={{width:140}} options={PEOPLE_LIST}/>
+    </div>
     <Table size="small" rowKey="key" dataSource={ds} columns={cols} pagination={false} scroll={{x:trialsN*110+500}}/>
   </Panel>;
 }
