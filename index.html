@@ -4017,7 +4017,7 @@ function SampleLabelPrintModal({sample,onClose}){
       if(on) qrCells.push(<rect key={x+'-'+y} x={x*4} y={y*4} width={4} height={4} fill="#000"/>);
     }
   }
-  return <Modal open title="样本标签打印预览（60×45mm）" onCancel={onClose} footer={<Button type="primary" onClick={()=>{window.print();}}>打印</Button>} width={520}>
+  return <Modal open={true} title="样本标签打印预览（60×45mm）" onCancel={onClose} footer={<Button type="primary" onClick={()=>{window.print();}}>打印</Button>} width={520} destroyOnClose>
     <div style={{display:'flex',justifyContent:'center',margin:'16px 0'}}>
       <div style={{width:'60mm',height:'45mm',border:'1px dashed #999',padding:'2mm',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',background:'#fff',boxSizing:'borderBox'}}>
         <svg width="20mm" height="20mm" viewBox={"0 0 "+(grid*4)+" "+(grid*4)} style={{marginBottom:'1mm'}}>
