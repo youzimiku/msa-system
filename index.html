@@ -4857,7 +4857,7 @@ function DataEntryPage({kind}){
   window.__entrySave=(fn)=>{ window.__entrySaveFn=fn; };
   const onPicked=(id)=>{ const r=(d[CFG.arr]||[]).find(g=>g.id===id); if(r){ setRec(r); setSelId(id); } };
   const onKindChange=(k)=>{ DataOpen=null; setCurKind(k); setRec(null); setSelId(null); };
-  return <div>
+  return <div style={{display:'flex',flexDirection:'column',minHeight:'calc(100vh - 120px)'}}>
     <PageHead title="数据录入"/>
     <Panel title="选择录入类型" extra={<Button type="primary" size="middle" onClick={()=>{ if(window.__entrySaveFn) window.__entrySaveFn(); else toast.warn('请先选择记录'); }}>保存数据</Button>}>
       <Space wrap>
@@ -4866,7 +4866,7 @@ function DataEntryPage({kind}){
         {(kindNow==='grr'||kindNow==='kappa') && <Select style={{width:160}} value={curEditor} placeholder="当前录入人" options={PEOPLE_LIST} onChange={setCurEditor}/>}
       </Space>
     </Panel>
-    {cur ? <Panel>
+    {cur ? <Panel style={{flex:1}}>
       {CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); }, curEditor)}
     </Panel> : null}
   </div>;
