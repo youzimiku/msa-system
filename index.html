@@ -3507,10 +3507,12 @@ function CharPage(){
     {stdModal && <StandardModal value={stdModal} onClose={()=>setStdModal(null)}/>}
     {stdListFor && <Modal cancelText="关闭" title={'检验标准 · '+stdListFor.id+' '+(stdListFor.name||'')} open width={1320} onCancel={()=>setStdListFor(null)} footer={<Button type="primary" onClick={()=>setStdListFor(null)}>关闭</Button>} destroyOnClose>
       {(()=>{ const ss=(d.standards||[]).find(x=>x.id===stdListFor.standardId); return ss? <div style={{marginBottom:12,padding:'8px 12px',background:'#fafafa',borderRadius:4,fontSize:13}}><span style={{color:'rgba(0,0,0,0.45)',marginRight:8}}>检验标准</span><span className="mono" style={{marginRight:8}}>{ss.id}</span><span>{ss.basis||''}</span></div> : null; })()}
-      <Space wrap style={{marginBottom:10}}>
+      <Space wrap style={{marginBottom:8}}>
         <Input allowClear placeholder="标准编号 / 名称 / 检验标准" style={{width:140}} value={slkw} onChange={e=>setSlkw(e.target.value)}/>
         <Select allowClear placeholder="分析类型" style={{width:140}} value={sltype} options={[{value:'GRR',label:'GRR'},{value:'KAPPA',label:'KAPPA'}]} onChange={setSltype}/>
         <Select allowClear placeholder="标准状态" style={{width:140}} value={slstatus} options={['启用','停用'].map(c=>({value:c,label:c}))} onChange={setSlstatus}/>
+      </Space>
+      <Space style={{marginBottom:10}}>
         <Button type="primary" onClick={()=>setSlq({kw:slkw,type:sltype,status:slstatus})}>查询</Button>
         <Button onClick={()=>{setSlkw('');setSltype(undefined);setSlstatus(undefined);setSlq({kw:'',type:undefined,status:undefined});}}>重置</Button>
         <Button type="primary" onClick={()=>addStdRowFor(stdListFor)}>新增标准</Button>
