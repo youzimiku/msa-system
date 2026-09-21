@@ -1827,7 +1827,7 @@ function LedgerPage(){
         ...editBtns,
         {label:'登记校准',disabled:!canDo(d.me.role,'edit'),onClick:()=>setCalModal(r)},
         {label:'状态变更',disabled:!canDo(d.me.role,'edit'),onClick:()=>openChangeStatus(r)},
-        {label:'删除',danger:true,disabled:!canDo(d.me.role,'edit'),onClick:()=>{ Modal.confirm({ title:'删除器具 — '+r.id+' '+r.name, content:'删除后该器具从台账移除，并同步清理其关联的 MSA 计划、校准记录与 GRR/KAPPA 记录，同时从所属器具组中移除。该操作不可恢复，确认删除？', okText:'删除', okType:'danger', cancelText:'取消', onOk:()=>{ mut(s=>{ s.instruments=s.instruments.filter(x=>x.id!==r.id); s.plans=s.plans.filter(p=>p.instId!==r.id); s.calibrations=s.calibrations.filter(c=>c.instId!==r.id); s.grr=s.grr.filter(x=>x.instId!==r.id); s.kappa=s.kappa.filter(x=>x.instId!==r.id); s.instGroups.forEach(g=>{ g.memberIds=g.memberIds.filter(id=>id!==r.id); }); logAction(s.me.name,'删除器具',r.id,'删除器具 '+r.id+' '+r.name+' 并清理关联数据'); }); toast.ok('已删除器具 '+r.id); } }); }}
+        {label:'删除',danger:true,disabled:!canDo(d.me.role,'edit'),onClick:()=>{ Modal.confirm({ content:'是否确定删除'+r.id+' '+r.name+'？', okText:'删除', okType:'danger', cancelText:'取消', onOk:()=>{ mut(s=>{ s.instruments=s.instruments.filter(x=>x.id!==r.id); s.plans=s.plans.filter(p=>p.instId!==r.id); s.calibrations=s.calibrations.filter(c=>c.instId!==r.id); s.grr=s.grr.filter(x=>x.instId!==r.id); s.kappa=s.kappa.filter(x=>x.instId!==r.id); s.instGroups.forEach(g=>{ g.memberIds=g.memberIds.filter(id=>id!==r.id); }); logAction(s.me.name,'删除器具',r.id,'删除器具 '+r.id+' '+r.name+' 并清理关联数据'); }); toast.ok('已删除器具 '+r.id); } }); }}
       ]}/>;
     }},
     {title:'器具编号', dataIndex:'id', width:120, render:(v,r)=><span className="row-link mono" onClick={()=>setDetail(r)}>{v}</span>},
@@ -2152,7 +2152,7 @@ function InstGroupPage(){
   const setF=(r,k,v)=>{ mut(s=>{ const g=s.instGroups.find(x=>x.id===r.id); if(g) g[k]=v; }); };
   const saveRow=(r)=>{ mut(s=>{ const g=s.instGroups.find(x=>x.id===r.id); if(g){ g.editor=s.me.name; g.editorDate=NOW; } logAction(s.me.name,'编辑器具组',r.id,'行内编辑器具组 '+r.id+' '+(r.name||'')); }); toast.ok('已保存'); };
   const referenced=(r)=>(d.plans||[]).some(p=> (r.memberIds||[]).some(mid=>(p.instIds||[]).indexOf(mid)>=0));
-  const delRow=(r)=>{ if(isNew(r)){ setAddRow(false); setDraft({}); return; } Modal.confirm({title:'删除器具组 — '+r.name, content:'删除后组内器具保留在台账中，仅解除分组关系。确认删除？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.instGroups=s.instGroups.filter(g=>g.id!==r.id); logAction(s.me.name,'删除器具组',r.id,'删除器具组 '+r.name); }); toast.ok('已删除器具组 '+r.id); } }); };
+  const delRow=(r)=>{ if(isNew(r)){ setAddRow(false); setDraft({}); return; } Modal.confirm({content:'是否确定删除'+r.name+'？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.instGroups=s.instGroups.filter(g=>g.id!==r.id); logAction(s.me.name,'删除器具组',r.id,'删除器具组 '+r.name); }); toast.ok('已删除器具组 '+r.id); } }); };
   const cols=[
     {title:'操作', width:150, fixed:'left', render:(_,r)=><Space size={0}>
       {!isNew(r) && <Button size="small" type="link" onClick={()=>setDetail(r)}>详情</Button>}
@@ -2523,7 +2523,7 @@ function PlanPage(){
 }
 
 function deletePlan(p){
-  Modal.confirm({ title:'删除计划 '+p.id, content:'将同时删除该计划下的全部台账分析单，且不可恢复。确认删除？', okText:'删除', okButtonProps:{danger:true}, cancelText:'取消',
+  Modal.confirm({ content:'是否确定删除'+p.id+'？', okText:'删除', okButtonProps:{danger:true}, cancelText:'取消',
     onOk:()=>{ mut(s=>{ ['grr','kappa','linear','stability','cgcgk','resolution'].forEach(k=>{ s[k]=s[k].filter(r=>r.planId!==p.id); }); s.plans=s.plans.filter(x=>x.id!==p.id); logAction(s.me.name,'删除计划',p.id,'删除 MSA 计划及其台账分析单'); }); toast.ok('计划已删除'); } });
 }
 function PlanActions({r, onDetail, onSave, onAppend}){
@@ -3426,8 +3426,8 @@ function CharPage(){
   const upgradeChar=(r)=>{ Modal.confirm({ title:'是否确认升版', content:'是否确认升版', okText:'确认', cancelText:'取消', onOk:()=>{ const cv=r.version||'V1'; const num=parseInt(cv.replace(/[^0-9]/g,''))||1; const nv='V'+(num+1); mut(s=>{ const rec=s.characteristics.find(x=>x.id===r.id&&(x.version||'V1')===cv); if(rec){ const copy=Object.assign({}, rec, {version:nv, status:'停用', editor:s.me.name, editorDate:NOW}); const idx=s.characteristics.findIndex(x=>x.id===r.id&&(x.version||'V1')===cv); s.characteristics.splice(idx+1, 0, copy); logAction(s.me.name,'升版被测参数',r.id,'升版 '+cv+' -> '+nv); } }); toast.ok('已升版至 '+nv); } }); };
   const charRef=(r)=>(d.plans||[]).some(p=>p.charId===r.id);
   const stdRef=(r)=> (d.characteristics||[]).some(c=>(c.methods||[]).some(m=>m.standardId===r.id)) || (d.plans||[]).some(p=>p.standard===r.id);
-  const delChar=(r)=>{ Modal.confirm({title:'删除被测参数 — '+(r.name||r.id)+(r.version?'（'+r.version+'）':''), content:'仅删除当前版本，其他版本不受影响。确认删除？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.characteristics=s.characteristics.filter(x=>!(x.id===r.id&&(x.version||'V1')===(r.version||'V1'))); logAction(s.me.name,'删除被测参数',r.id,'删除被测参数 '+(r.name||'')+'（'+(r.version||'V1')+'）'); }); toast.ok('已删除'); } }); };
-  const delStd=(r)=>{ Modal.confirm({title:'删除检验标准 — '+r.id, content:'确认删除该检验标准？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.standards=s.standards.filter(x=>x.id!==r.id); logAction(s.me.name,'删除检验标准',r.id,'删除检验标准 '+r.id); }); toast.ok('已删除'); } }); };
+  const delChar=(r)=>{ Modal.confirm({content:'是否确定删除'+(r.name||r.id)+(r.version?'（'+r.version+'）':'')+'？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.characteristics=s.characteristics.filter(x=>!(x.id===r.id&&(x.version||'V1')===(r.version||'V1'))); logAction(s.me.name,'删除被测参数',r.id,'删除被测参数 '+(r.name||'')+'（'+(r.version||'V1')+'）'); }); toast.ok('已删除'); } }); };
+  const delStd=(r)=>{ Modal.confirm({content:'是否确定删除'+r.id+'？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.standards=s.standards.filter(x=>x.id!==r.id); logAction(s.me.name,'删除检验标准',r.id,'删除检验标准 '+r.id); }); toast.ok('已删除'); } }); };
   const cols=[
     {title:'操作', width:210, fixed:'left', render:(_,r)=><Space size={0}>
       <Button size="small" type="link" onClick={()=>{ setSlkw(''); setSltype(undefined); setSlstatus(undefined); setSlq({kw:'',type:undefined,status:undefined}); setStdListFor(r); }}>检验标准</Button>
@@ -3673,9 +3673,9 @@ function SamplingPage(){
   const saveJRow=(r)=>{ mut(s=>{ const rec=s.judgeRules.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑判断规则',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
   const saveCRow=(r)=>{ mut(s=>{ const rec=s.calParams.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑计算参数',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
   const mRef=(r)=>(d.judgeRules||[]).some(j=>String(j.method).toLowerCase()===String(r.code).toLowerCase());
-  const delMRow=(r)=>{ Modal.confirm({title:'删除分析方法 — '+r.code, content:'删除后其取样规则一并删除。确认删除？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.anMethods=s.anMethods.filter(x=>x.code!==r.code); s.samplingRules=s.samplingRules.filter(x=>String(x.method).toLowerCase()!==String(r.code).toLowerCase()); logAction(s.me.name,'删除分析方法',r.code,'删除 '+(r.name||r.code)); }); toast.ok('已删除'); } }); };
-  const delJRow=(r)=>{ Modal.confirm({title:'删除判断规则 — '+r.id, content:'确认删除该判断规则？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.judgeRules=s.judgeRules.filter(x=>x.id!==r.id); logAction(s.me.name,'删除判断规则',r.id,'删除 '+r.id); }); toast.ok('已删除'); } }); };
-  const delCRow=(r)=>{ Modal.confirm({title:'删除计算参数 — '+r.id, content:'确认删除该计算参数？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.calParams=s.calParams.filter(x=>x.id!==r.id); logAction(s.me.name,'删除计算参数',r.id,'删除 '+r.id); }); toast.ok('已删除'); } }); };
+  const delMRow=(r)=>{ Modal.confirm({content:'是否确定删除'+r.code+'？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.anMethods=s.anMethods.filter(x=>x.code!==r.code); s.samplingRules=s.samplingRules.filter(x=>String(x.method).toLowerCase()!==String(r.code).toLowerCase()); logAction(s.me.name,'删除分析方法',r.code,'删除 '+(r.name||r.code)); }); toast.ok('已删除'); } }); };
+  const delJRow=(r)=>{ Modal.confirm({content:'是否确定删除'+r.id+'？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.judgeRules=s.judgeRules.filter(x=>x.id!==r.id); logAction(s.me.name,'删除判断规则',r.id,'删除 '+r.id); }); toast.ok('已删除'); } }); };
+  const delCRow=(r)=>{ Modal.confirm({content:'是否确定删除'+r.id+'？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.calParams=s.calParams.filter(x=>x.id!==r.id); logAction(s.me.name,'删除计算参数',r.id,'删除 '+r.id); }); toast.ok('已删除'); } }); };
   const doQuery=()=>{ setKw(fkw2); setFNeed(fn2); setFSt(fs2); setFQPlant(fPlant); setFQSub(fSub); setFMethod(fMethod2); setFMerge(fMerge2); };
   const doReset=()=>{ setFkw2(''); setFn2(); setFs2(); setFPlant(); setFSub(); setKw(''); setFNeed(); setFSt(); setFQPlant(); setFQSub(); setFMethod(); setFMerge(); setFMethod2(); setFMerge2(); };
   /* 分析方法列表（合并取样规则字段：方法字段全保留，取样规则按方法关联拼入） */
@@ -3709,7 +3709,7 @@ function SamplingPage(){
   const addRuleRow=()=>{ const m=ruleModal||{}; const id='SR-0'+(d.samplingRules.length+1); mut(st=>{ st.samplingRules.unshift({id, method:m.code, category:'其他', sampleDefault:'', sampleMin:'', sampleMax:'', opsDefault:'', opsMin:'', opsMax:'', trialsDefault:'', trialsMin:'', trialsMax:'', useOps:true, readingsMin:'', readingsMax:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, note:''}); logAction(st.me.name,'新增抽样规则',id,'方法 '+m.code); }); };
   const setRuleF=(r,k,v)=>{ mut(s=>{ const rec=s.samplingRules.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
   const saveRuleRow=(r)=>{ if(!r.method){ toast.warn('请先选择方法'); return; } const dup=(d.samplingRules||[]).some(x=>x.id!==r.id && String(x.method).toLowerCase()===String(r.method).toLowerCase() && x.plant===r.plant && x.subplant===r.subplant); if(dup){ toast.warn('同一方法 + 工厂 + 车间已存在抽样规则，不可重复'); return; } mut(s=>{ const rec=s.samplingRules.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑抽样规则',r.id,'方法 '+(r.method||'')); }); toast.ok('已保存'); };
-  const delRuleRow=(r)=>{ Modal.confirm({title:'删除抽样规则 — '+(r.method||r.id), content:'确认删除该抽样规则？删除后不可恢复。', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.samplingRules=s.samplingRules.filter(x=>x.id!==r.id); logAction(s.me.name,'删除抽样规则',r.id,'删除 '+(r.method||r.id)); }); toast.ok('已删除'); } }); };
+  const delRuleRow=(r)=>{ Modal.confirm({content:'是否确定删除'+(r.method||r.id)+'？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.samplingRules=s.samplingRules.filter(x=>x.id!==r.id); logAction(s.me.name,'删除抽样规则',r.id,'删除 '+(r.method||r.id)); }); toast.ok('已删除'); } }); };
   const samplingCols=[
     {title:'操作', width:110, fixed:'left', render:(_,r)=><Space size={0}>
       <Button size="small" type="link" onClick={()=>saveRuleRow(r)}>保存</Button>
@@ -3967,7 +3967,7 @@ function SampleLibPage(){
   const setF=(r,k,v)=>{ mut(s=>{ const rec=s.sampleLib.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
   const saveRow=(r)=>{ mut(s=>{ const rec=s.sampleLib.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑样本',r.id,'行内编辑 '+r.id+' '+(r.name||'')); }); toast.ok('已保存'); };
   const addRow=()=>{ const id='SPL-'+String((d.sampleLib||[]).length+1).padStart(3,'0'); mut(s=>{ s.sampleLib.unshift({id, name:'', type:'标准件', partNo:'', partName:'', charDim:'', verdict:'', nominal:'', refValue:'', unit:'mm', standardId:'', source:'', expireDate:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, status:'启用', note:''}); logAction(s.me.name,'新增样本',id,'列表新增空白行'); }); };
-  const delRow=(r)=>{ Modal.confirm({title:'删除样本 — '+(r.name||r.id), content:'确认删除该样本？删除后不可恢复。', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.sampleLib=s.sampleLib.filter(x=>x.id!==r.id); logAction(s.me.name,'删除样本',r.id,'删除 '+(r.name||'')); }); toast.ok('已删除'); } }); };
+  const delRow=(r)=>{ Modal.confirm({content:'是否确定删除'+(r.name||r.id)+'？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.sampleLib=s.sampleLib.filter(x=>x.id!==r.id); logAction(s.me.name,'删除样本',r.id,'删除 '+(r.name||'')); }); toast.ok('已删除'); } }); };
   const rows=(d.sampleLib||[]).filter(r=>(!q.kw||(r.id+r.name+(r.partNo||'')+(r.partName||'')+(r.charDim||'')).toLowerCase().includes(q.kw.toLowerCase())))
     .filter(r=>!q.type||r.type===q.type).filter(r=>!q.st||r.status===q.st)
     .filter(r=>!q.plant||r.plant===q.plant).filter(r=>!q.sub||r.subplant===q.sub);
@@ -4670,7 +4670,7 @@ function EntryPage({kind}){
   const setRecF=(r,k,v)=>{ mut(s=>{ const arr=kind==='grr'?s.grr:kind==='kappa'?s.kappa:s[ANA_CFG[kind].arr]; const g=arr.find(x=>x.id===r.id); if(g) g[k]=v; }); };
   const saveRow=(r)=>{ mut(s=>{ logAction(s.me.name,'编辑台账',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
   const canDel=(r)=>['待采集','待分析'].includes(r.reviewStatus);
-  const delRow=(r)=>{ Modal.confirm({ title:'删除台账记录 — '+r.id, content:'删除后该台账记录将从列表移除（仅允许删除「待采集/待分析」状态记录）。确认删除？', okText:'删除', okType:'danger', cancelText:'取消', onOk:()=>{ mut(s=>{ const arr=kind==='grr'?s.grr:kind==='kappa'?s.kappa:s[ANA_CFG[kind].arr]; const i=arr.findIndex(x=>x.id===r.id); if(i>=0) arr.splice(i,1); logAction(s.me.name,'删除台账',r.id,'删除台账记录 '+r.id); }); toast.ok('已删除'); } }); };
+  const delRow=(r)=>{ Modal.confirm({ content:'是否确定删除'+r.id+'？', okText:'删除', okType:'danger', cancelText:'取消', onOk:()=>{ mut(s=>{ const arr=kind==='grr'?s.grr:kind==='kappa'?s.kappa:s[ANA_CFG[kind].arr]; const i=arr.findIndex(x=>x.id===r.id); if(i>=0) arr.splice(i,1); logAction(s.me.name,'删除台账',r.id,'删除台账记录 '+r.id); }); toast.ok('已删除'); } }); };
   const cols=[
     {title:'操作', width:460, fixed:'left', render:(_,r)=><Space size={0} wrap>
       <Button size="small" type="link" onClick={()=>setPickRec(r)}>{(kind==='grr'||kind==='kappa')?'人员选择':'样本/人员选择'}</Button>
