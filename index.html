@@ -1038,7 +1038,9 @@ function applyFieldDefaults(d){
     const seen={};
     d[key]=(d[key]||[]).filter(r=>{ if(seen[r.id]) return false; seen[r.id]=1; return true; });
     SEED_IDS[key].forEach(id=>{ if(!seen[id]){ const f=SEED_F[id]||{}; const rec=Object.assign({id:id, method:'', analysisDate:'', analyst:'', reviewer:'', reviewDate:'', approver:'', approveDate:'', actions:[], note:'种子补录（演示数据）'}, f); if(id==='STB-2026-001'){ rec.raw=GEN_STB01(); rec.sampleNames=['轴径 φ10 标准件']; rec.opsNames=['赵磊','刘青']; rec.stations=['1号工位','2号工位']; } d[key].push(rec); } });
-    (d[key]||[]).forEach(r=>{ const f=SEED_F[r.id]; if(f) Object.assign(r,f); if(key==='grr'&&r.operators) r.opsNames=r.operators.map(n=>String(n).split('·').pop()).filter(n=>!/^(操作员[ABCDE]|检验员[甲乙丙丁戊])$/.test(n)); if(SEED_ST[r.id]){ r.reviewStatus=SEED_ST[r.id]; r.conclusion=SEED_CON[r.id]!==undefined?SEED_CON[r.id]:r.conclusion; } if(SEED_ST[r.id]==='待采集'){ r.raw=null; r.rawData=null; r.analysisDate=''; r.analyst=''; r.reviewer=''; r.reviewDate=''; r.approver=''; r.approveDate=''; r.actions=[]; } });
+    (d[key]||[]).forEach(r=>{ const f=SEED_F[r.id]; if(f) Object.assign(r,f);
+    const LEGACY_MAP={'待审核':'待确认','已批准':'完成','已通过':'完成','需整改':'驳回','不通过':'驳回','已闭环':'完成','已关闭':'完成','未定型':'待采集'};
+    if(LEGACY_MAP[r.reviewStatus]) r.reviewStatus=LEGACY_MAP[r.reviewStatus]; if(key==='grr'&&r.operators) r.opsNames=r.operators.map(n=>String(n).split('·').pop()).filter(n=>!/^(操作员[ABCDE]|检验员[甲乙丙丁戊])$/.test(n)); if(SEED_ST[r.id]){ r.reviewStatus=SEED_ST[r.id]; r.conclusion=SEED_CON[r.id]!==undefined?SEED_CON[r.id]:r.conclusion; } if(SEED_ST[r.id]==='待采集'){ r.raw=null; r.rawData=null; r.analysisDate=''; r.analyst=''; r.reviewer=''; r.reviewDate=''; r.approver=''; r.approveDate=''; r.actions=[]; } });
   };
   REBUILD('grr'); REBUILD('kappa'); REBUILD('linear'); REBUILD('stability'); REBUILD('cgcgk');
   /* 被测参数（质量特性）锚定种子：覆盖旧数据 methods 结构（字符串数组→对象数组）与字段口径 */
