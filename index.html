@@ -4529,18 +4529,18 @@ function AnlEntry({rec, kind, onClose, curEditor}){
   const label=(txt,desc)=> <div style={{marginBottom:6}}><span className="flt-label">{txt}</span>{desc?<span className="tiny" style={{marginLeft:8}}>{desc}</span>:null}</div>;
   const inputW=78;
   const saveRow=(i,name)=>{ mut(s=>{ const g=s[CFG.arr].find(x=>x.id===rec.id); if(g){ g.raw=st.raw; if(kind==='linear') g.refs=st.refs; if(kind==='cgcgk') g.refValue=st.refValue; } }); toast.ok(name+' 已保存'); };
-  const inp=(v,onChange)=> <Input size="small" style={{width:inputW}} value={v} onChange={e=>onChange(e.target.value)}/>;
+  const inp=(v,onChange)=> <Input size="small" className="data-cell" value={v} onChange={e=>onChange(e.target.value)}/>;
   let cols=[], data=[];
   if(kind==='linear'){
-    cols=[{title:'测量次数',width:100,render:(_,r)=><span className="mono">{r._j+1}</span>},{title:'样品号',width:160,render:(_,r)=><span className="mono">{r._code}</span>},{title:'录入人',width:120,render:()=><span>{curEditor||'无'}</span>},{title:'标准值',width:120,render:(_,r)=><span className="mono">{st.refs&&st.refs[r._i]!==undefined?st.refs[r._i]:'无'}</span>},{title:'实测值',width:140,render:(_,r)=>inp(st.raw[r._i]?st.raw[r._i][r._j]:'',v=>setCell('raw',r._i,r._j,v))},{title:'偏倚值',width:120,render:(_,r)=>{ const ref=st.refs&&st.refs[r._i]!==undefined?Number(st.refs[r._i]):NaN; const raw=st.raw[r._i]?Number(st.raw[r._i][r._j]):NaN; return (isNaN(ref)||isNaN(raw))?'无':(raw-ref).toFixed(3); }}];
+    cols=[{title:'测量次数',width:100,render:(_,r)=><span className="mono">{r._j+1}</span>},{title:'样品号',width:160,render:(_,r)=><span className="mono">{r._code}</span>},{title:'录入人',width:120,render:()=><span>{curEditor||'无'}</span>},{title:'标准值',width:120,render:(_,r)=><span className="mono">{st.refs&&st.refs[r._i]!==undefined?st.refs[r._i]:'无'}</span>},{title:'实测值',width:110,render:(_,r)=>inp(st.raw[r._i]?st.raw[r._i][r._j]:'',v=>setCell('raw',r._i,r._j,v))},{title:'偏倚值',width:120,render:(_,r)=>{ const ref=st.refs&&st.refs[r._i]!==undefined?Number(st.refs[r._i]):NaN; const raw=st.raw[r._i]?Number(st.raw[r._i][r._j]):NaN; return (isNaN(ref)||isNaN(raw))?'无':(raw-ref).toFixed(3); }}];
     data=[];
     for(let i=0;i<(cnt||5);i++){ const _code='STD-'+String(i+1).padStart(2,'0'); for(let j=0;j<(perN||12);j++){ data.push({_i:i,_j:j,_code:_code}); } }
   } else if(kind==='stability'){
     const sampleNo=(rec.sampleNames&&rec.sampleNames[0])||'—';
-    cols=[{title:'子组',width:100,render:(_,r)=><span className="mono">{r._code}</span>},{title:'样本号',width:140,render:()=><span className="mono">YB26922133058</span>},{title:'录入人',width:120,render:()=><span>张三</span>},{title:'实测值',width:120,render:(_,r)=>inp(st.raw[r._i]?st.raw[r._i][0]:'',v=>setCell('raw',r._i,0,v))}];
+    cols=[{title:'子组',width:100,render:(_,r)=><span className="mono">{r._code}</span>},{title:'样本号',width:140,render:()=><span className="mono">YB26922133058</span>},{title:'录入人',width:120,render:()=><span>张三</span>},{title:'实测值',width:110,render:(_,r)=>inp(st.raw[r._i]?st.raw[r._i][0]:'',v=>setCell('raw',r._i,0,v))}];
     data=st.raw.map((row,i)=>({_i:i,_code:'G'+String(i+1).padStart(2,'0')}));
   } else if(kind==='cgcgk'){
-    cols=[{title:'测量序号',width:100,render:(_,r)=><span className="mono">{r._i+1}</span>},{title:'样本号',width:140,render:()=><span className="mono">YB26922133058</span>},{title:'录入人',width:120,render:()=><span>{curEditor||'无'}</span>},{title:'测量值',width:140,render:(_,r)=>inp(st.raw[r._i]||'',v=>setCell('raw',r._i,0,v))}];
+    cols=[{title:'测量序号',width:100,render:(_,r)=><span className="mono">{r._i+1}</span>},{title:'样本号',width:140,render:()=><span className="mono">YB26922133058</span>},{title:'录入人',width:120,render:()=><span>{curEditor||'无'}</span>},{title:'测量值',width:110,render:(_,r)=>inp(st.raw[r._i]||'',v=>setCell('raw',r._i,0,v))}];
     data=st.raw.map((v,i)=>({_i:i}));
   }
   const submitRaw=()=>{ doSave(true); };
