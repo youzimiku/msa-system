@@ -1057,11 +1057,11 @@ const ENUM = {
   /* 1:1 模型：计划即分析任务，状态与 GRR/KAPPA 台账记录联动 */
   planStatus: ['未定型','待采集','待分析','待审核','已批准','需整改','已闭环','已关闭'],
   planType: ['年度计划','临时计划','项目计划'],
-  reviewStatus: ['待采集','待分析','分析完成','待确认','完成','驳回'],
+  reviewStatus: ['待采集','采集中','待分析','分析完成','待确认','完成','驳回'],
   conclusion: ['可接受','有条件接受','不可接受'],
   verdictTagColor: { '可接受':'green','优秀(可接受)':'green','有条件接受':'orange','良好(有条件接受)':'orange','不可接受':'red','优秀':'green','良好':'orange','-':'default' },
   statusColor: { '在用':'green','待校准':'orange','送检中':'blue','封存':'default','停用':'red','报废':'default',
-                 '未定型':'default','待采集':'processing','待分析':'cyan','分析完成':'blue','待确认':'orange','完成':'green','驳回':'red',
+                 '未定型':'default','待采集':'processing','采集中':'blue','待分析':'cyan','分析完成':'blue','待确认':'orange','完成':'green','驳回':'red',
                  '草稿':'default','待执行':'orange','样本准备中':'processing','数据采集中':'blue','分析中':'cyan','已完成':'green',
                  '启用':'green','停用':'default' },
   roleOptions: [
@@ -4723,7 +4723,7 @@ function EntryPage({kind}){
     <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="台账编号/计划号/器具编号/器具名称/测量对象" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Select allowClear style={{width:140}} value={fstatus||undefined} options={['待采集','待分析','分析完成','待确认','完成','驳回'].map(c=>({value:c,label:c}))} onChange={v=>setFstatus(v||undefined)}/>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Select allowClear style={{width:140}} value={fstatus||undefined} options={['待采集','采集中','待分析','分析完成','待确认','完成','驳回'].map(c=>({value:c,label:c}))}} onChange={v=>setFstatus(v||undefined)}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>结论</span><Select allowClear style={{width:140}} value={fconcl} options={conclOpts.map(c=>({value:c,label:c}))} onChange={setFconcl}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>责任人</span><Select allowClear style={{width:140}} value={fanl} options={anlOpts.map(c=>({value:c,label:c}))} onChange={setFanl}/>
         <span className="tiny">共 {rows.length} 条</span>
