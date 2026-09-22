@@ -4278,7 +4278,7 @@ function GrrEntry({rec, onClose, curEditor}){
     refCols.push({title:'实测值'+(t+1), dataIndex:'c'+t, width:110,
       render:(v,row)=><Input size="small" value={row.c&&row.c[t]!=null?row.c[t]:''} className="data-cell"/>});
   }
-  refCols.push({title:'录入时间', width:150, render:()=><span className="mono" style={{color:'#999'}}>待保存</span>});
+  refCols.push({title:'录入时间', width:150, render:()=><span className="mono" style={{color:'#999'}}></span>});
   const ds=[];
   for(let i=0;i<partsN;i++){
     const sid=items[i]?items[i].id:('样本'+String(i+1));
@@ -4335,7 +4335,7 @@ function KappaEntry({rec, onClose, curEditor}){
   ];
   for(let tt=0;tt<trialsN;tt++) cols.push({title:'实测值'+(tt+1), dataIndex:'t'+tt, width:110,
     render:(v,row)=><Input size="small" value={row.j&&row.j[tt]!=null?row.j[tt]:''} className="data-cell" onChange={e=>{ const val=e.target.value; setJudg(judg.map((x,ia)=>{ if(ia!==row.app) return x; return x.map((y,is)=>{ if(is!==row.i) return y; return y.map((z,it)=>it===tt?val:z); }); })); }}/>});
-  cols.push({title:'录入时间', width:150, render:()=><span className="mono" style={{color:'#999'}}>待保存</span>});
+  cols.push({title:'录入时间', width:150, render:()=><span className="mono" style={{color:'#999'}}></span>});
   const ds=[];
   for(let i=0;i<samplesN;i++){
     const sid=items[i]?items[i].id:('样本'+String(i+1));
