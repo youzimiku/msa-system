@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>MSA系统 改动记录 2026-09-22</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.21.6/dist/reset.css">
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;margin:0;padding:24px;}
+.container{max-width:960px;margin:0 auto;background:#fff;padding:32px;border-radius:8px;}
+h1{font-size:24px;margin:0 0 8px;}
+.sub{color:#888;margin-bottom:24px;font-size:14px;}
+.section{margin-bottom:24px;}
+.section-title{font-size:16px;font-weight:600;border-left:3px solid #1677ff;padding-left:8px;margin-bottom:12px;}
+.item{padding:10px 12px;border:1px solid #f0f0f0;border-radius:6px;margin-bottom:8px;display:flex;gap:12px;}
+.commit-id{font-family:monospace;color:#1677ff;font-size:12px;white-space:nowrap;min-width:70px;}
+.commit-msg{font-size:14px;flex:1;}
+.tag{display:inline-block;padding:1px 8px;border-radius:4px;font-size:12px;margin-right:4px;}
+.tag-feat{background:#e6f4ff;color:#1677ff;}
+.tag-style{background:#f6ffed;color:#52c41a;}
+.tag-fix{background:#fff2e8;color:#fa8c16;}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>MSA系统 改动记录</h1>
+<div class="sub">日期：2026-09-22 ｜ 按时间倒序排列</div>
+
+<div class="section">
+<div class="section-title">数据录入页面</div>
+<div class="item"><span class="commit-id">7524ef6</span><span class="commit-msg"><span class="tag tag-style">style</span> 去掉默认GRR结构下拉的placeholder</span></div>
+<div class="item"><span class="commit-id">3b6be28</span><span class="commit-msg"><span class="tag tag-style">style</span> 非GRR方法时默认GRR结构下拉禁用且空值</span></div>
+<div class="item"><span class="commit-id">ef86a69</span><span class="commit-msg"><span class="tag tag-style">style</span> 非GRR方法时默认GRR结构显示"无"</span></div>
+<div class="item"><span class="commit-id">5fecc7c</span><span class="commit-msg"><span class="tag tag-feat">feat</span> 默认GRR结构仅方法名含GRR时可编辑</span></div>
+<div class="item"><span class="commit-id">43030ca</span><span class="commit-msg"><span class="tag tag-feat">feat</span> Cg/Cgk加样本号列，线性/偏倚加录入人列</span></div>
+<div class="item"><span class="commit-id">ddf11df</span><span class="commit-msg"><span class="tag tag-feat">feat</span> Cg/Cgk录入矩阵加录入人字段</span></div>
+<div class="item"><span class="commit-id">2f5db10</span><span class="commit-msg"><span class="tag tag-style">style</span> 稳定性录入"样本值"改为"实测值"</span></div>
+<div class="item"><span class="commit-id">666d380</span><span class="commit-msg"><span class="tag tag-feat">feat</span> 线性/偏倚"测量序号"改"测量次数"，一个样品多次测量每行一条</span></div>
+<div class="item"><span class="commit-id">2415f0e</span><span class="commit-msg"><span class="tag tag-style">style</span> 线性/偏倚样品号改回不可编辑</span></div>
+<div class="item"><span class="commit-id">5c1841a</span><span class="commit-msg"><span class="tag tag-style">style</span> 线性/偏倚样品号改为可编辑</span></div>
+<div class="item"><span class="commit-id">f98df69</span><span class="commit-msg"><span class="tag tag-style">style</span> KAPPA样本编号不可编辑</span></div>
+<div class="item"><span class="commit-id">577211a</span><span class="commit-msg"><span class="tag tag-fix">fix</span> KAPPA样本编号默认显示样本号</span></div>
+<div class="item"><span class="commit-id">49af9f6</span><span class="commit-msg"><span class="tag tag-feat">feat</span> GRR/KAPPA样本编号默认空，选择录入类型加下拉标题</span></div>
+<div class="item"><span class="commit-id">688fc68</span><span class="commit-msg"><span class="tag tag-feat">feat</span> GRR/KAPPA录入人下拉加"全部"选项，仅责任人可见</span></div>
+<div class="item"><span class="commit-id">498cc83</span><span class="commit-msg"><span class="tag tag-style">style</span> 去掉保存数据按钮，录入完成改"提交"</span></div>
+<div class="item"><span class="commit-id">5ea1f1a</span><span class="commit-msg"><span class="tag tag-style">style</span> GRR/KAPPA录入矩阵去掉录入时间列</span></div>
+<div class="item"><span class="commit-id">fd346bd</span><span class="commit-msg"><span class="tag tag-feat">feat</span> 线性/偏倚录入页加测量序号和偏倚值字段</span></div>
+<div class="item"><span class="commit-id">72e8f6e</span><span class="commit-msg"><span class="tag tag-feat">feat</span> 保存数据不做校验直接保存，录入完成保留校验</span></div>
+<div class="item"><span class="commit-id">12e3e16</span><span class="commit-msg"><span class="tag tag-style">style</span> 保存数据按钮移到数据录入矩阵Panel内部</span></div>
+<div class="item"><span class="commit-id">87dd360</span><span class="commit-msg"><span class="tag tag-style">style</span> 提交改录入完成，保存数据移到矩阵上方居左</span></div>
+<div class="item"><span class="commit-id">6cbe4d7</span><span class="commit-msg"><span class="tag tag-fix">fix</span> 恢复保存数据按钮，新增提交按钮</span></div>
+<div class="item"><span class="commit-id">e21e52b</span><span class="commit-msg"><span class="tag tag-style">style</span> GRR/KAPPA录入时间无值时显示空而非"待保存"</span></div>
+<div class="item"><span class="commit-id">b0a4773</span><span class="commit-msg"><span class="tag tag-feat">feat</span> 录入矩阵去掉行级保存按钮，右上角改提交，GRR/KAPPA样本编号不合并</span></div>
+</div>
+
+<div class="section">
+<div class="section-title">被测参数维护页面</div>
+<div class="item"><span class="commit-id">e4187d5</span><span class="commit-msg"><span class="tag tag-style">style</span> 特性等级改纯文字显示</span></div>
+<div class="item"><span class="commit-id">377d685</span><span class="commit-msg"><span class="tag tag-feat">feat</span> 特性等级移到特殊特性后改只读，加绑定文件按钮</span></div>
+</div>
+
+</div>
+</body>
+</html>
