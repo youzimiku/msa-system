@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>MSA系统原型评审会议纪要 2026-09-22</title>
+<style>
+body{font-family:-apple-system,"Microsoft YaHei",sans-serif;max-width:1100px;margin:0 auto;padding:32px 24px;color:#333;line-height:1.7;background:#fafafa}
+h1{font-size:24px;border-bottom:3px solid #1677ff;padding-bottom:12px}
+h2{font-size:19px;margin-top:36px;color:#1677ff;border-left:4px solid #1677ff;padding-left:10px}
+h3{font-size:16px;margin-top:24px;color:#0f4c8a}
+.meta{background:#f0f7ff;border:1px solid #d6e4ff;border-radius:6px;padding:14px 18px;margin:16px 0;font-size:14px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;background:#fff}
+th{background:#1677ff;color:#fff;padding:10px 12px;text-align:left;font-weight:600}
+td{border:1px solid #e5e7eb;padding:10px 12px;vertical-align:top}
+tr:nth-child(even) td{background:#f9fafb}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600}
+.tag-done{background:#e6ffed;color:#137333;border:1px solid #b7eb8f}
+.tag-pending{background:#fff7e6;color:#d46b08;border:1px solid #ffd591}
+.tag-new{background:#fff1f0;color:#cf1322;border:1px solid #ffa39e}
+.tag-tbd{background:#f5f5f5;color:#666;border:1px solid #d9d9d9}
+ul{padding-left:22px}
+li{margin:6px 0}
+.summary-box{background:#fffbe6;border:1px solid #ffe58f;border-radius:6px;padding:16px 20px;margin:16px 0}
+.warn-box{background:#fff1f0;border:1px solid #ffa39e;border-radius:6px;padding:16px 20px;margin:16px 0}
+</style>
+</head>
+<body>
+
+<h1>MSA系统原型评审会议纪要</h1>
+<div class="meta">
+<b>会议时间：</b>2026-09-22 11:37 ~ 12:37（约52分钟）<br>
+<b>参会人：</b>张会娟、高国翔<br>
+<b>会议主题：</b>MSA测量系统分析原型逐页评审（GRR/KAPPA/线性偏倚/稳定性/Cg/Cgk录入页 + 报告页 + 特性方法维护）
+</div>
+
+<h2>一、会议结论概览</h2>
+<div class="summary-box">
+本次会议逐页评审了五个录入数据页面、MSA计划创建弹窗、特性方法维护、报告页样式。核心结论：<br>
+1. 五个录入页统一改为<b>左侧台账卡片列表 + 右侧录入矩阵</b>布局，去掉下拉选台账；<br>
+2. GRR样本号扫描录入（可编辑、默认空、校验样本库），KAPPA样本号只读带出；<br>
+3. 稳定性加"组内次数"字段，决定实测值列数；<br>
+4. 保存和录入完成合并为"提交"，不做行级保存；<br>
+5. 报告图表直接复用丁宁（Minitab）和石洋洋（稳定性）的现成图，每图上方加统一表头；<br>
+6. 待确认项：提交后状态控制、编辑权限（需跟万工确认）。
+</div>
+
+<h2>二、逐页改动决议</h2>
+
+<h3>2.1 GRR / KAPPA 录入数据页</h3>
+<table>
+<tr><th style="width:40%">改动点</th><th style="width:45%">会议决议</th><th style="width:15%">状态</th></tr>
+<tr><td>台账选择方式</td><td>去掉下拉框，左侧放台账卡片列表（只显示未完成的），右侧录入矩阵</td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td>GRR样本号</td><td>不预生成，扫描录入，可编辑，默认空，扫一个填一个</td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td>GRR样本号校验</td><td>扫描后校验是否在当前特性的样本库内，防止录错</td><td><span class="tag tag-done">已改（备注）</span></td></tr>
+<tr><td>KAPPA样本号</td><td>选好后默认带出，纯文本只读，不可修改</td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td>KAPPA人员选择</td><td>加"全部"选项，只有责任人才可选全部</td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td>录入时间列</td><td>录入页面不要录入时间列（报告查看时要有）</td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td>保存/提交按钮</td><td>合并为"提交"，整体提交，不做行级保存，提交前不做完整性校验</td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td>录入完成标记</td><td>多人录入时每人录完打标记，全部录完整体状态判断——<b>暂不做</b></td><td><span class="tag tag-tbd">待确认</span></td></tr>
+</table>
+
+<h3>2.2 稳定性录入数据页</h3>
+<table>
+<tr><th style="width:40%">改动点</th><th style="width:45%">会议决议</th><th style="width:15%">状态</th></tr>
+<tr><td>字段命名</td><td>"样本值"改为"实测值"</td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td>子组含义</td><td>子组就是测量次数</td><td><span class="tag tag-done">已改（备注）</span></td></tr>
+<tr><td>组内次数字段</td><td>创建计划时新增"组内次数"，手填InputNumber，决定实测值列数（测2次=2列，测3次=3列）</td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td>单值/多值测量</td><td>创建计划时选单值还是多值测量，多值时一个子组下有多列实测值</td><td><span class="tag tag-pending">部分改</span></td></tr>
+<tr><td>样本号/录入人</td><td>样本号固定显示，录入人列加</td><td><span class="tag tag-done">已改</span></td></tr>
+</table>
+
+<h3>2.3 线性/偏倚录入数据页</h3>
+<table>
+<tr><th style="width:40%">改动点</th><th style="width:45%">会议决议</th><th style="width:15%">状态</th></tr>
+<tr><td>字段</td><td>测量次数、样品号、标准值、实测值、偏倚值、录入人</td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td>样本号</td><td>不可编辑（标准件/生产件规则：标准件选样本，生产件不选）</td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td>测量次数</td><td>不是序号，每件样本测多次，每次单独一行</td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td>录入人列</td><td>统一加</td><td><span class="tag tag-done">已改</span></td></tr>
+</table>
+
+<h3>2.4 Cg/Cgk 录入数据页</h3>
+<table>
+<tr><th style="width:40%">改动点</th><th style="width:45%">会议决议</th><th style="width:15%">状态</th></tr>
+<tr><td>字段</td><td>测量序号、样本号、录入人、测量值</td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td>录入人列</td><td>统一加</td><td><span class="tag tag-done">已改</span></td></tr>
+</table>
+
+<h3>2.5 MSA计划创建弹窗</h3>
+<table>
+<tr><th style="width:40%">改动点</th><th style="width:45%">会议决议</th><th style="width:15%">状态</th></tr>
+<tr><td>分析方法列表</td><td>加"组内次数"列，仅稳定性可手填，其他方法显示"—"</td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td>计算方法字段</td><td>特性方法维护里加"计算方法"和"默认GRR结构"，仅GRR方法可填</td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td>计算方法下拉值</td><td>每个方法的计算方法下拉选项不一样，按方法动态过滤</td><td><span class="tag tag-done">已改（备注）</span></td></tr>
+</table>
+
+<h3>2.6 特性方法维护（被测参数）</h3>
+<table>
+<tr><th style="width:40%">改动点</th><th style="width:45%">会议决议</th><th style="width:15%">状态</th></tr>
+<tr><td>检验标准</td><td>维护到被测参数层级（一对一），不用在每个界面重复选</td><td><span class="tag tag-done">已改</span></td></tr>
+<tr><td>绑定文件按钮</td><td>按钮板加"绑定文件"，点击调子页面（文件树+文件清单+文件名搜索），<b>子页面还没做</b></td><td><span class="tag tag-pending">按钮已加/子页未做</span></td></tr>
+</table>
+
+<h3>2.7 报告页</h3>
+<table>
+<tr><th style="width:40%">改动点</th><th style="width:45%">会议决议</th><th style="width:15%">状态</th></tr>
+<tr><td>图表来源</td><td>直接复用丁宁给的Minitab图（Cg/Cgk、KAPPA、单值偏倚）和石洋洋的稳定性图，不自己画</td><td><span class="tag tag-new">未改</span></td></tr>
+<tr><td>图表统一表头</td><td>每个图表上方加表头：量具编号、量具型号、测量人、测量时间、分析方法、抽样规则等计划/台账信息</td><td><span class="tag tag-new">未改</span></td></tr>
+<tr><td>报告样式</td><td>结合群里截图圈选的表格 + Minitab图，用Excel拼，不用AI做</td><td><span class="tag tag-tbd">工作方式</span></td></tr>
+<tr><td>图表坐标轴定义</td><td>每张图X/Y轴显示什么要自定义——<b>后续再研究</b></td><td><span class="tag tag-tbd">暂缓</span></td></tr>
+</table>
+
+<h2>三、待确认/待办事项</h2>
+<div class="warn-box">
+<b>需跟万工确认（张会娟明确要求）：</b>
+<ul>
+<li>数据提交后是否允许二次提交？</li>
+<li>提交后录入人是否还能修改？还是只有责任人能改？</li>
+<li>不同状态下（待采集/待分析/已提交/分析中）各角色的编辑权限边界</li>
+<li>多人录入时，每人录完是否要做"完成标记"，全部录完才整体流转</li>
+</ul>
+</div>
+
+<h2>四、会议提到但今天未改的内容</h2>
+<table>
+<tr><th style="width:5%">#</th><th style="width:35%">内容</th><th style="width:45%">说明</th><th style="width:15%">优先级</th></tr>
+<tr><td>1</td><td><b>录入页顶部台账信息要丰富</b></td><td>当前只显示台账编号和名称，会议要求加：器具编号/名称、被测项目、分析方法、标准等字段，让录入人知道自己在录什么</td><td><span class="tag tag-new">高</span></td></tr>
+<tr><td>2</td><td><b>报告页每个图表加统一表头</b></td><td>量具编号、型号、测量人、测量时间、方法、抽样规则</td><td><span class="tag tag-new">高</span></td></tr>
+<tr><td>3</td><td><b>报告图表复用现成图</b></td><td>Cg/Cgk、KAPPA、单值偏倚用丁宁的Minitab图；稳定性用石洋洋的图</td><td><span class="tag tag-new">高</span></td></tr>
+<tr><td>4</td><td><b>一进页面默认编辑模式</b></td><td>根据台账状态判断是否默认开启编辑模式，开发备注要写清楚条件</td><td><span class="tag tag-pending">中</span></td></tr>
+<tr><td>5</td><td><b>录入时间在报告页要有</b></td><td>录入页去掉了，但查看报告/结果时要显示录入时间</td><td><span class="tag tag-pending">中</span></td></tr>
+<tr><td>6</td><td><b>稳定性单值/多值测量选择</b></td><td>创建计划时选单值还是多值，多值时一个子组下多列实测值（组内次数已加，但单值/多值选择未加）</td><td><span class="tag tag-pending">中</span></td></tr>
+<tr><td>7</td><td><b>左侧台账卡片完成后消失</b></td><td>只显示未完成的台账，完成的从卡片列表移除</td><td><span class="tag tag-pending">中</span></td></tr>
+<tr><td>8</td><td><b>绑定文件子页面</b></td><td>文件树+文件清单+文件名搜索，按钮已加但子页面未做</td><td><span class="tag tag-pending">中</span></td></tr>
+<tr><td>9</td><td><b>各图表X/Y轴自定义定义</b></td><td>张会娟说先不管，后续再研究</td><td><span class="tag tag-tbd">暂缓</span></td></tr>
+</table>
+
+<h2>五、工作方式约定</h2>
+<ul>
+<li>复杂报告不建议用AI生成，容易做乱调整成本高；用Excel拼现成图表+数据</li>
+<li>后续新原型：AI先出基础版 → 评审确认样式 → 转Excel做细节微调</li>
+<li>UI样式参考刘科壮做的列表样式（有横线竖线、无外框），等他明天截图确认</li>
+</ul>
+
+</body>
+</html>
