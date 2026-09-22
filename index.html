@@ -4905,7 +4905,6 @@ function DataEntryPage({kind}){
               return <div key={r.id} onClick={()=>onPicked(r.id)} style={{border:'1px solid '+(active?'#1677ff':'#e3eaf3'),borderRadius:6,padding:'8px 10px',marginBottom:6,cursor:'pointer',background:active?'#e6f4ff':'#fff'}}>
                 <div style={{fontSize:13,fontWeight:active?600:400,color:active?'#1677ff':'#333',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.id}</div>
                 <div style={{fontSize:12,color:'#888',marginTop:2,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.instName||'无'}</div>
-                <div style={{fontSize:12,color:'#aaa',marginTop:2}}>{r.reviewStatus==='待采集'?'待采集':'待分析'}</div>
               </div>;
             })}
           </div>
