@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>MSA系统待确认事项 - 致万工</title>
+<style>
+body{font-family:-apple-system,"Microsoft YaHei",sans-serif;max-width:780px;margin:0 auto;padding:40px 24px;color:#333;line-height:1.8;background:#f5f7fa}
+.card{background:#fff;border-radius:8px;padding:28px 32px;margin:16px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+h1{font-size:22px;color:#1677ff;margin:0 0 8px}
+.sub{color:#888;font-size:14px;margin-bottom:20px}
+h2{font-size:17px;color:#0f4c8a;border-left:4px solid #1677ff;padding-left:10px;margin-top:28px}
+p{margin:10px 0}
+.q{background:#e6f4ff;border-radius:6px;padding:12px 16px;margin:10px 0;color:#0958d9}
+ul{padding-left:22px}
+li{margin:6px 0}
+.end{margin-top:24px;color:#555}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>MSA系统待确认事项</h1>
+<div class="sub">致：万工 ｜ 整理：高国翔 ｜ 2026-09-22</div>
+
+<p>万工你好，上午张姐带我过了一遍MSA系统原型，主要看了五个录入数据页面（GRR/KAPPA/线性偏倚/稳定性/Cg/Cgk）和MSA计划创建弹窗。有几个关于数据提交后状态和权限的问题需要跟你对齐一下：</p>
+
+<h2>1. 数据提交后还能不能改？</h2>
+<div class="q">现在原型里"提交"按钮点完数据就整体进入待分析阶段了。</div>
+<p>想确认下：</p>
+<ul>
+<li>提交后、分析开始前，录入人能不能回来改数据？</li>
+<li>如果分析已经开始了，还能不能改？</li>
+<li>改完之后要不要重新触发分析？</li>
+</ul>
+
+<h2>2. 提交后谁还有修改权限？</h2>
+<div class="q">现在原型默认所有人都能编辑。张姐的意思是录入人提交完就应该只读了，不应该再改；如果确实要改，可能只有责任人能改。</div>
+<p>想确认下：</p>
+<ul>
+<li>录入人提交后是不是就只读了？</li>
+<li>责任人有没有修改权限？</li>
+<li>其他角色（比如质量主管）能不能改？</li>
+<li>改完要不要留痕？</li>
+</ul>
+
+<h2>3. 不同状态下各角色的编辑权限怎么定？</h2>
+<div class="q">台账有"待采集/采集进行中/待分析/分析中/已完成/已确认"这些状态，每个状态下各角色能做什么操作还没定义。</div>
+<p>想确认下：</p>
+<ul>
+<li>每个状态下，录入人、责任人、确认人分别能做什么操作？</li>
+<li>一进录入页面，是默认直接进编辑模式，还是要看状态判断？</li>
+<li>哪些字段在什么状态下变成只读？</li>
+</ul>
+<p>这个要写到开发说明里，开发才知道怎么判断。</p>
+
+<h2>4. 多人录入时怎么标记完成？</h2>
+<div class="q">GRR这种可能有多个录入人（比如3个操作员各录各的）。现在的"提交"是整体提交，但每个人录完自己那部分怎么标记还没定。</div>
+<p>想确认下：</p>
+<ul>
+<li>是否需要每个人录完点一下"完成"打个标记？</li>
+<li>等所有人都录完，系统自动算整体完成进入下一阶段？</li>
+<li>还是只要有一个人提交了，整个台账就进入下一阶段？</li>
+</ul>
+
+<p class="end">你看下这几个问题方便的时候跟我对一下，我把结论更新到原型的开发备注里。谢谢！</p>
+</div>
+</body>
+</html>
