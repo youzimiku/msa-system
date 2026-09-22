@@ -4703,10 +4703,10 @@ function EntryPage({kind}){
   const delRow=(r)=>{ Modal.confirm({ content:'是否确定删除'+r.id+' '+(r.object||'')+'？', okText:'删除', okType:'danger', cancelText:'取消', onOk:()=>{ mut(s=>{ const arr=kind==='grr'?s.grr:kind==='kappa'?s.kappa:s[ANA_CFG[kind].arr]; const i=arr.findIndex(x=>x.id===r.id); if(i>=0) arr.splice(i,1); logAction(s.me.name,'删除台账',r.id,'删除台账记录 '+r.id); }); toast.ok('已删除'); } }); };
   const cols=[
     {title:'操作', width:460, fixed:'left', render:(_,r)=><Space size={0} wrap>
-      <Button size="small" type="link" onClick={()=>setPickRec(r)}>{(kind==='grr'||kind==='kappa')?'人员选择':'样本/人员选择'}</Button>
-      <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>{ if(r.reviewStatus!=='待采集'&&r.reviewStatus!=='待分析'){ toast.warn('仅「待采集/待分析」状态可录入数据'); return; } DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind); }}>数据录入</Button>
+      <Button size="small" type="link" onClick={()=>setPickRec(r)}>{(kind==='grr'||kind==='kappa')?'人员选择':'样本/人员'}</Button>
+      <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>{ if(r.reviewStatus!=='待采集'&&r.reviewStatus!=='待分析'){ toast.warn('仅「待采集/待分析」状态可录入数据'); return; } DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind); }}>录入</Button>
       <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>{ if(r.reviewStatus!=='待分析'){ toast.warn('仅「待分析」状态可执行分析'); return; } setAnlRec(r); }}>分析</Button>
-      <Button size="small" type="link" onClick={()=>goResult(r)}>查看结果</Button>
+      <Button size="small" type="link" onClick={()=>goResult(r)}>结果</Button>
       <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
       <Button size="small" type="link" danger disabled={!canDo(d.me.role,'edit')||!canDel(r)} onClick={()=>delRow(r)}>删除</Button>
     </Space>},
@@ -4970,7 +4970,7 @@ function GrrPage(){
   const cols=[
     {title:'操作', width:250, fixed:'left', render:(_,r)=><OpBtns items={[
       {label:'详情',onClick:()=>setDetail(r)},
-      {label:'去录入',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待采集',onClick:()=>{ DataOpen={kind:'grr',id:r.id}; NavAPI.go('data_grr'); }},
+      {label:'录入',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待采集',onClick:()=>{ DataOpen={kind:'grr',id:r.id}; NavAPI.go('data_grr'); }},
       {label:'手动分析',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待分析',onClick:()=>setAnlRec(r)},
       {label:'修改数据',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待分析',onClick:()=>{ DataOpen={kind:'grr',id:r.id}; NavAPI.go('data_grr'); }},
       {label:'导入',onClick:()=>doImport(r,'grr')},
@@ -5136,7 +5136,7 @@ function KappaPage(){
   const cols=[
     {title:'操作', width:250, fixed:'left', render:(_,r)=><OpBtns items={[
       {label:'详情',onClick:()=>setDetail(r)},
-      {label:'去录入',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待采集',onClick:()=>{ DataOpen={kind:'kappa',id:r.id}; NavAPI.go('data_kappa'); }},
+      {label:'录入',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待采集',onClick:()=>{ DataOpen={kind:'kappa',id:r.id}; NavAPI.go('data_kappa'); }},
       {label:'手动分析',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待分析',onClick:()=>setAnlRec(r)},
       {label:'修改数据',disabled:!canDo(d.me.role,'edit')||r.reviewStatus!=='待分析',onClick:()=>{ DataOpen={kind:'kappa',id:r.id}; NavAPI.go('data_kappa'); }},
       {label:'导入',onClick:()=>doImport(r,'kappa')},
