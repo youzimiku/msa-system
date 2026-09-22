@@ -3725,7 +3725,20 @@ function SamplingPage(){
     {title:'是否需要取样', dataIndex:'needSample', width:104, render:(_,r)=><Select size="small" value={r.needSample||'是'} style={{width:92}} options={[{value:'是',label:'是'},{value:'否',label:'否'}]} onChange={x=>setMF(r,'needSample',x)}/>},
     {title:'方法组', dataIndex:'mergeWith', width:130, render:(_,r)=><Input size="small" value={r.mergeWith||''} onChange={e=>setMF(r,'mergeWith',e.target.value)}/>},
     {title:'默认GRR结构', width:180, render:(_,r)=><Select size="small" disabled={!(r.name&&r.name.toUpperCase().includes('GRR'))} value={(r.name&&r.name.toUpperCase().includes('GRR'))?(r.grrStruct||'CROSSED'):undefined} style={{width:160}} options={[{value:'CROSSED',label:'交叉CROSSED(默认)'},{value:'NESTED',label:'嵌套NESTED'},{value:'EXPANDED',label:'扩展EXPANDED'}]} onChange={x=>setMF(r,'grrStruct',x)}/>},
-    {title:'计算方法', width:180, render:(_,r)=><Select size="small" value={r.calcMethod||'XBAR_R'} style={{width:160}} options={[{value:'ANOVA',label:'ANOVA'},{value:'XBAR_R',label:'均值极差法XBAR_R'}]} onChange={x=>setMF(r,'calcMethod',x)}/>},
+    {title:'计算方法', width:200, render:(_,r)=>{
+      const CM={
+        GRR:[{value:'XBAR_R',label:'均值-极差法(Xbar-R)'},{value:'ANOVA',label:'方差分析法(ANOVA)'}],
+        KAPPA:[{value:'KAPPA2',label:'Cohen\'s Kappa（2人）'},{value:'KAPPA_FLEISS',label:'Fleiss Kappa（多人）'},{value:'CROSS_TAB',label:'交叉表分析（有效性/漏发率/误发率）'}],
+        LINEAR:[{value:'LIN_REG',label:'线性回归分析'},{value:'BIAS_T',label:'偏倚 t 检验'},{value:'FIT_LINE',label:'拟合线图'}],
+        BIAS:[{value:'ONE_SAMPLE_T',label:'单样本 t 检验'},{value:'BIAS_CI',label:'偏倚置信区间法'}],
+        STABILITY:[{value:'XBAR_R',label:'Xbar-R 控制图'},{value:'XBAR_S',label:'Xbar-S 控制图'},{value:'I_MR',label:'I-MR 控制图'}],
+        CGCGK:[{value:'VDA_TYPE1',label:'VDA Type1（Cg/Cgk）'},{value:'BIAS_T',label:'偏差 t 检验'}],
+        RES:[]
+      };
+      const opts=CM[r.code]||[];
+      const cur=opts.some(o=>o.value===r.calcMethod)?r.calcMethod:undefined;
+      return <Select size="small" value={cur} disabled={!opts.length} allowClear style={{width:180}} options={opts} onChange={x=>setMF(r,'calcMethod',x||'')} placeholder={opts.length?'请选择':'不适用'}/>;
+    }},
     {title:'数据类型', dataIndex:'defaultType', width:108, render:(_,r)=><Select size="small" value={r.defaultType||'计量型'} style={{width:98}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} onChange={x=>setMF(r,'defaultType',x)}/>},
     {title:'默认样品数', width:96, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.sampleDefault:undefined} style={{width:86}} onChange={x=>setRF(r,'sampleDefault',x)}/>},
     {title:'默认人数', width:88, render:(_,r)=><InputNumber size="small" min={0} value={r.rule?r.rule.opsDefault:undefined} style={{width:78}} onChange={x=>setRF(r,'opsDefault',x)}/>},
