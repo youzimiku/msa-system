@@ -4311,9 +4311,9 @@ function GrrEntry({rec, onClose, curEditor}){
   const submitRaw=()=>{ doSave(); };
   const submitChecked=()=>{ if(!complete){ toast.err('数据不完整：请填满所有操作员×样本×试验的测量值'); return; } doSave(); };
   useEffect(()=>{ if(window.__entrySave) window.__entrySave(submitRaw); if(window.__entryDone) window.__entryDone(submitChecked); return ()=>{ if(window.__entrySave) window.__entrySave(null); if(window.__entryDone) window.__entryDone(null); } },[submitRaw,submitChecked]);
-  return <Panel bodyStyle={{padding:0}}>
+  return <div style={{margin:0,padding:0}}>
     <Table bordered size="small" rowKey="key" dataSource={ds} columns={refCols} pagination={false} scroll={{x:trialsN*110+500}} className="grr-entry-table" headerCellStyle={{background:"#ACCDEC"}}/>
-  </Panel>;
+  </div>;
 }
 
 function KappaEntry({rec, onClose, curEditor}){
