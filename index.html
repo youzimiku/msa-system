@@ -4292,7 +4292,7 @@ function GrrEntry({rec, onClose, curEditor}){
   const submitChecked=()=>{ if(!complete){ toast.err('数据不完整：请填满所有操作员×样本×试验的测量值'); return; } doSave(); };
   useEffect(()=>{ if(window.__entrySave) window.__entrySave(submitRaw); if(window.__entryDone) window.__entryDone(submitChecked); return ()=>{ if(window.__entrySave) window.__entrySave(null); if(window.__entryDone) window.__entryDone(null); } },[submitRaw,submitChecked]);
   return <Panel>
-    <Table size="small" rowKey="key" dataSource={ds} columns={refCols} pagination={false} scroll={{x:trialsN*110+500}}/>
+    <Table bordered size="small" rowKey="key" dataSource={ds} columns={refCols} pagination={false} scroll={{x:trialsN*110+500}}/>
   </Panel>;
 }
 
@@ -4350,7 +4350,7 @@ function KappaEntry({rec, onClose, curEditor}){
   const submitChecked=()=>{ if(!complete){ toast.err('请为每个检验员对每个样本完成 合格/不合格 判定'); return; } doSave(); };
   useEffect(()=>{ if(window.__entrySave) window.__entrySave(submitRaw); if(window.__entryDone) window.__entryDone(submitChecked); return ()=>{ if(window.__entrySave) window.__entrySave(null); if(window.__entryDone) window.__entryDone(null); } },[submitRaw,submitChecked]);
   return <Panel>
-    <Table size="small" rowKey="key" dataSource={ds} columns={cols} pagination={false} scroll={{x:trialsN*110+500}}/>
+    <Table bordered size="small" rowKey="key" dataSource={ds} columns={cols} pagination={false} scroll={{x:trialsN*110+500}}/>
   </Panel>;
 }
 /* ================= GRR 台账 ================= */
@@ -4527,11 +4527,11 @@ function AnlEntry({rec, kind, onClose, curEditor}){
   useEffect(()=>{ if(window.__entrySave) window.__entrySave(submitRaw); if(window.__entryDone) window.__entryDone(submitChecked); return ()=>{ if(window.__entrySave) window.__entrySave(null); if(window.__entryDone) window.__entryDone(null); } },[submitRaw,submitChecked]);
   return <div>
     {kind==='linear' && <div>
-      <Table size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{x:1200}} size="small"/></div>}
+      <Table bordered size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{x:1200}} size="small"/></div>}
     {kind==='stability' && <div>
-      <Table size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{x:1200}}/></div>}
+      <Table bordered size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{x:1200}}/></div>}
     {kind==='cgcgk' && <div>
-      <Table size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false}/></div>}
+      <Table bordered size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false}/></div>}
   </div>;
 }
 
