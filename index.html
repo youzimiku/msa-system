@@ -4338,7 +4338,7 @@ function KappaEntry({rec, onClose, curEditor}){
   
   const ds=[];
   for(let i=0;i<samplesN;i++){
-    const sid='';
+    const sid=items[i]?items[i].id:('样本'+String(i+1));
     for(let app=0;app<2;app++){
       ds.push({key:i+'-'+app, sid:sid, j:(judg[app]||[])[i]||[], app:app, i:i});
     }
