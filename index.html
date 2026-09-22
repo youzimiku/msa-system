@@ -1614,7 +1614,7 @@ function PageGuide({page}){
   else g=PAGE_GUIDE[page];
   if(!g) return null;
   const body=[];
-  if(kind==='data'){ if(g.logic) body.push(<div key="l" style={{marginBottom:6}}><b>关键逻辑：</b>{g.logic}</div>); if(g.ops) body.push(<div key="o"><b>关键操作：</b>{g.ops}</div>); }
+  if(kind==='data'){ if(g.logic) body.push(<div key="l" style={{marginBottom:6}}><b>关键逻辑：</b>{g.logic}</div>); if(g.ops) body.push(<div key="o"><b>关键操作：</b>{g.ops}</div>); if(g.recent) body.push(<div key="r" style={{marginTop:6,paddingTop:6,borderTop:'1px dashed #e8e8e8'}}><b>改动内容：</b>{g.recent}</div>); }
   else {
   if(g.text) body.push(<div key="t" style={{marginBottom:6}}><b>页面说明：</b>{g.text}</div>);
   if(g.logic) body.push(<div key="l" style={{marginBottom:6}}><b>关键逻辑：</b>{g.logic}</div>);
