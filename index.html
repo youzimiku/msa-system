@@ -3437,8 +3437,8 @@ function CharPage(){
     </Space>},
     {title:'被测参数编号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
     {title:'被测参数名称', dataIndex:'name', width:170, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
-    {title:'特性等级', dataIndex:'type', width:110, render:(_,r)=><Select size="small" value={r.type||'普通'} style={{width:100}} options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]} onChange={x=>setF(r,'type',x)}/>},
     {title:'特殊特性', width:176, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" placeholder="选择特殊特性" value={r.specialCharId||undefined} style={{width:166}} options={(d.specialChars||[]).map(s=>({value:s.id,label:s.name}))} onChange={x=>setF(r,'specialCharId',x)}/>},
+    {title:'特性等级', dataIndex:'type', width:110, render:v=><Tag color={v==='SC'?'red':v==='CC'?'orange':'default'}>{v||'普通'}</Tag>},
     {title:'零件号', dataIndex:'partNo', width:110, render:(_,r)=><PartSelect value={r.partNo} width={100} onChange={(no,name)=>{setF(r,'partNo',no); setF(r,'partName',name);}}/>},
     {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><span>{r.partName||'—'}</span>},
     {title:'工序', dataIndex:'processName', width:100, render:(_,r)=><Select size="small" value={r.processName||undefined} style={{width:90}} options={PROCESS_OPT} onChange={x=>setF(r,'processName',x)}/>},
@@ -3500,6 +3500,7 @@ function CharPage(){
         <Button type="primary" onClick={addCharRow}>新增特性</Button>
         <ImportBtn title="被测参数维护"/>
         <Button>导出</Button>
+        <Button>绑定文件</Button>
       </Space>
     </Panel>
     <Panel>
