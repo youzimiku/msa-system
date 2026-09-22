@@ -4372,9 +4372,7 @@ function KappaEntry({rec, onClose, curEditor}){
   const submitRaw=()=>{ doSave(); };
   const submitChecked=()=>{ if(!complete){ toast.err('请为每个检验员对每个样本完成 合格/不合格 判定'); return; } doSave(); };
   useEffect(()=>{ if(window.__entrySave) window.__entrySave(submitRaw); if(window.__entryDone) window.__entryDone(submitChecked); return ()=>{ if(window.__entrySave) window.__entrySave(null); if(window.__entryDone) window.__entryDone(null); } },[submitRaw,submitChecked]);
-  return <Panel>
-    <Table bordered size="small" rowKey="key" dataSource={ds} columns={cols} pagination={false} scroll={{x:trialsN*110+500}}/>
-  </Panel>;
+  return <Table bordered size="small" rowKey="key" dataSource={ds} columns={cols} pagination={false} scroll={{x:trialsN*110+500, y:"calc(100vh - 300px)"}} className="grr-entry-table" headerCellStyle={{background:"#ACCDEC"}}/>;
 }
 /* ================= GRR 台账 ================= */
 let GrrOpenId=null;
@@ -4550,11 +4548,11 @@ function AnlEntry({rec, kind, onClose, curEditor}){
   useEffect(()=>{ if(window.__entrySave) window.__entrySave(submitRaw); if(window.__entryDone) window.__entryDone(submitChecked); return ()=>{ if(window.__entrySave) window.__entrySave(null); if(window.__entryDone) window.__entryDone(null); } },[submitRaw,submitChecked]);
   return <div>
     {kind==='linear' && <div>
-      <Table bordered size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{x:1200}} size="small"/></div>}
+      <Table bordered size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{x:1200, y:"calc(100vh - 300px)"}} className="grr-entry-table" headerCellStyle={{background:"#ACCDEC"}}/></div>}
     {kind==='stability' && <div>
-      <Table bordered size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{x:1200}}/></div>}
+      <Table bordered size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{x:1200, y:"calc(100vh - 300px)"}} className="grr-entry-table" headerCellStyle={{background:"#ACCDEC"}}/></div>}
     {kind==='cgcgk' && <div>
-      <Table bordered size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false}/></div>}
+      <Table bordered size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{y:"calc(100vh - 300px)"}} className="grr-entry-table" headerCellStyle={{background:"#ACCDEC"}}/></div>}
   </div>;
 }
 
@@ -4933,7 +4931,7 @@ function DataEntryPage({kind}){
           </div>
         </div>
         <div style={{flex:1,minWidth:0,display:'flex',flexDirection:'column'}}>
-          {cur ? <Panel className={"entry-panel"+(kindNow==="grr"?" grr-entry-panel":"")} style={{flex:1}}>
+          {cur ? <Panel className="entry-panel grr-entry-panel" style={{flex:1}}>
             {CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); }, curEditor)}
           </Panel> : <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',color:'#999',fontSize:14}}>请从左侧选择要录入的台账记录</div>}
         </div>
