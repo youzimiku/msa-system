@@ -1062,7 +1062,7 @@ const ENUM = {
   taskMethod: { 'GRR':['均值-极差法(Xbar-R)','方差分析法(ANOVA)'], 'KAPPA':['计数型一致性(KAPPA)'],
     'linear':['线性回归+偏移t检验（5标准件覆盖量程）'], 'stability':['均值-极差控制图（SPC判异模型）'], 'cgcgk':['Type1 能力指数（VDA 参考值±10%标准误）'] },
   /* 1:1 模型：计划即分析任务，状态与 GRR/KAPPA 台账记录联动 */
-  planStatus: ['未定型','待采集','待分析','待审核','已批准','需整改','已闭环','已关闭'],
+  planStatus: ['未定型','待采集','采集中','待分析','分析完成','待确认','完成','驳回'],
   planType: ['年度计划','临时计划','项目计划'],
   reviewStatus: ['待采集','采集中','待分析','分析完成','待确认','完成','驳回'],
   conclusion: ['可接受','有条件接受','不可接受'],
@@ -1191,7 +1191,7 @@ function selectableStds(inst){
 function planRecords(s, planId){
   return (s.grr||[]).concat(s.kappa||[],s.linear||[],s.stability||[],s.cgcgk||[],s.resolution||[]).filter(r=>r.planId===planId);
 }
-/* 计划状态与台账记录状态同步（台账记录为权威来源；多记录按聚合规则推导：需整改/待审核/待采集优先于已批准/已闭环） */
+/* 计划状态与台账记录状态同步（台账记录为权威来源；多记录按聚合规则推导：驳回/待确认/待采集优先于完成） */
 function syncPlanFromRecord(s, planId){
   const p = s.plans.find(x=>x.id===planId); if(!p) return;
   const recs = planRecords(s, planId);
@@ -1203,21 +1203,21 @@ function syncPlanFromRecord(s, planId){
   else if(sts.includes('待分析')) agg='待分析';
   else if(sts.includes('待采集')) agg='待采集';
   else if(sts.includes('完成')) agg='完成';
-  else if(sts.includes('已闭环')) agg='已闭环';
-  else if(sts.includes('已关闭')) agg='已关闭';
+
+
   else agg = recs[0].reviewStatus;
   p.status = agg;
   const cons = recs.map(r=>r.conclusion).filter(c=>c&&c!=='-'&&c!=='待采集');
   p.result = recs.length>1 ? (cons.length? cons.join('；') : '待采集') : (recs[0].conclusion&&recs[0].conclusion!=='-'?recs[0].conclusion:'待采集');
 }
-/* 分析闭环终态（已批准/已闭环）回写器具「上次MSA」，复评周期随之滚动（会议口径：汇总到器具并更新周期） */
+/* 分析闭环终态（完成/驳回）回写器具「上次MSA」，复评周期随之滚动（会议口径：汇总到器具并更新周期） */
 function backfillMsa(s, planId){
   const p = s.plans.find(x=>x.id===planId); if(!p) return;
   (p.instIds||[p.instId]).forEach(iid=>{ const it=s.instruments.find(i=>i.id===iid); if(it) it.lastMsa=TODAY; });
 }
 /* 器具是否允许再次创建计划（同一器具存在未闭环/未归档计划时禁止重复生成；合并计划按 instIds 全覆盖检查） */
 function instHasActivePlan(s, instId){
-  return s.plans.some(p=>(p.instIds||[p.instId]).indexOf(instId)>=0 && ['未定型','待采集','待分析','待审核','需整改'].indexOf(p.status)>=0);
+  return s.plans.some(p=>(p.instIds||[p.instId]).indexOf(instId)>=0 && ['未定型','待采集','采集中','待分析','分析完成','待确认','驳回'].indexOf(p.status)>=0);
 }
 /* 分析类型显示名与配色（会议口径：特性-量具-方法） */
 const ANAL_SHORT = { 'GRR':'GRR','KAPPA':'KAPPA','linear':'线性/偏移','stability':'稳定性','cgcgk':'Cg/Cgk','resolution':'分辨力' };
@@ -2411,7 +2411,7 @@ function CalibPage(){
 
 /* ================= MSA 计划（1:1 模型：1 个计划 = 1 个分析任务） ================= */
 function planStatusView(st){
-  if(st==='已闭环'||st==='已关闭') return {text:'已完成', color:'green'};
+  if(st==='完成'||st==='驳回') return {text:'已完成', color: st==='完成'?'green':'red'};
   if(st==='未定型'||st==='待采集') return {text:'待开始', color:'default'};
   return {text:'进行中', color:'blue'};
 }
@@ -2477,7 +2477,7 @@ function PlanPage(){
   /* 行内字段即时写 store；只读字段渲染为禁用控件；保存常驻操作列 */
   const setF=(r,k,v)=>{ mut(s=>{ const p=s.plans.find(x=>x.id===r.id); if(p) p[k]=v; }); };
   const saveRow=(r)=>{ mut(s=>{ const p=s.plans.find(x=>x.id===r.id); if(p){ p.editor=s.me.name; p.editorDate=NOW; } logAction(s.me.name,'编辑MSA计划',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
-  const STATUS_BACK={'待开始':['未定型','待采集'],'进行中':['待分析','已批准','需整改'],'已完成':['已闭环','已关闭']};
+  const STATUS_BACK={'待开始':['未定型','待采集'],'进行中':['采集中','待分析','分析完成','待确认'],'已完成':['完成','驳回']};
   const cols=[
     {title:'操作', width:176, fixed:'left', render:(_,r)=><PlanActions r={r} onDetail={()=>setDetail(r)} onSave={()=>saveRow(r)} onAppend={setAppendPlan}/>},
     {title:'MSA计划号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
@@ -5349,7 +5349,7 @@ function KappaDetail({rec,onBack}){
       <div className="panel-title"><span className="t"><span className="bar"/>审批栏</span></div>
       <Table size="small" rowKey="r" pagination={false} dataSource={[
         {r:'拟制', name:rec.analyst||'—', date:rec.analysisDate||'—'},
-        {r:'审核', name:rec.reviewer||'待审核', date:rec.reviewDate||'—'},
+        {r:'确认', name:rec.reviewer||'待确认', date:rec.reviewDate||'—'},
         {r:'批准', name:rec.approver||'待批准', date:rec.approveDate||'—'}
       ]} columns={[
         {title:'签署', dataIndex:'r', width:120, render:v=><b>{v}</b>},
