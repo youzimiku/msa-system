@@ -4256,8 +4256,7 @@ function GrrEntry({rec, onClose, curEditor}){
     setRaw(g.map(op=>{ const a=op.slice(0,partsN); while(a.length<partsN) a.push(Array.from({length:trialsN},()=>'')); return a; }));
   };
   const clearAll=()=>{ setRaw(raw.map(op=>op.map(part=>part.map(()=>'')))); };
-  const submit=()=>{
-    if(!complete){ toast.err('数据不完整：请填满所有操作员×样本×试验的测量值'); return; }
+  const doSave=()=>{
     const numeric = raw.map(op=>op.map(part=>part.map(v=>Number(v))));
     mut(s=>{
       const g=s.grr.find(x=>x.id===rec.id); if(!g) return;
@@ -4286,7 +4285,9 @@ function GrrEntry({rec, onClose, curEditor}){
       ds.push({key:i+'-'+op, sid:sid, c:(raw[op]||[])[i]||[]});
     }
   }
-  useEffect(()=>{ if(window.__entrySave) window.__entrySave(submit); return ()=>{ if(window.__entrySave) window.__entrySave(null); } },[submit,complete]);
+  const submitRaw=()=>{ doSave(); };
+  const submitChecked=()=>{ if(!complete){ toast.err('数据不完整：请填满所有操作员×样本×试验的测量值'); return; } doSave(); };
+  useEffect(()=>{ if(window.__entrySave) window.__entrySave(submitRaw); if(window.__entryDone) window.__entryDone(submitChecked); return ()=>{ if(window.__entrySave) window.__entrySave(null); if(window.__entryDone) window.__entryDone(null); } },[submitRaw,submitChecked]);
   return <Panel>
     <Table size="small" rowKey="key" dataSource={ds} columns={refCols} pagination={false} scroll={{x:trialsN*110+500}}/>
   </Panel>;
@@ -4315,8 +4316,7 @@ function KappaEntry({rec, onClose, curEditor}){
     const ref = Array.from({length:samplesN},(_,i)=> i<Math.round(samplesN*0.6)?1:0);
     setJudg(appNames.map((_,ia)=> ref.map((v,i)=>Array.from({length:trialsN},(_,t)=>(i%(7+ia*3+t)===0&&i>0)?(v===1?0:1):v))));
   };
-  const submit=()=>{
-    if(!complete){ toast.err('请为每个检验员对每个样本完成 合格/不合格 判定'); return; }
+  const doSave=()=>{
     mut(s=>{
       const k=s.kappa.find(x=>x.id===rec.id); if(!k) return;
       k.rawData=judg; k.appNames=appNames; k.numApp=appNames.length; k.numSamples=samplesN; k.numTrials=trialsN;
@@ -4343,7 +4343,9 @@ function KappaEntry({rec, onClose, curEditor}){
       ds.push({key:i+'-'+app, sid:sid, j:(judg[app]||[])[i]||[], app:app, i:i});
     }
   }
-  useEffect(()=>{ if(window.__entrySave) window.__entrySave(submit); return ()=>{ if(window.__entrySave) window.__entrySave(null); } },[submit,complete]);
+  const submitRaw=()=>{ doSave(); };
+  const submitChecked=()=>{ if(!complete){ toast.err('请为每个检验员对每个样本完成 合格/不合格 判定'); return; } doSave(); };
+  useEffect(()=>{ if(window.__entrySave) window.__entrySave(submitRaw); if(window.__entryDone) window.__entryDone(submitChecked); return ()=>{ if(window.__entrySave) window.__entrySave(null); if(window.__entryDone) window.__entryDone(null); } },[submitRaw,submitChecked]);
   return <Panel>
     <Table size="small" rowKey="key" dataSource={ds} columns={cols} pagination={false} scroll={{x:trialsN*110+500}}/>
   </Panel>;
@@ -4483,16 +4485,22 @@ function AnlEntry({rec, kind, onClose}){
   const [perN,setPerN]=useState(kind==='linear'?(rec.per||12):kind==='stability'?(rec.per||5):0);
   const setCell=(a,i,j,v)=>{ setSt(s=>{ const n={...s}; n[a]=s[a].map((r,ri)=>ri===i? (Array.isArray(r)? r.map((c,ci)=>ci===j?v:c): v):r); return n; }); };
   const regen=()=>{ if(kind==='linear'){ setSt(s=>({...s, raw:Array.from({length:cnt||5},()=>Array.from({length:perN||12},()=>'')), refs:Array.from({length:cnt||5},(_,i)=>s.refs&&s.refs[i]!==undefined?s.refs[i]:'')})); } if(kind==='stability'){ setSt(s=>({...s, raw:Array.from({length:cnt||25},()=>Array.from({length:perN||5},()=>''))})); } if(kind==='cgcgk'){ setSt(s=>({...s, raw:Array.from({length:cnt||50},()=>'')})); } };
-  const submit=()=>{
-    const check=(a)=>{ for(const r of st[a]){ for(const c of r){ if(c===''||c==null){ toast.warn('请完整录入数据'); return false; } } } return true; };
-    const libRefs=()=> (d.sampleLib||[]).filter(x=>x.type==='标准件'&&x.refValue!=null&&!isNaN(Number(x.refValue))).map(x=>String(x.refValue));
-    let refsOut=st.refs, refValOut=st.refValue;
-    if(kind==='linear'){ if(!check('raw')) return; if(st.refs.some(x=>!x)){ const lr=libRefs(); refsOut=st.refs.map((x,i)=>x||(lr[i]!==undefined?lr[i]:'')); if(refsOut.some(x=>!x)){ toast.warn('标准件参考值缺失，已从样本库带出 '+lr.length+' 个，仍缺 '+(refsOut.filter(x=>!x).length)+' 个，请先在样本库管理维护标准件真值'); return; } setSt(s=>({...s,refs:refsOut})); } }
-    if(kind==='stability'){ if(!check('raw')) return; }
-    if(kind==='cgcgk'){ if(st.raw.some(x=>x===''||x==null)){ toast.warn('请完整录入 '+st.raw.length+' 次测量'); return; } if(!st.refValue){ const lr=libRefs(); refValOut=lr[0]||''; if(!refValOut){ toast.warn('未获取到标准件真值，请先在样本库管理维护标准件真值'); return; } setSt(s=>({...s,refValue:refValOut})); } }
-    mut(s=>{ const g=s[CFG.arr].find(x=>x.id===rec.id); Object.assign(g,{ raw:st.raw, refs:kind==='linear'?refsOut:g.refs, refValue:kind==='cgcgk'?refValOut:g.refValue,
-      reviewStatus:'待分析', conclusion:'', analyst:'', analysisDate:'' }); syncPlanFromRecord(s,g.planId); logAction(s.me.name,'样本录入保存',g.id,CFG.name+'测量数据已保存（待分析）'); });
-    toast.ok('数据已保存（待分析），请到台账页「手动分析」计算并提交审核'); onClose();
+  const doSave=(skipCheck)=>{
+    if(!skipCheck){
+      const check=(a)=>{ for(const r of st[a]){ for(const c of r){ if(c===''||c==null){ toast.warn('请完整录入数据'); return false; } } } return true; };
+      const libRefs=()=> (d.sampleLib||[]).filter(x=>x.type==='标准件'&&x.refValue!=null&&!isNaN(Number(x.refValue))).map(x=>String(x.refValue));
+      let refsOut=st.refs, refValOut=st.refValue;
+      if(kind==='linear'){ if(!check('raw')) return; if(st.refs.some(x=>!x)){ const lr=libRefs(); refsOut=st.refs.map((x,i)=>x||(lr[i]!==undefined?lr[i]:'')); if(refsOut.some(x=>!x)){ toast.warn('标准件参考值缺失，已从样本库带出 '+lr.length+' 个，仍缺 '+(refsOut.filter(x=>!x).length)+' 个，请先在样本库管理维护标准件真值'); return; } setSt(s=>({...s,refs:refsOut})); } }
+      if(kind==='stability'){ if(!check('raw')) return; }
+      if(kind==='cgcgk'){ if(st.raw.some(x=>x===''||x==null)){ toast.warn('请完整录入 '+st.raw.length+' 次测量'); return; } if(!st.refValue){ const lr=libRefs(); refValOut=lr[0]||''; if(!refValOut){ toast.warn('未获取到标准件真值，请先在样本库管理维护标准件真值'); return; } setSt(s=>({...s,refValue:refValOut})); } }
+      mut(s=>{ const g=s[CFG.arr].find(x=>x.id===rec.id); Object.assign(g,{ raw:st.raw, refs:kind==='linear'?refsOut:g.refs, refValue:kind==='cgcgk'?refValOut:g.refValue,
+        reviewStatus:'待分析', conclusion:'', analyst:'', analysisDate:'' }); syncPlanFromRecord(s,g.planId); logAction(s.me.name,'样本录入保存',g.id,CFG.name+'测量数据已保存（待分析）'); });
+      toast.ok('数据已保存（待分析），请到台账页「手动分析」计算并提交审核'); onClose();
+    } else {
+      mut(s=>{ const g=s[CFG.arr].find(x=>x.id===rec.id); Object.assign(g,{ raw:st.raw, refs:kind==='linear'?st.refs:g.refs, refValue:kind==='cgcgk'?st.refValue:g.refValue,
+        reviewStatus:'待分析', conclusion:'', analyst:'', analysisDate:'' }); syncPlanFromRecord(s,g.planId); logAction(s.me.name,'样本录入保存',g.id,CFG.name+'测量数据已保存'); });
+      toast.ok('数据已保存');
+    }
   };
   const label=(txt,desc)=> <div style={{marginBottom:6}}><span className="flt-label">{txt}</span>{desc?<span className="tiny" style={{marginLeft:8}}>{desc}</span>:null}</div>;
   const inputW=78;
@@ -4510,7 +4518,9 @@ function AnlEntry({rec, kind, onClose}){
     cols=[{title:'测量序号',width:100,render:(_,r)=><span className="mono">{r._i+1}</span>},{title:'测量值',width:140,render:(_,r)=>inp(st.raw[r._i]||'',v=>setCell('raw',r._i,0,v))}];
     data=st.raw.map((v,i)=>({_i:i}));
   }
-  useEffect(()=>{ if(window.__entrySave) window.__entrySave(submit); return ()=>{ if(window.__entrySave) window.__entrySave(null); } },[submit]);
+  const submitRaw=()=>{ doSave(true); };
+  const submitChecked=()=>{ doSave(false); };
+  useEffect(()=>{ if(window.__entrySave) window.__entrySave(submitRaw); if(window.__entryDone) window.__entryDone(submitChecked); return ()=>{ if(window.__entrySave) window.__entrySave(null); if(window.__entryDone) window.__entryDone(null); } },[submitRaw,submitChecked]);
   return <div>
     {kind==='linear' && <div>
       <Table size="small" rowKey="_i" dataSource={data} columns={cols} pagination={false} scroll={{x:1200}} size="small"/></div>}
@@ -4871,11 +4881,12 @@ function DataEntryPage({kind}){
   const cur=rec || (d[CFG.arr]||[]).find(g=>g.id===selId) || null;
   const gotoList=()=>NavAPI.go('entry_'+kindNow);
   window.__entrySave=(fn)=>{ window.__entrySaveFn=fn; };
+    window.__entryDone=(fn)=>{ window.__entryDoneFn=fn; };
   const onPicked=(id)=>{ const r=(d[CFG.arr]||[]).find(g=>g.id===id); if(r){ setRec(r); setSelId(id); } };
   const onKindChange=(k)=>{ DataOpen=null; setCurKind(k); setRec(null); setSelId(null); };
   return <div style={{display:'flex',flexDirection:'column',minHeight:'calc(100vh - 120px)'}}>
     <PageHead title="数据录入"/>
-    <Panel title="选择录入类型" extra={<Button type="primary" size="middle" onClick={()=>{ if(window.__entrySaveFn) window.__entrySaveFn(); else toast.warn('请先选择记录'); }}>录入完成</Button>}>
+    <Panel title="选择录入类型" extra={<Button type="primary" size="middle" onClick={()=>{ if(window.__entryDoneFn) window.__entryDoneFn(); else toast.warn('请先选择记录'); }}>录入完成</Button>}>
       <Space wrap>
         <Select style={{width:300}} value={kindNow} placeholder="选择台账类型" options={['grr','kappa','linear','stability','cgcgk'].map(k=>({value:k,label:ENTRY_CFG[k].name+'（'+ENTRY_CFG[k].title+'）'}))} onChange={onKindChange}/>
         <Select style={{width:360}} value={cur?cur.id:undefined} placeholder={'选择要录入 / 修改的'+CFG.name+'记录'} options={pending.map(r=>({value:r.id,label:r.id+' · '+r.instName}))} onChange={onPicked}/>
