@@ -4891,9 +4891,7 @@ function DataEntryPage({kind}){
   return <div style={{display:'flex',flexDirection:'column',minHeight:'calc(100vh - 120px)'}}>
     <PageHead title="数据录入"/>
     <Panel extra={<Space>
-        <span style={{marginRight:8}}>台账类型</span><Select style={{width:260}} value={kindNow} options={['grr','kappa','linear','stability','cgcgk'].map(k=>({value:k,label:ENTRY_CFG[k].name+'（'+ENTRY_CFG[k].title+'）'}))} onChange={onKindChange}/>
         {(kindNow==='grr'||kindNow==='kappa') && <><span style={{marginRight:8}}>当前录入人</span><Select style={{width:140}} value={curEditor} options={(cur && (cur.owner===d.me.name||cur.assignee===d.me.name) ? [{value:'all',label:'全部'}] : []).concat(PEOPLE_LIST)} onChange={setCurEditor}/></>}
-        <Button type="primary" size="middle" onClick={()=>{ if(window.__entryDoneFn) window.__entryDoneFn(); else toast.warn('请先选择记录'); }}>提交</Button>
       </Space>}>
       <div style={{display:'flex',gap:12,alignItems:'stretch',minHeight:480}}>
         <div style={{width:260,flexShrink:0,display:'flex',flexDirection:'column',border:'1px solid #e3eaf3',borderRadius:6,padding:'8px',background:'#fafcff'}}>
