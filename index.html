@@ -4513,7 +4513,7 @@ function AnlEntry({rec, kind, onClose}){
     for(let i=0;i<(cnt||5);i++){ const _code='STD-'+String(i+1).padStart(2,'0'); for(let j=0;j<(perN||12);j++){ data.push({_i:i,_j:j,_code:_code}); } }
   } else if(kind==='stability'){
     const sampleNo=(rec.sampleNames&&rec.sampleNames[0])||'—';
-    cols=[{title:'子组',width:100,render:(_,r)=><span className="mono">{r._code}</span>},{title:'样本号',width:140,render:()=><span className="mono">{sampleNo}</span>},{title:'样本值',width:120,render:(_,r)=>inp(st.raw[r._i]?st.raw[r._i][0]:'',v=>setCell('raw',r._i,0,v))}];
+    cols=[{title:'子组',width:100,render:(_,r)=><span className="mono">{r._code}</span>},{title:'样本号',width:140,render:()=><span className="mono">{sampleNo}</span>},{title:'实测值',width:120,render:(_,r)=>inp(st.raw[r._i]?st.raw[r._i][0]:'',v=>setCell('raw',r._i,0,v))}];
     data=st.raw.map((row,i)=>({_i:i,_code:'G'+String(i+1).padStart(2,'0')}));
   } else if(kind==='cgcgk'){
     cols=[{title:'测量序号',width:100,render:(_,r)=><span className="mono">{r._i+1}</span>},{title:'测量值',width:140,render:(_,r)=>inp(st.raw[r._i]||'',v=>setCell('raw',r._i,0,v))}];
