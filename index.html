@@ -4271,7 +4271,7 @@ function GrrEntry({rec, onClose, curEditor}){
   const curOpSafe=Math.min(curOp, Math.max(0, opsNames.length-1));
   const d0=Store.get();
   const refCols=[
-    {title:'样本编号', width:130, render:(_,row)=><span>{row.sid||'无'}</span>},
+    {title:'样本编号', width:130, render:(_,row)=><Input size="small" value={row.sid} className="data-cell"/>},
     {title:'录入人', width:110, render:()=><span>{curEditor||'无'}</span>}
   ];
   for(let t=0;t<trialsN;t++){
@@ -4331,7 +4331,7 @@ function KappaEntry({rec, onClose, curEditor}){
   const d0=Store.get();
 
   const cols=[
-    {title:'样本编号', width:130, render:(_,row)=><Input size="small" value={row.sid} className="data-cell"/>},
+    {title:'样本编号', width:130, render:(_,row)=><span>{row.sid||'无'}</span>},
     {title:'录入人', width:110, render:()=><span>{curEditor||'无'}</span>}
   ];
   for(let tt=0;tt<trialsN;tt++) cols.push({title:'实测值'+(tt+1), dataIndex:'t'+tt, width:110,
