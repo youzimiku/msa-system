@@ -517,7 +517,7 @@ function buildSeed(){
     {id:'GRR-2026-004', planId:'MSAP-2026-009', instId:'JJQ-2024-004', instName:'数显千分表 0~12.7mm', object:'轴径 Φ12.5±0.05', unit:'mm',
      method:'均值-极差法(Xbar-R)', standard:'STD-MSA-001', numOps:3, numTrials:3, numParts:10, sampleGroup:'',
      tolerance:{has:true, usl:12.55, lsl:12.45},
-     operators:['操作员A','操作员B','操作员C'], raw:null, analysisDate:'', analyst:'', reviewStatus:'待采集', conclusion:'', reviewer:'', reviewDate:'', approver:'', approveDate:'', actions:[], note:'一计划多方法：GRR 任务（待采集）'},
+     operators:['操作员A','操作员B','操作员C'], raw:genGRR(20260915, [12.48,12.49,12.50,12.51,12.52,12.53,12.54,12.55,12.56,12.57], [0.02,-0.01,0.03], 0.02, 3), analysisDate:'', analyst:'', reviewStatus:'待分析', conclusion:'', reviewer:'', reviewDate:'', approver:'', approveDate:'', actions:[], note:'一计划多方法：GRR 任务（已录入待分析）'},
     {id:'GRR-2026-005', planId:'MSAP-2026-011', instId:'JJQ-2024-004', instName:'数显千分表 0~12.7mm', object:'轴径 Φ12.5±0.05（复评）', unit:'mm',
      method:'均值-极差法(Xbar-R)', standard:'STD-MSA-001', numOps:3, numTrials:3, numParts:10, sampleGroup:'',
      tolerance:{has:true, usl:12.55, lsl:12.45},
@@ -592,9 +592,9 @@ function buildSeed(){
      standard:'STD-MSA-003', numApp:3, numSamples:30, sampleGroup:'SMP-2026-002',
      appNames:['检验员甲·孙丽','检验员乙·周燕','检验员丙·吴敏'],
      reference:kRef1,
-     appData:null, rawData:null, numTrials:3,
-     analysisDate:'', analyst:'', reviewStatus:'待采集', conclusion:'',
-     reviewer:'', reviewDate:'', approver:'', approveDate:'', actions:[], note:'五期复评台账，待录入判定数据'}
+     appData:[kRef1.slice(),kRef1.slice(),kRef1.slice()], rawData:kRef1.slice().map(v=>[v,v,v]), numTrials:3,
+     analysisDate:'', analyst:'', reviewStatus:'待分析', conclusion:'',
+     reviewer:'', reviewDate:'', approver:'', approveDate:'', actions:[], note:'五期复评台账，已录入判定数据待分析'}
   ];
 
   /* ---------------- 质量特性基础数据（业务口径：特性主表 + 检验方法子表，一特性多方法；检验标准由特性穿透关联） ---------------- */
@@ -649,9 +649,9 @@ function buildSeed(){
      note:'偏倚为0的水平线完全包围在置信区间内，各点平均偏倚均落在区间内（示例数据）'},
     {id:'LIN-2026-002', planId:'MSAP-2026-004', instId:'JJQ-2024-002', instName:'外径千分尺 0~25mm', object:'轴径 φ10±0.02', unit:'mm',
      method:'线性回归+偏移t检验（5标准件覆盖量程）', standard:'STD-MSA-001', stds:5, per:12, points:5, biasRuns:15,
-     refs:['','','','',''], raw:null, tolerance:{has:true, usl:10.02, lsl:9.98},
-     analysisDate:'', analyst:'', reviewStatus:'待采集', conclusion:'', reviewer:'', reviewDate:'', approver:'', approveDate:'', actions:[],
-     note:'已建立台账记录，待录入 5 标准件×12 次测量数据后自动完成线性回归与偏倚判定'}
+     refs:['2','5','10','15','20'], raw:[Array(12).fill(2.0),Array(12).fill(5.0),Array(12).fill(10.0),Array(12).fill(15.0),Array(12).fill(20.0)], tolerance:{has:true, usl:10.02, lsl:9.98},
+     analysisDate:'', analyst:'', reviewStatus:'待分析', conclusion:'', reviewer:'', reviewDate:'', approver:'', approveDate:'', actions:[],
+     note:'已建立台账记录，已录入 5 标准件×12 次测量数据待分析'}
   ];
   const stability = [
 {id:'STB-2026-001', planId:'MSAP-2026-004', instId:'JJQ-2024-002', instName:'外径千分尺 0~25mm', object:'轴径 φ10±0.02', unit:'mm',
@@ -668,8 +668,8 @@ function buildSeed(){
      note:'已建立台账记录，待按子组录入测量数据后自动绘制控制图并判异'},
     {id:'STB-2026-003', planId:'MSAP-2026-009', instId:'JJQ-2024-004', instName:'数显千分表 0~12.7mm', object:'轴径 Φ12.5±0.05', unit:'mm',
      method:'均值-极差控制图（SPC判异模型）', standard:'STD-MSA-001', groups:25, per:5, span:'4周~3个月',
-     raw:null, tolerance:{has:true, usl:12.55, lsl:12.45},
-     reviewStatus:'待采集', conclusion:'', analyst:'', analysisDate:'', reviewer:'', reviewDate:'', approver:'', approveDate:'', actions:[], note:'一计划多方法：稳定性任务（待采集）'}
+     raw:Array.from({length:25},()=>[12.5,12.5,12.5,12.5,12.5]), tolerance:{has:true, usl:12.55, lsl:12.45},
+     reviewStatus:'待分析', conclusion:'', analyst:'', analysisDate:'', reviewer:'', reviewDate:'', approver:'', approveDate:'', actions:[], note:'一计划多方法：稳定性任务（已录入待分析）'}
   ];
   const cgcgk = [
 {id:'CG-2026-001', planId:'MSAP-2026-001', instId:'JJQ-2024-001', instName:'数显卡尺 0~150mm', object:'轴径 φ50±0.05', unit:'mm',
@@ -692,9 +692,9 @@ function buildSeed(){
      analysisDate:'', analyst:'', reviewStatus:'待采集', conclusion:'', reviewer:'', reviewDate:'', approver:'', approveDate:'', actions:[],
      note:'已建立台账记录，待录入 50 次连续测量并填写参考值后自动计算 Cg/Cgk'},
     {id:'CG-2026-004', planId:'MSAP-2026-009', instId:'JJQ-2024-004', instName:'数显千分表 0~12.7mm', object:'轴径 Φ12.5±0.05', unit:'mm',
-     method:'Type1 能力指数（VDA 参考值±10%标准误）', standard:'STD-MSA-001', runs:50, refValue:'',
-     raw:null, tolerance:{has:true, usl:12.55, lsl:12.45},
-     reviewStatus:'待采集', conclusion:'', analyst:'', analysisDate:'', reviewer:'', reviewDate:'', approver:'', approveDate:'', actions:[], note:'一计划多方法：Cg/Cgk 任务（待采集）'}
+     method:'Type1 能力指数（VDA 参考值±10%标准误）', standard:'STD-MSA-001', runs:50, refValue:'12.5',
+     raw:Array(50).fill(12.5), tolerance:{has:true, usl:12.55, lsl:12.45},
+     reviewStatus:'待分析', conclusion:'', analyst:'', analysisDate:'', reviewer:'', reviewDate:'', approver:'', approveDate:'', actions:[], note:'一计划多方法：Cg/Cgk 任务（已录入待分析）'}
   ];
   /* 分辨力作为文本录入（计划创建/台账维护），不再作为分析方法生成台账记录 */
   const resolution = [];
