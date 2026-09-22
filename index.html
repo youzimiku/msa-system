@@ -2145,7 +2145,7 @@ function InstGroupPage(){
     (!q.type||(g.type||'inst')===q.type) &&
     (!q.plant||g.plant===q.plant) && (!q.sub||g.subplant===q.sub));
   const [draft,setDraft]=useState({}); const [addRow,setAddRow]=useState(false);
-  const addRowStart=()=>{ setDraft({id:'',name:'',type:'inst',calCycle:12,cycleUnit:'月',lastExec:'',nextPlanDate:'',remindAdvance:20,nextRemind:'',note:''}); setAddRow(true); };
+  const addRowStart=()=>{ setDraft({id:'',name:'',type:'inst',calCycle:12,cycleUnit:'月',lastExec:'',nextPlanDate:'',remindAdvance:20,nextRemind:'',note:'',plant:undefined,subplant:undefined}); setAddRow(true); };
   const isNew=(r)=>r.id==='__NEW__';
   const gv=(o,k,dv)=>(o&&o[k]!==undefined&&o[k]!==null)?o[k]:dv;
   const saveNew=()=>{ if(!draft.name||!draft.name.trim()){ toast.warn('请填写组名称'); return; } const tp=draft.type||'inst'; const dc=isPersonGroupType(tp)?{postCode:GROUP_POST[tp],postName:GROUP_POST_NAME[tp]}:{}; mut(s=>{ const nid=(draft.id&&draft.id.trim())?draft.id.trim(): (isPersonGroupType(tp)? 'P-'+String(s.instGroups.filter(g=>g.id.startsWith('P-')).length+1).padStart(2,'0') : 'G-'+String(s.instGroups.filter(g=>g.id.startsWith('G-')).length+1).padStart(2,'0')); const rec={...draft, ...dc, id:nid, type:tp, creator:s.me.name, createDate:NOW, editor:s.me.name, editorDate:NOW, records:[]}; s.instGroups.push(rec); logAction(s.me.name,'新增器具组',nid+' '+(draft.name||''),'行内新增器具组'); }); setAddRow(false); setDraft({}); toast.ok('已保存'); };
@@ -2159,6 +2159,8 @@ function InstGroupPage(){
       <Button size="small" type="link" onClick={isNew(r)?saveNew:()=>saveRow(r)}>保存</Button>
       <Button size="small" type="link" danger disabled={!isNew(r)&&referenced(r)} onClick={()=>delRow(r)}>删除</Button>
     </Space>},
+    {title:'工厂', dataIndex:'plant', width:120, render:(v,r)=>isNew(r)?<Select size="small" style={{width:110}} allowClear options={PLANTS_OPT} value={draft.plant||undefined} onChange={x=>setDraft(d=>({...d,plant:x}))}/>:<Select size="small" style={{width:110}} allowClear options={PLANTS_OPT} value={r.plant||undefined} onChange={x=>setF(r,'plant',x)}/>},
+    {title:'车间', dataIndex:'subplant', width:120, render:(v,r)=>isNew(r)?<Select size="small" style={{width:110}} allowClear options={SUBPLANTS_OPT} value={draft.subplant||undefined} onChange={x=>setDraft(d=>({...d,subplant:x}))}/>:<Select size="small" style={{width:110}} allowClear options={SUBPLANTS_OPT} value={r.subplant||undefined} onChange={x=>setF(r,'subplant',x)}/>},
     {title:'组编码', dataIndex:'id', width:110, render:(v,r)=>isNew(r)?<Input size="small" value={draft.id||''} placeholder="留空自动生成" onChange={e=>setDraft(d=>({...d,id:e.target.value}))}/>:<span className="mono">{v}</span>},
     {title:'组名称', dataIndex:'name', width:190, ellipsis:true, render:(v,r)=>isNew(r)?<Input size="small" value={draft.name||''} onChange={e=>setDraft(d=>({...d,name:e.target.value}))}/>:<Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
     {title:'组类型', width:140, render:(_,r)=>isNew(r)?<Select size="small" value={draft.type||'inst'} style={{width:130}} options={GROUP_TYPE_OPTS} onChange={x=>setDraft(d=>({...d,type:x}))}/>:<Select size="small" value={r.type||'inst'} style={{width:130}} options={GROUP_TYPE_OPTS} onChange={x=>setF(r,'type',x)}/>},
@@ -2196,7 +2198,7 @@ function InstGroupPage(){
       </Space>
     </Panel>
     <Panel>
-      <Table rowKey="id" size="middle" dataSource={addRow? [{...draft, id:'__NEW__'}, ...rows] : rows} columns={cols} scroll={{x:1750}} pagination={{pageSize:10, showSizeChanger:true}}/>
+      <Table rowKey="id" size="middle" dataSource={addRow? [{...draft, id:'__NEW__'}, ...rows] : rows} columns={cols} scroll={{x:1990}} pagination={{pageSize:10, showSizeChanger:true}}/>
     </Panel>
     {detail && <InstGroupDetail rec={detail} onClose={()=>setDetail(null)}/>}
   </div>;
