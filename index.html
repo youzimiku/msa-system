@@ -5486,247 +5486,401 @@ const RPT = {
 };
 function ReportPage({kind}){
   const c=RPT[kind];
-  const verdictColor2 = c.verdictLevel===0?'#16a34a':c.verdictLevel===1?'#d97706':'#dc2626';
-  /* ---- 模拟统计数值（演示用，由“后台计算”，前端仅展示） ---- */
-  const stats = {
-    grr: [
-      {k:'重复性 EV', v:'0.0123'},{k:'再现性 AV', v:'0.0085'},{k:'GRR', v:'0.0149'},
-      {k:'零件变差 PV', v:'0.1458'},{k:'总变差 TV', v:'0.1466'},{k:'%GRR', v:'10.2%'},
-      {k:'NDC', v:'13'},{k:'公差%GRR', v:'7.4%'},{k:'方差分量', v:'EV 0.70% / AV 0.34% / GRR 1.04%'}
-    ],
-    kappa: [
-      {k:'总体一致性', v:'96.7%'},{k:'Fleiss Kappa', v:'0.93'},{k:'误发率', v:'2.0%'},
-      {k:'漏发率', v:'1.3%'},{k:'检验员间一致性', v:'95.6%'},{k:'与标准一致性', v:'97.8%'}
-    ],
-    linear: [
-      {k:'斜率', v:'1.0002'},{k:'常量', v:'0.0031'},{k:'R²', v:'0.998'},
-      {k:'最大偏倚', v:'0.0068'},{k:'最大偏倚%', v:'0.014%'},{k:'T 检验 P 值', v:'0.312'}
-    ],
-    cgcgk: [
-      {k:'均值', v:'12.5001'},{k:'σ', v:'0.0006'},{k:'6σ', v:'0.0036'},
-      {k:'Cg', v:'2.31'},{k:'Cgk', v:'2.19'},{k:'Rg', v:'0.0015'},{k:'N', v:'50'}
-    ],
-    stability: [
-      {k:'X̄̄', v:'10.0001'},{k:'R̄', v:'0.0008'},{k:'UCL(X̄)', v:'10.0012'},
-      {k:'LCL(X̄)', v:'9.9990'},{k:'UCL(R)', v:'0.0017'},{k:'出界点数', v:'0'}
-    ]
-  }[kind];
-  /* ---- 模拟样本数据表 ---- */
-  const sampleCols = {
-    grr: [
-      {title:'样本编号', dataIndex:'s', width:90},
-      {title:'参考值', dataIndex:'ref', width:80},
-      ...c.ops.map((o,i)=>({title:'操作员'+String.fromCharCode(65+i)+' ('+o+')', children:[
-        {title:'试次1', dataIndex:'t1_'+i, width:80},
-        {title:'试次2', dataIndex:'t2_'+i, width:80},
-        {title:'试次3', dataIndex:'t3_'+i, width:80}
-      ]}))
-    ],
-    kappa: [
-      {title:'样本编号', dataIndex:'s', width:90},
-      {title:'基准值', dataIndex:'ref', width:80},
-      ...c.ops.map((o,i)=>({title:'检验员'+['甲','乙','丙'][i]+' ('+o+')', children:[
-        {title:'试次1', dataIndex:'t1_'+i, width:80},
-        {title:'试次2', dataIndex:'t2_'+i, width:80},
-        {title:'试次3', dataIndex:'t3_'+i, width:80}
-      ]}))
-    ],
-    linear: [
-      {title:'部件号', dataIndex:'s', width:90},
-      {title:'参考值', dataIndex:'ref', width:80},
-      ...Array.from({length:12},(_,i)=>({title:'测量'+(i+1), dataIndex:'m'+i, width:70}))
-    ],
-    cgcgk: [
-      {title:'序号', dataIndex:'s', width:70},
-      {title:'实测值', dataIndex:'m', width:90},
-      {title:'名义值(基准值)', dataIndex:'ref', width:100}
-    ],
-    stability: [
-      {title:'子组号', dataIndex:'s', width:70},
-      ...Array.from({length:5},(_,i)=>({title:'测量'+(i+1), dataIndex:'m'+i, width:80})),
-      {title:'X̄', dataIndex:'xb', width:80},
-      {title:'R', dataIndex:'rg', width:70}
-    ]
-  }[kind];
-  const sampleData = (()=>{
-    const rnd = mulberry32(20260918);
-    if(kind==='grr') return c.samples.map((s,pi)=>{
-      const ref = r3(50 + (pi%5-2)*0.02 + gauss(rnd)*0.0003);
-      const row={key:pi, s, ref};
-      c.ops.forEach((o,oi)=>{ [0,1,2].forEach(t=>{ row['t'+(t+1)+'_'+oi]= r3(ref + (oi-1)*0.002 + gauss(rnd)*0.008); }); });
-      return row;
-    });
-    if(kind==='kappa') return c.samples.map((s,pi)=>{
-      const ref = pi%3===0?0:1;
-      const row={key:pi, s, ref};
-      c.ops.forEach((o,oi)=>{ [0,1,2].forEach(t=>{ row['t'+(t+1)+'_'+oi]= (gauss(rnd)> -1.4 ? ref : (ref===0?1:0)); }); });
-      return row;
-    });
-    if(kind==='linear') return [20,45,70,95,120].map((ref,pi)=>{
-      const row={key:pi, s:'件'+(pi+1), ref};
-      for(let t=0;t<12;t++) row['m'+t]= r3(ref + (ref-70)*0.00002 + gauss(rnd)*0.006);
-      return row;
-    });
-    if(kind==='cgcgk') return Array.from({length:50},(_,i)=>{
-      return {key:i, s:i+1, m: r3(12.5001 + gauss(rnd)*0.0006), ref:'12.5000'};
-    });
-    /* stability */
-    const base=10.0001, data=[];
-    for(let g=0;g<25;g++){
-      const vals=Array.from({length:5},()=> base + gauss(rnd)*0.0004);
-      const xb = vals.reduce((a,b)=>a+b,0)/5;
-      const rg = Math.max(...vals)-Math.min(...vals);
-      const row={key:g, s:g+1};
-      vals.forEach((v,i)=> row['m'+i]=r3(v));
-      row.xb=r3(xb); row.rg=r3(rg);
-      data.push(row);
-    }
-    return data;
-  })();
-  /* ---- 模拟图表（内联 SVG 示意） ---- */
-  const chartW=560, chartH=210, pl=46, pr=16, pt=22, pb=26;
-  const yAxis = (vals, fmtV)=>{ const lo=Math.min(...vals), hi=Math.max(...vals); const pad=(hi-lo)*0.12||0.5; return {lo:lo-pad, hi:hi+pad, fmt:fmtV||(v=>v.toFixed(3))}; };
-  const mkChart = (series, opts={})=>{
-    const all=[]; series.forEach(s=>all.push(...s.data));
-    const {lo,hi,fmt}=yAxis(all, opts.fmt);
-    const X=i=> pl + i*(chartW-pl-pr)/(series[0].data.length-1||1);
-    const Y=v=> pt + (chartH-pt-pb)*(hi-v)/(hi-lo);
-    const yTicks=[0,1,2,3,4].map(i=>{ const v=lo+(hi-lo)*i/4; return <g key={i}><line x1={pl} x2={chartW-pr} y1={Y(v)} y2={Y(v)} stroke="#eef1f5"/><text x={pl-6} y={Y(v)+4} fontSize={10} fill="#999" textAnchor="end">{fmt(v)}</text></g>; });
-    return {lo,hi,X,Y,yTicks,fmt};
-  };
-  const grrRefs=[]; const grrM=[];
-  sampleData.forEach((row,pi)=>{ const ops=[]; c.ops.forEach((o,oi)=>{ const t=[row['t1_'+oi],row['t2_'+oi],row['t3_'+oi]]; ops.push({op:oi, t}); }); const allT=ops.flatMap(x=>x.t); grrM.push({pi, mean: allT.reduce((a,b)=>a+b,0)/allT.length, rg: Math.max(...allT)-Math.min(...allT)}); grrRefs.push(row.ref); });
-  const gMean = grrM.map(g=>g.mean), gR = grrM.map(g=>g.rg);
-  const grrChart=(title, series, lines)=>{ const C=mkChart(series); return <div style={{border:'1px solid #eef1f5',borderRadius:8,padding:'8px 10px 4px',background:'#fff'}}><div style={{fontSize:13,fontWeight:600,color:'#333',marginBottom:4}}>{title}</div><svg viewBox={`0 0 ${chartW} ${chartH}`} style={{width:'100%',height:'auto'}}>{C.yTicks}{series.map((s,si)=>{ const path=s.data.map((v,i)=>(i===0?'M':'L')+C.X(i).toFixed(1)+' '+C.Y(v).toFixed(1)).join(''); return <g key={si}><path d={path} fill="none" stroke={s.color} strokeWidth={1.6}/>{s.data.map((v,i)=><circle key={i} cx={C.X(i)} cy={C.Y(v)} r={2.4} fill={s.color}><title>{s.name+': '+v.toFixed(4)}</title></circle>)}</g>; })} {lines&&lines.map((l,i)=><line key={i} x1={pl} x2={chartW-pr} y1={C.Y(l.v)} y2={C.Y(l.v)} stroke={l.color||'#d97706'} strokeWidth={1} strokeDasharray="5 4"/>)}{Array.from({length:series[0].data.length},(_,i)=><text key={i} x={C.X(i)} y={chartH-pb+14} fontSize={10} fill="#999" textAnchor="middle">{series[0].labels[i]}</text>)}</svg></div>; };
-  const histChart=(vals, bins=8, color='#2563eb', title='直方图')=>{
-    const lo=Math.min(...vals), hi=Math.max(...vals), w=(hi-lo)/bins;
-    const counts=Array.from({length:bins},()=>0); vals.forEach(v=>{ const bi=Math.min(bins-1, Math.floor((v-lo)/w)); counts[bi]++; });
-    const mx=Math.max(...counts);
-    const bw=(chartW-pl-pr)/bins;
-    return <div style={{border:'1px solid #eef1f5',borderRadius:8,padding:'8px 10px 4px',background:'#fff'}}><div style={{fontSize:13,fontWeight:600,color:'#333',marginBottom:4}}>{title}</div><svg viewBox={`0 0 ${chartW} ${chartH}`} style={{width:'100%',height:'auto'}}>{[0,1,2,3,4].map(i=>{ const v=mx*i/4; return <g key={i}><line x1={pl} x2={chartW-pr} y1={pt+(chartH-pt-pb)*(1-i/4)} y2={pt+(chartH-pt-pb)*(1-i/4)} stroke="#eef1f5"/><text x={pl-6} y={pt+(chartH-pt-pb)*(1-i/4)+4} fontSize={10} fill="#999" textAnchor="end">{Math.round(v)}</text></g>; })}{counts.map((c,i)=>{ const x=pl+i*bw+2, y=pt+(chartH-pt-pb)*(1-c/mx); return <g key={i}><rect x={x} y={y} width={bw-3} height={chartH-pt-pb-y+pb} fill={color} rx={1} opacity={0.85}/><text x={x+bw/2} y={chartH-pb+14} fontSize={10} fill="#999" textAnchor="middle">{(lo+w*i).toFixed(2)}</text></g>; })}</svg></div>;
-  };
-  const kappaCross=()=>{
-    const rows=[
-      {a:'基准 0（不合格）', b:'基准 1（合格）', c:'实测合计'},
-      {a:'', b:'', c:''}
-    ];
-    const grid=[];
-    let agree=0, total=0, miss=0, falseA=0;
-    sampleData.forEach(r=>{
-      const ref=r.ref;
-      c.ops.forEach((o,oi)=>{
-        [1,2,3].forEach(t=>{
-          const m=r['t'+t+'_'+oi]; total++;
-          if(m===ref) agree++; else if(ref===1&&m===0) miss++; else falseA++;
-        });
-      });
-    });
-    const cnt=(rf,mf)=> sampleData.reduce((acc,r)=>{ let n=0; c.ops.forEach((o,oi)=>[1,2,3].forEach(t=>{ if(r.ref===rf&&r['t'+t+'_'+oi]===mf) n++; })); return acc+n; },0);
-    const c00=cnt(0,0), c01=cnt(0,1), c10=cnt(1,0), c11=cnt(1,1);
-    return <div style={{border:'1px solid #eef1f5',borderRadius:8,padding:12,background:'#fff'}}>
-      <div style={{fontSize:13,fontWeight:600,color:'#333',marginBottom:8}}>基准值 × 实测值 交叉表（统计数量）</div>
-      <table style={{borderCollapse:'collapse',fontSize:13}}>
-        <thead><tr><th style={{border:'1px solid #e5e7eb',padding:'5px 10px',background:'#f8fafc'}}>实测 \\ 基准</th><th style={{border:'1px solid #e5e7eb',padding:'5px 10px',background:'#f8fafc'}}>基准 0（不合格）</th><th style={{border:'1px solid #e5e7eb',padding:'5px 10px',background:'#f8fafc'}}>基准 1（合格）</th><th style={{border:'1px solid #e5e7eb',padding:'5px 10px',background:'#f8fafc'}}>实测合计</th></tr></thead>
-        <tbody>
-          <tr><td style={{border:'1px solid #e5e7eb',padding:'5px 10px',fontWeight:600}}>实测 0（不合格）</td><td style={{border:'1px solid #e5e7eb',padding:'5px 10px',textAlign:'center'}}>{c00}</td><td style={{border:'1px solid #e5e7eb',padding:'5px 10px',textAlign:'center'}}>{c01}</td><td style={{border:'1px solid #e5e7eb',padding:'5px 10px',textAlign:'center'}}>{c00+c01}</td></tr>
-          <tr><td style={{border:'1px solid #e5e7eb',padding:'5px 10px',fontWeight:600}}>实测 1（合格）</td><td style={{border:'1px solid #e5e7eb',padding:'5px 10px',textAlign:'center'}}>{c10}</td><td style={{border:'1px solid #e5e7eb',padding:'5px 10px',textAlign:'center'}}>{c11}</td><td style={{border:'1px solid #e5e7eb',padding:'5px 10px',textAlign:'center'}}>{c10+c11}</td></tr>
-          <tr><td style={{border:'1px solid #e5e7eb',padding:'5px 10px',fontWeight:600}}>基准合计</td><td style={{border:'1px solid #e5e7eb',padding:'5px 10px',textAlign:'center'}}>{c00+c10}</td><td style={{border:'1px solid #e5e7eb',padding:'5px 10px',textAlign:'center'}}>{c01+c11}</td><td style={{border:'1px solid #e5e7eb',padding:'5px 10px',textAlign:'center'}}>{total}</td></tr>
-        </tbody>
+  const verdictColor = c.verdictLevel===0?'#16a34a':c.verdictLevel===1?'#d97706':'#dc2626';
+  /* ---- 通用表格 ---- */
+  const T=(title, head, rows, widths)=>{
+    return <div style={{marginBottom:16}}>
+      {title && <div style={{fontSize:14,fontWeight:600,color:'#2563eb',marginBottom:6}}>{title}</div>}
+      <table style={{borderCollapse:'collapse',fontSize:13,width:'100%'}}>
+        <thead><tr>{head.map((h,i)=><th key={i} style={{border:'1px solid #d9dee5',padding:'6px 12px',background:'#f5f7fa',textAlign:i===0?'left':'center',fontWeight:600,width:widths?widths[i]:undefined}}>{h}</th>)}</tr></thead>
+        <tbody>{rows.map((r,ri)=><tr key={ri}>{r.map((cell,ci)=><td key={ci} style={{border:'1px solid #d9dee5',padding:'6px 12px',textAlign:ci===0?'left':'center'}}>{cell}</td>)}</tr>)}</tbody>
       </table>
-      <div style={{marginTop:8,color:'#666',fontSize:12.5,lineHeight:1.7}}>一致性（实测=基准）：{(agree/total*100).toFixed(1)}% ｜ 误发（基准 0 判为 1）：{(c01/(c00+c01)*100).toFixed(1)}% ｜ 漏发（基准 1 判为 0）：{(c10/(c10+c11)*100).toFixed(1)}% ｜ 总判定次数：{total}（{c.ops.length} 检验员 × {c.parts} 样本 × {c.trials} 次）</div>
     </div>;
   };
-  const linearChart=()=>{
-    const pts=sampleData.map(r=>({x:r.ref, y:r.ref + (r.ref-70)*0.00002}));
-    const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y);
-    const lo=Math.min(...xs), hi=Math.max(...xs);
-    const C={lo:lo-2, hi:hi+2};
-    const ylo=Math.min(...ys)-0.01, yhi=Math.max(...ys)+0.01;
-    const X=v=> pl + (v-C.lo)/(C.hi-C.lo)*(chartW-pl-pr);
-    const Y=v=> pt + (chartH-pt-pb)*(yhi-v)/(yhi-ylo);
-    return <div style={{border:'1px solid #eef1f5',borderRadius:8,padding:'8px 10px 4px',background:'#fff'}}><div style={{fontSize:13,fontWeight:600,color:'#333',marginBottom:4}}>线性回归图（悬停查看参考值/测量值）</div><svg viewBox={`0 0 ${chartW} ${chartH}`} style={{width:'100%',height:'auto'}}>{[0,1,2,3,4].map(i=>{ const v=C.lo+(C.hi-C.lo)*i/4; return <g key={i}><line x1={pl} x2={chartW-pr} y1={Y(v)} y2={Y(v)} stroke="#eef1f5"/><text x={pl-6} y={Y(v)+4} fontSize={10} fill="#999" textAnchor="end">{v.toFixed(0)}</text></g>; })}<line x1={X(lo)} x2={X(hi)} y1={Y(lo*1.00002)} y2={Y(hi*1.00002)} stroke="#d97706" strokeWidth={1.5} strokeDasharray="5 4"/>{pts.map((p,i)=><g key={i}><circle cx={X(p.x)} cy={Y(p.y)} r={3.2} fill="#2563eb"><title>{'参考值 '+p.x.toFixed(3)+'，测量均值 '+p.y.toFixed(4)}</title></circle></g>)}</svg></div>;
+  /* ---- 通用 KPI ---- */
+  const KPI=(items)=>{
+    return <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(120px,1fr))',gap:10,marginBottom:16}}>
+      {items.map((it,i)=><div key={i} style={{border:'1px solid #e5e7eb',borderRadius:8,padding:'10px 14px',background:'#fafbfc'}}>
+        <div style={{fontSize:12,color:'#888'}}>{it.k}</div>
+        <div style={{fontSize:16,fontWeight:600,color:'#333',marginTop:2}}>{it.v}</div>
+      </div>)}
+    </div>;
   };
-  const stabilityChart=()=>{
-    const xbs=sampleData.map(r=>r.xb), rgs=sampleData.map(r=>r.rg);
+  /* ---- 通用 SVG 柱状图 ---- */
+  const BarChart=(title, items, opts={})=>{
+    const W=opts.w||480, H=opts.h||200, pl=50, pr=16, pt=24, pb=30;
+    const max=Math.max(...items.map(i=>Math.abs(i.v)), 1);
+    const bw=(W-pl-pr)/items.length*0.6;
+    const gap=(W-pl-pr)/items.length;
+    return <div style={{border:'1px solid #e5e7eb',borderRadius:8,padding:'8px 12px',background:'#fff',flex:1,minWidth:280}}>
+      <div style={{fontSize:13,fontWeight:600,color:'#333',marginBottom:4}}>{title}</div>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{width:'100%',height:'auto'}}>
+        {[0,1,2,3,4].map(i=>{ const v=max*i/4; const y=pt+(H-pt-pb)*(1-i/4); return <g key={i}><line x1={pl} x2={W-pr} y1={y} y2={y} stroke="#eef1f5"/><text x={pl-6} y={y+4} fontSize={10} fill="#999" textAnchor="end">{v.toFixed(2)}</text></g>; })}
+        {items.map((it,i)=>{ const x=pl+i*gap+gap*0.2; const h=(H-pt-pb)*Math.abs(it.v)/max; const y=pt+(H-pt-pb)-h; return <g key={i}><rect x={x} y={y} width={bw} height={h} fill={it.color||'#2563eb'} rx={2}/><text x={x+bw/2} y={H-pb+16} fontSize={10} fill="#666" textAnchor="middle">{it.name}</text><text x={x+bw/2} y={y-4} fontSize={10} fill="#333" textAnchor="middle">{it.v.toFixed(2)}</text></g>; })}
+      </svg>
+    </div>;
+  };
+  /* ---- 通用折线/运行图 ---- */
+  const RunChart=(title, data, lines, opts={})=>{
+    const W=opts.w||560, H=opts.h||220, pl=50, pr=60, pt=24, pb=30;
+    const all=data.map(d=>d.y);
+    if(lines) lines.forEach(l=>all.push(l.v));
+    const lo=Math.min(...all), hi=Math.max(...all); const pad=(hi-lo)*0.15||1;
+    const X=i=> pl + i*(W-pl-pr)/(data.length-1||1);
+    const Y=v=> pt + (H-pt-pb)*(hi+pad-v)/(hi-lo+2*pad);
+    return <div style={{border:'1px solid #e5e7eb',borderRadius:8,padding:'8px 12px',background:'#fff',flex:1,minWidth:300}}>
+      <div style={{fontSize:13,fontWeight:600,color:'#333',marginBottom:4}}>{title}</div>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{width:'100%',height:'auto'}}>
+        {[0,1,2,3,4].map(i=>{ const v=hi+pad-(hi-lo+2*pad)*i/4; const y=Y(v); return <g key={i}><line x1={pl} x2={W-pr} y1={y} y2={y} stroke="#eef1f5"/><text x={pl-6} y={y+4} fontSize={10} fill="#999" textAnchor="end">{v.toFixed(3)}</text></g>; })}
+        {lines&&lines.map((l,i)=><g key={i}><line x1={pl} x2={W-pr} y1={Y(l.v)} y2={Y(l.v)} stroke={l.color||'#dc2626'} strokeWidth={1.2} strokeDasharray={l.dash?'6 3':'0'}/><text x={W-pr+4} y={Y(l.v)+4} fontSize={9} fill="#888">{l.label}</text></g>)}
+        <polyline points={data.map((d,i)=>X(i).toFixed(1)+','+Y(d.y).toFixed(1)).join(' ')} fill="none" stroke="#2563eb" strokeWidth={1.5}/>
+        {data.map((d,i)=><circle key={i} cx={X(i)} cy={Y(d.y)} r={2.6} fill="#2563eb"><title>{d.x+': '+d.y.toFixed(4)}</title></circle>)}
+      </svg>
+    </div>;
+  };
+  /* ---- 散点图 ---- */
+  const ScatterChart=(title, pts, line, opts={})=>{
+    const W=opts.w||560, H=opts.h||260, pl=50, pr=60, pt=24, pb=36;
+    const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y);
+    const loX=Math.min(...xs), hiX=Math.max(...xs), loY=Math.min(...ys), hiY=Math.max(...ys);
+    const padX=(hiX-loX)*0.1||1, padY=(hiY-loY)*0.15||0.01;
+    const X=v=> pl + (v-loX+padX)/(hiX-loX+2*padX)*(W-pl-pr);
+    const Y=v=> pt + (H-pt-pb)*(hiY+padY-v)/(hiY-loY+2*padY);
+    return <div style={{border:'1px solid #e5e7eb',borderRadius:8,padding:'8px 12px',background:'#fff',flex:1,minWidth:320}}>
+      <div style={{fontSize:13,fontWeight:600,color:'#333',marginBottom:4}}>{title}</div>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{width:'100%',height:'auto'}}>
+        {[0,1,2,3,4].map(i=>{ const v=loX+padX+(hiX-loX+2*padX)*i/4; const x=X(v); return <g key={i}><line x1={x} x2={x} y1={pt} y2={H-pb} stroke="#f3f4f6"/><text x={x} y={H-pb+16} fontSize={10} fill="#999" textAnchor="middle">{v.toFixed(1)}</text></g>; })}
+        {[0,1,2,3,4].map(i=>{ const v=hiY+padY-(hiY-loY+2*padY)*i/4; const y=Y(v); return <g key={i}><line x1={pl} x2={W-pr} y1={y} y2={y} stroke="#f3f4f6"/><text x={pl-6} y={y+4} fontSize={10} fill="#999" textAnchor="end">{v.toFixed(3)}</text></g>; })}
+        {line && <line x1={X(line.x1)} y1={Y(line.y1)} x2={X(line.x2)} y2={Y(line.y2)} stroke="#dc2626" strokeWidth={1.5} strokeDasharray="6 3"/>}
+        {pts.map((p,i)=><circle key={i} cx={X(p.x)} cy={Y(p.y)} r={3} fill="#2563eb" opacity={0.8}><title>{'参考值 '+p.x.toFixed(2)+'，偏倚 '+p.y.toFixed(4)}</title></circle>)}
+      </svg>
+    </div>;
+  };
+
+  /* ==================== GRR ==================== */
+  if(kind==='grr'){
+    return <div>
+      <PageHead extra={<Space><span style={{color:'#666'}}>{c.label} · 报告编号 {c.no} · {c.plan} · 出具日期 {c.date}</span></Space>}/>
+      <div style={{display:'flex',gap:12,alignItems:'center',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:8,padding:'12px 16px',marginBottom:14}}>
+        <span style={{fontSize:15,fontWeight:700,color:verdictColor}}>结论：{c.verdict}</span>
+        <span style={{color:'#666',fontSize:13}}>{c.verdictNote}</span>
+      </div>
+      <Panel title="报告表头">
+        <Descriptions size="small" column={4} items={[
+          {key:'no',label:'报告编号',children:c.no},{key:'plan',label:'MSA计划号',children:c.plan},
+          {key:'inst',label:'器具名称',children:c.inst},{key:'instNo',label:'器具编号',children:<span className="mono">{c.instNo}</span>},
+          {key:'obj',label:'被测参数',children:c.object},{key:'unit',label:'单位',children:c.unit},
+          {key:'an',label:'分析类型',children:c.type},{key:'est',label:'估计方法',children:c.method},
+          {key:'by',label:'评价人',children:c.analyst},{key:'dt',label:'日期',children:c.date}
+        ]}/>
+      </Panel>
+      <Panel title="方差分析结果">
+        {T('包含交互作用的双因子方差分析表',
+          ['来源','自由度','SS','MS','F','P'],
+          [['部件',9,'88.3619','9.81799','492.291','0.000'],
+           ['操作员',2,'3.1673','1.58363','79.406','0.000'],
+           ['部件 × 操作员',18,'0.3590','0.01994','0.434','0.974'],
+           ['重复性',60,'2.7589','0.04598','',''],
+           ['合计',89,'94.6471','','','']],
+          [null,null,null,null,null,null])}
+        <div style={{color:'#888',fontSize:12,marginBottom:16}}>用于删除交互作用项的 α = 0.05（P=0.974 > 0.05，删除交互作用）</div>
+        {T('不含交互作用的双因子方差分析表',
+          ['来源','自由度','SS','MS','F','P'],
+          [['部件',9,'88.3619','9.81799','245.614','0.000'],
+           ['操作员',2,'3.1673','1.58363','39.617','0.000'],
+           ['重复性',78,'3.1179','0.03997','',''],
+           ['合计',89,'94.6471','','','']])}
+      </Panel>
+      <Panel title="方差分量">
+        {T('方差分量表',
+          ['来源','方差分量','95% 置信区间','% 贡献率','95% 置信区间'],
+          [['合计量具 R&R','0.09143','(0.052, 2.124)','7.76','(2.14, 66.18)'],
+           ['重复性','0.03997','(0.030, 0.056)','3.39','(0.89, 7.34)'],
+           ['再现性','0.05146','(0.013, 2.084)','4.37','(0.77, 64.72)'],
+           ['操作员','0.05146','(0.013, 2.084)','4.37','(0.77, 64.72)'],
+           ['部件间','1.08645','(0.512, 3.631)','92.24','(33.82, 97.86)'],
+           ['合计变异','1.17788','(0.602, 4.435)','100.00','(—)']])}
+        <div style={{color:'#888',fontSize:12}}>过程公差 = 0.10（轴径 φ50±0.05）</div>
+      </Panel>
+      <Panel title="量具评估">
+        {T('量具评估表',
+          ['来源','标准差(SD)','95% CI','研究变异(6×SD)','95% CI','%研究变异(%SV)','95% CI'],
+          [['合计量具 R&R','0.30237','(0.227, 1.457)','1.81423','(1.365, 8.744)','27.86','(14.62, 81.35)'],
+           ['重复性','0.19993','(0.173, 0.237)','1.19960','(1.037, 1.423)','18.42','(9.46, 27.09)'],
+           ['再现性','0.22684','(0.114, 1.443)','1.36103','(0.683, 8.661)','20.90','(8.76, 80.45)'],
+           ['操作员','0.22684','(0.114, 1.443)','1.36103','(0.683, 8.661)','20.90','(8.76, 80.45)'],
+           ['部件间','1.04233','(0.715, 1.906)','6.25396','(4.292, 11.433)','96.04','(58.15, 98.93)'],
+           ['合计变异','1.08530','(0.776, 2.106)','6.51180','(4.654, 12.635)','100.00','(—)']])}
+        {T('%公差',
+          ['来源','%SV/Toler','95% 置信区间'],
+          [['合计量具 R&R','302.37','(227.45, 1457.29)'],
+           ['重复性','199.93','(172.88, 237.09)'],
+           ['再现性','226.84','(113.79, 1443.48)'],
+           ['操作员','226.84','(113.79, 1443.48)'],
+           ['部件间','1042.33','(715.27, 1905.58)'],
+           ['合计变异','1085.30','(775.73, 2105.86)']])}
+        <div style={{fontSize:14,fontWeight:600,color:'#333',marginTop:8}}>可区分类别数 ndc = <span style={{color:'#2563eb'}}>4</span>　<span style={{fontSize:12,color:'#888',fontWeight:400}}>95% 置信区间 (1.01092, 9.56983)</span></div>
+      </Panel>
+      <Panel title="报告图">
+        <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
+          {BarChart('变异分量（%贡献率）',
+            [{name:'GRR',v:7.76,color:'#8b5cf6'},{name:'重复性',v:3.39,color:'#3b82f6'},{name:'再现性',v:4.37,color:'#f59e0b'},{name:'部件间',v:92.24,color:'#16a34a'}])}
+          {BarChart('占公差百分比',
+            [{name:'GRR',v:302,color:'#8b5cf6'},{name:'重复性',v:200,color:'#3b82f6'},{name:'再现性',v:227,color:'#f59e0b'}])}
+        </div>
+        <div style={{display:'flex',gap:14,flexWrap:'wrap',marginTop:12}}>
+          {RunChart('Xbar 控制图（按操作员）',
+            Array.from({length:10},(_,i)=>({x:'件'+(i+1),y:50+(i%3-1)*0.02+Math.sin(i)*0.01})),
+            [{v:50.05,color:'#dc2626',dash:true,label:'UCL'},{v:50.00,color:'#16a34a',dash:false,label:'X̄'},{v:49.95,color:'#dc2626',dash:true,label:'LCL'}])}
+          {RunChart('R 控制图（按操作员）',
+            Array.from({length:10},(_,i)=>({x:'件'+(i+1),y:0.03+Math.abs(Math.sin(i*1.3))*0.02})),
+            [{v:0.05,color:'#dc2626',dash:true,label:'UCL'},{v:0.03,color:'#16a34a',label:'R̄'},{v:0,color:'#dc2626',dash:true,label:'LCL'}])}
+        </div>
+      </Panel>
+    </div>;
+  }
+
+  /* ==================== KAPPA ==================== */
+  if(kind==='kappa'){
+    return <div>
+      <PageHead extra={<Space><span style={{color:'#666'}}>{c.label} · 报告编号 {c.no} · {c.plan} · 出具日期 {c.date}</span></Space>}/>
+      <div style={{display:'flex',gap:12,alignItems:'center',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:8,padding:'12px 16px',marginBottom:14}}>
+        <span style={{fontSize:15,fontWeight:700,color:verdictColor}}>结论：{c.verdict}</span>
+        <span style={{color:'#666',fontSize:13}}>{c.verdictNote}</span>
+      </div>
+      <Panel title="报告表头">
+        <Descriptions size="small" column={4} items={[
+          {key:'no',label:'报告编号',children:c.no},{key:'plan',label:'MSA计划号',children:c.plan},
+          {key:'inst',label:'器具名称',children:c.inst},{key:'instNo',label:'器具编号',children:<span className="mono">{c.instNo}</span>},
+          {key:'obj',label:'被测参数',children:c.object},{key:'unit',label:'单位',children:c.unit},
+          {key:'an',label:'分析类型',children:c.type},{key:'est',label:'估计方法',children:c.method},
+          {key:'by',label:'评价人',children:c.analyst},{key:'dt',label:'日期',children:c.date}
+        ]}/>
+      </Panel>
+      <Panel title="检验员自身">
+        {T('评估一致性',
+          ['检验员','# 检验数','# 相符数','百分比','95% 置信区间','判定'],
+          [['A','50','49','98.00','(89.35, 99.95)','好'],
+           ['B','50','49','98.00','(89.35, 99.95)','好'],
+           ['C','50','50','100.00','(94.18, 100.00)','好']])}
+        <div style={{color:'#888',fontSize:12,marginBottom:16}}># 相符数：检验员在多个试验之间，他/她自身标准一致。判定标准：≥90% 好，否则差。</div>
+        {T('Fleiss 的 Kappa 统计量',
+          ['检验员','响应','Kappa','Kappa 标准误','Z','P(与 > 0)'],
+          [['A','0','0.95934','0.0816497','11.7494','0.0000'],
+           ['','1','0.95934','0.0816497','11.7494','0.0000'],
+           ['B','0','0.95725','0.0816497','11.7239','0.0000'],
+           ['','1','0.95725','0.0816497','11.7239','0.0000'],
+           ['C','0','1.00000','0.0816497','12.2474','0.0000'],
+           ['','1','1.00000','0.0816497','12.2474','0.0000']])}
+      </Panel>
+      <Panel title="每个检验员与标准">
+        {T('评估一致性',
+          ['检验员','# 检验数','# 相符数','百分比','95% 置信区间'],
+          [['A','50','48','96.00','(86.29, 99.51)'],
+           ['B','50','49','98.00','(89.35, 99.95)'],
+           ['C','50','49','98.00','(89.35, 99.95)']])}
+        <div style={{color:'#888',fontSize:12,marginBottom:16}}># 相符数：检验员在多次试验中的评估与已知标准一致。</div>
+        {T('评估不一致',
+          ['检验员','# 1/0','百分比','# 0/1','百分比','# 混合','百分比'],
+          [['A','0','0.00','0','0.00','1','2.00'],
+           ['B','0','0.00','0','0.00','1','2.00'],
+           ['C','0','0.00','1','2.50','0','0.00']])}
+        <div style={{color:'#888',fontSize:12,marginBottom:16}}>
+          # 1/0：多个试验中误将标准=0者一致评估为=1的次数；# 0/1：误将标准=1者一致评估为=0的次数；# 混合：所有评估与标准不相同者。判定标准：>75% 好，否则差。
+        </div>
+        {T('Fleiss 的 Kappa 统计量',
+          ['检验员','响应','Kappa','Kappa 标准误','Z','P(与 > 0)'],
+          [['A','0','0.979908','0.0816497','12.0014','0.0000'],
+           ['','1','0.979908','0.0816497','12.0014','0.0000'],
+           ['B','0','0.978341','0.0816497','11.9822','0.0000'],
+           ['','1','0.978341','0.0816497','11.9822','0.0000'],
+           ['C','0','0.939723','0.0816497','11.5092','0.0000'],
+           ['','1','0.939723','0.0816497','11.5092','0.0000']])}
+      </Panel>
+      <Panel title="检验员之间">
+        {T('评估一致性',
+          ['# 检验数','# 相符数','百分比','95% 置信区间'],
+          [['50','48','96.00','(86.29, 99.51)']])}
+        <div style={{color:'#888',fontSize:12,marginBottom:16}}># 相符数：所有检验员的评估一致。</div>
+        {T('Fleiss 的 Kappa 统计量',
+          ['响应','Kappa','Kappa 标准误','Z','P(与 > 0)'],
+          [['0','0.952562','0.0235702','40.4138','0.0000'],
+           ['1','0.952562','0.0235702','40.4138','0.0000']])}
+        {T('两两 Kappa',
+          ['对比','A×B','A×C','B×C'],
+          [['Kappa','0.917','0.960','0.919'],['判定','好','好','好']])}
+      </Panel>
+      <Panel title="所有检验员与标准">
+        {T('评估一致性',
+          ['# 检验数','# 相符数','百分比','95% 置信区间'],
+          [['50','48','96.00','(86.29, 99.51)']])}
+        {T('Fleiss 的 Kappa 统计量',
+          ['响应','Kappa','Kappa 标准误','Z','P(与 > 0)'],
+          [['0','0.965990','0.0471405','20.4918','0.0000'],
+           ['1','0.965990','0.0471405','20.4918','0.0000']])}
+        {T('漏发/误发分析',
+          ['检验员','漏发率','漏发结论','误发率','误发结论'],
+          [['A','3.33%','不可接受','1.67%','可接受'],
+           ['B','3.33%','不可接受','0.00%','可接受'],
+           ['C','0.00%','可接受','2.50%','可接受']])}
+      </Panel>
+      <Panel title="判定准则">
+        {T(null,
+          ['判断测量系统','Kappa','有效性','漏发','误发'],
+          [['评价人可接受','≧0.75','≧90%','≦2%','≦5%'],
+           ['评价人可接受的边缘（可能需改进）','0.4~0.75','80%~90%','2%~5%','5%~10%'],
+           ['评价人不可接受（需改进）','<0.4','<80%','＞5%','＞10%']])}
+      </Panel>
+    </div>;
+  }
+
+  /* ==================== LINEAR / BIAS ==================== */
+  if(kind==='linear'){
+    const pts=[];
+    const refs=[20,45,70,95,120];
+    const biases=[0.004333,-0.01667,-0.05000,0.03333,0.38333];
+    refs.forEach((r,i)=>{ for(let t=0;t<12;t++){ pts.push({x:r,y:biases[i]+(Math.sin(t+i)*0.003)}); }});
+    return <div>
+      <PageHead extra={<Space><span style={{color:'#666'}}>{c.label} · 报告编号 {c.no} · {c.plan} · 出具日期 {c.date}</span></Space>}/>
+      <div style={{display:'flex',gap:12,alignItems:'center',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:8,padding:'12px 16px',marginBottom:14}}>
+        <span style={{fontSize:15,fontWeight:700,color:verdictColor}}>结论：{c.verdict}</span>
+        <span style={{color:'#666',fontSize:13}}>{c.verdictNote}</span>
+      </div>
+      <Panel title="报告表头">
+        <Descriptions size="small" column={4} items={[
+          {key:'no',label:'报告编号',children:c.no},{key:'plan',label:'MSA计划号',children:c.plan},
+          {key:'inst',label:'器具名称',children:c.inst},{key:'instNo',label:'器具编号',children:<span className="mono">{c.instNo}</span>},
+          {key:'obj',label:'被测参数',children:c.object},{key:'unit',label:'单位',children:c.unit},
+          {key:'an',label:'分析类型',children:c.type},{key:'est',label:'估计方法',children:c.method},
+          {key:'by',label:'评价人',children:c.analyst},{key:'dt',label:'日期',children:c.date}
+        ]}/>
+      </Panel>
+      <Panel title="测量值的量具线性和偏倚报告">
+        <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
+          {ScatterChart('偏倚散点图（参考值 vs 偏倚）', pts,
+            {x1:20,y1:0.0085,x2:120,y2:0.0383})}
+          <div style={{flex:1,minWidth:280}}>
+            {T('量具线性',
+              ['项','值','系数标准误','P'],
+              [['自变量','—','—','—'],
+               ['常量','-0.12854','0.05462','0.032'],
+               ['斜率','0.021911','0.004448','0.000']])}
+            {T(null,
+              ['S','R-Sq','线性百分率'],
+              [['0.158085','46.4%','2.2']])}
+            {T('量具偏倚',
+              ['参考','平均','偏倚','%偏倚','P'],
+              [['20','0.004333','0.0','0.0','0.001'],
+               ['45','-0.01667','-0.9','0.0','0.941'],
+               ['70','-0.05000','0.4','0.0','0.632'],
+               ['95','0.03333','0.3','0.0','0.425'],
+               ['120','0.38333','1.3','3.2','0.001']])}
+          </div>
+        </div>
+        <div style={{display:'flex',gap:14,flexWrap:'wrap',marginTop:12}}>
+          {BarChart('占过程变异的百分比',
+            [{name:'线性',v:2.2,color:'#2563eb'},{name:'偏倚',v:1.3,color:'#f59e0b'}])}
+        </div>
+      </Panel>
+      <Panel title="单样本 T 检验（偏倚）">
+        {T('描述性统计量',
+          ['N','均值','标准差','均值标准误','μ 的 95% 置信区间'],
+          [['60','0.0306','0.1542','0.0199','(26.69, 34.20)']])}
+        <div style={{color:'#888',fontSize:12}}>μ：测量值的总体均值。H0：偏倚=0，P=0.312 > 0.05，偏倚不显著。</div>
+      </Panel>
+    </div>;
+  }
+
+  /* ==================== Cg/Cgk ==================== */
+  if(kind==='cgcgk'){
+    const runData=Array.from({length:50},(_,i)=>({x:String(i+1),y:12.5001+Math.sin(i*0.7)*0.0006+(Math.random()-0.5)*0.0004}));
+    return <div>
+      <PageHead extra={<Space><span style={{color:'#666'}}>{c.label} · 报告编号 {c.no} · {c.plan} · 出具日期 {c.date}</span></Space>}/>
+      <div style={{display:'flex',gap:12,alignItems:'center',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:8,padding:'12px 16px',marginBottom:14}}>
+        <span style={{fontSize:15,fontWeight:700,color:verdictColor}}>结论：{c.verdict}</span>
+        <span style={{color:'#666',fontSize:13}}>{c.verdictNote}</span>
+      </div>
+      <Panel title="报告表头">
+        <Descriptions size="small" column={4} items={[
+          {key:'no',label:'报告编号',children:c.no},{key:'plan',label:'MSA计划号',children:c.plan},
+          {key:'inst',label:'器具名称',children:c.inst},{key:'instNo',label:'器具编号',children:<span className="mono">{c.instNo}</span>},
+          {key:'obj',label:'被测参数',children:c.object},{key:'unit',label:'单位',children:c.unit},
+          {key:'an',label:'分析类型',children:c.type},{key:'est',label:'估计方法',children:c.method},
+          {key:'by',label:'评价人',children:c.analyst},{key:'dt',label:'日期',children:c.date}
+        ]}/>
+      </Panel>
+      <Panel title="类型 1 量具研究">
+        <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
+          {RunChart('运行图（参考值 ±10% 公差）', runData,
+            [{v:12.5050,color:'#dc2626',dash:true,label:'+10%公差'},{v:12.5000,color:'#16a34a',label:'参考值'},{v:12.4950,color:'#dc2626',dash:true,label:'-10%公差'}])}
+          <div style={{flex:1,minWidth:280}}>
+            {T('基本统计量',
+              ['项','值','项','值'],
+              [['参考值','12.500','偏倚','-0.000015'],
+               ['均值','12.4985','T','-2.3847019'],
+               ['标准差','0.000438','P 值','0.021'],
+               ['6×标准差(SV)','0.002625','(检验偏倚=0)','—'],
+               ['公差','0.007','—','—'],
+               ['Tol% 分辨率','14.3% (0.0001)','—','—']])}
+            {T('能力',
+              ['项','值'],
+              [['Cg','0.53'],['Cgk','0.42']])}
+            {T('% 变异',
+              ['项','值'],
+              [['%变异（重复性）','37.50%'],['%变异（重复性+再现性）','47.52%']])}
+          </div>
+        </div>
+      </Panel>
+      <Panel title="VDAS 结果">
+        {T('不确定性来源',
+          ['不确定性来源','标签','值','总和的 %'],
+          [['参考时的重复性','uEVR','0.0000','96.35'],
+           ['分辨度','uRE','0.0000','*'],
+           ['偏倚','uBI','0.0000','3.65'],
+           ['测量系统','uMS','0.0000','100.00']])}
+        <div style={{fontSize:14,fontWeight:600,color:'#333',marginTop:8}}>公差的 %：<span style={{color:'#2563eb'}}>%QMS = 38.2092</span></div>
+      </Panel>
+    </div>;
+  }
+
+  /* ==================== STABILITY ==================== */
+  if(kind==='stability'){
+    const xbs=Array.from({length:25},(_,i)=>10.0001+Math.sin(i*0.5)*0.0003);
+    const rgs=Array.from({length:25},(_,i)=>0.0008+Math.abs(Math.sin(i*1.2))*0.0004);
     const meanX=xbs.reduce((a,b)=>a+b,0)/xbs.length;
     const meanR=rgs.reduce((a,b)=>a+b,0)/rgs.length;
-    return <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
-      {grrChart('X̄ 控制图', [{name:'X̄',color:'#2563eb',data:xbs,labels:sampleData.map(r=>r.s)}], [
-        {v: meanX+0.729*meanR, color:'#dc2626'},{v: meanX, color:'#16a34a'},{v: meanX-0.729*meanR, color:'#dc2626'}
-      ])}
-      {grrChart('R 控制图', [{name:'R',color:'#0891b2',data:rgs,labels:sampleData.map(r=>r.s)}], [
-        {v: 2.282*meanR, color:'#dc2626'},{v: meanR, color:'#16a34a'},{v: 0, color:'#dc2626'}
-      ])}
-    </div>;
-  };
-  const grrSix=()=>{
-    const labels=sampleData.map(r=>r.s);
-    const barChart=(title, items, color)=>{
-      const max=Math.max(...items.map(i=>i.v));
-      const bw=(chartW-pl-pr)/items.length;
-      return <div style={{border:'1px solid #eef1f5',borderRadius:8,padding:'8px 10px 4px',background:'#fff'}}><div style={{fontSize:13,fontWeight:600,color:'#333',marginBottom:4}}>{title}</div><svg viewBox={`0 0 ${chartW} ${chartH}`} style={{width:'100%',height:'auto'}}>{[0,1,2,3,4].map(i=>{ const v=max*i/4; return <g key={i}><line x1={pl} x2={chartW-pr} y1={pt+(chartH-pt-pb)*(1-i/4)} y2={pt+(chartH-pt-pb)*(1-i/4)} stroke="#eef1f5"/><text x={pl-6} y={pt+(chartH-pt-pb)*(1-i/4)+4} fontSize={10} fill="#999" textAnchor="end">{v.toFixed(1)}</text></g>; })}{items.map((it,i)=>{ const x=pl+i*bw+3, y=pt+(chartH-pt-pb)*(1-it.v/max); return <g key={i}><rect x={x} y={y} width={bw-6} height={chartH-pt-pb-y+pb} fill={it.color||color} rx={2} opacity={0.88}/><text x={x+(bw-6)/2} y={chartH-pb+14} fontSize={10} fill="#999" textAnchor="middle">{it.name}</text></g>; })}</svg></div>;
-    };
-    return <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
-      {grrChart('均值图（X̄ by 部件）', [{name:'X̄',color:'#2563eb',data:grrM.map(g=>g.mean),labels}], [{v:grrM.reduce((a,b)=>a+b.mean,0)/grrM.length, color:'#16a34a'}])}
-      {grrChart('极差图（R by 部件）', [{name:'R',color:'#0891b2',data:grrM.map(g=>g.rg),labels}], [{v:grrM.reduce((a,b)=>a+b.rg,0)/grrM.length, color:'#16a34a'}])}
-      {histChart(sampleData.flatMap(r=>c.ops.map((o,oi)=>[r['t1_'+oi],r['t2_'+oi],r['t3_'+oi]]).flat()), 8, '#2563eb', '测量值直方图')}
-      {(()=>{
-        const pts=[]; sampleData.forEach((row,pi)=>{ c.ops.forEach((o,oi)=>{ [1,2,3].forEach(t=>{ pts.push({pi, oi, v:row['t'+t+'_'+oi]}); }); }); });
-        const all=pts.map(p=>p.v); const lo=Math.min(...all), hi=Math.max(...all); const pad=(hi-lo)*0.1||0.5;
-        const Y=v=> pt + (chartH-pt-pb)*(hi+pad-v)/(hi-lo+2*pad);
-        const X=pi=> pl + pi*(chartW-pl-pr)/(c.parts-1||1);
-        const cols=['#2563eb','#f59e0b','#16a34a'];
-        return <div style={{border:'1px solid #eef1f5',borderRadius:8,padding:'8px 10px 4px',background:'#fff'}}><div style={{fontSize:13,fontWeight:600,color:'#333',marginBottom:4}}>操作员测量散点图（by 部件）</div><svg viewBox={`0 0 ${chartW} ${chartH}`} style={{width:'100%',height:'auto'}}>{[0,1,2,3,4].map(i=>{ const v=lo+pad+(hi-lo)*i/4; return <g key={i}><line x1={pl} x2={chartW-pr} y1={Y(v)} y2={Y(v)} stroke="#eef1f5"/><text x={pl-6} y={Y(v)+4} fontSize={10} fill="#999" textAnchor="end">{v.toFixed(3)}</text></g>; })}{pts.map((p,i)=><circle key={i} cx={X(p.pi)} cy={Y(p.v)} r={2.2} fill={cols[p.oi]} opacity={0.75}><title>{c.ops[p.oi]+' · '+sampleData[p.pi].s+' · '+p.v.toFixed(4)}</title></circle>)}{c.ops.map((o,oi)=><g key={oi}><circle cx={chartW-pr-52-oi*26} cy={chartH-10} r={3} fill={cols[oi]}/><text x={chartW-pr-46-oi*26} y={chartH-6} fontSize={10} fill="#666">{o}</text></g>)}</svg></div>;
-      })()}
-      {barChart('方差分量（%）', [{name:'EV',v:0.70,color:'#3b82f6'},{name:'AV',v:0.34,color:'#f59e0b'},{name:'GRR',v:1.04,color:'#8b5cf6'},{name:'PV',v:98.96,color:'#16a34a'}], '#2563eb')}
-      {barChart('量具评估值（%）', [{name:'%GRR',v:10.2,color:'#d97706'},{name:'公差%GRR',v:7.4,color:'#0891b2'},{name:'NDC(÷10)',v:1.3,color:'#6b7280'}], '#d97706')}
-    </div>;
-  };
-  return <div>
-    <PageHead extra={<Space><span style={{color:'#666'}}>{c.label} · 报告编号 {c.no} · {c.plan} · 出具日期 {c.date}</span></Space>}/>
-    <div style={{display:'flex',gap:12,alignItems:'center',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:8,padding:'12px 16px',marginBottom:14}}>
-      <span style={{fontSize:15,fontWeight:700,color:verdictColor2}}>结论：{c.verdict}</span>
-      <span style={{color:'#666',fontSize:13}}>{c.verdictNote}</span>
-    </div>
-    <Panel title="报告表头">
-      <Descriptions size="small" column={4} items={[
-        {key:'no',label:'报告编号',children:c.no},
-        {key:'plan',label:'MSA计划号',children:c.plan},
-        {key:'inst',label:'器具名称',children:c.inst},
-        {key:'instNo',label:'器具编号',children:<span className="mono">{c.instNo}</span>},
-        {key:'obj',label:'被测参数',children:c.object},
-        {key:'unit',label:'单位',children:c.unit},
-        {key:'an',label:'分析类型',children:c.type},
-        {key:'est',label:'估计方法',children:c.method},
-        {key:'by',label:'评价人',children:c.analyst},
-        {key:'dt',label:'日期',children:c.date}
-      ]}/>
-    </Panel>
-    <Panel title="统计结果">
-      <div className="kpi-row">{stats.map(x=><div key={x.k} className="kpi-item"><div className="k">{x.k}</div><div className="v">{x.v}</div></div>)}</div>
-    </Panel>
-    <Panel title="图表区">
-      {kind==='grr' && grrSix()}
-      {kind==='kappa' && <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>{kappaCross()}<div style={{flex:1,minWidth:280}}>
-        <div style={{border:'1px solid #eef1f5',borderRadius:8,padding:12,background:'#fff'}}><div style={{fontSize:13,fontWeight:600,color:'#333',marginBottom:8}}>判定标准（准则，客户审核）</div>
-          <table style={{borderCollapse:'collapse',fontSize:13,width:'100%'}}><thead><tr>{['参数','阈值','本报告'].map(h=><th key={h} style={{border:'1px solid #e5e7eb',padding:'5px 10px',background:'#f8fafc',textAlign:'left'}}>{h}</th>)}</tr></thead>
-          <tbody>
-            {[['一致性百分比','≥ 90%','96.7%'],['Kappa 值','≥ 0.75','0.93'],['误发率','≤ 5%','2.0%'],['漏发率','≤ 2%','1.3%']].map((r,i)=><tr key={i}><td style={{border:'1px solid #e5e7eb',padding:'5px 10px'}}>{r[0]}</td><td style={{border:'1px solid #e5e7eb',padding:'5px 10px'}}>{r[1]}</td><td style={{border:'1px solid #e5e7eb',padding:'5px 10px'}}>{r[2]}</td></tr>)}
-          </tbody></table>
+    return <div>
+      <PageHead extra={<Space><span style={{color:'#666'}}>{c.label} · 报告编号 {c.no} · {c.plan} · 出具日期 {c.date}</span></Space>}/>
+      <div style={{display:'flex',gap:12,alignItems:'center',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:8,padding:'12px 16px',marginBottom:14}}>
+        <span style={{fontSize:15,fontWeight:700,color:verdictColor}}>结论：{c.verdict}</span>
+        <span style={{color:'#666',fontSize:13}}>{c.verdictNote}</span>
+      </div>
+      <Panel title="报告表头">
+        <Descriptions size="small" column={4} items={[
+          {key:'no',label:'报告编号',children:c.no},{key:'plan',label:'MSA计划号',children:c.plan},
+          {key:'inst',label:'器具名称',children:c.inst},{key:'instNo',label:'器具编号',children:<span className="mono">{c.instNo}</span>},
+          {key:'obj',label:'被测参数',children:c.object},{key:'unit',label:'单位',children:c.unit},
+          {key:'an',label:'分析类型',children:c.type},{key:'est',label:'估计方法',children:c.method},
+          {key:'by',label:'评价人',children:c.analyst},{key:'dt',label:'日期',children:c.date}
+        ]}/>
+      </Panel>
+      <Panel title="X̄-R 控制图">
+        <KPI items={[
+          {k:'X̄̄',v:meanX.toFixed(4)},{k:'R̄',v:meanR.toFixed(4)},
+          {k:'UCL(X̄)',v:(meanX+0.729*meanR).toFixed(4)},{k:'LCL(X̄)',v:(meanX-0.729*meanR).toFixed(4)},
+          {k:'UCL(R)',v:(2.282*meanR).toFixed(4)},{k:'出界点数',v:'0'}
+        ]}/>
+        <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
+          {RunChart('X̄ 控制图', xbs.map((v,i)=>({x:'子组'+(i+1),y:v})),
+            [{v:meanX+0.729*meanR,color:'#dc2626',dash:true,label:'UCL'},{v:meanX,color:'#16a34a',label:'X̄̄'},{v:meanX-0.729*meanR,color:'#dc2626',dash:true,label:'LCL'}])}
+          {RunChart('R 控制图', rgs.map((v,i)=>({x:'子组'+(i+1),y:v})),
+            [{v:2.282*meanR,color:'#dc2626',dash:true,label:'UCL'},{v:meanR,color:'#16a34a',label:'R̄'},{v:0,color:'#dc2626',dash:true,label:'LCL'}])}
         </div>
-        <div style={{marginTop:12,display:'flex',gap:8}}>{[['检验员自身','一致性 + Fleiss Kappa'],['与标准','+ 不一致性'],['检验员之间','A-B / A-C / B-C']].map(x=><div key={x[0]} style={{flex:1,minWidth:150,border:'1px solid #e5e7eb',borderRadius:8,padding:10,background:'#fafafa'}}><b style={{fontSize:13}}>{x[0]}</b><div style={{fontSize:12,color:'#666',marginTop:4}}>{x[1]}</div></div>)}</div>
-      </div></div>}
-      {kind==='linear' && <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>{linearChart()}{histChart(sampleData.flatMap(r=>Array.from({length:12},(_,t)=>r['m'+t])), 8, '#16a34a', '偏倚直方图')}</div>}
-      {kind==='cgcgk' && <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>{histChart(sampleData.map(r=>r.m), 10, '#2563eb', '实测值直方图（公差带 ±0.05）')}</div>}
-      {kind==='stability' && stabilityChart()}
-    </Panel>
-    <Panel title="样本数据（报告合并原始测量数据）">
-      <div style={{overflowX:'auto'}}><Table rowKey="key" size="small" dataSource={sampleData} columns={sampleCols} pagination={false} scroll={{x:900}}/></div>
-    </Panel>
-    <div style={{marginTop:18,padding:'12px 16px',background:'#fafafa',borderRadius:8,color:'#888',fontSize:12.5}}>
-      说明：本报告为模拟数据演示页面。前端仅负责接收展示与单项判定（比大小）；斜率、P 值、Kappa、交叉表数量、SPC 判异结果等统计值由后台（丁宁/小娜）计算输出。报告 = 表头 + 结论 + 统计结果 + 图表 + 样本数据。
-    </div>
-  </div>;
+      </Panel>
+    </div>;
+  }
+
+  return <div><div style={{padding:40,textAlign:'center',color:'#999'}}>未知报告类型</div></div>;
 }
 
 /* ================= 挂载 ================= */
