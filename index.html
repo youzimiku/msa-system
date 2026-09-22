@@ -59,6 +59,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',R
 /* ---------- Table tweaks ---------- */
 .ant-table{font-size:14px}
 .ant-table-thead>tr>th{background:#f8fafc!important;color:#666666;font-weight:600;white-space:nowrap}
+.grr-entry-table .ant-table-tbody>tr>td{background:#D8E8F6!important}
+.grr-entry-table .ant-table-thead>tr>th{background:#ACCDEC!important}
 .ant-table-tbody>tr>td{padding:10px 12px!important}
 .ant-table-row{cursor:default}
 .row-link{color:#333333;cursor:pointer}
@@ -4310,7 +4312,7 @@ function GrrEntry({rec, onClose, curEditor}){
   const submitChecked=()=>{ if(!complete){ toast.err('数据不完整：请填满所有操作员×样本×试验的测量值'); return; } doSave(); };
   useEffect(()=>{ if(window.__entrySave) window.__entrySave(submitRaw); if(window.__entryDone) window.__entryDone(submitChecked); return ()=>{ if(window.__entrySave) window.__entrySave(null); if(window.__entryDone) window.__entryDone(null); } },[submitRaw,submitChecked]);
   return <Panel>
-    <Table bordered size="small" rowKey="key" dataSource={ds} columns={refCols} pagination={false} scroll={{x:trialsN*110+500}}/>
+    <Table bordered size="small" rowKey="key" dataSource={ds} columns={refCols} pagination={false} scroll={{x:trialsN*110+500}} className="grr-entry-table" headerCellStyle={{background:"#ACCDEC"}}/>
   </Panel>;
 }
 
