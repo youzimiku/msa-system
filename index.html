@@ -4471,7 +4471,7 @@ function AnlDetail({rec, kind, onBack}){
     {(rec.actions||[]).length>0 && <div className="mt12">{rec.actions.map((a,i)=><Alert key={i} type={a.status==='已完成'?'success':'warning'} showIcon style={{marginBottom:8}} message={<Space><Tag color={a.status==='已完成'?'green':'orange'}>{a.status}</Tag><b>{a.type}</b></Space>} description={<span>{a.content} ｜ 责任人：{a.owner} ｜ 计划完成：{a.planDate}</span>}/>)}</div>}
   </div>;
 }
-function AnlEntry({rec, kind, onClose}){
+function AnlEntry({rec, kind, onClose, curEditor}){
   const CFG=ANA_CFG[kind];
   const d=Store.get();
   const me=d.me;
@@ -4516,7 +4516,7 @@ function AnlEntry({rec, kind, onClose}){
     cols=[{title:'子组',width:100,render:(_,r)=><span className="mono">{r._code}</span>},{title:'样本号',width:140,render:()=><span className="mono">{sampleNo}</span>},{title:'实测值',width:120,render:(_,r)=>inp(st.raw[r._i]?st.raw[r._i][0]:'',v=>setCell('raw',r._i,0,v))}];
     data=st.raw.map((row,i)=>({_i:i,_code:'G'+String(i+1).padStart(2,'0')}));
   } else if(kind==='cgcgk'){
-    cols=[{title:'测量序号',width:100,render:(_,r)=><span className="mono">{r._i+1}</span>},{title:'测量值',width:140,render:(_,r)=>inp(st.raw[r._i]||'',v=>setCell('raw',r._i,0,v))}];
+    cols=[{title:'测量序号',width:100,render:(_,r)=><span className="mono">{r._i+1}</span>},{title:'录入人',width:120,render:()=><span>{curEditor||'无'}</span>},{title:'测量值',width:140,render:(_,r)=>inp(st.raw[r._i]||'',v=>setCell('raw',r._i,0,v))}];
     data=st.raw.map((v,i)=>({_i:i}));
   }
   const submitRaw=()=>{ doSave(true); };
@@ -4905,7 +4905,7 @@ const ENTRY_CFG = {
   kappa:{arr:'kappa', idPref:'KAPPA', name:'KAPPA', title:'KAPPA 台账', desc:'检验员判定矩阵（合格/不合格，盲测）', entry:(r,c,ce)=><KappaEntry rec={r} onClose={c} curEditor={ce}/>, result:'kappa'},
   linear:{arr:'linear', idPref:'LIN', name:'线性/偏倚', title:'线性/偏倚台账', desc:'标准件测量（覆盖量程 0/25/50/75/100%）', entry:(r,c)=><AnlEntry rec={r} kind="linear" onClose={c}/>, result:'anl_linear'},
   stability:{arr:'stability', idPref:'STB', name:'稳定性', title:'稳定性台账', desc:'子组测量（跨 4 周~3 个月，SPC 判异）', entry:(r,c)=><AnlEntry rec={r} kind="stability" onClose={c}/>, result:'anl_stability'},
-  cgcgk:{arr:'cgcgk', idPref:'CG', name:'Cg/Cgk', title:'Cg/Cgk 台账', desc:'标准件连续测量（VDA Type1）', entry:(r,c)=><AnlEntry rec={r} kind="cgcgk" onClose={c}/>, result:'anl_cgcgk'},
+  cgcgk:{arr:'cgcgk', idPref:'CG', name:'Cg/Cgk', title:'Cg/Cgk 台账', desc:'标准件连续测量（VDA Type1）', entry:(r,c,ed)=><AnlEntry rec={r} kind="cgcgk" onClose={c} curEditor={ed}/>, result:'anl_cgcgk'},
 };
 
 function GrrPage(){
