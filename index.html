@@ -4882,9 +4882,10 @@ function DataEntryPage({kind}){
         {(kindNow==='grr'||kindNow==='kappa') && <Select style={{width:160}} value={curEditor} placeholder="当前录入人" options={PEOPLE_LIST} onChange={setCurEditor}/>}
       </Space>
     </Panel>
-    {cur ? <div><div style={{marginBottom:8, textAlign:"left"}}><Button type="primary" size="middle" onClick={()=>{ if(window.__entrySaveFn) window.__entrySaveFn(); else toast.warn('请先选择记录'); }}>保存数据</Button></div><Panel className="entry-panel" style={{flex:1}}>
+    {cur ? <Panel className="entry-panel" style={{flex:1}}>
+      <div style={{marginBottom:8, textAlign:"left"}}><Button type="primary" size="middle" onClick={()=>{ if(window.__entrySaveFn) window.__entrySaveFn(); else toast.warn('请先选择记录'); }}>保存数据</Button></div>
       {CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); }, curEditor)}
-    </Panel></div> : null}
+    </Panel> : null}
   </div>;
 }
 
