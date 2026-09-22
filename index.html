@@ -4703,7 +4703,7 @@ function EntryPage({kind}){
   const delRow=(r)=>{ Modal.confirm({ content:'是否确定删除'+r.id+' '+(r.object||'')+'？', okText:'删除', okType:'danger', cancelText:'取消', onOk:()=>{ mut(s=>{ const arr=kind==='grr'?s.grr:kind==='kappa'?s.kappa:s[ANA_CFG[kind].arr]; const i=arr.findIndex(x=>x.id===r.id); if(i>=0) arr.splice(i,1); logAction(s.me.name,'删除台账',r.id,'删除台账记录 '+r.id); }); toast.ok('已删除'); } }); };
   const cols=[
     {title:'操作', width:460, fixed:'left', render:(_,r)=><Space size={0} wrap>
-      <Button size="small" type="link" onClick={()=>setPickRec(r)}>{(kind==='grr'||kind==='kappa')?'人员选择':'样本/人员'}</Button>
+      <Button size="small" type="link" onClick={()=>setPickRec(r)}>{(kind==='grr'||kind==='kappa')?'人员':'样本/人员'}</Button>
       <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>{ if(r.reviewStatus!=='待采集'&&r.reviewStatus!=='待分析'){ toast.warn('仅「待采集/待分析」状态可录入数据'); return; } DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind); }}>录入</Button>
       <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>{ if(r.reviewStatus!=='待分析'){ toast.warn('仅「待分析」状态可执行分析'); return; } setAnlRec(r); }}>分析</Button>
       <Button size="small" type="link" onClick={()=>goResult(r)}>结果</Button>
