@@ -4923,8 +4923,12 @@ function DataEntryPage({kind}){
             {cardItems.length===0 && <div style={{color:'#666',fontSize:13,textAlign:'center',padding:18}}>无可录入台账</div>}
             {cardItems.map(r=>{
               const active=cur && cur.id===r.id;
+              const entered=r.reviewStatus==='待分析';
               return <div key={r.id} onClick={()=>onPicked(r.id)} style={{border:'1px solid '+(active?'#1677ff':'#e3eaf3'),borderRadius:6,padding:'8px 10px',marginBottom:6,cursor:'pointer',background:active?'#e6f4ff':'#fff'}}>
-                <div style={{fontSize:13,fontWeight:active?600:400,color:active?'#1677ff':'#333',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.id}</div>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:6}}>
+                  <div style={{fontSize:13,fontWeight:active?600:400,color:active?'#1677ff':'#333',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',flex:1}}>{r.id}</div>
+                  <span style={{fontSize:11,padding:'1px 6px',borderRadius:3,flexShrink:0,background:entered?'#f6ffed':'#fff7e6',color:entered?'#52c41a':'#fa8c16',border:'1px solid '+(entered?'#b7eb8f':'#ffd591')}}>{entered?'已录入':'待录入'}</span>
+                </div>
                 <div style={{fontSize:12,color:'#888',marginTop:2,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.instName||'无'}</div>
               </div>;
             })}
