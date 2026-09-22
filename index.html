@@ -4886,18 +4886,37 @@ function DataEntryPage({kind}){
     window.__entryDone=(fn)=>{ window.__entryDoneFn=fn; };
   const onPicked=(id)=>{ const r=(d[CFG.arr]||[]).find(g=>g.id===id); if(r){ setRec(r); setSelId(id); } };
   const onKindChange=(k)=>{ DataOpen=null; setCurKind(k); setRec(null); setSelId(null); };
+  const [cardKw,setCardKw]=useState('');
+  const cardItems=pending.filter(r=>!cardKw || (r.id+' '+(r.instName||'')).toLowerCase().includes(cardKw.toLowerCase()));
   return <div style={{display:'flex',flexDirection:'column',minHeight:'calc(100vh - 120px)'}}>
     <PageHead title="数据录入"/>
-    <Panel title="选择录入类型" extra={<Button type="primary" size="middle" onClick={()=>{ if(window.__entryDoneFn) window.__entryDoneFn(); else toast.warn('请先选择记录'); }}>提交</Button>}>
-      <Space wrap size="large">
-        <div><span style={{marginRight:8}}>台账类型</span><Select style={{width:300}} value={kindNow} options={['grr','kappa','linear','stability','cgcgk'].map(k=>({value:k,label:ENTRY_CFG[k].name+'（'+ENTRY_CFG[k].title+'）'}))} onChange={onKindChange}/></div>
-        <div><span style={{marginRight:8}}>{CFG.name}记录</span><Select style={{width:360}} value={cur?cur.id:undefined} options={pending.map(r=>({value:r.id,label:r.id+' · '+r.instName}))} onChange={onPicked}/></div>
-        {(kindNow==='grr'||kindNow==='kappa') && <div><span style={{marginRight:8}}>当前录入人</span><Select style={{width:160}} value={curEditor} options={(cur && (cur.owner===d.me.name||cur.assignee===d.me.name) ? [{value:'all',label:'全部'}] : []).concat(PEOPLE_LIST)} onChange={setCurEditor}/></div>}
-      </Space>
+    <Panel extra={<Space>
+        <span style={{marginRight:8}}>台账类型</span><Select style={{width:260}} value={kindNow} options={['grr','kappa','linear','stability','cgcgk'].map(k=>({value:k,label:ENTRY_CFG[k].name+'（'+ENTRY_CFG[k].title+'）'}))} onChange={onKindChange}/>
+        {(kindNow==='grr'||kindNow==='kappa') && <><span style={{marginRight:8}}>当前录入人</span><Select style={{width:140}} value={curEditor} options={(cur && (cur.owner===d.me.name||cur.assignee===d.me.name) ? [{value:'all',label:'全部'}] : []).concat(PEOPLE_LIST)} onChange={setCurEditor}/></>}
+        <Button type="primary" size="middle" onClick={()=>{ if(window.__entryDoneFn) window.__entryDoneFn(); else toast.warn('请先选择记录'); }}>提交</Button>
+      </Space>}>
+      <div style={{display:'flex',gap:12,alignItems:'stretch',minHeight:480}}>
+        <div style={{width:260,flexShrink:0,display:'flex',flexDirection:'column',border:'1px solid #e3eaf3',borderRadius:6,padding:'8px',background:'#fafcff'}}>
+          <Input size="small" allowClear placeholder="搜索台账编号/器具" style={{width:'100%',marginBottom:8,flexShrink:0}} value={cardKw} onChange={e=>setCardKw(e.target.value)}/>
+          <div style={{flex:1,minHeight:0,overflow:'auto'}}>
+            {cardItems.length===0 && <div style={{color:'#666',fontSize:13,textAlign:'center',padding:18}}>无可录入台账</div>}
+            {cardItems.map(r=>{
+              const active=cur && cur.id===r.id;
+              return <div key={r.id} onClick={()=>onPicked(r.id)} style={{border:'1px solid '+(active?'#1677ff':'#e3eaf3'),borderRadius:6,padding:'8px 10px',marginBottom:6,cursor:'pointer',background:active?'#e6f4ff':'#fff'}}>
+                <div style={{fontSize:13,fontWeight:active?600:400,color:active?'#1677ff':'#333',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.id}</div>
+                <div style={{fontSize:12,color:'#888',marginTop:2,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.instName||'无'}</div>
+                <div style={{fontSize:12,color:'#aaa',marginTop:2}}>{r.reviewStatus==='待采集'?'待采集':'待分析'}</div>
+              </div>;
+            })}
+          </div>
+        </div>
+        <div style={{flex:1,minWidth:0,display:'flex',flexDirection:'column'}}>
+          {cur ? <Panel className="entry-panel" style={{flex:1}}>
+            {CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); }, curEditor)}
+          </Panel> : <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',color:'#999',fontSize:14}}>请从左侧选择要录入的台账记录</div>}
+        </div>
+      </div>
     </Panel>
-    {cur ? <Panel className="entry-panel" style={{flex:1}}>
-      {CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); }, curEditor)}
-    </Panel> : null}
   </div>;
 }
 
