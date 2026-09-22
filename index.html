@@ -4886,7 +4886,7 @@ function DataEntryPage({kind}){
   const onKindChange=(k)=>{ DataOpen=null; setCurKind(k); setRec(null); setSelId(null); };
   return <div style={{display:'flex',flexDirection:'column',minHeight:'calc(100vh - 120px)'}}>
     <PageHead title="数据录入"/>
-    <Panel title="选择录入类型" extra={<Button type="primary" size="middle" onClick={()=>{ if(window.__entryDoneFn) window.__entryDoneFn(); else toast.warn('请先选择记录'); }}>录入完成</Button>}>
+    <Panel title="选择录入类型" extra={<Button type="primary" size="middle" onClick={()=>{ if(window.__entryDoneFn) window.__entryDoneFn(); else toast.warn('请先选择记录'); }}>提交</Button>}>
       <Space wrap>
         <Select style={{width:300}} value={kindNow} placeholder="选择台账类型" options={['grr','kappa','linear','stability','cgcgk'].map(k=>({value:k,label:ENTRY_CFG[k].name+'（'+ENTRY_CFG[k].title+'）'}))} onChange={onKindChange}/>
         <Select style={{width:360}} value={cur?cur.id:undefined} placeholder={'选择要录入 / 修改的'+CFG.name+'记录'} options={pending.map(r=>({value:r.id,label:r.id+' · '+r.instName}))} onChange={onPicked}/>
@@ -4894,7 +4894,6 @@ function DataEntryPage({kind}){
       </Space>
     </Panel>
     {cur ? <Panel className="entry-panel" style={{flex:1}}>
-      <div style={{marginBottom:8, textAlign:"left"}}><Button type="primary" size="middle" onClick={()=>{ if(window.__entrySaveFn) window.__entrySaveFn(); else toast.warn('请先选择记录'); }}>保存数据</Button></div>
       {CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); }, curEditor)}
     </Panel> : null}
   </div>;
