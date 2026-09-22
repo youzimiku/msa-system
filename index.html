@@ -1031,7 +1031,7 @@ function applyFieldDefaults(d){
     'CG-2026-003':{planId:'MSAP-2026-004',instId:'JJQ-2024-002',instName:'外径千分尺 0~25mm',object:'轴径 φ10±0.02',standard:'STD-MSA-001',runs:50},
     'CG-2026-004':{planId:'MSAP-2026-009',instId:'JJQ-2024-004',instName:'数显千分表 0~12.7mm',object:'轴径 Φ12.5±0.05',standard:'STD-MSA-001',runs:50}
   };
-  const SEED_ST={'GRR-2026-001':'已批准','GRR-2026-002':'需整改','GRR-2026-003':'待采集','GRR-2026-004':'待分析','KPA-2026-001':'已批准','KPA-2026-002':'需整改','KPA-2026-004':'待分析','LIN-2026-001':'已批准','LIN-2026-002':'待分析','STB-2026-001':'已批准','STB-2026-002':'待采集','STB-2026-003':'待分析','CG-2026-001':'已批准','CG-2026-002':'待审核','CG-2026-003':'待采集','CG-2026-004':'待分析'};
+  const SEED_ST={'GRR-2026-001':'完成','GRR-2026-002':'驳回','GRR-2026-003':'待采集','GRR-2026-004':'待分析','KPA-2026-001':'完成','KPA-2026-002':'驳回','KPA-2026-004':'待分析','LIN-2026-001':'完成','LIN-2026-002':'待分析','STB-2026-001':'完成','STB-2026-002':'待采集','STB-2026-003':'待分析','CG-2026-001':'完成','CG-2026-002':'待确认','CG-2026-003':'待采集','CG-2026-004':'待分析'};
   const SEED_CON={'GRR-2026-001':'可接受','GRR-2026-002':'有条件接受','GRR-2026-003':'','GRR-2026-004':'','KPA-2026-001':'优秀(可接受)','KPA-2026-002':'不可接受-需改进','LIN-2026-001':'非常理想可接受','LIN-2026-002':'','STB-2026-001':'可接受','STB-2026-002':'','STB-2026-003':'','CG-2026-001':'可接受','CG-2026-002':'有条件接受','CG-2026-003':'','CG-2026-004':''};
   const GEN_STB01=()=>{ const arr=[]; const base=[9.9979,9.9987,9.9996,10.0004,10.0013]; for(let g=0;g<25;g++){ const row=[]; for(let k=0;k<5;k++){ row.push(base[(g+k)%5]); } arr.push(row); } return arr; };
   const REBUILD=(key)=>{
@@ -1107,7 +1107,7 @@ const UNIT_OPT = ['mm','μm','N','N·m','kg','g','°C','MPa','件'].map(v=>({val
 const DEPT_OPT = ['品质部','总装车间','电控车间','计量室','实验室','质量'].map(v=>({value:v,label:v}));
 const ANALYST_OPT = ['王强','刘青','张伟','孙丽','赵磊','周敏','吴刚','郑芳','冯强','何静','李工程师','陈杰','吴芳','周军'].map(v=>({value:v,label:v}));
 const TIPS = {
-  status: {'待采集':'台账记录已生成，等待录入样本/测量数据','待分析':'样本已录入/导入，等待手动执行分析','待审核':'数据已提交，等待审核员审核','已批准':'审核通过，结论生效并回写计划/器具','需整改':'审核退回，需添加纠正措施并复测','已闭环':'纠正措施完成、复测通过，已归档','已关闭':'人工关闭归档','在用':'可正常使用','待校准':'已到/即将到校准周期','送检中':'正在送检','封存':'封存保管，暂停使用','停用':'暂停使用，需整改后启用','报废':'已报废'},
+  status: {'待采集':'台账记录已生成，等待录入样本/测量数据','采集中':'正在采集测量数据','待分析':'样本已录入，等待分析','分析完成':'分析已完成，等待发起确认','待确认':'数据已提交，等待确认人确认','完成':'确认通过，结论生效','驳回':'确认退回，需修改后重新提交'},'在用':'可正常使用','待校准':'已到/即将到校准周期','送检中':'正在送检','封存':'封存保管，暂停使用','停用':'暂停使用，需整改后启用','报废':'已报废'},
   verdict: {'可接受':'测量系统能力合格，可用于日常检验与量产判定','有条件接受':'能力处于边缘，需结合过程能力/公差评估后批准','不可接受':'能力不足，必须整改后重新分析','待采集':'样本未录完，尚无分析结论','优秀(可接受)':'各项指标显著优于阈值，可接受','良好(有条件接受)':'处于边缘档，需评估后批准','优秀':'测量系统能力合格','良好':'处于边缘，需评估后批准'},
   plan: {'待开始':'计划已创建/已定型，等待采集样本','进行中':'样本采集中或结论审核中','已完成':'计划已闭环归档'},
   calib: {'正常':'在检定/校准周期内','临期':'距校准到期不足30天，请安排送检','超期':'已超过校准日期，应停用并送检'},
@@ -1198,11 +1198,11 @@ function syncPlanFromRecord(s, planId){
   if(!recs.length) return;
   const sts = recs.map(r=>r.reviewStatus);
   let agg;
-  if(sts.includes('需整改')) agg='需整改';
-  else if(sts.includes('待审核')) agg='待审核';
+  if(sts.includes('驳回')) agg='驳回';
+  else if(sts.includes('待确认')) agg='待确认';
   else if(sts.includes('待分析')) agg='待分析';
   else if(sts.includes('待采集')) agg='待采集';
-  else if(sts.includes('已批准')) agg='已批准';
+  else if(sts.includes('完成')) agg='完成';
   else if(sts.includes('已闭环')) agg='已闭环';
   else if(sts.includes('已关闭')) agg='已关闭';
   else agg = recs[0].reviewStatus;
@@ -4432,7 +4432,7 @@ function AnlPage({kind}){
     <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="台账编号/计划号/器具编号/器具名称/测量对象" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待分析">待分析</Radio><Radio value="待审核">待审核</Radio><Radio value="已批准">已批准</Radio><Radio value="需整改">需整改</Radio><Radio value="已闭环">已闭环</Radio><Radio value="已关闭">已关闭</Radio></Radio.Group>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待采集">待采集</Radio><Radio value="采集中">采集中</Radio><Radio value="待分析">待分析</Radio><Radio value="分析完成">分析完成</Radio><Radio value="待确认">待确认</Radio><Radio value="完成">完成</Radio><Radio value="驳回">驳回</Radio></Radio.Group>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>结论</span><Select allowClear style={{width:140}} value={fconcl} options={conclOpts.map(c=>({value:c,label:c}))} onChange={setFconcl}/>
         <span className="tiny">共 {rows.length} 条</span>
       </Space>
@@ -4576,7 +4576,7 @@ function AnalyzeModal({rec, kind, onClose}){
     if(!canCalc){ toast.err('数据不足或尚未录入，无法完成分析'); return; }
     mut(s=>{ const arr = kind==='grr'? s.grr : kind==='kappa'? s.kappa : s[ANA_CFG[kind].arr]; const g=arr.find(x=>x.id===rec.id); if(!g)return;
       if(kind==='kappa'){ const ref=(g.reference&&g.reference.length)?g.reference:Array.from({length:g.numSamples||50},(_,i)=> i<Math.round((g.numSamples||50)*0.6)?1:0); const maj=(a)=>{ if(!a||!a.length)return 0; const ones=a.filter(v=>v===1).length; return ones>a.length/2?1:0; }; g.reference=ref; g.appData=g.rawData.map(a=>a.map(s=>maj(s))); }
-      g.conclusion=calc.verdict; g.reviewStatus='待审核'; g.reviewer=''; g.approveDate=''; g.analyst=s.me.name; g.analysisDate=TODAY;
+      g.conclusion=calc.verdict; g.reviewStatus='待确认'; g.reviewer=''; g.approveDate=''; g.analyst=s.me.name; g.analysisDate=TODAY;
       syncPlanFromRecord(s,g.planId); backfillMsa(s,g.planId);
       logAction(s.me.name,'手动分析',g.id,CFG.name+'分析完成并提交审核，结论['+calc.verdict+']'); });
     toast.ok('分析完成并提交审核：结论 '+calc.verdict); onClose&&onClose();
@@ -5000,7 +5000,7 @@ function GrrPage(){
     <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="台账编号/计划号/器具编号/器具名称/测量对象" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待分析">待分析</Radio><Radio value="待审核">待审核</Radio><Radio value="已批准">已批准</Radio><Radio value="需整改">需整改</Radio><Radio value="已闭环">已闭环</Radio><Radio value="已关闭">已关闭</Radio></Radio.Group>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待采集">待采集</Radio><Radio value="采集中">采集中</Radio><Radio value="待分析">待分析</Radio><Radio value="分析完成">分析完成</Radio><Radio value="待确认">待确认</Radio><Radio value="完成">完成</Radio><Radio value="驳回">驳回</Radio></Radio.Group>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>结论</span><Select allowClear style={{width:140}} value={fconcl} options={conclOpts.map(c=>({value:c,label:c}))} onChange={setFconcl}/>
         <span className="tiny">共 {rows.length} 条</span>
       </Space>
@@ -5165,7 +5165,7 @@ function KappaPage(){
     <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="台账编号/计划号/器具编号/器具名称/测量对象" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待分析">待分析</Radio><Radio value="待审核">待审核</Radio><Radio value="已批准">已批准</Radio><Radio value="需整改">需整改</Radio><Radio value="已闭环">已闭环</Radio><Radio value="已关闭">已关闭</Radio></Radio.Group>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待采集">待采集</Radio><Radio value="采集中">采集中</Radio><Radio value="待分析">待分析</Radio><Radio value="分析完成">分析完成</Radio><Radio value="待确认">待确认</Radio><Radio value="完成">完成</Radio><Radio value="驳回">驳回</Radio></Radio.Group>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>结论</span><Select allowClear style={{width:140}} value={fconcl} options={conclOpts.map(c=>({value:c,label:c}))} onChange={setFconcl}/>
         <span className="tiny">共 {rows.length} 条</span>
       </Space>
@@ -5368,8 +5368,8 @@ function KappaDetail({rec,onBack}){
 function DesignPage(){
   const d=Store.get();
   const flow = ['计量器具台账建档','校准周期管理','按「零件/工序」选择检验标准','筛选到期器具(未来N天/厂商/产线/工序)','批量创建MSA计划(一器一计划，一个计划只针对一个质量特性)','定型(GRR/KAPPA)','样本准备(交叉型/嵌套型，参考值溯源)','台账内数据录入(强制行数校验)','统计分析(GRR/KAPPA)','结果判定(标准自动)','审核批准','合格归档 / 不合格整改→复测→闭环','台账更新关联'];
-  const planFlow = ['未定型','定型(GRR/KAPPA+标准)','待采集','台账录入并提交(交叉型强制校验)','待审核','已批准 / 需整改','已闭环 / 已关闭'];
-  const recFlow = ['待采集','待审核','已批准','需整改','已闭环','已关闭'];
+  const planFlow = ['未定型','定型(GRR/KAPPA+标准)','待采集','台账录入并提交(交叉型强制校验)','待确认','完成 / 驳回'];
+  const recFlow = ['待采集','采集中','待分析','分析完成','待确认','完成','驳回'];
   return <div>
     <PageHead title="设计说明 · 评审依据" sub="业务模型、标准依据、状态机、判定准则与防漏洞设计，供内外部评审查阅"/>
     <Row gutter={16}>
