@@ -4890,7 +4890,7 @@ function DataEntryPage({kind}){
       <Space wrap>
         <Select style={{width:300}} value={kindNow} placeholder="选择台账类型" options={['grr','kappa','linear','stability','cgcgk'].map(k=>({value:k,label:ENTRY_CFG[k].name+'（'+ENTRY_CFG[k].title+'）'}))} onChange={onKindChange}/>
         <Select style={{width:360}} value={cur?cur.id:undefined} placeholder={'选择要录入 / 修改的'+CFG.name+'记录'} options={pending.map(r=>({value:r.id,label:r.id+' · '+r.instName}))} onChange={onPicked}/>
-        {(kindNow==='grr'||kindNow==='kappa') && <Select style={{width:160}} value={curEditor} placeholder="当前录入人" options={PEOPLE_LIST} onChange={setCurEditor}/>}
+        {(kindNow==='grr'||kindNow==='kappa') && <Select style={{width:160}} value={curEditor} placeholder="当前录入人" options={(cur && (cur.owner===d.me.name||cur.assignee===d.me.name) ? [{value:'all',label:'全部'}] : []).concat(PEOPLE_LIST)} onChange={setCurEditor}/>}
       </Space>
     </Panel>
     {cur ? <Panel className="entry-panel" style={{flex:1}}>
