@@ -2817,6 +2817,7 @@ function BatchPlanModal({value, onClose}){
             {title:'分析方法', width:120, render:(_,r)=><Tag color={ANAL_COLOR[r.method]} style={{marginRight:0,width:76,textAlign:'center'}}>{ANAL_SHORT[r.method]}</Tag>},
             {title:'人数', width:100, render:(_,r)=>{ const sd=samplingDef(r.method); if(!sd.useOps) return <span className="tiny">—</span>; return <InputNumber size="small" min={sd.opsMin} max={sd.opsMax} style={{width:88}} value={r.ops} onChange={v=>setRow(r.method,{ops:v})}/>; }},
             {title:'次数', width:100, render:(_,r)=>{ const sd=samplingDef(r.method); return <InputNumber size="small" min={sd.trialsMin} max={sd.trialsMax} style={{width:88}} value={r.trials} onChange={v=>setRow(r.method,{trials:v})}/>; }},
+            {title:'组内次数', width:100, render:(_,r)=>{ if(r.method!=='stability') return <span className="tiny">—</span>; return <InputNumber size="small" min={1} max={30} style={{width:88}} value={r.subGroups} onChange={v=>setRow(r.method,{subGroups:v})}/>; }},
             {title:'样本数', width:100, render:(_,r)=>{ const sd=samplingDef(r.method); return <InputNumber size="small" min={sd.partsMin} max={sd.partsMax} style={{width:88}} value={r.parts} onChange={v=>setRow(r.method,{parts:v})}/>; }},
           ]}/>
       </>}
@@ -3042,6 +3043,7 @@ function AppendPlanModal({plan, onClose}){
           {title:'分析方法', width:120, render:(_,r)=><Tag color={ANAL_COLOR[r.method]} style={{marginRight:0,width:76,textAlign:'center'}}>{ANAL_SHORT[r.method]}</Tag>},
           {title:'人数', width:100, render:(_,r)=>{ const sd=samplingDef2(r.method); if(!sd.useOps) return <span className="tiny">—</span>; return <InputNumber size="small" min={sd.opsMin} max={sd.opsMax} style={{width:88}} value={r.ops} onChange={v=>setRow(r.method,{ops:v})}/>; }},
           {title:'次数', width:100, render:(_,r)=>{ const sd=samplingDef2(r.method); return <InputNumber size="small" min={sd.trialsMin} max={sd.trialsMax} style={{width:88}} value={r.trials} onChange={v=>setRow(r.method,{trials:v})}/>; }},
+          {title:'组内次数', width:100, render:(_,r)=>{ if(r.method!=='stability') return <span className="tiny">—</span>; return <InputNumber size="small" min={1} max={30} style={{width:88}} value={r.subGroups} onChange={v=>setRow(r.method,{subGroups:v})}/>; }},
           {title:'样本数', width:100, render:(_,r)=>{ const sd=samplingDef2(r.method); return <InputNumber size="small" min={sd.partsMin} max={sd.partsMax} style={{width:88}} value={r.parts} onChange={v=>setRow(r.method,{parts:v})}/>; }},
         ]}/>
     </div>
