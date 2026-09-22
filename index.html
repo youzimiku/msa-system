@@ -4723,7 +4723,7 @@ function EntryPage({kind}){
     <Panel>
       <Space wrap>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="台账编号/计划号/器具编号/器具名称/测量对象" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Select allowClear style={{width:140}} value={fstatus||undefined} options={['待采集','采集中','待分析','分析完成','待确认','完成','驳回'].map(c=>({value:c,label:c}))}} onChange={v=>setFstatus(v||undefined)}/>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Select allowClear style={{width:140}} value={fstatus||undefined} options={['待采集','采集中','待分析','分析完成','待确认','完成','驳回'].map(c=>({value:c,label:c}))} onChange={v=>setFstatus(v||undefined)}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>结论</span><Select allowClear style={{width:140}} value={fconcl} options={conclOpts.map(c=>({value:c,label:c}))} onChange={setFconcl}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>责任人</span><Select allowClear style={{width:140}} value={fanl} options={anlOpts.map(c=>({value:c,label:c}))} onChange={setFanl}/>
         <span className="tiny">共 {rows.length} 条</span>
