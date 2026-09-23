@@ -2502,9 +2502,6 @@ function PlanPage(){
     {title:'KAPPA', width:68, align:'center', render:fenCell('KAPPA','KAPPA')},
     {title:'判定结果', width:110, render:(_,r)=>{ const recs=planRecords(d,r.id); const sv=sumVerdict(recs); return recs.length? <VerdictTag v={sv}/> : (r.result&&r.result!=='-'?<VerdictTag v={r.result}/>:<VerdictTag v="待采集"/>); }},
     {title:'状态', width:112, render:(_,r)=>{ const v=planStatusView(r.status); return <Tag color={v.color} style={{marginRight:0}}>{v.text}</Tag>; }},
-    {title:'测量人数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); const v=recs.length&&recs[0].numOps!=null? recs[0].numOps : (r.params&&r.params.ops!=null? r.params.ops : ''); return <span className="mono">{v===''?'-':v}</span>; }},
-    {title:'测量次数', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); const v=recs.length&&recs[0].numTrials!=null? recs[0].numTrials : (r.params&&r.params.trials!=null? r.params.trials : ''); return <span className="mono">{v===''?'-':v}</span>; }},
-    {title:'样本数量', width:92, render:(_,r)=>{ const recs=planRecords(d,r.id); const v=recs.length&&recs[0].numParts!=null? recs[0].numParts : (r.params&&r.params.parts!=null? r.params.parts : ''); return <span className="mono">{v===''?'-':v}</span>; }},
     {title:'工序', width:84, render:(_,r)=>instCell(r,it=>it?<span>{it.process||'暂无'}</span>:'')},
     {title:'分辨力', width:86, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.res||'暂无'}</span>:'')},
     {title:'数据类型', width:102, render:(_,r)=><span>{r.dataType||'计量型'}</span>},
@@ -3188,9 +3185,6 @@ function PlanDetail({plan, onClose, onConvert}){
       item('分厂', plan.subplant||'—')
     ])}
     {grp('抽样规则', [
-      item('测量人数', recs.length? recs[0].numOps+' 人' : (plan.params?plan.params.ops+' 人':'待定型')),
-      item('测量次数', recs.length? recs[0].numTrials+' 次' : (plan.params?plan.params.trials+' 次':'待定型')),
-      item('样本数量', recs.length? recs[0].numParts+' 件' : (plan.params?plan.params.parts+' 件':'待定型')),
       item('CG/CGK', dimStatus('cgcgk','CG/CGK')),
       item('偏倚', dimStatus('linear','偏倚')),
       item('线性', dimStatus('linear','线性')),
