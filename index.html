@@ -5498,7 +5498,7 @@ function ReportPage({kind}){
     </div>;
   };
   /* ---- 通用 KPI ---- */
-  const KPI=(items)=>{
+  const KPI=({items})=>{
     return <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(120px,1fr))',gap:10,marginBottom:16}}>
       {items.map((it,i)=><div key={i} style={{border:'1px solid #e5e7eb',borderRadius:8,padding:'10px 14px',background:'#fafbfc'}}>
         <div style={{fontSize:12,color:'#888'}}>{it.k}</div>
