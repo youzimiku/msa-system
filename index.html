@@ -4916,9 +4916,9 @@ function DataEntryPage({kind}){
   return <div style={{display:'flex',flexDirection:'column',minHeight:'calc(100vh - 120px)'}}>
     <PageHead title="数据录入"/>
     <Panel>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+      <div style={{display:'flex',alignItems:'center',marginBottom:12}}>
         {(kindNow==='grr'||kindNow==='kappa') && <div style={{display:'flex',alignItems:'center'}}><span style={{fontSize:14,color:'#666',marginRight:8}}>操作人</span><Select style={{width:180}} value={curEditor} options={(cur && (cur.owner===d.me.name||cur.assignee===d.me.name) ? [{value:'all',label:'全部'}] : []).concat(PEOPLE_LIST)} onChange={setCurEditor}/></div>}
-        <Button type="primary" size="middle" onClick={()=>{ if(window.__entryDoneFn) window.__entryDoneFn(); else toast.warn('请先选择记录'); }}>提交</Button>
+        <Button type="primary" size="middle" style={{marginLeft:'auto'}} onClick={()=>{ if(window.__entryDoneFn) window.__entryDoneFn(); else toast.warn('请先选择记录'); }}>提交</Button>
       </div>
       <div style={{display:'flex',gap:12,alignItems:'stretch',minHeight:480}}>
         <div style={{width:260,flexShrink:0,display:'flex',flexDirection:'column',border:'1px solid #e3eaf3',borderRadius:6,padding:'8px',background:'#fafcff'}}>
