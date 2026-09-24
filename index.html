@@ -2607,7 +2607,6 @@ function BatchPlanModal({value, onClose}){
   const setMetaK=(k,v)=>setMeta(m=>({...m,[k]:v}));
   const [qualityChar,setQualityChar]=useState('');
   const [methodRows,setMethodRows]=useState([]);
-  const [trigger,setTrigger]=useState('周期复评');
   const [planDate,setPlanDate]=useState(dayjs().add(30,'day').format('YYYY-MM-DD'));
   const [dueSel,setDueSel]=useState('');
   const [fVendor,setFVendor]=useState(); const [fModel,setFModel]=useState(); const [fProd,setFProd]=useState(); const [fProcess,setFProcess]=useState(); const [fDept,setFDept]=useState();
@@ -2743,7 +2742,7 @@ function BatchPlanModal({value, onClose}){
         s.plans.unshift({ id:pid, name:(charObj?charObj.name:fullName)+' MSA 分析计划', instId:skey, instName:fullName, instIds:[skey], cat: isPersonGroup? per.postName : it.cat, planType: isPersonGroup? '人员MSA':'器具MSA',
           type:acts[0], method:ENUM.taskMethod[acts[0]][0], methods:acts.slice(), standard:(savedRows.find(r=>r.method===acts[0])||{}).std||'', params:mkP(acts[0]),
           object:charObj?charObj.name:'', feature:charObj?charObj.type:'', charId:charSel, owner:meta.owner||s.me.name, editor:s.me.name, editorDate:NOW,
-          planDate, trigger, source:'临时任务', status:'待采集', recordId:'', result:'',
+          planDate, source:'临时任务', status:'待采集', recordId:'', result:'',
           note:'', partNo:charObj?charObj.partNo:'', partName:charObj?charObj.partName:'', qcArea:meta.qcArea, plant:meta.plant, subplant:meta.subplant, analyst:meta.analyst, resolution:meta.resolution,
           dept:meta.dept, dataType, msaMethods: acts.reduce((a,x)=>a.concat(msaExcelMap(x)),[]), opMethod:'《测量系统分析操作指导书》' });
         acts.forEach(an=>{ spawnRecord(s, pid, {type:an, instId:skey, instName:fullName, object:charObj?charObj.name:'', standard:(savedRows.find(r=>r.method===an)||{}).std||'', method:ENUM.taskMethod[an][0], params:mkP(an), feature:charObj?charObj.type:'', charId:charSel, note:''}); });
@@ -2819,7 +2818,6 @@ function BatchPlanModal({value, onClose}){
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">质量特性</span><Select size="small" style={{width:140}} disabled placeholder="由被测参数带出" options={(d.specialChars||[]).map(s=>({value:s.id,label:s.id+' '+s.name}))} value={qualityChar||undefined} onChange={setQualityChar}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">车间</span><Select size="small" style={{width:140}} options={SUBPLANTS_OPT} value={meta.subplant} onChange={v=>setMetaK('subplant',v)}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">部门</span><Select size="small" style={{width:140}} value={meta.dept} options={ENUM.deptOptions.map(c=>({value:c,label:c}))} onChange={v=>setMetaK('dept',v)}/></Col>
-        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">触发依据</span><Select size="small" style={{width:140}} value={trigger} options={['周期复评','新量具','新过程','过程变更','顾客要求','内审发现'].map(c=>({value:c,label:c}))} onChange={setTrigger}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">计划检期</span><Input size="small" style={{width:140}} value={planDate} onChange={e=>setPlanDate(e.target.value)}/></Col>
       </Row>
     </div>
@@ -2880,7 +2878,6 @@ function AppendPlanModal({plan, onClose}){
   const [meta,setMeta]=useState({ qcArea:plan.qcArea||'质检科', plant:plan.plant||'青岛工厂', subplant:plan.subplant||'一分厂', analyst:plan.analyst||'', owner:plan.owner||'', resolution:plan.resolution||'', dept:plan.dept||'质量' });
   const setMetaK=(k,v)=>setMeta(m=>({...m,[k]:v}));
   const [qualityChar,setQualityChar]=useState(plan.charId? (charObj&&charObj.specialCharId? charObj.specialCharId : '') : '');
-  const [trigger,setTrigger]=useState(plan.trigger||'周期复评');
   const [planDate,setPlanDate]=useState(plan.planDate||dayjs().add(30,'day').format('YYYY-MM-DD'));
   const [dueSel,setDueSel]=useState('');
   const [fVendor,setFVendor]=useState(); const [fModel,setFModel]=useState(); const [fProd,setFProd]=useState(); const [fProcess,setFProcess]=useState(); const [fDept,setFDept]=useState();
@@ -3044,7 +3041,6 @@ function AppendPlanModal({plan, onClose}){
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">质量特性</span><Select size="small" style={{width:140}} disabled placeholder="由被测参数带出" options={(d.specialChars||[]).map(s=>({value:s.id,label:s.id+' '+s.name}))} value={qualityChar||undefined} onChange={setQualityChar}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">车间</span><Select size="small" style={{width:140}} options={SUBPLANTS_OPT} value={meta.subplant} onChange={v=>setMetaK('subplant',v)}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">部门</span><Select size="small" style={{width:140}} value={meta.dept} options={ENUM.deptOptions.map(c=>({value:c,label:c}))} onChange={v=>setMetaK('dept',v)}/></Col>
-        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">触发依据</span><Select size="small" style={{width:140}} value={trigger} options={['周期复评','新量具','新过程','过程变更','顾客要求','内审发现'].map(c=>({value:c,label:c}))} onChange={setTrigger}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">计划检期</span><Input size="small" style={{width:140}} value={planDate} onChange={e=>setPlanDate(e.target.value)}/></Col>
       </Row>
     </div>
@@ -3087,7 +3083,7 @@ function ConvertModal({plan, onClose}){
     const s0=typeStds('GRR');
     form.setFieldsValue({ type:'GRR', method:ENUM.taskMethod.GRR[0], standard:s0[0]?s0[0].id:undefined,
       ops:TYPE_PARAMS.GRR.ops, trials:TYPE_PARAMS.GRR.trials, parts:TYPE_PARAMS.GRR.parts,
-      object:plan.object||'', owner:plan.owner||d.me.name, planDate:plan.planDate||dayjs().add(30,'day').format('YYYY-MM-DD'), trigger:plan.trigger||'周期复评' });
+      object:plan.object||'', owner:plan.owner||d.me.name, planDate:plan.planDate||dayjs().add(30,'day').format('YYYY-MM-DD') });
   },[]);
   const changeType=(t)=>{
     setType(t);
@@ -3105,7 +3101,7 @@ function ConvertModal({plan, onClose}){
       Object.assign(p,{ type:v.type, method:v.method, standard:v.standard, dataType:(v.type==='KAPPA'?'计数型':'计量型'),
         msaMethods:[...new Set([...(p.msaMethods||[]), ...msaExcelMap(v.type)].filter(Boolean))],
         params: isGrrK? {ops:Number(v.ops)||3, trials:Number(v.trials)||3, parts:Number(v.parts)||10} : {...(TYPE_PARAMS[v.type]||{}), ops:Number(v.ops)||3, trials:Number(v.trials)||3, parts:Number(v.parts)||10},
-        object:v.object||p.object, owner:v.owner||p.owner, planDate:v.planDate||p.planDate, trigger:v.trigger||p.trigger, status:'待采集' });
+        object:v.object||p.object, owner:v.owner||p.owner, planDate:v.planDate||p.planDate, status:'待采集' });
       const rid=spawnRecord(s, p.id, { type:v.type, standard:v.standard, method:v.method,
         params: isGrrK? {ops:Number(v.ops)||3, trials:Number(v.trials)||3, parts:Number(v.parts)||10} : {...(TYPE_PARAMS[v.type]||{}), ops:Number(v.ops)||3, trials:Number(v.trials)||3, parts:Number(v.parts)||10},
         object:p.object, instId:p.instId, instName:p.instName, owner:v.owner||p.owner, note:'计划定型为 '+v.type+'，待台账内录入数据' });
@@ -3129,7 +3125,6 @@ function ConvertModal({plan, onClose}){
         <Col span={6}><Form.Item name="planDate" label="计划完成日期"><FDate style={{width:'100%'}}/></Form.Item></Col>
         <Col span={12}><Form.Item name="object" label="测量对象" rules={[{required:true}]}><Input/></Form.Item></Col>
         <Col span={6}><Form.Item name="owner" label="责任人"><Input/></Form.Item></Col>
-        <Col span={6}><Form.Item name="trigger" label="触发依据"><Select options={['周期复评','新量具','新过程','过程变更','顾客要求','内审发现'].map(c=>({value:c,label:c}))}/></Form.Item></Col>
       </Row>
     </Form>
   </Modal>;
@@ -3214,14 +3209,14 @@ function PlanEditModal({plan, onClose}){
   const d=Store.get();
   useEffect(()=>{ form.setFieldsValue({ partNo:plan.partNo, qcArea:plan.qcArea, plant:plan.plant, subplant:plan.subplant,
     analyst:plan.analyst||plan.observer||'', resolution:plan.resolution||'', reason:plan.reason, improvement:plan.improvement,
-    actualDate:plan.actualDate||'', note:plan.note, planDate:plan.planDate, trigger:plan.trigger,
+    actualDate:plan.actualDate||'', note:plan.note, planDate:plan.planDate,
     dept:plan.dept||'质量', dataType:plan.dataType||'计量型', msaMethods:plan.msaMethods||[], opMethod:plan.opMethod||'《测量系统分析操作指导书》' }); },[]);
   const onOk=async()=>{
     const v=await form.validateFields();
     mut(s=>{ const p=s.plans.find(x=>x.id===plan.id); if(!p)return;
       Object.assign(p,{ partNo:v.partNo, qcArea:v.qcArea, plant:v.plant, subplant:v.subplant, analyst:v.analyst,
         resolution:v.resolution, reason:v.reason, improvement:v.improvement, actualDate:v.actualDate, note:v.note,
-        planDate:v.planDate, trigger:v.trigger, dept:v.dept, dataType:v.dataType, msaMethods:v.msaMethods, opMethod:v.opMethod,
+        planDate:v.planDate, dept:v.dept, dataType:v.dataType, msaMethods:v.msaMethods, opMethod:v.opMethod,
         modifier:s.me.name, modifyDate:NOW });
       logAction(s.me.name,'计划信息编辑',p.id,'更新计划业务信息'); });
     toast.ok('已保存计划信息'); onClose();
@@ -3237,7 +3232,6 @@ function PlanEditModal({plan, onClose}){
         <Col span={8}><Form.Item name="resolution" label="分辨力"><Input placeholder="如：0.01"/></Form.Item></Col>
         <Col span={8}><Form.Item name="planDate" label="计划检期"><Input/></Form.Item></Col>
         <Col span={8}><Form.Item name="actualDate" label="实际检期"><FDate style={{width:'100%'}}/></Form.Item></Col>
-        <Col span={8}><Form.Item name="trigger" label="触发依据"><Select options={['周期复评','新量具','新过程','过程变更','顾客要求','内审发现'].map(c=>({value:c,label:c}))}/></Form.Item></Col>
         <Col span={8}><Form.Item name="dept" label="部门"><Select options={ENUM.deptOptions.map(c=>({value:c,label:c}))}/></Form.Item></Col>
         <Col span={8}><Form.Item name="dataType" label="数据类型"><Select options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]}/></Form.Item></Col>
         <Col span={8}><Form.Item name="opMethod" label="操作方法"><Input/></Form.Item></Col>
