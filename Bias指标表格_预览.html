@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>系统测量偏差试验 (Bias) 指标表</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231677ff'/%3E%3Ctext x='16' y='22' font-size='18' font-weight='bold' fill='%23fff' text-anchor='middle' font-family='Arial'%3EB%3C/text%3E%3C/svg%3E">
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/antd@5.21.6/dist/antd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.24.7/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 14px; color: #333333; background: #f0f2f5;
+  }
+  .app { max-width: 1080px; margin: 24px auto; padding: 0 16px; }
+  .page-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .page-head h2 { margin: 0; font-size: 16px; color: #333333; }
+  .page-head .sub { color: #666666; font-size: 14px; margin-top: 4px; }
+  .panel {
+    background: #fff; border-radius: 12px; padding: 18px 20px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, .05); margin-bottom: 16px;
+  }
+  .panel-title { display: flex; align-items: center; margin-bottom: 14px; }
+  .panel-title .bar { width: 4px; height: 16px; border-radius: 2px; background: linear-gradient(180deg, #3b82f6, #1d4ed8); margin-right: 8px; }
+  .panel-title .t { font-size: 16px; font-weight: 600; color: #333333; }
+  .conclusion-banner {
+    display: flex; gap: 12px; align-items: center;
+    background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;
+    padding: 12px 16px; margin-bottom: 16px;
+  }
+  .conclusion-banner .verdict { font-size: 15px; font-weight: 700; color: #16a34a; }
+  .conclusion-banner .note { color: #666; font-size: 13px; }
+  .formula { font-family: Consolas, 'Courier New', monospace; color: #333; }
+  .result-cell { font-weight: 700; font-size: 14px; }
+  .result-ok { color: #16a34a; }
+  .result-bad { color: #dc2626; }
+  .criteria { color: #888; font-size: 13px; }
+  .metric-name { font-weight: 600; }
+  /* mini 标尺 */
+  .scale-wrap { display: flex; align-items: center; gap: 8px; }
+  .scale-svg { display: block; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { Table, Tag } = antd;
+
+/* 迷你刻度条：max=主轴右端，limit=达标线（绿色区从 limit 到右端），points=数值点 */
+function Scale({ max, limit, points, unit }) {
+  const W = 190, H = 46, baseY = 34, pad = 4;
+  const x = (v) => pad + (v / max) * (W - pad * 2);
+  const ticks = [0, limit, max].filter((v, i, a) => a.indexOf(v) === i);
+  return (
+    <svg className="scale-svg" width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
+      {/* 绿色达标区：limit -> max */}
+      <rect x={x(limit)} y={baseY - 10} width={x(max) - x(limit)} height={14} fill="#dcfce7" rx="2" />
+      {/* 主轴 */}
+      <line x1={x(0)} y1={baseY} x2={x(max)} y2={baseY} stroke="#c1c9d4" strokeWidth="1.5" />
+      {/* 刻度 + 数字 */}
+      {ticks.map((v) => (
+        <g key={v}>
+          <line x1={x(v)} y1={baseY - 4} x2={x(v)} y2={baseY + 4} stroke="#666" strokeWidth="1" />
+          <text x={x(v)} y={baseY + 18} textAnchor={v === 0 ? "start" : v === max ? "end" : "middle"} fontSize="11" fill="#666">{v}{v === max && unit ? unit : ''}</text>
+        </g>
+      ))}
+      {/* 数值点 */}
+      {points.map((p, i) => {
+        const ok = p.ok !== false;
+        return (
+          <g key={i}>
+            <circle cx={x(p.v)} cy={baseY - 8} r="4" fill={ok ? "#16a34a" : "#dc2626"} stroke="#fff" strokeWidth="1.2" />
+            <text x={x(p.v)} y={baseY - 16} textAnchor="middle" fontSize="11" fontWeight="700" fill={ok ? "#16a34a" : "#dc2626"}>{p.v.toFixed(2)}</text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+const rows = [
+  { key: 1, name: '精确度', formula: '—', result: '0.00%', ok: true, criteria: '—', scale: null },
+  { key: 2, name: '分辨率', formula: '%RE', result: '0.25%', ok: true, criteria: '≤ 5%', scale: <Scale max={5} limit={5} points={[{ v: 0.25, ok: true }]} /> },
+  { key: 3, name: '%EV', formula: '%EV = EV / T', result: '14.87%', ok: true, criteria: '≤ 30%', scale: <Scale max={30} limit={30} points={[{ v: 14.87, ok: true }]} /> },
+  { key: 4, name: 'Cg', formula: 'Cg = (0.2·T) / (6·s_g)', result: '1.34', ok: true, criteria: '≥ 1.33', scale: <Scale max={2} limit={1.33} points={[{ v: 1.08, ok: false }, { v: 1.34, ok: true }, { v: 1.61, ok: true }]} /> },
+  { key: 5, name: 'Cgk', formula: 'Cgk = (0.1·T − |x̄_g − x_m|) / (3·s_g)', result: '1.34', ok: true, criteria: '≥ 1.33', scale: <Scale max={2} limit={1.33} points={[{ v: 1.06, ok: false }, { v: 1.34, ok: true }, { v: 1.63, ok: true }]} /> },
+];
+
+const columns = [
+  { title: '指标', dataIndex: 'name', width: 100, render: v => <span className="metric-name">{v}</span> },
+  { title: '计算公式', dataIndex: 'formula', width: 300, render: v => <span className="formula">{v}</span> },
+  { title: '结果', dataIndex: 'result', width: 100, align: 'center', render: (v, r) => <span className={"result-cell " + (r.ok ? 'result-ok' : 'result-bad')}>{v}</span> },
+  { title: '判定标准', dataIndex: 'criteria', width: 100, align: 'center', render: v => <span className="criteria">{v}</span> },
+  { title: '标尺', dataIndex: 'scale', render: (v) => v || <span className="criteria">—</span> },
+];
+
+function App() {
+  return (
+    <div className="app">
+      <div className="page-head">
+        <div>
+          <h2>系统测量偏差试验 (Bias)</h2>
+          <div className="sub">GRR 报告 · 报告编号 RPT-GRR-2026-001 · MSAP-2026-001 · 出具日期 2026-09-30</div>
+        </div>
+        <Tag color="green" style={{ fontSize: 14 }}>计量型</Tag>
+      </div>
+
+      <div className="conclusion-banner">
+        <span className="verdict">结论：可接受</span>
+        <span className="note">Cg 2.31 ≥ 1.67；Cgk 2.19 ≥ 1.67，量具能力充足</span>
+      </div>
+
+      <div className="panel">
+        <div className="panel-title"><span className="bar" /><span className="t">系统测量偏差试验 (Bias) 指标表</span></div>
+        <Table
+          size="middle"
+          bordered
+          columns={columns}
+          dataSource={rows}
+          pagination={false}
+          tableLayout="fixed"
+          scroll={{ x: 700 }}
+        />
+        <div style={{ color: '#888', fontSize: 12, marginTop: 12 }}>
+          注：标尺绿色区域为达标区间；Cg / Cgk 达标线为 1.33，分辨率 / %EV 上限分别为 5% / 30%。红点为未达标测点。
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
