@@ -4667,7 +4667,7 @@ function EntryPage({kind}){
     (!q.concl || (r.conclusion||'').indexOf(q.concl)>=0) &&
     (!q.anl || r.analyst===q.anl));
   const resetQ=()=>{ setFkw('');setFstatus(undefined);setFconcl(undefined);setFanl(undefined); setQ({kw:'',status:undefined,concl:undefined,anl:undefined}); };
-  const goResult=(r)=>{ if(kind==='grr'){ GrrOpenId=r.id; NavAPI.go('grr'); } else if(kind==='kappa'){ KpaOpenId=r.id; NavAPI.go('kappa'); } else { AnlOpen={kind,id:r.id}; NavAPI.go(CFG.result); } };
+  const goResult=(r)=>{ window.open('https://app.mockplus.cn/s/6dH4MawEMA','_blank'); };
   const recParams=(r)=> kind==='grr'? (r.numOps+'人 × '+r.numTrials+'次 × '+r.numParts+'件') : kind==='kappa'? (r.numApp+'人 × '+r.numSamples+'件') : ANA_CFG[kind].params(r);
   const [anlRec,setAnlRec]=useState(null); const [opsRec,setOpsRec]=useState(null); const [prevRec,setPrevRec]=useState(null);
   const [pickRec,setPickRec]=useState(null);
