@@ -4868,8 +4868,9 @@ function ImportPreviewModal({rec, kind, onClose}){
   </Modal>;
 }
 function SampleCodePanel({rec}){
+  const cleanName=s=>{ const t=String(s||''); return t.includes('·')?t.split('·').pop():t; };
   const ops=(rec.operators&&rec.operators.length)?rec.operators:(rec.appNames&&rec.appNames.length?rec.appNames:[]);
-  const personList=(ops&&ops.length)?ops:['操作员A','操作员B','操作员C'];
+  const personList=(ops&&ops.length)?ops.map(cleanName):['王强','刘青','陈杰'];
   const N=Number(rec.numParts)||Number(rec.numSamples)||10;
   const [selOp,setSelOp]=useState(0);
   const [codes,setCodes]=useState(()=>Array.from({length:N},()=>''));
