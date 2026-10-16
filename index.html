@@ -4918,7 +4918,8 @@ function SampleCodePanel({rec}){
             columns={[
             {title:'样本序号',width:90,render:(_,r)=><span className="mono">{r.i+1}</span>},
             {title:'样本编号',width:220,render:(_,r)=><Input size="small" value={r.code||''} onChange={e=>{const n=codes.slice();n[r.i]=e.target.value;setTrialCodes(Object.assign({},trialCodes,{[codeKey]:n}));}}/>},
-            {title:'录入人',width:140,render:()=><span>{opName} · 第{selTrial}次</span>},
+            {title:'录入人',width:120,render:()=><span>{opName}</span>},
+            {title:'测量次数',width:100,render:()=><span className="mono">第{selTrial}次</span>},
             {title:'实测值',width:130,render:()=><span>待录入</span>}
           ]}/>
         </div>
@@ -4998,10 +4999,10 @@ function DataEntryPage({kind}){
     <Panel>
       {(kindNow==='grr'||kindNow==='kappa')
         ? <Tabs activeKey={entryTab} onChange={setEntryTab} items={[
-            {key:'data',label:'数据录入',children:dataContent},
             {key:'code',label:'样本编号',children:!cur
-              ? <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:480,color:'#999',fontSize:14}}>请先在「数据录入」页签选择台账记录</div>
-              : <SampleCodePanel rec={cur}/>}
+              ? <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:480,color:'#999',fontSize:14}}>请先在左侧台账列表选择台账记录</div>
+              : <SampleCodePanel rec={cur}/>},
+            {key:'data',label:'数据录入',children:dataContent}
           ]}/>
         : dataContent}
     </Panel>
