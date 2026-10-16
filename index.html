@@ -4870,43 +4870,43 @@ function SampleCodePanel({rec}){
   const ops=(rec.operators&&rec.operators.length)?rec.operators:(rec.appNames&&rec.appNames.length?rec.appNames:[]);
   const personList=(ops&&ops.length)?ops.map(cleanName):['王强','刘青','陈杰'];
   const N=Number(rec.numParts)||Number(rec.numSamples)||10;
+  const trialsN=Number(rec.numTrials)||3;
   const [selOp,setSelOp]=useState(0);
-  const [trialNo,setTrialNo]=useState(1);
-  const [trialCodes,setTrialCodes]=useState({1:Array.from({length:N},()=>'')});
-  const codes=trialCodes[trialNo] || Array.from({length:N},()=>'');
+  const [selTrial,setSelTrial]=useState(1);
+  const codeKey=selOp+'_'+selTrial;
+  const [trialCodes,setTrialCodes]=useState({[codeKey]:Array.from({length:N},()=>'')});
+  const codes=trialCodes[codeKey] || Array.from({length:N},()=>'');
   const opName=personList[Math.min(selOp,personList.length-1)];
-  // 原型模拟：待编号(橙) / 待录入(蓝) / 已完成(绿)
-  const statusOf=i=> i%3===0 ? 'done' : (i%3===1?'todo':'pending');
+  // 行状态：第1人按轮次推进(1完成/2待录入/3待编号)，其余全部待编号
+  const rowStatus=(i,t)=>{ if(i!==0) return 'pending'; return t===1?'done':(t===2?'todo':'pending'); };
   const statusMeta={
     pending:{label:'待编号',color:'#fa8c16',bg:'#fff7e6',bd:'#ffd591'},
     todo:{label:'待录入',color:'#1677ff',bg:'#e6f4ff',bd:'#91caff'},
     done:{label:'已完成',color:'#52c41a',bg:'#f6ffed',bd:'#b7eb8f'}
   };
-  // 总测量次数 = 人数 × 轮次（例：5人×3次=15次）；当前次数按完成进度累计
-  const trialsN=Number(rec.numTrials)||3;
   const totalTrials=personList.length*trialsN;
-  const doneTrials=personList.reduce((s,_,i)=> s + (statusOf(i)==='done'?trialsN : (statusOf(i)==='todo'?trialsN-1:0)),0);
-  const curTrial= statusOf(selOp)==='pending' ? 1 : (statusOf(selOp)==='todo'? 2 : trialsN);
-  const currentCount=Math.min(totalTrials, doneTrials+curTrial);
+  let doneCount=0; personList.forEach((_,i)=>{ for(let t=1;t<=trialsN;t++){ if(rowStatus(i,t)==='done') doneCount++; } });
   const rows=codes.map((c,i)=>({key:i,i,code:c}));
+  const pickRow=(i,t)=>{ setSelOp(i); setSelTrial(t); if(!trialCodes[i+'_'+t]) setTrialCodes(Object.assign({},trialCodes,{[i+'_'+t]:Array.from({length:N},()=>'')})); };
   return <div>
     <div style={{display:'flex',alignItems:'center',marginBottom:12}}>
       <span style={{fontSize:14,color:'#666',marginRight:8}}>人员</span>
-      <Select style={{width:180,marginRight:16}} value={selOp} onChange={v=>setSelOp(v)} options={personList.map((n,i)=>({value:i,label:n}))}/>
-      <span style={{fontSize:13,color:'#666'}}>当前进度：</span>
-      <span style={{fontSize:13,marginLeft:4,padding:'2px 10px',background:'#e6f4ff',color:'#1677ff',borderRadius:4,border:'1px solid #91caff'}}>第 {currentCount} / {totalTrials} 次</span>
-      <Button type="primary" style={{marginLeft:'auto'}} onClick={()=>toast.ok('样本编号已提交并通知录入人：'+opName+'（第'+currentCount+'次测量）')}>提交</Button>
+      <Select style={{width:180}} value={selOp} onChange={v=>{setSelOp(v);setSelTrial(1);}} options={personList.map((n,i)=>({value:i,label:n}))}/>
+      <span style={{fontSize:13,marginLeft:'auto',color:'#666'}}>当前进度：</span>
+      <span style={{fontSize:13,marginLeft:6,padding:'2px 10px',background:'#e6f4ff',color:'#1677ff',borderRadius:4,border:'1px solid #91caff'}}>第 {doneCount} / {totalTrials} 次</span>
+      <Button type="primary" style={{marginLeft:12}} onClick={()=>toast.ok('样本编号已提交并通知录入人：'+opName+'（第'+selTrial+'次测量）')}>提交</Button>
     </div>
     <div style={{display:'flex',gap:12,alignItems:'stretch',minHeight:480}}>
       <div style={{width:260,flexShrink:0,display:'flex',flexDirection:'column',border:'1px solid #e3eaf3',borderRadius:6,padding:'8px',background:'#fafcff'}}>
-        <div style={{fontSize:13,color:'#666',marginBottom:8}}>录入人</div>
+        <div style={{fontSize:13,color:'#666',marginBottom:8}}>录入人 / 测量次数</div>
         <div style={{flex:1,minHeight:0,overflow:'auto'}}>
-          {personList.map((n,i)=>{ const sm=statusMeta[statusOf(i)]; return <div key={n+i} onClick={()=>setSelOp(i)} style={{padding:'8px 10px',marginBottom:6,cursor:'pointer',borderRadius:6,border:'1px solid '+(i===selOp?'#1677ff':'#e3eaf3'),background:i===selOp?'#e6f4ff':'#fff'}}>
+          {personList.map((n,i)=>[1,2,3].map(t=>{ const st=rowStatus(i,t); const sm=statusMeta[st]; const active=(i===selOp&&t===selTrial); return <div key={n+'_'+t} onClick={()=>pickRow(i,t)} style={{padding:'7px 10px',marginBottom:5,cursor:'pointer',borderRadius:6,border:'1px solid '+(active?'#1677ff':'#e3eaf3'),background:active?'#e6f4ff':'#fff'}}>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-              <span style={{fontSize:13,color:i===selOp?'#1677ff':'#333',fontWeight:i===selOp?600:400}}>{n}</span>
+              <span style={{fontSize:13,color:active?'#1677ff':'#333',fontWeight:active?600:400,width:56}}>{n}</span>
+              <span style={{fontSize:12,color:'#666',fontFamily:'Consolas,monospace'}}>{t}/{trialsN}</span>
               <span style={{fontSize:11,padding:'1px 6px',borderRadius:3,background:sm.bg,color:sm.color,border:'1px solid '+sm.bd}}>{sm.label}</span>
             </div>
-          </div>;})}
+          </div>;}))}
         </div>
       </div>
       <Panel className="entry-panel grr-entry-panel" style={{flex:1,minWidth:0}}>
@@ -4917,8 +4917,8 @@ function SampleCodePanel({rec}){
             headerCellStyle={{background:"#ACCDEC"}}
             columns={[
             {title:'样本序号',width:90,render:(_,r)=><span className="mono">{r.i+1}</span>},
-            {title:'样本编号',width:220,render:(_,r)=><Input size="small" value={r.code||''} onChange={e=>{const n=(trialCodes[trialNo]||[]).slice();n[r.i]=e.target.value;setTrialCodes(Object.assign({},trialCodes,{[trialNo]:n}));}}/>},
-            {title:'录入人',width:140,render:()=><span>{opName}</span>},
+            {title:'样本编号',width:220,render:(_,r)=><Input size="small" value={r.code||''} onChange={e=>{const n=codes.slice();n[r.i]=e.target.value;setTrialCodes(Object.assign({},trialCodes,{[codeKey]:n}));}}/>},
+            {title:'录入人',width:140,render:()=><span>{opName} · 第{selTrial}次</span>},
             {title:'实测值',width:130,render:()=><span>待录入</span>}
           ]}/>
         </div>
