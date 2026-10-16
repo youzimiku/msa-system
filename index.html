@@ -1551,6 +1551,7 @@ const MENU = [
   {key:'char', icon:'♯', label:'被测参数维护', group:'基础数据'},
   {key:'sampling', icon:'∿', label:'抽样方法维护', group:'基础数据'},
   {key:'samplelib', icon:'▣', label:'样本库管理', group:'基础数据'},
+  {key:'projinst', icon:'⧉', label:'项目量具关系维护', group:'基础数据'},
   /* 计划：创建 → 定型 → 自动生成台账 */
   {key:'plan', icon:'▤', label:'MSA 计划', group:'MSA 计划'},
   /* 台账：定型后设置操作人/对象 */
@@ -1570,12 +1571,15 @@ const MENU = [
   {key:'kappa', icon:'✓', label:'KAPPA 分析结果', group:'分析执行', hidden:true},
   {key:'anl_linear', icon:'↗', label:'线性/偏移分析结果', group:'分析执行', hidden:true},
   {key:'anl_stability', icon:'≋', label:'稳定性分析结果', group:'分析执行', hidden:true},
-  {key:'anl_cgcgk', icon:'⊞', label:'Cg/Cgk 分析结果', group:'分析执行', hidden:true}
+  {key:'anl_cgcgk', icon:'⊞', label:'Cg/Cgk 分析结果', group:'分析执行', hidden:true},
+  /* 报表 */
+  {key:'report_overview', icon:'◫', label:'总览报表', group:'报表'}
 ];
 const PAGE_TITLE = {'ledger':'计量器具台账','ledger_img':'计量器具台账','instgroup':'器具组维护','plan':'MSA 计划',
   'char':'被测参数维护','sampling':'抽样方法维护','samplelib':'样本库管理',
   'entry_grr':'GRR 台账','entry_kappa':'KAPPA 台账','entry_linear':'线性/偏倚台账','entry_stability':'稳定性台账','entry_cgcgk':'Cg/Cgk 台账','data_grr':'GRR 录入数据','data_kappa':'KAPPA 录入数据','data_linear':'线性/偏倚录入数据','data_stability':'稳定性录入数据','data_cgcgk':'Cg/Cgk 录入数据',
-  'grr':'GRR 分析结果','kappa':'KAPPA 分析结果','anl_linear':'线性/偏移分析结果','anl_stability':'稳定性分析结果','anl_cgcgk':'Cg/Cgk 分析结果（VDA Type1）'};
+  'grr':'GRR 分析结果','kappa':'KAPPA 分析结果','anl_linear':'线性/偏移分析结果','anl_stability':'稳定性分析结果','anl_cgcgk':'Cg/Cgk 分析结果（VDA Type1）',
+  'projinst':'项目量具关系维护','report_overview':'MSA 总览报表'};
 
 /* 页面使用说明（可折叠，面向有经验的业务人员：简短说明 + 关键操作点 + 台账权限 + MSA 计划状态标识） */
 const PAGE_GUIDE = {
@@ -1759,6 +1763,8 @@ function App(){
     if(page==='anl_linear') return <AnlPage kind="linear"/>;
     if(page==='anl_stability') return <AnlPage kind="stability"/>;
     if(page==='anl_cgcgk') return <AnlPage kind="cgcgk"/>;
+    if(page==='projinst') return <ProjInstPage/>;
+    if(page==='report_overview') return <OverviewReportPage/>;
     return <LedgerPage/>;
   };
 
@@ -5523,6 +5529,148 @@ const RPT = {
   cgcgk:{label:'Cg/Cgk 报告', no:'RPT-CG-2026-001', plan:'MSAP-2026-009', inst:'数显千分表 0~12.7mm', instNo:'JJQ-2024-004', object:'轴径 Φ12.5±0.05', unit:'mm', analyst:'李工程师', date:'2026-09-10', type:'Cg/Cgk（VDA Type1）', method:'Type1 能力指数', verdict:'可接受', verdictLevel:0, verdictNote:'Cg 2.31 ≥ 1.67；Cgk 2.19 ≥ 1.33，测量能力充分', ops:['冯强'], parts:1, trials:50, samples:['STD-001']},
   stability:{label:'稳定性报告', no:'RPT-STB-2026-001', plan:'MSAP-2026-004', inst:'外径千分尺 0~25mm', instNo:'JJQ-2024-002', object:'轴径 φ10±0.02', unit:'mm', analyst:'李工程师', date:'2026-09-10', type:'稳定性', method:'X̄-R 控制图（SPC）', verdict:'受控', verdictLevel:0, verdictNote:'X̄ 图与 R 图均无出界点，判异规则：单点超出上下限；过程受控', ops:['赵磊','刘青'], parts:1, trials:25, samples:['STD-002']}
 };
+/* ================= 项目量具关系维护 ================= */
+const PROJ_LIST=[
+  {code:'PRJ-001',name:'4缸发动机总成装配线',product:'4G15 发动机',plant:'青岛工厂',dept:'动力总成车间'},
+  {code:'PRJ-002',name:'前悬架装配线',product:'麦弗逊前悬',plant:'青岛工厂',dept:'底盘车间'},
+  {code:'PRJ-003',name:'车门焊接线',product:'前门焊接总成',plant:'烟台工厂',dept:'车身车间'},
+  {code:'PRJ-004',name:'仪表台总装线',product:'数字仪表台',plant:'青岛工厂',dept:'电子电气车间'}
+];
+const PROJ_INST={
+  'PRJ-001':[
+    {no:'JJQ-2024-001',name:'数显游标卡尺',model:'0-150mm',range:'0-150mm',res:'0.01mm',type:'专用',dept:'动力总成车间',status:'在用'},
+    {no:'JJQ-2024-002',name:'外径千分尺',model:'0-25mm',range:'0-25mm',res:'0.001mm',type:'专用',dept:'动力总成车间',status:'在用'},
+    {no:'JJQ-2024-005',name:'扭矩扳手',model:'5-50N·m',range:'5-50N·m',res:'0.1N·m',type:'共用',dept:'计量室',status:'在用'},
+    {no:'JJQ-2024-008',name:'气漏检测仪',model:'LD-200',range:'0-200Pa',res:'1Pa',type:'专用',dept:'动力总成车间',status:'在用'}
+  ],
+  'PRJ-002':[
+    {no:'JJQ-2024-003',name:'弹簧拉压试验机',model:'SSL-500',range:'0-500N',res:'0.5N',type:'专用',dept:'底盘车间',status:'在用'},
+    {no:'JJQ-2024-005',name:'扭矩扳手',model:'5-50N·m',range:'5-50N·m',res:'0.1N·m',type:'共用',dept:'计量室',status:'在用'}
+  ],
+  'PRJ-003':[
+    {no:'JJQ-2024-006',name:'焊缝检具',model:'HJJ-30',range:'1-30mm',res:'0.05mm',type:'专用',dept:'车身车间',status:'在用'},
+    {no:'JJQ-2024-007',name:'三坐标测量机',model:'GLOBAL-0710',range:'700×1000×600',res:'0.001mm',type:'共用',dept:'计量室',status:'在用'}
+  ],
+  'PRJ-004':[
+    {no:'JJQ-2024-009',name:'示波器',model:'DS1054',range:'0-500MHz',res:'1mV',type:'共用',dept:'电子电气车间',status:'在用'}
+  ]
+};
+function ProjInstPage(){
+  const [sel,setSel]=useState('PRJ-001');
+  const [addOpen,setAddOpen]=useState(false);
+  const p=PROJ_LIST.find(x=>x.code===sel);
+  const insts=PROJ_INST[sel]||[];
+  return <div>
+    <Row gutter={12}>
+      <Col span={8}>
+        <Card size="small" title="项目列表" extra={<Button size="small" type="primary">+ 新增项目</Button>}>
+          <List size="small" dataSource={PROJ_LIST} rowKey="code" renderItem={it=>
+            <List.Item style={{cursor:'pointer',background:it.code===sel?'#e6f4ff':'transparent',borderRadius:4,padding:'8px 12px'}} onClick={()=>setSel(it.code)}>
+              <List.Item.Meta title={<Space><b>{it.code}</b></Space>} description={<div>{it.name}<div style={{color:'#888',fontSize:12}}>产品：{it.product}</div></div>}/>
+            </List.Item>}/>
+        </Card>
+      </Col>
+      <Col span={16}>
+        <Card size="small" title={<Space>{p.name}<Tag color="blue">{p.code}</Tag></Space>} extra={
+          <Space>
+            <Button size="small" onClick={()=>message.info('演示：导出项目-量具关系')}>导出</Button>
+            <Button size="small" type="primary" onClick={()=>setAddOpen(true)}>+ 添加量具</Button>
+          </Space>}>
+          <Descriptions size="small" column={3} bordered style={{marginBottom:12}}>
+            <Descriptions.Item label="项目编号">{p.code}</Descriptions.Item>
+            <Descriptions.Item label="项目名称">{p.name}</Descriptions.Item>
+            <Descriptions.Item label="产品（一对一）">{p.product}</Descriptions.Item>
+            <Descriptions.Item label="工厂">{p.plant}</Descriptions.Item>
+            <Descriptions.Item label="责任部门">{p.dept}</Descriptions.Item>
+            <Descriptions.Item label="量具数量">{insts.length} 件</Descriptions.Item>
+          </Descriptions>
+          <Table size="small" rowKey="no" pagination={false} columns={[
+            {title:'量具编号',dataIndex:'no',width:140},
+            {title:'量具名称',dataIndex:'name',width:160},
+            {title:'型号',dataIndex:'model',width:140},
+            {title:'测量范围',dataIndex:'range',width:140},
+            {title:'分辨力',dataIndex:'res',width:90},
+            {title:'类型',dataIndex:'type',width:80,render:v=>v==='专用'?<Tag color="geekblue">专用</Tag>:<Tag color="orange">共用</Tag>},
+            {title:'使用部门',dataIndex:'dept',width:140},
+            {title:'状态',dataIndex:'status',width:80,render:v=><Tag color="green">{v}</Tag>},
+            {title:'操作',width:90,render:()=><Button size="small" type="link" danger onClick={()=>message.info('演示：解除关联')}>解除</Button>}
+          ]} dataSource={insts}/>
+        </Card>
+      </Col>
+    </Row>
+    <Modal title="添加量具" open={addOpen} onCancel={()=>setAddOpen(false)} onOk={()=>{setAddOpen(false);message.success('演示：已添加')}} okText="确定" cancelText="取消">
+      <p style={{color:'#666'}}>从计量器具台账选择要挂载到本项目的量具。专用量具仅能挂载到一个项目；共用量具可挂载到多个项目。</p>
+      <Table size="small" rowKey="no" pagination={false} dataSource={[
+        {no:'JJQ-2024-010',name:'数显高度尺',model:'0-300mm',type:'共用'},
+        {no:'JJQ-2024-011',name:'螺纹塞规',model:'M10×1.5',type:'专用'},
+        {no:'JJQ-2024-012',name:'推拉力计',model:'NK-200',type:'共用'}
+      ]} rowSelection={{type:'checkbox'}} columns={[
+        {title:'量具编号',dataIndex:'no'},
+        {title:'名称',dataIndex:'name'},
+        {title:'型号',dataIndex:'model'},
+        {title:'类型',dataIndex:'type',render:v=>v==='专用'?<Tag color="geekblue">专用</Tag>:<Tag color="orange">共用</Tag>}
+      ]}/>
+    </Modal>
+  </div>;
+}
+
+/* ================= MSA 总览报表 ================= */
+const OV_DATA=[
+  {no:'JJQ-2024-001',name:'数显游标卡尺',project:'PRJ-001',results:{grr:{verdict:'可接受',date:'2026-09-12',val:'GRR% 18.2%'},kappa:null,linear:{verdict:'有条件接受',date:'2026-08-30',val:'b 0.012mm'},bias:{verdict:'可接受',date:'2026-09-05',val:'偏倚 0.003mm'},stability:null,cgcgk:{verdict:'可接受',date:'2026-09-10',val:'Cgk 2.19'}}},
+  {no:'JJQ-2024-002',name:'外径千分尺',project:'PRJ-001',results:{grr:{verdict:'可接受',date:'2026-09-11',val:'GRR% 12.5%'},kappa:null,linear:{verdict:'可接受',date:'2026-09-01',val:'R² 0.998'},bias:{verdict:'可接受',date:'2026-09-02',val:'偏倚 0.001mm'},stability:{verdict:'受控',date:'2026-09-08',val:'X̄-R 受控'},cgcgk:null}},
+  {no:'JJQ-2024-003',name:'弹簧拉压试验机',project:'PRJ-002',results:{grr:{verdict:'不通过',date:'2026-08-25',val:'GRR% 45.6%'},kappa:null,linear:null,bias:null,stability:null,cgcgk:null}},
+  {no:'JJQ-2024-005',name:'扭矩扳手',project:'PRJ-001',results:{grr:{verdict:'可接受',date:'2026-09-10',val:'GRR% 22.1%'},kappa:null,linear:null,bias:{verdict:'有条件接受',date:'2026-09-06',val:'偏倚 0.2N·m'},stability:null,cgcgk:null}},
+  {no:'JJQ-2024-005',name:'扭矩扳手',project:'PRJ-002',results:{grr:{verdict:'可接受',date:'2026-09-10',val:'GRR% 22.1%'},kappa:null,linear:null,bias:null,stability:null,cgcgk:null}},
+  {no:'JJQ-2024-006',name:'焊缝检具',project:'PRJ-003',results:{grr:null,kappa:{verdict:'可接受',date:'2026-09-09',val:'Kappa 0.87'},linear:null,bias:null,stability:null,cgcgk:null}},
+  {no:'JJQ-2024-007',name:'三坐标测量机',project:'PRJ-003',results:{grr:{verdict:'可接受',date:'2026-09-12',val:'GRR% 9.8%'},kappa:null,linear:null,bias:null,stability:null,cgcgk:null}}
+];
+const OV_METHODS=[
+  {key:'grr',label:'GRR'},{key:'kappa',label:'KAPPA'},{key:'linear',label:'线性'},
+  {key:'bias',label:'偏倚'},{key:'stability',label:'稳定性'},{key:'cgcgk',label:'Cg/Cgk'}
+];
+function OvCell({r}){
+  if(!r) return <span style={{color:'#ccc'}}>—</span>;
+  const color=r.verdict==='可接受'||r.verdict==='受控'?'green':(r.verdict==='有条件接受'?'orange':'red');
+  return <div><Tag color={color} style={{marginRight:0}}>{r.verdict}</Tag><div style={{fontSize:11,color:'#888',marginTop:2}}>{r.val}<br/>{r.date}</div></div>;
+}
+function OverviewReportPage(){
+  const [proj,setProj]=useState('PRJ-001');
+  const rows=OV_DATA.filter(x=>x.project===proj);
+  const p=PROJ_LIST.find(x=>x.code===proj);
+  const cols=[
+    {title:'量具编号',dataIndex:'no',width:140,fixed:'left'},
+    {title:'量具名称',dataIndex:'name',width:160,fixed:'left'}
+  ];
+  OV_METHODS.forEach(m=>cols.push({title:m.label,dataIndex:m.key,width:160,render:(_,r)=><OvCell r={r.results[m.key]}/>}));
+  return <div>
+    <Card size="small" style={{marginBottom:12}}>
+      <Space wrap>
+        <span>项目：</span>
+        <Select style={{width:260}} value={proj} onChange={setProj} options={PROJ_LIST.map(x=>({value:x.code,label:`${x.code} ${x.name}`}))}/>
+        <span>工厂：</span>
+        <Select style={{width:160}} defaultValue="全部" options={[{value:'全部',label:'全部'},{value:'青岛工厂',label:'青岛工厂'},{value:'烟台工厂',label:'烟台工厂'}]}/>
+        <span>分析时间：</span>
+        <Select style={{width:120}} defaultValue="2026-01" options={['2026-01','2026-04','2026-07'].map(v=>({value:v,label:v}))}/>
+        <span>至</span>
+        <Select style={{width:120}} defaultValue="2026-10" options={['2026-10','2026-12'].map(v=>({value:v,label:v}))}/>
+        <Button type="primary">查询</Button>
+        <Button>重置</Button>
+        <Button style={{float:'right'}} onClick={()=>message.success('演示：已导出')}>导出</Button>
+      </Space>
+    </Card>
+    <Card size="small" title={<Space>{p.product} — MSA 分析结果总览<Tag color="blue">{p.code}</Tag></Space>}>
+      <Table size="small" rowKey={(r,i)=>r.no+'_'+i} pagination={false} columns={cols} dataSource={rows} scroll={{x:1200}} summary={()=>{
+        let total=0,pass=0;
+        rows.forEach(r=>OV_METHODS.forEach(m=>{ if(r.results[m.key]){ total++; if(['可接受','受控'].includes(r.results[m.key].verdict)) pass++; } }));
+        return <Table.Summary.Row style={{background:'#fafafa',fontWeight:600}}>
+          <Table.Summary.Cell index={0} colSpan={2}>合计：{rows.length} 台设备，{total} 项分析记录，通过 {pass} 项（通过率 {total?Math.round(pass/total*100):0}%）</Table.Summary.Cell>
+          {OV_METHODS.map((_,i)=><Table.Summary.Cell key={i} index={i+2}/>)}
+        </Table.Summary.Row>;
+      }}/>
+    </Card>
+  </div>;
+}
+
 function ReportPage({kind}){
   const c=RPT[kind];
   const verdictColor = c.verdictLevel===0?'#16a34a':c.verdictLevel===1?'#d97706':'#dc2626';
@@ -5946,3 +6094,6 @@ function ReportPage({kind}){
 </script>
 </body>
 </html>
+
+
+
