@@ -4276,8 +4276,8 @@ function GrrEntry({rec, onClose, curEditor}){
   const curOpSafe=Math.min(curOp, Math.max(0, opsNames.length-1));
   const d0=Store.get();
   const refCols=[
-    {title:'样本号', width:130, render:(_,row)=><Input size="small" value={row.sid} className="data-cell"/>},
-    {title:'操作人', width:110, render:()=><span>{curEditor||'无'}</span>}
+    {title:'样本编号', width:140, render:(_,row)=><span className="mono">{row.sid||'待管理员编号'}</span>},
+    {title:'录入人', width:110, render:()=><span>{curEditor||'无'}</span>}
   ];
   for(let t=0;t<trialsN;t++){
     refCols.push({title:'实测值'+(t+1), dataIndex:'c'+t, width:110,
@@ -4334,8 +4334,8 @@ function KappaEntry({rec, onClose, curEditor}){
   const d0=Store.get();
 
   const cols=[
-    {title:'样本号', width:130, render:(_,row)=><span>{row.sid||'无'}</span>},
-    {title:'操作人', width:110, render:()=><span>{curEditor||'无'}</span>}
+    {title:'样本编号', width:140, render:(_,row)=><span className="mono">{row.sid||'待管理员编号'}</span>},
+    {title:'录入人', width:110, render:()=><span>{curEditor||'无'}</span>}
   ];
   for(let tt=0;tt<trialsN;tt++) cols.push({title:'实测值'+(tt+1), dataIndex:'t'+tt, width:110,
     render:(v,row)=><Input size="small" value={row.j&&row.j[tt]!=null?row.j[tt]:''} className="data-cell" onChange={e=>{ const val=e.target.value; setJudg(judg.map((x,ia)=>{ if(ia!==row.app) return x; return x.map((y,is)=>{ if(is!==row.i) return y; return y.map((z,it)=>it===tt?val:z); }); })); }}/>});
@@ -4681,7 +4681,7 @@ function EntryPage({kind}){
   const delRow=(r)=>{ Modal.confirm({ content:'是否确定删除'+r.id+' '+(r.object||'')+'？', okText:'删除', okType:'danger', cancelText:'取消', onOk:()=>{ mut(s=>{ const arr=kind==='grr'?s.grr:kind==='kappa'?s.kappa:s[ANA_CFG[kind].arr]; const i=arr.findIndex(x=>x.id===r.id); if(i>=0) arr.splice(i,1); logAction(s.me.name,'删除台账',r.id,'删除台账记录 '+r.id); }); toast.ok('已删除'); } }); };
   const cols=[
     {title:'操作', width:460, fixed:'left', render:(_,r)=><Space size={0} wrap>
-      <Button size="small" type="link" onClick={()=>setPickRec(r)}>{(kind==='grr'||kind==='kappa')?'人员':'样本/人员'}</Button>
+      <Button size="small" type="link" onClick={()=>setPickRec(r)}>样本/人员</Button>
       <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>{ if(r.reviewStatus!=='待采集'&&r.reviewStatus!=='待分析'){ toast.warn('仅「待采集/待分析」状态可录入数据'); return; } DataOpen={kind,id:r.id}; NavAPI.go('data_'+kind); }}>录入</Button>
       <Button size="small" type="link" disabled={!canDo(d.me.role,'edit')} onClick={()=>{ if(r.reviewStatus!=='待分析'){ toast.warn('仅「待分析」状态可执行分析'); return; } setAnlRec(r); }}>分析</Button>
       <Button size="small" type="link" onClick={()=>goResult(r)}>结果</Button>
@@ -4690,8 +4690,8 @@ function EntryPage({kind}){
     </Space>},
     {title:'台账编号', dataIndex:'id', width:115, render:v=><span className="mono">{v}</span>},
     {title:'责任人', width:110, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" placeholder="选择责任人" value={r.analyst||undefined} style={{width:100}} options={PEOPLE_OPT} onChange={x=>setRecF(r,'analyst',x)}/>},
-    ...(kind==='grr'||kind==='kappa' ? [] : [{title:'人员', width:180, ellipsis:true, render:(_,r)=>{ const nm=(r.opsNames||r.operators||r.appNames||[]).map(n=>String(n).split('·').pop()).filter(n=>!/^(操作员[ABCDE]|检验员[甲乙丙丁戊])$/.test(n)); return <span className="tiny">{nm.length? nm.join('、') : '无'}</span>; }}]),
-    ...(kind==='grr'||kind==='kappa' ? [] : [{title:'样本', width:200, ellipsis:true, render:(_,r)=>{ const pt=(kind==='linear'||kind==='cgcgk')?(r.parts||[]):(r.sampleNames||[]); return <span className="tiny">{pt.length? pt.join('、') : '无'}</span>; }}]),
+    {title:'人员', width:180, ellipsis:true, render:(_,r)=>{ const nm=(r.opsNames||r.operators||r.appNames||[]).map(n=>String(n).split('·').pop()); const clean=(kind==='grr'||kind==='kappa')?nm:nm.filter(n=>!/^(操作员[ABCDE]|检验员[甲乙丙丁戊])$/.test(n)); return <span className="tiny">{clean.length? clean.join('、') : '未维护'}</span>; }},
+    {title:'样本', width:200, ellipsis:true, render:(_,r)=>{ const pt=(kind==='linear'||kind==='cgcgk')?(r.parts||[]):(r.sampleNames||[]); if(pt.length) return <span className="tiny">{pt.join('、')}</span>; const n=r.numParts||r.numSamples; return <span className="tiny">{n?('计划 '+n+' 件，未维护样本'):'未维护样本'}</span>; }},
     ...(kind==='stability' ? [{title:'工位', width:120, ellipsis:true, render:(_,r)=>{ const st=(r.stations||[]); return <span className="tiny">{st.length? st.join('、') : '无'}</span>; }}] : []),
     {title:'关联计划', dataIndex:'planId', width:110, render:v=><span className="mono">{v||'暂无'}</span>},
     {title:'器具名称', width:150, render:(_,r)=>{ const it=d.instruments.find(i=>i.id===r.instId); return <span>{it?it.name:r.instName}</span>; }, ellipsis:true},
@@ -4773,7 +4773,7 @@ function ConfirmModal({rows,onClose,onOk}){
 }
 function SamplePersonModal({kind, rec, picked, onOk, onClose}){
   const d=Store.get();
-  const onlyPeople=(kind==='grr'||kind==='kappa');
+  const onlyPeople=false; // GRR/KAPPA 也改为同时选样本+人员，与线性/偏倚一致
   const onlySamples=false;
   const needStation=(kind==='stability');
   const [kw,setKw]=useState('');
@@ -4867,6 +4867,34 @@ function ImportPreviewModal({rec, kind, onClose}){
     {info && info.rows.length? <Table size="small" rowKey="i" dataSource={info.rows.map((r,i)=>({i, ...r}))} pagination={{pageSize:10,showTotal:t=>'共 '+t+' 行'}} scroll={{x:640}} columns={[{title:'', width:110, render:(_,x)=>x.label}, ...info.heads.map((h,ci)=>({title:h, width:90, render:(_,x)=><span className="mono tiny">{x.cells[ci]!=null?x.cells[ci]:''}</span>}))]}/> : <div style={{color:'#666666',fontSize:14}}>该记录暂无导入数据。</div>}
   </Modal>;
 }
+function SampleCodePanel({rec}){
+  const ops=(rec.operators&&rec.operators.length)?rec.operators:(rec.appNames&&rec.appNames.length?rec.appNames:[]);
+  const personList=(ops&&ops.length)?ops:['操作员A','操作员B','操作员C'];
+  const N=Number(rec.numParts)||Number(rec.numSamples)||10;
+  const [selOp,setSelOp]=useState(0);
+  const [codes,setCodes]=useState(()=>Array.from({length:N},()=>''));
+  const opName=personList[Math.min(selOp,personList.length-1)];
+  const rows=codes.map((c,i)=>({key:i,i,code:c}));
+  return <div>
+    <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
+      <div style={{width:180,flexShrink:0}}>
+        <div style={{fontSize:13,color:'#666',marginBottom:8}}>录入人</div>
+        {personList.map((n,i)=><div key={n+i} onClick={()=>setSelOp(i)} style={{padding:'8px 10px',marginBottom:6,cursor:'pointer',borderRadius:6,border:'1px solid '+(i===selOp?'#1677ff':'#e3eaf3'),background:i===selOp?'#e6f4ff':'#fff',color:i===selOp?'#1677ff':'#333',fontSize:13}}>{n}</div>)}
+      </div>
+      <div style={{flex:1,minWidth:0}}>
+        <Table size="small" bordered pagination={{pageSize:10,showTotal:t=>'共 '+t+' 个样本'}} rowKey="key" dataSource={rows} columns={[
+          {title:'样本序号',width:90,render:(_,r)=><span className="mono">{r.i+1}</span>},
+          {title:'样本编号',width:220,render:(_,r)=><Input size="small" value={r.code||''} placeholder="管理员手写编号" onChange={e=>{const n=codes.slice();n[r.i]=e.target.value;setCodes(n);}}/>},
+          {title:'录入人',width:140,render:()=><span>{opName}</span>},
+          {title:'实测值',width:130,render:()=><span style={{color:'#bbb'}}>待录入</span>}
+        ]}/>
+        <div style={{marginTop:12,textAlign:'right'}}>
+          <Button type="primary" onClick={()=>toast.ok('样本编号已提交并通知录入人：'+opName)}>提交</Button>
+        </div>
+      </div>
+    </div>
+  </div>;
+}
 function DataEntryPage({kind}){
   const PEOPLE_LIST=[{value:'王强',label:'王强'},{value:'李娜',label:'李娜'},{value:'张伟',label:'张伟'},{value:'刘洋',label:'刘洋'},{value:'陈静',label:'陈静'},{value:'赵磊',label:'赵磊'},{value:'孙丽',label:'孙丽'},{value:'周涛',label:'周涛'},{value:'吴敏',label:'吴敏'},{value:'郑凯',label:'郑凯'}];
   const [curEditor,setCurEditor]=useState(Store.get().me.name);
@@ -4888,6 +4916,7 @@ function DataEntryPage({kind}){
   const onKindChange=(k)=>{ DataOpen=null; setCurKind(k); setRec(null); setSelId(null); };
   const [cardKw,setCardKw]=useState('');
   const [stFilter,setStFilter]=useState(undefined);
+  const [entryTab,setEntryTab]=useState('data');
   const stOpts=(d.mesStations||[]).map(x=>typeof x==='object'?x.name:x).filter(Boolean);
   const cardItems=pending.filter(r=>!cardKw || (r.id+' '+(r.instName||'')).toLowerCase().includes(cardKw.toLowerCase())).filter(r=>!stFilter || (r.stations||[]).includes(stFilter));
   return <div style={{display:'flex',flexDirection:'column',minHeight:'calc(100vh - 120px)'}}>
@@ -4919,9 +4948,12 @@ function DataEntryPage({kind}){
           </div>
         </div>
         <div style={{flex:1,minWidth:0,display:'flex',flexDirection:'column'}}>
-          {cur ? <Panel className="entry-panel grr-entry-panel" style={{flex:1}}>
-            {CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); }, curEditor)}
-          </Panel> : <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',color:'#999',fontSize:14}}>请从左侧选择要录入的台账记录</div>}
+          {!cur ? <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',color:'#999',fontSize:14}}>请从左侧选择要录入的台账记录</div>
+            : (kindNow==='grr'||kindNow==='kappa') ? <Tabs activeKey={entryTab} onChange={setEntryTab} style={{flex:1,minHeight:0}} items={[
+              {key:'data',label:'数据录入',children:<Panel className="entry-panel grr-entry-panel">{CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); }, curEditor)}</Panel>},
+              {key:'code',label:'样本编号',children:<Panel className="entry-panel"><SampleCodePanel rec={cur}/></Panel>}
+            ]}/>
+            : <Panel className="entry-panel grr-entry-panel" style={{flex:1}}>{CFG.entry(cur, ()=>{ toast.ok('已保存，请到台账页手动分析'); }, curEditor)}</Panel>}
         </div>
       </div>
     </Panel>
