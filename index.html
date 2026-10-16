@@ -4890,7 +4890,7 @@ function SampleCodePanel({rec}){
   const pickRow=(i,t)=>{ setSelOp(i); setSelTrial(t); if(!trialCodes[i+'_'+t]) setTrialCodes(Object.assign({},trialCodes,{[i+'_'+t]:Array.from({length:N},()=>'')})); };
   return <div>
     <div style={{display:'flex',alignItems:'center',marginBottom:12}}>
-      <span style={{fontSize:14,color:'#666',marginRight:8}}>人员</span>
+      <span style={{fontSize:14,color:'#666',marginRight:8}}>录入人</span>
       <Select style={{width:180}} value={selOp} onChange={v=>{setSelOp(v);setSelTrial(1);}} options={personList.map((n,i)=>({value:i,label:n}))}/>
       <span style={{fontSize:13,marginLeft:'auto',color:'#666'}}>当前进度：</span>
       <span style={{fontSize:13,marginLeft:6,padding:'2px 10px',background:'#e6f4ff',color:'#1677ff',borderRadius:4,border:'1px solid #91caff'}}>第 {doneCount} / {totalTrials} 次</span>
@@ -4948,7 +4948,7 @@ function DataEntryPage({kind}){
   const onKindChange=(k)=>{ DataOpen=null; setCurKind(k); setRec(null); setSelId(null); };
   const [cardKw,setCardKw]=useState('');
   const [stFilter,setStFilter]=useState(undefined);
-  const [entryTab,setEntryTab]=useState('data');
+  const [entryTab,setEntryTab]=useState('code');
   const stOpts=(d.mesStations||[]).map(x=>typeof x==='object'?x.name:x).filter(Boolean);
   const cardItems=pending.filter(r=>!cardKw || (r.id+' '+(r.instName||'')).toLowerCase().includes(cardKw.toLowerCase())).filter(r=>!stFilter || (r.stations||[]).includes(stFilter));
   const ledgerCol=(
@@ -4975,7 +4975,7 @@ function DataEntryPage({kind}){
       );
       const toolRow=(
         <div style={{display:'flex',alignItems:'center',marginBottom:12}}>
-          {(kindNow==='grr'||kindNow==='kappa') && <div style={{display:'flex',alignItems:'center'}}><span style={{fontSize:14,color:'#666',marginRight:8}}>操作人</span><Select style={{width:180}} value={curEditor} options={(cur && (cur.owner===d.me.name||cur.assignee===d.me.name) ? [{value:'all',label:'全部'}] : []).concat(PEOPLE_LIST)} onChange={setCurEditor}/></div>}
+          {(kindNow==='grr'||kindNow==='kappa') && <div style={{display:'flex',alignItems:'center'}}><span style={{fontSize:14,color:'#666',marginRight:8}}>录入人</span><Select style={{width:180}} value={curEditor} options={(cur && (cur.owner===d.me.name||cur.assignee===d.me.name) ? [{value:'all',label:'全部'}] : []).concat(PEOPLE_LIST)} onChange={setCurEditor}/></div>}
           <Button type="primary" size="middle" style={{marginLeft:'auto'}} onClick={()=>{ if(window.__entryDoneFn) window.__entryDoneFn(); else toast.warn('请先选择记录'); }}>提交</Button>
         </div>
       );
