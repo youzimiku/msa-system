@@ -4279,10 +4279,8 @@ function GrrEntry({rec, onClose, curEditor}){
     {title:'样本编号', width:140, render:(_,row)=><span className="mono">{row.sid||'待管理员编号'}</span>},
     {title:'录入人', width:110, render:()=><span>{curEditor||'无'}</span>}
   ];
-  for(let t=0;t<trialsN;t++){
-    refCols.push({title:'实测值'+(t+1), dataIndex:'c'+t, width:110,
-      render:(v,row)=><Input size="small" value={row.c&&row.c[t]!=null?row.c[t]:''} className="data-cell"/>});
-  }
+  refCols.push({title:'实测值', dataIndex:'c0', width:110,
+    render:(v,row)=><Input size="small" value={row.c&&row.c[0]!=null?row.c[0]:''} className="data-cell"/>});
   
   const ds=[];
   for(let i=0;i<partsN;i++){
@@ -4337,8 +4335,8 @@ function KappaEntry({rec, onClose, curEditor}){
     {title:'样本编号', width:140, render:(_,row)=><span className="mono">{row.sid||'待管理员编号'}</span>},
     {title:'录入人', width:110, render:()=><span>{curEditor||'无'}</span>}
   ];
-  for(let tt=0;tt<trialsN;tt++) cols.push({title:'实测值'+(tt+1), dataIndex:'t'+tt, width:110,
-    render:(v,row)=><Input size="small" value={row.j&&row.j[tt]!=null?row.j[tt]:''} className="data-cell" onChange={e=>{ const val=e.target.value; setJudg(judg.map((x,ia)=>{ if(ia!==row.app) return x; return x.map((y,is)=>{ if(is!==row.i) return y; return y.map((z,it)=>it===tt?val:z); }); })); }}/>});
+  cols.push({title:'实测值', dataIndex:'t0', width:110,
+    render:(v,row)=><Input size="small" value={row.j&&row.j[0]!=null?row.j[0]:''} className="data-cell" onChange={e=>{ const val=e.target.value; setJudg(judg.map((x,ia)=>{ if(ia!==row.app) return x; return x.map((y,is)=>{ if(is!==row.i) return y; return y.map((z,it)=>it===0?val:z); }); })); }}/>});
   
   const ds=[];
   for(let i=0;i<samplesN;i++){
