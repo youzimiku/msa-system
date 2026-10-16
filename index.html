@@ -4909,6 +4909,7 @@ function SampleCodePanel({rec}){
       <div style={{flex:1,display:'flex',flexDirection:'column'}}>
         <Table size="small" bordered rowKey="key" dataSource={rows} pagination={false}
           scroll={{x:720, y:"calc(100vh - 380px)"}}
+          className="grr-entry-table"
           headerCellStyle={{background:"#ACCDEC"}}
           columns={[
           {title:'样本序号',width:90,render:(_,r)=><span className="mono">{r.i+1}</span>},
