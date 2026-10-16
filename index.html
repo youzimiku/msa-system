@@ -4691,7 +4691,7 @@ function EntryPage({kind}){
     {title:'台账编号', dataIndex:'id', width:115, render:v=><span className="mono">{v}</span>},
     {title:'责任人', width:110, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" placeholder="选择责任人" value={r.analyst||undefined} style={{width:100}} options={PEOPLE_OPT} onChange={x=>setRecF(r,'analyst',x)}/>},
     {title:'人员', width:180, ellipsis:true, render:(_,r)=>{ const nm=(r.opsNames||r.operators||r.appNames||[]).map(n=>String(n).split('·').pop()); const clean=(kind==='grr'||kind==='kappa')?nm:nm.filter(n=>!/^(操作员[ABCDE]|检验员[甲乙丙丁戊])$/.test(n)); return <span className="tiny">{clean.length? clean.join('、') : '未维护'}</span>; }},
-    {title:'样本', width:200, ellipsis:true, render:(_,r)=>{ const pt=(kind==='linear'||kind==='cgcgk')?(r.parts||[]):(r.sampleNames||[]); if(pt.length) return <span className="tiny">{pt.join('、')}</span>; const n=r.numParts||r.numSamples; return <span className="tiny">{n?('计划 '+n+' 件，未维护样本'):'未维护样本'}</span>; }},
+    {title:'样本', width:200, ellipsis:true, render:(_,r)=>{ const pt=(kind==='linear'||kind==='cgcgk')?(r.parts||[]):(r.sampleNames||[]); return pt.length?<span className="tiny">{pt.join('、')}</span>:null; }},
     ...(kind==='stability' ? [{title:'工位', width:120, ellipsis:true, render:(_,r)=>{ const st=(r.stations||[]); return <span className="tiny">{st.length? st.join('、') : '无'}</span>; }}] : []),
     {title:'关联计划', dataIndex:'planId', width:110, render:v=><span className="mono">{v||'暂无'}</span>},
     {title:'器具名称', width:150, render:(_,r)=>{ const it=d.instruments.find(i=>i.id===r.instId); return <span>{it?it.name:r.instName}</span>; }, ellipsis:true},
