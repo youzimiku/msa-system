@@ -5558,12 +5558,14 @@ const PROJ_INST={
 function ProjInstPage(){
   const [sel,setSel]=useState('PRJ-001');
   const [addOpen,setAddOpen]=useState(false);
+  const [newOpen,setNewOpen]=useState(false);
+  const [unlink,setUnlink]=useState(null);
   const p=PROJ_LIST.find(x=>x.code===sel);
   const insts=PROJ_INST[sel]||[];
   return <div>
     <Row gutter={12}>
       <Col span={8}>
-        <Card size="small" title="项目列表" extra={<Button size="small" type="primary">+ 新增项目</Button>}>
+        <Card size="small" title="项目列表" extra={<Button size="small" type="primary" onClick={()=>setNewOpen(true)}>+ 新增项目</Button>}>
           <List size="small" dataSource={PROJ_LIST} rowKey="code" renderItem={it=>
             <List.Item style={{cursor:'pointer',background:it.code===sel?'#e6f4ff':'transparent',borderRadius:4,padding:'8px 12px'}} onClick={()=>setSel(it.code)}>
               <List.Item.Meta title={<Space><b>{it.code}</b></Space>} description={<div>{it.name}<div style={{color:'#888',fontSize:12}}>产品：{it.product}</div></div>}/>
@@ -5593,7 +5595,7 @@ function ProjInstPage(){
             {title:'类型',dataIndex:'type',width:80,render:v=>v==='专用'?<Tag color="geekblue">专用</Tag>:<Tag color="orange">共用</Tag>},
             {title:'使用部门',dataIndex:'dept',width:140},
             {title:'状态',dataIndex:'status',width:80,render:v=><Tag color="green">{v}</Tag>},
-            {title:'操作',width:90,render:()=><Button size="small" type="link" danger onClick={()=>message.info('演示：解除关联')}>解除</Button>}
+            {title:'操作',width:90,render:(_,r)=><Button size="small" type="link" danger onClick={()=>setUnlink(r)}>解除</Button>}
           ]} dataSource={insts}/>
         </Card>
       </Col>
@@ -5610,6 +5612,21 @@ function ProjInstPage(){
         {title:'型号',dataIndex:'model'},
         {title:'类型',dataIndex:'type',render:v=>v==='专用'?<Tag color="geekblue">专用</Tag>:<Tag color="orange">共用</Tag>}
       ]}/>
+    </Modal>
+    <Modal title="新增项目" open={newOpen} onCancel={()=>setNewOpen(false)} onOk={()=>{setNewOpen(false);message.success('演示：项目已新增')}} okText="确定" cancelText="取消" width={620}>
+      <Form layout="vertical">
+        <Row gutter={12}>
+          <Col span={12}><Form.Item label="项目编号"><Input placeholder="系统自动生成" disabled/></Form.Item></Col>
+          <Col span={12}><Form.Item label="项目名称"><Input placeholder="请输入项目名称"/></Form.Item></Col>
+          <Col span={12}><Form.Item label="产品编号"><Input placeholder="请输入产品编号"/></Form.Item></Col>
+          <Col span={12}><Form.Item label="产品名称"><Input placeholder="请输入产品名称"/></Form.Item></Col>
+          <Col span={12}><Form.Item label="工厂"><Select placeholder="请选择" options={[{value:'青岛工厂',label:'青岛工厂'},{value:'烟台工厂',label:'烟台工厂'}]}/></Form.Item></Col>
+          <Col span={12}><Form.Item label="责任部门"><Select placeholder="请选择" options={[{value:'动力总成车间',label:'动力总成车间'},{value:'底盘车间',label:'底盘车间'},{value:'车身车间',label:'车身车间'},{value:'电子电气车间',label:'电子电气车间'}]}/></Form.Item></Col>
+        </Row>
+      </Form>
+    </Modal>
+    <Modal title="解除关联" open={!!unlink} onCancel={()=>setUnlink(null)} onOk={()=>{setUnlink(null);message.success('演示：已解除')}} okText="确认解除" cancelText="取消" okButtonProps={{danger:true}}>
+      {unlink && <p>确认将量具 <b>{unlink.no} {unlink.name}</b> 从项目 <b>{p.code} {p.name}</b> 解除关联吗？<br/><span style={{color:'#888'}}>{unlink.type==='共用'?'该量具仍可在其他项目中使用。':'解除后该量具需重新分配项目。'}</span></p>}
     </Modal>
   </div>;
 }
@@ -5635,10 +5652,11 @@ function OvCell({r}){
 }
 function OverviewReportPage(){
   const [proj,setProj]=useState('PRJ-001');
+  const [detail,setDetail]=useState(null);
   const rows=OV_DATA.filter(x=>x.project===proj);
   const p=PROJ_LIST.find(x=>x.code===proj);
   const cols=[
-    {title:'量具编号',dataIndex:'no',width:140,fixed:'left'},
+    {title:'量具编号',dataIndex:'no',width:140,fixed:'left',render:v=><Button type="link" size="small" style={{padding:0}} onClick={()=>{}}>{v}</Button>},
     {title:'量具名称',dataIndex:'name',width:160,fixed:'left'}
   ];
   OV_METHODS.forEach(m=>cols.push({title:m.label,dataIndex:m.key,width:160,render:(_,r)=><OvCell r={r.results[m.key]}/>}));
@@ -5659,7 +5677,7 @@ function OverviewReportPage(){
       </Space>
     </Card>
     <Card size="small" title={<Space>{p.product} — MSA 分析结果总览<Tag color="blue">{p.code}</Tag></Space>}>
-      <Table size="small" rowKey={(r,i)=>r.no+'_'+i} pagination={false} columns={cols} dataSource={rows} scroll={{x:1200}} summary={()=>{
+      <Table size="small" rowKey={(r,i)=>r.no+'_'+i} pagination={false} columns={cols} dataSource={rows} scroll={{x:1200}} onRow={(r)=>({onClick:()=>setDetail(r),style:{cursor:'pointer'}})} summary={()=>{
         let total=0,pass=0;
         rows.forEach(r=>OV_METHODS.forEach(m=>{ if(r.results[m.key]){ total++; if(['可接受','受控'].includes(r.results[m.key].verdict)) pass++; } }));
         return <Table.Summary.Row style={{background:'#fafafa',fontWeight:600}}>
@@ -5668,6 +5686,14 @@ function OverviewReportPage(){
         </Table.Summary.Row>;
       }}/>
     </Card>
+    <Modal title={detail?<Space>{detail.no} {detail.name} — MSA 分析详情<Tag color="blue">{p.code}</Tag></Space>:'分析详情'} open={!!detail} onCancel={()=>setDetail(null)} footer={[<Button key="close" onClick={()=>setDetail(null)}>关闭</Button>]} width={720}>
+      {detail && <Table size="small" pagination={false} rowKey="key" dataSource={OV_METHODS.map(m=>({key:m.key,method:m.label,res:detail.results[m.key]})).filter(x=>x.res)} columns={[
+        {title:'分析方法',dataIndex:'method',width:120},
+        {title:'结论',dataIndex:['res','verdict'],width:120,render:v=>{const color=v==='可接受'||v==='受控'?'green':(v==='有条件接受'?'orange':'red');return <Tag color={color}>{v}</Tag>;}},
+        {title:'关键指标',dataIndex:['res','val'],width:180},
+        {title:'分析时间',dataIndex:['res','date'],width:120}
+      ]}/>}
+    </Modal>
   </div>;
 }
 
@@ -6094,6 +6120,8 @@ function ReportPage({kind}){
 </script>
 </body>
 </html>
+
+
 
 
 
