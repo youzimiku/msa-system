@@ -4875,13 +4875,13 @@ function SampleCodePanel({rec}){
   const [codes,setCodes]=useState(()=>Array.from({length:N},()=>''));
   const opName=personList[Math.min(selOp,personList.length-1)];
   const rows=codes.map((c,i)=>({key:i,i,code:c}));
-  return <div>
-    <div style={{display:'flex',gap:12,alignItems:'flex-start'}}>
-      <div style={{width:260,flexShrink:0}}>
-        <div style={{fontSize:13,color:'#666',marginBottom:8}}>录入人</div>
-        {personList.map((n,i)=><div key={n+i} onClick={()=>setSelOp(i)} style={{padding:'8px 10px',marginBottom:6,cursor:'pointer',borderRadius:6,border:'1px solid '+(i===selOp?'#1677ff':'#e3eaf3'),background:i===selOp?'#e6f4ff':'#fff',color:i===selOp?'#1677ff':'#333',fontSize:13}}>{n}</div>)}
-      </div>
-      <div style={{flex:1,minWidth:0}}>
+  return <div style={{display:'flex',gap:12,alignItems:'stretch',minHeight:480}}>
+    <div style={{width:260,flexShrink:0,display:'flex',flexDirection:'column',border:'1px solid #e3eaf3',borderRadius:6,padding:'8px',background:'#fafcff'}}>
+      <div style={{fontSize:13,color:'#666',marginBottom:8}}>录入人</div>
+      {personList.map((n,i)=><div key={n+i} onClick={()=>setSelOp(i)} style={{padding:'8px 10px',marginBottom:6,cursor:'pointer',borderRadius:6,border:'1px solid '+(i===selOp?'#1677ff':'#e3eaf3'),background:i===selOp?'#e6f4ff':'#fff',color:i===selOp?'#1677ff':'#333',fontSize:13}}>{n}</div>)}
+    </div>
+    <Panel className="entry-panel grr-entry-panel" style={{flex:1,minWidth:0}}>
+      <div style={{flex:1,display:'flex',flexDirection:'column'}}>
         <Table size="small" bordered pagination={{pageSize:10,showTotal:t=>'共 '+t+' 个样本'}} rowKey="key" dataSource={rows} columns={[
           {title:'样本序号',width:90,render:(_,r)=><span className="mono">{r.i+1}</span>},
           {title:'样本编号',width:220,render:(_,r)=><Input size="small" value={r.code||''} placeholder="管理员手写编号" onChange={e=>{const n=codes.slice();n[r.i]=e.target.value;setCodes(n);}}/>},
@@ -4892,7 +4892,7 @@ function SampleCodePanel({rec}){
           <Button type="primary" onClick={()=>toast.ok('样本编号已提交并通知录入人：'+opName)}>提交</Button>
         </div>
       </div>
-    </div>
+    </Panel>
   </div>;
 }
 function DataEntryPage({kind}){
