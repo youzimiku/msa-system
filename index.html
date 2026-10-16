@@ -1570,19 +1570,12 @@ const MENU = [
   {key:'kappa', icon:'✓', label:'KAPPA 分析结果', group:'分析执行', hidden:true},
   {key:'anl_linear', icon:'↗', label:'线性/偏移分析结果', group:'分析执行', hidden:true},
   {key:'anl_stability', icon:'≋', label:'稳定性分析结果', group:'分析执行', hidden:true},
-  {key:'anl_cgcgk', icon:'⊞', label:'Cg/Cgk 分析结果', group:'分析执行', hidden:true},
-  /* 报告：独立报告页面（模拟数据） */
-  {key:'report_grr', icon:'▤', label:'GRR 报告', group:'报告'},
-  {key:'report_kappa', icon:'▤', label:'KAPPA 报告', group:'报告'},
-  {key:'report_linear', icon:'▤', label:'线性/偏倚报告', group:'报告'},
-  {key:'report_cgcgk', icon:'▤', label:'Cg/Cgk 报告', group:'报告'},
-  {key:'report_stability', icon:'▤', label:'稳定性报告', group:'报告'}
+  {key:'anl_cgcgk', icon:'⊞', label:'Cg/Cgk 分析结果', group:'分析执行', hidden:true}
 ];
 const PAGE_TITLE = {'ledger':'计量器具台账','ledger_img':'计量器具台账','instgroup':'器具组维护','plan':'MSA 计划',
   'char':'被测参数维护','sampling':'抽样方法维护','samplelib':'样本库管理',
   'entry_grr':'GRR 台账','entry_kappa':'KAPPA 台账','entry_linear':'线性/偏倚台账','entry_stability':'稳定性台账','entry_cgcgk':'Cg/Cgk 台账','data_grr':'GRR 录入数据','data_kappa':'KAPPA 录入数据','data_linear':'线性/偏倚录入数据','data_stability':'稳定性录入数据','data_cgcgk':'Cg/Cgk 录入数据',
-  'grr':'GRR 分析结果','kappa':'KAPPA 分析结果','anl_linear':'线性/偏移分析结果','anl_stability':'稳定性分析结果','anl_cgcgk':'Cg/Cgk 分析结果（VDA Type1）',
-  'report_grr':'GRR 报告','report_kappa':'KAPPA 报告','report_linear':'线性/偏倚报告','report_cgcgk':'Cg/Cgk 报告','report_stability':'稳定性报告'};
+  'grr':'GRR 分析结果','kappa':'KAPPA 分析结果','anl_linear':'线性/偏移分析结果','anl_stability':'稳定性分析结果','anl_cgcgk':'Cg/Cgk 分析结果（VDA Type1）'};
 
 /* 页面使用说明（可折叠，面向有经验的业务人员：简短说明 + 关键操作点 + 台账权限 + MSA 计划状态标识） */
 const PAGE_GUIDE = {
@@ -1609,17 +1602,11 @@ const PAGE_GUIDE = {
     logic:'本页面按分析类型展示 MSA 台账记录，默认开启行内编辑，字段修改即时生效。\n• 责任人（Owner）：台账的负责人，下拉单选，可改。\n• 确认人：下拉单选，每条台账只有一个确认人；该确认人由责任人在创建 / 下发任务时指定，不是全公司人员。\n• 确认状态：下拉（已确认 / 未确认），默认「未确认」；选了确认人不会自动变「已确认」。\n• 确认状态按权限控制：只有当前登录账号 = 该台账的确认人时，确认状态下拉框才可编辑（由该确认人本人登录后在此点选「已确认」）；其他账号、或尚未指定确认人时，该下拉框禁用。',
     ops:'【查询区】\n• 关键词：模糊匹配台账编号 / 计划号 / 器具编号 / 器具名称 / 测量对象。\n• 状态 / 结论 / 责任人：下拉过滤；「查询」刷新列表，「重置」清空条件。\n\n【按钮板】\n• 「查询」「重置」：列表筛选。\n• 「确认」：先在列表勾选记录，再批量确认。\n• 「导入」「导出」：待接入。\n\n【列表操作列（每行）】\n• 「人员选择 / 样本选择 / 样本/人员选择」：弹窗选择本台账对应的人员或样本（稳定性含工位）。\n• 「分析」：仅「待分析」状态可点，打开分析页；其他状态提示不可分析。\n• 「数据录入」：仅「待采集 / 待分析」状态可点，跳转数据录入页；其他状态提示不可录入。\n• 「查看结果」：打开该台账的分析结果页。\n• 「保存」：保存本行修改。\n• 「删除」：仅「待采集 / 待分析」状态可删，二次确认。\n\n【行内编辑】\n• 责任人：下拉单选。\n• 确认人：下拉单选（每条台账仅一人）。\n• 确认状态：下拉（已确认 / 未确认）。\n• 编号、器具、被测参数、结论、审核人 / 时间等为只读展示。\n\n【按钮与字段】\n• 「人员选择 / 样本选择 / 样本·人员选择」「查看结果」「保存」：操作按钮。\n• 「分析」：仅台账状态为「待分析」时可点。\n• 「数据录入」：仅台账状态为「待采集 / 待分析」时可点。\n• 「删除」：仅台账状态为「待采集 / 待分析」时可点；有二次确认。\n• 「确认」（按钮板）：需先勾选记录，再批量确认。\n• 「导入」「导出」：操作按钮。\n• 可编辑字段：责任人（下拉）、确认人（下拉单选，每条台账一人）。\n• 确认状态（下拉：已确认 / 未确认）：仅当前登录账号 = 该台账确认人本人时可改；选了确认人不会自动变已确认。\n• 只读字段：台账编号、器具、被测参数、版本、结论、审核人、审核时间、确认时间。\n\n【保存校验】\n• 责任人、确认人下拉必选其一后才生效；确认人未指定时确认状态不可改。\n• 删除仅「待采集 / 待分析」状态可执行，有二次确认。\n\n【查看范围】\n• 「查看全部台账」：可看所有责任人的记录。\n• 「仅查看本人台账」：只看当前登录人自己负责的记录。',
     recent:'【近期改动（2026-09-20 16:45起）】\n• 操作人/确认状态改只读纯文本；按钮板加发起确认按钮；确认弹窗含确认状态(确认/驳回)和驳回说明\n• 列表字段更新：发起人/发起时间/确认人/确认时间/确认状态/驳回说明\n• 样本人员弹窗去标题文字和可多选后缀；人员列表加搜索；稳定性工位改列表带产线查询\n• 线性/偏倚弹窗加人员选择，按钮改名样本/人员选择，列表加人员列\n• 无数据显示无不显示—；GRR/Kappa去样本工位列人员加宽；线性/偏倚去人员工位列样本加宽；Cg/Cgk去工位列\n• 台账编号/关联计划去超链接'}
-  ,
-  report:{label:'报告',
-    text:'独立报告页面：完整呈现某类 MSA 分析的结论、统计结果、图表与原始样本数据（模拟数据）。',
-    logic:'前端只做接收、展示与单项判定；斜率 / P 值 / Kappa 等统计值由后台计算（演示为模拟数据）。报告 = 表头 + 结论 + 统计 + 图表 + 样本数据。',
-    ops:'【页面结构】\n• 表头：台账编号、器具、被测参数、责任人、确认人、分析时间。\n• 结论区：可接受 / 有条件接受 / 不可接受。\n• 统计区：关键统计值（如 GRR%、ndc、Kappa 值、斜率、P 值）。\n• 图表区：对应方法的控制图 / 散点图。\n• 样本数据区：原始测量值明细表。\n\n【按钮权限】\n• 报告页无编辑操作，所有角色均可查看。'}
 };
 function PageGuide({page}){
   let g = null, kind='';
   if(/^entry_/.test(page)){ g=PAGE_GUIDE.entry; kind='entry'; }
   else if(/^data_/.test(page)){ g=PAGE_GUIDE.data; kind='data'; }
-  else if(/^report_/.test(page)){ g=PAGE_GUIDE.report; kind='report'; }
   else if(page==='grr'||page==='kappa'||/^anl_/.test(page)){ g=PAGE_GUIDE.anl; kind='anl'; }
   else g=PAGE_GUIDE[page];
   if(!g) return null;
@@ -1772,11 +1759,6 @@ function App(){
     if(page==='anl_linear') return <AnlPage kind="linear"/>;
     if(page==='anl_stability') return <AnlPage kind="stability"/>;
     if(page==='anl_cgcgk') return <AnlPage kind="cgcgk"/>;
-    if(page==='report_grr') return <ReportPage kind="grr"/>;
-    if(page==='report_kappa') return <ReportPage kind="kappa"/>;
-    if(page==='report_linear') return <ReportPage kind="linear"/>;
-    if(page==='report_cgcgk') return <ReportPage kind="cgcgk"/>;
-    if(page==='report_stability') return <ReportPage kind="stability"/>;
     return <LedgerPage/>;
   };
 
@@ -2484,6 +2466,7 @@ function PlanPage(){
     {title:'MSA计划号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
     {title:'责任人', width:116, render:(_,r)=><Select size="small" value={r.analyst||r.observer||undefined} style={{width:106}} options={ANALYST_OPT} onChange={x=>setF(r,'analyst',x)}/>},
     {title:'任务来源', width:100, render:(_,r)=><span>{r.source==='周期任务'?'周期任务':'临时任务'}</span>},
+    {title:'项目', width:140, render:(_,r)=><Select size="small" allowClear style={{width:130}} value={r.project||undefined} placeholder="选择项目" options={['动力总成项目','底盘项目','车身项目','电子电气项目','内外饰项目'].map(p=>({value:p,label:p}))} onChange={x=>setF(r,'project',x||'')}/>},
     {title:'设备名称', width:160, render:(_,r)=>instCell(r,it=>it?it.name:'')},
     {title:'量具编号', width:110, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.id}</span>:'')},
     {title:'零件号', width:110, dataIndex:'partNo', render:(_,r)=><span className="mono">{r.partNo||'—'}</span>},
@@ -2509,7 +2492,12 @@ function PlanPage(){
     {title:'计划完成时间', dataIndex:'planDate', width:120, render:(_,r)=><span className="mono">{r.planDate||'—'}</span>},
     {title:'实际完成时间', dataIndex:'actualDate', width:116, render:v=><span className="mono">{v||'—'}</span>},
     {title:'录入人', dataIndex:'editor', width:100, ellipsis:true, render:v=><span>{v||'—'}</span>},
-    {title:'录入时间', dataIndex:'editorDate', width:115, render:v=><span className="mono">{v||'—'}</span>}
+    {title:'录入时间', dataIndex:'editorDate', width:115, render:v=><span className="mono">{v||'—'}</span>},
+    {title:'创建人', width:100, render:(_,r)=><span>{r.creator||'—'}</span>},
+    {title:'创建时间', width:115, render:(_,r)=><span className="mono">{r.createDate||'—'}</span>},
+    {title:'审核人', width:100, render:(_,r)=><span>{r.reviewer||'—'}</span>},
+    {title:'审核时间', width:115, render:(_,r)=><span className="mono">{r.reviewDate||'—'}</span>},
+    {title:'驳回说明', width:160, ellipsis:true, render:(_,r)=><span>{r.rejectReason||'—'}</span>}
   ];
 
   return <div>
@@ -4706,13 +4694,13 @@ function EntryPage({kind}){
     ]),
     {title:'结论', width:120, render:(_,r)=><VerdictTag v={r.conclusion}/>},
     {title:'状态', width:90, render:(_,r)=><StatusTag s={r.reviewStatus}/>},
-    {title:'审核人', width:90, render:(_,r)=><span>{r.reviewer||'—'}</span>},
-    {title:'审核时间', width:115, render:(_,r)=><span className="mono">{r.reviewDate||'—'}</span>},
-    {title:'发起人', width:100, render:(_,r)=><span>{r.initiator||'—'}</span>},
-    {title:'发起时间', width:115, render:(_,r)=><span className="mono">{r.initiateDate||'—'}</span>},
+    {title:'创建人', width:100, render:(_,r)=><span>{r.initiator||'—'}</span>},
+    {title:'创建时间', width:115, render:(_,r)=><span className="mono">{r.initiateDate||'—'}</span>},
     {title:'确认人', width:100, render:(_,r)=><span>{r.approver||'—'}</span>},
     {title:'确认时间', width:115, render:(_,r)=><span className="mono">{r.approveDate||'—'}</span>},
-    {title:'驳回说明', width:160, ellipsis:true, render:(_,r)=><span>{r.rejectReason||'—'}</span>}
+    {title:'驳回说明', width:160, ellipsis:true, render:(_,r)=><span>{r.rejectReason||'—'}</span>},
+    {title:'分析人', width:100, render:(_,r)=><span>{r.analyst||'—'}</span>},
+    {title:'分析时间', width:115, render:(_,r)=><span className="mono">{r.analyzeDate||'—'}</span>}
   ];
   return <div>
     <Panel>
