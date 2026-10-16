@@ -5531,10 +5531,10 @@ const RPT = {
 };
 /* ================= 项目量具关系维护 ================= */
 const PROJ_LIST=[
-  {code:'PRJ-001',name:'4缸发动机总成装配线',product:'4G15 发动机',plant:'青岛工厂',dept:'动力总成车间'},
-  {code:'PRJ-002',name:'前悬架装配线',product:'麦弗逊前悬',plant:'青岛工厂',dept:'底盘车间'},
-  {code:'PRJ-003',name:'车门焊接线',product:'前门焊接总成',plant:'烟台工厂',dept:'车身车间'},
-  {code:'PRJ-004',name:'仪表台总装线',product:'数字仪表台',plant:'青岛工厂',dept:'电子电气车间'}
+  {code:'PRJ-001',name:'4缸发动机总成装配线',prodCode:'P001',product:'4G15 发动机',plant:'青岛工厂',dept:'动力总成车间',creator:'张伟',createTime:'2026-03-12 09:20'},
+  {code:'PRJ-002',name:'前悬架装配线',prodCode:'P002',product:'麦弗逊前悬',plant:'青岛工厂',dept:'底盘车间',creator:'李娜',createTime:'2026-04-08 14:35'},
+  {code:'PRJ-003',name:'车门焊接线',prodCode:'P003',product:'前门焊接总成',plant:'烟台工厂',dept:'车身车间',creator:'王强',createTime:'2026-05-21 10:02'},
+  {code:'PRJ-004',name:'仪表台总装线',prodCode:'P004',product:'数字仪表台',plant:'青岛工厂',dept:'电子电气车间',creator:'赵敏',createTime:'2026-06-15 16:48'}
 ];
 const PROJ_INST={
   'PRJ-001':[
@@ -5579,8 +5579,13 @@ function ProjInstPage(){
         <Input allowClear placeholder="项目编号、项目名称" style={{width:200}}/>
         <span style={{marginRight:4,color:'#666',fontSize:14,whiteSpace:'nowrap'}}>产品</span>
         <Select allowClear style={{width:200}} options={PROJ_PRODUCTS.map(x=>({value:x.code,label:`${x.code}-${x.name}`}))}/>
-        <span style={{marginRight:4,color:'#666',fontSize:14,whiteSpace:'nowrap'}}>器具</span>
-        <Input allowClear placeholder="器具编号、名称" style={{width:180}}/>
+        <span style={{marginRight:4,color:'#666',fontSize:14,whiteSpace:'nowrap'}}>量具</span>
+        <Select allowClear style={{width:220}} placeholder="量具编号、名称" options={[
+          {value:'JJQ-2024-001',label:'JJQ-2024-001 数显游标卡尺'},
+          {value:'JJQ-2024-002',label:'JJQ-2024-002 外径千分尺'},
+          {value:'JJQ-2024-005',label:'JJQ-2024-005 扭矩扳手'},
+          {value:'JJQ-2024-008',label:'JJQ-2024-008 气漏检测仪'}
+        ]}/>
         <span className="tiny">共 {PROJ_LIST.length} 个项目，{insts.length} 件量具</span>
       </Space>
     </Panel>
@@ -5589,20 +5594,24 @@ function ProjInstPage(){
         <Button type="primary">查询</Button>
         <Button>重置</Button>
         <Button type="primary" onClick={()=>setNewOpen(true)}>+ 新增项目</Button>
-        <Button type="primary" onClick={()=>setAddOpen(true)}>+ 添加量具</Button>
+        <Button type="primary" onClick={()=>setAddOpen(true)}>+ 绑定量具</Button>
         <Button onClick={()=>message.info('演示：导出项目-量具关系')}>导出</Button>
       </Space>
     </Panel>
     <Row gutter={12}>
-      <Col span={8}>
+      <Col span={10}>
         <Panel>
-          <List size="small" dataSource={PROJ_LIST} rowKey="code" renderItem={it=>
-            <List.Item style={{cursor:'pointer',background:it.code===sel?'#e6f4ff':'transparent',borderRadius:4,padding:'8px 12px'}} onClick={()=>setSel(it.code)}>
-              <List.Item.Meta title={<Space><b>{it.code}</b></Space>} description={<div>{it.name}<div style={{color:'#888',fontSize:12}}>产品：{it.product}</div></div>}/>
-            </List.Item>}/>
+          <Table size="small" rowKey="code" pagination={false} onRow={(r)=>({onClick:()=>setSel(r.code),style:{cursor:'pointer'}})} rowClassName={(r)=>r.code===sel?'ant-table-row-selected':''} columns={[
+            {title:'项目号',dataIndex:'code',width:100},
+            {title:'项目名称',dataIndex:'name',ellipsis:true},
+            {title:'产品号',dataIndex:'prodCode',width:80},
+            {title:'产品名称',dataIndex:'product',ellipsis:true},
+            {title:'创建人',dataIndex:'creator',width:80},
+            {title:'创建时间',dataIndex:'createTime',width:140}
+          ]} dataSource={PROJ_LIST}/>
         </Panel>
       </Col>
-      <Col span={16}>
+      <Col span={14}>
         <Panel>
           <Table size="small" rowKey="no" pagination={false} columns={[
             {title:'操作',width:90,fixed:'left',render:(_,r)=><Button size="small" type="link" danger onClick={()=>setUnlink(r)}>解除</Button>},
@@ -5612,18 +5621,17 @@ function ProjInstPage(){
             {title:'测量范围',dataIndex:'range',width:140},
             {title:'分辨力',dataIndex:'res',width:90},
             {title:'类型',dataIndex:'type',width:80,render:v=>v==='专用'?<Tag color="geekblue">专用</Tag>:<Tag color="orange">共用</Tag>},
-            {title:'使用部门',dataIndex:'dept',width:140},
-            {title:'状态',dataIndex:'status',width:80,render:v=><Tag color="green">{v}</Tag>}
+            {title:'使用部门',dataIndex:'dept',width:140}
           ]} dataSource={insts}/>
         </Panel>
       </Col>
     </Row>
-    <Modal title="添加量具" open={addOpen} onCancel={()=>setAddOpen(false)} onOk={()=>{setAddOpen(false);message.success('演示：已添加')}} okText="确定" cancelText="取消" width={900}>
+    <Modal title="绑定量具" open={addOpen} onCancel={()=>setAddOpen(false)} onOk={()=>{setAddOpen(false);message.success('演示：已绑定')}} okText="确定" cancelText="取消" width={900}>
       <p style={{color:'#666'}}>从计量器具台账选择要挂载到本项目的量具。专用量具仅能挂载到一个项目；共用量具可挂载到多个项目。</p>
-      <Table size="small" rowKey="no" pagination={false} scroll={{x:1100}} dataSource={[
-        {no:'JJQ-2024-010',name:'数显高度尺',model:'0-300mm',range:'0-300mm',res:'0.01mm',type:'共用',dept:'计量室',status:'在用'},
-        {no:'JJQ-2024-011',name:'螺纹塞规',model:'M10×1.5',range:'M10×1.5',res:'0.01mm',type:'专用',dept:'动力总成车间',status:'在用'},
-        {no:'JJQ-2024-012',name:'推拉力计',model:'NK-200',range:'0-200N',res:'0.1N',type:'共用',dept:'计量室',status:'在用'}
+      <Table size="small" rowKey="no" pagination={false} scroll={{x:1000}} dataSource={[
+        {no:'JJQ-2024-010',name:'数显高度尺',model:'0-300mm',range:'0-300mm',res:'0.01mm',type:'共用',dept:'计量室'},
+        {no:'JJQ-2024-011',name:'螺纹塞规',model:'M10×1.5',range:'M10×1.5',res:'0.01mm',type:'专用',dept:'动力总成车间'},
+        {no:'JJQ-2024-012',name:'推拉力计',model:'NK-200',range:'0-200N',res:'0.1N',type:'共用',dept:'计量室'}
       ]} rowSelection={{type:'checkbox'}} columns={[
         {title:'量具编号',dataIndex:'no',width:140},
         {title:'量具名称',dataIndex:'name',width:160},
@@ -5631,8 +5639,7 @@ function ProjInstPage(){
         {title:'测量范围',dataIndex:'range',width:140},
         {title:'分辨力',dataIndex:'res',width:90},
         {title:'类型',dataIndex:'type',width:80,render:v=>v==='专用'?<Tag color="geekblue">专用</Tag>:<Tag color="orange">共用</Tag>},
-        {title:'使用部门',dataIndex:'dept',width:140},
-        {title:'状态',dataIndex:'status',width:80,render:v=><Tag color="green">{v}</Tag>}
+        {title:'使用部门',dataIndex:'dept',width:140}
       ]}/>
     </Modal>
     <Modal title="新增项目" open={newOpen} onCancel={()=>setNewOpen(false)} onOk={()=>{setNewOpen(false);message.success('演示：项目已新增')}} okText="确定" cancelText="取消" width={620}>
@@ -6141,6 +6148,8 @@ function ReportPage({kind}){
 </script>
 </body>
 </html>
+
+
 
 
 
