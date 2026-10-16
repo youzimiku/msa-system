@@ -4882,19 +4882,20 @@ function SampleCodePanel({rec}){
     todo:{label:'待录入',color:'#1677ff',bg:'#e6f4ff',bd:'#91caff'},
     done:{label:'已完成',color:'#52c41a',bg:'#f6ffed',bd:'#b7eb8f'}
   };
+  // 总测量次数 = 人数 × 轮次（例：5人×3次=15次）；当前次数按完成进度累计
+  const trialsN=Number(rec.numTrials)||3;
+  const totalTrials=personList.length*trialsN;
+  const doneTrials=personList.reduce((s,_,i)=> s + (statusOf(i)==='done'?trialsN : (statusOf(i)==='todo'?trialsN-1:0)),0);
+  const curTrial= statusOf(selOp)==='pending' ? 1 : (statusOf(selOp)==='todo'? 2 : trialsN);
+  const currentCount=Math.min(totalTrials, doneTrials+curTrial);
   const rows=codes.map((c,i)=>({key:i,i,code:c}));
-  const onTrialChange=(v)=>{
-    if(v>trialNo){ toast.warn('第 '+trialNo+' 轮尚未录完，请先完成本轮测量再开始第 '+v+' 轮'); return; }
-    setTrialNo(v);
-    if(!trialCodes[v]) setTrialCodes(Object.assign({},trialCodes,{v:Array.from({length:N},()=>'')}));
-  };
   return <div>
     <div style={{display:'flex',alignItems:'center',marginBottom:12}}>
       <span style={{fontSize:14,color:'#666',marginRight:8}}>人员</span>
       <Select style={{width:180,marginRight:16}} value={selOp} onChange={v=>setSelOp(v)} options={personList.map((n,i)=>({value:i,label:n}))}/>
-      <span style={{fontSize:14,color:'#666',marginRight:8}}>第几次测量</span>
-      <Select style={{width:120}} value={trialNo} onChange={onTrialChange} options={[1,2,3].map(x=>({value:x,label:'第 '+x+' 次'}))}/>
-      <Button type="primary" style={{marginLeft:'auto'}} onClick={()=>toast.ok('样本编号已提交并通知录入人：'+opName+'（第'+trialNo+'次测量）')}>提交</Button>
+      <span style={{fontSize:13,color:'#666'}}>当前进度：</span>
+      <span style={{fontSize:13,marginLeft:4,padding:'2px 10px',background:'#e6f4ff',color:'#1677ff',borderRadius:4,border:'1px solid #91caff'}}>第 {currentCount} / {totalTrials} 次</span>
+      <Button type="primary" style={{marginLeft:'auto'}} onClick={()=>toast.ok('样本编号已提交并通知录入人：'+opName+'（第'+currentCount+'次测量）')}>提交</Button>
     </div>
     <div style={{display:'flex',gap:12,alignItems:'stretch',minHeight:480}}>
       <div style={{width:260,flexShrink:0,display:'flex',flexDirection:'column',border:'1px solid #e3eaf3',borderRadius:6,padding:'8px',background:'#fafcff'}}>
