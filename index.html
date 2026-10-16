@@ -5555,6 +5555,13 @@ const PROJ_INST={
     {no:'JJQ-2024-009',name:'示波器',model:'DS1054',range:'0-500MHz',res:'1mV',type:'共用',dept:'电子电气车间',status:'在用'}
   ]
 };
+const PROJ_PRODUCTS=[
+  {code:'P001',name:'4G15 发动机'},
+  {code:'P002',name:'麦弗逊前悬'},
+  {code:'P003',name:'前门焊接总成'},
+  {code:'P004',name:'数字仪表台'},
+  {code:'P005',name:'后副车架'}
+];
 function ProjInstPage(){
   const [sel,setSel]=useState('PRJ-001');
   const [addOpen,setAddOpen]=useState(false);
@@ -5563,9 +5570,21 @@ function ProjInstPage(){
   const p=PROJ_LIST.find(x=>x.code===sel);
   const insts=PROJ_INST[sel]||[];
   return <div>
+    <Card size="small" style={{marginBottom:12}}>
+      <Space wrap>
+        <span>工厂：</span>
+        <Select style={{width:160}} defaultValue="全部" options={[{value:'全部',label:'全部'},{value:'青岛工厂',label:'青岛工厂'},{value:'烟台工厂',label:'烟台工厂'}]}/>
+        <span>车间：</span>
+        <Select style={{width:160}} defaultValue="全部" options={[{value:'全部',label:'全部'},{value:'动力总成车间',label:'动力总成车间'},{value:'底盘车间',label:'底盘车间'},{value:'车身车间',label:'车身车间'},{value:'电子电气车间',label:'电子电气车间'}]}/>
+        <Button type="primary">查询</Button>
+        <Button>重置</Button>
+        <Button style={{float:'right'}} onClick={()=>message.info('演示：导出项目-量具关系')}>导出</Button>
+        <Button style={{float:'right'}} type="primary" onClick={()=>setNewOpen(true)}>+ 新增项目</Button>
+      </Space>
+    </Card>
     <Row gutter={12}>
       <Col span={8}>
-        <Card size="small" title="项目列表" extra={<Button size="small" type="primary" onClick={()=>setNewOpen(true)}>+ 新增项目</Button>}>
+        <Card size="small" title="项目列表">
           <List size="small" dataSource={PROJ_LIST} rowKey="code" renderItem={it=>
             <List.Item style={{cursor:'pointer',background:it.code===sel?'#e6f4ff':'transparent',borderRadius:4,padding:'8px 12px'}} onClick={()=>setSel(it.code)}>
               <List.Item.Meta title={<Space><b>{it.code}</b></Space>} description={<div>{it.name}<div style={{color:'#888',fontSize:12}}>产品：{it.product}</div></div>}/>
@@ -5574,11 +5593,8 @@ function ProjInstPage(){
       </Col>
       <Col span={16}>
         <Card size="small" title={<Space>{p.name}<Tag color="blue">{p.code}</Tag></Space>} extra={
-          <Space>
-            <Button size="small" onClick={()=>message.info('演示：导出项目-量具关系')}>导出</Button>
-            <Button size="small" type="primary" onClick={()=>setAddOpen(true)}>+ 添加量具</Button>
-          </Space>}>
-          <Descriptions size="small" column={3} bordered style={{marginBottom:12}}>
+          <Button size="small" type="primary" onClick={()=>setAddOpen(true)}>+ 添加量具</Button>}>
+          <Descriptions size="small" column={3} style={{marginBottom:12}}>
             <Descriptions.Item label="项目编号">{p.code}</Descriptions.Item>
             <Descriptions.Item label="项目名称">{p.name}</Descriptions.Item>
             <Descriptions.Item label="产品（一对一）">{p.product}</Descriptions.Item>
@@ -5600,28 +5616,31 @@ function ProjInstPage(){
         </Card>
       </Col>
     </Row>
-    <Modal title="添加量具" open={addOpen} onCancel={()=>setAddOpen(false)} onOk={()=>{setAddOpen(false);message.success('演示：已添加')}} okText="确定" cancelText="取消">
+    <Modal title="添加量具" open={addOpen} onCancel={()=>setAddOpen(false)} onOk={()=>{setAddOpen(false);message.success('演示：已添加')}} okText="确定" cancelText="取消" width={900}>
       <p style={{color:'#666'}}>从计量器具台账选择要挂载到本项目的量具。专用量具仅能挂载到一个项目；共用量具可挂载到多个项目。</p>
-      <Table size="small" rowKey="no" pagination={false} dataSource={[
-        {no:'JJQ-2024-010',name:'数显高度尺',model:'0-300mm',type:'共用'},
-        {no:'JJQ-2024-011',name:'螺纹塞规',model:'M10×1.5',type:'专用'},
-        {no:'JJQ-2024-012',name:'推拉力计',model:'NK-200',type:'共用'}
+      <Table size="small" rowKey="no" pagination={false} scroll={{x:1100}} dataSource={[
+        {no:'JJQ-2024-010',name:'数显高度尺',model:'0-300mm',range:'0-300mm',res:'0.01mm',type:'共用',dept:'计量室',status:'在用'},
+        {no:'JJQ-2024-011',name:'螺纹塞规',model:'M10×1.5',range:'M10×1.5',res:'0.01mm',type:'专用',dept:'动力总成车间',status:'在用'},
+        {no:'JJQ-2024-012',name:'推拉力计',model:'NK-200',range:'0-200N',res:'0.1N',type:'共用',dept:'计量室',status:'在用'}
       ]} rowSelection={{type:'checkbox'}} columns={[
-        {title:'量具编号',dataIndex:'no'},
-        {title:'名称',dataIndex:'name'},
-        {title:'型号',dataIndex:'model'},
-        {title:'类型',dataIndex:'type',render:v=>v==='专用'?<Tag color="geekblue">专用</Tag>:<Tag color="orange">共用</Tag>}
+        {title:'量具编号',dataIndex:'no',width:140},
+        {title:'量具名称',dataIndex:'name',width:160},
+        {title:'型号',dataIndex:'model',width:140},
+        {title:'测量范围',dataIndex:'range',width:140},
+        {title:'分辨力',dataIndex:'res',width:90},
+        {title:'类型',dataIndex:'type',width:80,render:v=>v==='专用'?<Tag color="geekblue">专用</Tag>:<Tag color="orange">共用</Tag>},
+        {title:'使用部门',dataIndex:'dept',width:140},
+        {title:'状态',dataIndex:'status',width:80,render:v=><Tag color="green">{v}</Tag>}
       ]}/>
     </Modal>
     <Modal title="新增项目" open={newOpen} onCancel={()=>setNewOpen(false)} onOk={()=>{setNewOpen(false);message.success('演示：项目已新增')}} okText="确定" cancelText="取消" width={620}>
       <Form layout="vertical">
         <Row gutter={12}>
+          <Col span={12}><Form.Item label="工厂"><Select placeholder="请选择" options={[{value:'青岛工厂',label:'青岛工厂'},{value:'烟台工厂',label:'烟台工厂'}]}/></Form.Item></Col>
+          <Col span={12}><Form.Item label="车间（责任部门）"><Select placeholder="请选择" options={[{value:'动力总成车间',label:'动力总成车间'},{value:'底盘车间',label:'底盘车间'},{value:'车身车间',label:'车身车间'},{value:'电子电气车间',label:'电子电气车间'}]}/></Form.Item></Col>
           <Col span={12}><Form.Item label="项目编号"><Input placeholder="系统自动生成" disabled/></Form.Item></Col>
           <Col span={12}><Form.Item label="项目名称"><Input placeholder="请输入项目名称"/></Form.Item></Col>
-          <Col span={12}><Form.Item label="产品编号"><Input placeholder="请输入产品编号"/></Form.Item></Col>
-          <Col span={12}><Form.Item label="产品名称"><Input placeholder="请输入产品名称"/></Form.Item></Col>
-          <Col span={12}><Form.Item label="工厂"><Select placeholder="请选择" options={[{value:'青岛工厂',label:'青岛工厂'},{value:'烟台工厂',label:'烟台工厂'}]}/></Form.Item></Col>
-          <Col span={12}><Form.Item label="责任部门"><Select placeholder="请选择" options={[{value:'动力总成车间',label:'动力总成车间'},{value:'底盘车间',label:'底盘车间'},{value:'车身车间',label:'车身车间'},{value:'电子电气车间',label:'电子电气车间'}]}/></Form.Item></Col>
+          <Col span={24}><Form.Item label="产品（一对一）"><Select placeholder="请选择产品" options={PROJ_PRODUCTS.map(x=>({value:x.code,label:`${x.code}-${x.name}`}))}/></Form.Item></Col>
         </Row>
       </Form>
     </Modal>
@@ -6120,6 +6139,8 @@ function ReportPage({kind}){
 </script>
 </body>
 </html>
+
+
 
 
 
