@@ -5567,42 +5567,45 @@ function ProjInstPage(){
   const [addOpen,setAddOpen]=useState(false);
   const [newOpen,setNewOpen]=useState(false);
   const [unlink,setUnlink]=useState(null);
-  const p=PROJ_LIST.find(x=>x.code===sel);
   const insts=PROJ_INST[sel]||[];
   return <div>
-    <Card size="small" style={{marginBottom:12}}>
+    <Panel>
       <Space wrap>
-        <span>工厂：</span>
-        <Select style={{width:160}} defaultValue="全部" options={[{value:'全部',label:'全部'},{value:'青岛工厂',label:'青岛工厂'},{value:'烟台工厂',label:'烟台工厂'}]}/>
-        <span>车间：</span>
-        <Select style={{width:160}} defaultValue="全部" options={[{value:'全部',label:'全部'},{value:'动力总成车间',label:'动力总成车间'},{value:'底盘车间',label:'底盘车间'},{value:'车身车间',label:'车身车间'},{value:'电子电气车间',label:'电子电气车间'}]}/>
+        <span style={{marginRight:4,color:'#666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span>
+        <Select allowClear style={{width:140}} options={[{value:'青岛工厂',label:'青岛工厂'},{value:'烟台工厂',label:'烟台工厂'}]}/>
+        <span style={{marginRight:4,color:'#666',fontSize:14,whiteSpace:'nowrap'}}>车间</span>
+        <Select allowClear style={{width:140}} options={[{value:'动力总成车间',label:'动力总成车间'},{value:'底盘车间',label:'底盘车间'},{value:'车身车间',label:'车身车间'},{value:'电子电气车间',label:'电子电气车间'}]}/>
+        <span style={{marginRight:4,color:'#666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span>
+        <Input allowClear placeholder="项目编号、项目名称" style={{width:200}}/>
+        <span style={{marginRight:4,color:'#666',fontSize:14,whiteSpace:'nowrap'}}>产品</span>
+        <Select allowClear style={{width:200}} options={PROJ_PRODUCTS.map(x=>({value:x.code,label:`${x.code}-${x.name}`}))}/>
+        <span style={{marginRight:4,color:'#666',fontSize:14,whiteSpace:'nowrap'}}>器具</span>
+        <Input allowClear placeholder="器具编号、名称" style={{width:180}}/>
+        <span className="tiny">共 {PROJ_LIST.length} 个项目，{insts.length} 件量具</span>
+      </Space>
+    </Panel>
+    <Panel>
+      <Space wrap>
         <Button type="primary">查询</Button>
         <Button>重置</Button>
-        <Button style={{float:'right'}} onClick={()=>message.info('演示：导出项目-量具关系')}>导出</Button>
-        <Button style={{float:'right'}} type="primary" onClick={()=>setNewOpen(true)}>+ 新增项目</Button>
+        <Button type="primary" onClick={()=>setNewOpen(true)}>+ 新增项目</Button>
+        <Button type="primary" onClick={()=>setAddOpen(true)}>+ 添加量具</Button>
+        <Button onClick={()=>message.info('演示：导出项目-量具关系')}>导出</Button>
       </Space>
-    </Card>
+    </Panel>
     <Row gutter={12}>
       <Col span={8}>
-        <Card size="small" title="项目列表">
+        <Panel>
           <List size="small" dataSource={PROJ_LIST} rowKey="code" renderItem={it=>
             <List.Item style={{cursor:'pointer',background:it.code===sel?'#e6f4ff':'transparent',borderRadius:4,padding:'8px 12px'}} onClick={()=>setSel(it.code)}>
               <List.Item.Meta title={<Space><b>{it.code}</b></Space>} description={<div>{it.name}<div style={{color:'#888',fontSize:12}}>产品：{it.product}</div></div>}/>
             </List.Item>}/>
-        </Card>
+        </Panel>
       </Col>
       <Col span={16}>
-        <Card size="small" title={<Space>{p.name}<Tag color="blue">{p.code}</Tag></Space>} extra={
-          <Button size="small" type="primary" onClick={()=>setAddOpen(true)}>+ 添加量具</Button>}>
-          <Descriptions size="small" column={3} style={{marginBottom:12}}>
-            <Descriptions.Item label="项目编号">{p.code}</Descriptions.Item>
-            <Descriptions.Item label="项目名称">{p.name}</Descriptions.Item>
-            <Descriptions.Item label="产品（一对一）">{p.product}</Descriptions.Item>
-            <Descriptions.Item label="工厂">{p.plant}</Descriptions.Item>
-            <Descriptions.Item label="责任部门">{p.dept}</Descriptions.Item>
-            <Descriptions.Item label="量具数量">{insts.length} 件</Descriptions.Item>
-          </Descriptions>
+        <Panel>
           <Table size="small" rowKey="no" pagination={false} columns={[
+            {title:'操作',width:90,fixed:'left',render:(_,r)=><Button size="small" type="link" danger onClick={()=>setUnlink(r)}>解除</Button>},
             {title:'量具编号',dataIndex:'no',width:140},
             {title:'量具名称',dataIndex:'name',width:160},
             {title:'型号',dataIndex:'model',width:140},
@@ -5610,10 +5613,9 @@ function ProjInstPage(){
             {title:'分辨力',dataIndex:'res',width:90},
             {title:'类型',dataIndex:'type',width:80,render:v=>v==='专用'?<Tag color="geekblue">专用</Tag>:<Tag color="orange">共用</Tag>},
             {title:'使用部门',dataIndex:'dept',width:140},
-            {title:'状态',dataIndex:'status',width:80,render:v=><Tag color="green">{v}</Tag>},
-            {title:'操作',width:90,render:(_,r)=><Button size="small" type="link" danger onClick={()=>setUnlink(r)}>解除</Button>}
+            {title:'状态',dataIndex:'status',width:80,render:v=><Tag color="green">{v}</Tag>}
           ]} dataSource={insts}/>
-        </Card>
+        </Panel>
       </Col>
     </Row>
     <Modal title="添加量具" open={addOpen} onCancel={()=>setAddOpen(false)} onOk={()=>{setAddOpen(false);message.success('演示：已添加')}} okText="确定" cancelText="取消" width={900}>
@@ -6139,6 +6141,8 @@ function ReportPage({kind}){
 </script>
 </body>
 </html>
+
+
 
 
 
