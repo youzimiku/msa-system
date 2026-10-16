@@ -4876,12 +4876,10 @@ function SampleCodePanel({rec}){
   const [filter,setFilter]=useState('all');
   const [codes,setCodes]=useState(()=>Array.from({length:N},()=>''));
   const opName=personList[Math.min(selOp,personList.length-1)];
-  // 原型模拟：按录入人顺序给出录入状态（未开始/进行中/已完成）及完成数
-  const statusOf=i=> i%3===0 ? 'done' : (i%3===1?'doing':'todo');
-  const doneCount=i=> statusOf(i)==='done'? N : (statusOf(i)==='doing'? Math.max(1,Math.round(N*0.6)):0);
+  // 原型模拟：按录入人顺序给出录入状态（待录入/已完成）
+  const statusOf=i=> i%3===0 ? 'done' : 'todo';
   const statusMeta={
-    todo:{label:'未开始',color:'#8c8c8c',bg:'#f5f5f5',bd:'#d9d9d9'},
-    doing:{label:'进行中',color:'#fa8c16',bg:'#fff7e6',bd:'#ffd591'},
+    todo:{label:'待录入',color:'#8c8c8c',bg:'#f5f5f5',bd:'#d9d9d9'},
     done:{label:'已完成',color:'#52c41a',bg:'#f6ffed',bd:'#b7eb8f'}
   };
   const listItems=personList.map((n,i)=>({n,i})).filter(x=> filter==='all' || statusOf(x.i)===filter);
@@ -4891,8 +4889,7 @@ function SampleCodePanel({rec}){
       <div style={{fontSize:13,color:'#666',marginBottom:8}}>录入人</div>
       <Select allowClear size="small" style={{width:'100%',marginBottom:8}} placeholder="按状态筛选" value={filter} onChange={v=>setFilter(v||'all')} options={[
         {value:'all',label:'全部状态'},
-        {value:'todo',label:'未开始'},
-        {value:'doing',label:'进行中'},
+        {value:'todo',label:'待录入'},
         {value:'done',label:'已完成'}
       ]}/>
       <div style={{flex:1,minHeight:0,overflow:'auto'}}>
@@ -4900,7 +4897,7 @@ function SampleCodePanel({rec}){
         {listItems.map(({n,i})=>{ const sm=statusMeta[statusOf(i)]; return <div key={n+i} onClick={()=>setSelOp(i)} style={{padding:'8px 10px',marginBottom:6,cursor:'pointer',borderRadius:6,border:'1px solid '+(i===selOp?'#1677ff':'#e3eaf3'),background:i===selOp?'#e6f4ff':'#fff'}}>
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
             <span style={{fontSize:13,color:i===selOp?'#1677ff':'#333',fontWeight:i===selOp?600:400}}>{n}</span>
-            <span style={{fontSize:11,padding:'1px 6px',borderRadius:3,background:sm.bg,color:sm.color,border:'1px solid '+sm.bd}}>{sm.label}{statusOf(i)==='doing'?(' '+doneCount(i)+'/'+N):''}</span>
+            <span style={{fontSize:11,padding:'1px 6px',borderRadius:3,background:sm.bg,color:sm.color,border:'1px solid '+sm.bd}}>{sm.label}</span>
           </div>
         </div>;})}
       </div>
@@ -4913,9 +4910,9 @@ function SampleCodePanel({rec}){
           headerCellStyle={{background:"#ACCDEC"}}
           columns={[
           {title:'样本序号',width:90,render:(_,r)=><span className="mono">{r.i+1}</span>},
-          {title:'样本编号',width:220,render:(_,r)=><Input size="small" value={r.code||''} placeholder="管理员手写编号" onChange={e=>{const n=codes.slice();n[r.i]=e.target.value;setCodes(n);}}/>},
+          {title:'样本编号',width:220,render:(_,r)=><Input size="small" value={r.code||''} onChange={e=>{const n=codes.slice();n[r.i]=e.target.value;setCodes(n);}}/>},
           {title:'录入人',width:140,render:()=><span>{opName}</span>},
-          {title:'实测值',width:130,render:()=><span style={{color:'#bbb'}}>待录入</span>}
+          {title:'实测值',width:130,render:()=><span>待录入</span>}
         ]}/>
         <div style={{marginTop:12,textAlign:'right'}}>
           <Button type="primary" onClick={()=>toast.ok('样本编号已提交并通知录入人：'+opName)}>提交</Button>
