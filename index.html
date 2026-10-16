@@ -4871,7 +4871,9 @@ function SampleCodePanel({rec}){
   const personList=(ops&&ops.length)?ops.map(cleanName):['王强','刘青','陈杰'];
   const N=Number(rec.numParts)||Number(rec.numSamples)||10;
   const [selOp,setSelOp]=useState(0);
-  const [codes,setCodes]=useState(()=>Array.from({length:N},()=>''));
+  const [trialNo,setTrialNo]=useState(1);
+  const [trialCodes,setTrialCodes]=useState({1:Array.from({length:N},()=>'')});
+  const codes=trialCodes[trialNo] || Array.from({length:N},()=>'');
   const opName=personList[Math.min(selOp,personList.length-1)];
   // 原型模拟：待编号(橙) / 待录入(蓝) / 已完成(绿)
   const statusOf=i=> i%3===0 ? 'done' : (i%3===1?'todo':'pending');
@@ -4881,11 +4883,18 @@ function SampleCodePanel({rec}){
     done:{label:'已完成',color:'#52c41a',bg:'#f6ffed',bd:'#b7eb8f'}
   };
   const rows=codes.map((c,i)=>({key:i,i,code:c}));
+  const onTrialChange=(v)=>{
+    if(v>trialNo){ toast.warn('第 '+trialNo+' 轮尚未录完，请先完成本轮测量再开始第 '+v+' 轮'); return; }
+    setTrialNo(v);
+    if(!trialCodes[v]) setTrialCodes(Object.assign({},trialCodes,{v:Array.from({length:N},()=>'')}));
+  };
   return <div>
     <div style={{display:'flex',alignItems:'center',marginBottom:12}}>
       <span style={{fontSize:14,color:'#666',marginRight:8}}>人员</span>
-      <Select style={{width:180}} value={selOp} onChange={v=>setSelOp(v)} options={personList.map((n,i)=>({value:i,label:n}))}/>
-      <Button type="primary" style={{marginLeft:'auto'}} onClick={()=>toast.ok('样本编号已提交并通知录入人：'+opName)}>提交</Button>
+      <Select style={{width:180,marginRight:16}} value={selOp} onChange={v=>setSelOp(v)} options={personList.map((n,i)=>({value:i,label:n}))}/>
+      <span style={{fontSize:14,color:'#666',marginRight:8}}>第几次测量</span>
+      <Select style={{width:120}} value={trialNo} onChange={onTrialChange} options={[1,2,3].map(x=>({value:x,label:'第 '+x+' 次'}))}/>
+      <Button type="primary" style={{marginLeft:'auto'}} onClick={()=>toast.ok('样本编号已提交并通知录入人：'+opName+'（第'+trialNo+'次测量）')}>提交</Button>
     </div>
     <div style={{display:'flex',gap:12,alignItems:'stretch',minHeight:480}}>
       <div style={{width:260,flexShrink:0,display:'flex',flexDirection:'column',border:'1px solid #e3eaf3',borderRadius:6,padding:'8px',background:'#fafcff'}}>
@@ -4907,7 +4916,7 @@ function SampleCodePanel({rec}){
             headerCellStyle={{background:"#ACCDEC"}}
             columns={[
             {title:'样本序号',width:90,render:(_,r)=><span className="mono">{r.i+1}</span>},
-            {title:'样本编号',width:220,render:(_,r)=><Input size="small" value={r.code||''} onChange={e=>{const n=codes.slice();n[r.i]=e.target.value;setCodes(n);}}/>},
+            {title:'样本编号',width:220,render:(_,r)=><Input size="small" value={r.code||''} onChange={e=>{const n=(trialCodes[trialNo]||[]).slice();n[r.i]=e.target.value;setTrialCodes(Object.assign({},trialCodes,{[trialNo]:n}));}}/>},
             {title:'录入人',width:140,render:()=><span>{opName}</span>},
             {title:'实测值',width:130,render:()=><span>待录入</span>}
           ]}/>
