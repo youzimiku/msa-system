@@ -2489,15 +2489,16 @@ function PlanPage(){
     {title:'数据类型', width:102, render:(_,r)=><span>{r.dataType||'计量型'}</span>},
     {title:'部门', dataIndex:'dept', width:104, render:(_,r)=><span>{r.dept||'—'}</span>},
     {title:'工厂', width:100, dataIndex:'plant', render:(_,r)=><span>{r.plant||'—'}</span>},
+    {title:'创建人', width:100, render:(_,r)=><span>{r.creator||'—'}</span>},
+    {title:'创建时间', width:115, render:(_,r)=><span className="mono">{r.createDate||'—'}</span>},
+    {title:'审核状态', width:100, render:(_,r)=>{ const s=r.auditStatus; if(!s) return <span>—</span>; const color=s==='审核通过'?'green':(s==='审核驳回'?'red':'orange'); return <Tag color={color} style={{marginRight:0}}>{s}</Tag>; }},
+    {title:'审核人', width:100, render:(_,r)=><span>{r.reviewer||'—'}</span>},
+    {title:'审核时间', width:115, render:(_,r)=><span className="mono">{r.reviewDate||'—'}</span>},
+    {title:'驳回说明', width:160, ellipsis:true, render:(_,r)=><span>{r.rejectReason||'—'}</span>},
     {title:'计划完成时间', dataIndex:'planDate', width:120, render:(_,r)=><span className="mono">{r.planDate||'—'}</span>},
     {title:'实际完成时间', dataIndex:'actualDate', width:116, render:v=><span className="mono">{v||'—'}</span>},
     {title:'录入人', dataIndex:'editor', width:100, ellipsis:true, render:v=><span>{v||'—'}</span>},
-    {title:'录入时间', dataIndex:'editorDate', width:115, render:v=><span className="mono">{v||'—'}</span>},
-    {title:'创建人', width:100, render:(_,r)=><span>{r.creator||'—'}</span>},
-    {title:'创建时间', width:115, render:(_,r)=><span className="mono">{r.createDate||'—'}</span>},
-    {title:'审核人', width:100, render:(_,r)=><span>{r.reviewer||'—'}</span>},
-    {title:'审核时间', width:115, render:(_,r)=><span className="mono">{r.reviewDate||'—'}</span>},
-    {title:'驳回说明', width:160, ellipsis:true, render:(_,r)=><span>{r.rejectReason||'—'}</span>}
+    {title:'录入时间', dataIndex:'editorDate', width:115, render:v=><span className="mono">{v||'—'}</span>}
   ];
 
   return <div>
@@ -4696,11 +4697,11 @@ function EntryPage({kind}){
     {title:'状态', width:90, render:(_,r)=><StatusTag s={r.reviewStatus}/>},
     {title:'创建人', width:100, render:(_,r)=><span>{r.initiator||'—'}</span>},
     {title:'创建时间', width:115, render:(_,r)=><span className="mono">{r.initiateDate||'—'}</span>},
+    {title:'分析人', width:100, render:(_,r)=><span>{r.analyst||'—'}</span>},
+    {title:'分析时间', width:115, render:(_,r)=><span className="mono">{r.analyzeDate||'—'}</span>},
     {title:'确认人', width:100, render:(_,r)=><span>{r.approver||'—'}</span>},
     {title:'确认时间', width:115, render:(_,r)=><span className="mono">{r.approveDate||'—'}</span>},
-    {title:'驳回说明', width:160, ellipsis:true, render:(_,r)=><span>{r.rejectReason||'—'}</span>},
-    {title:'分析人', width:100, render:(_,r)=><span>{r.analyst||'—'}</span>},
-    {title:'分析时间', width:115, render:(_,r)=><span className="mono">{r.analyzeDate||'—'}</span>}
+    {title:'驳回说明', width:160, ellipsis:true, render:(_,r)=><span>{r.rejectReason||'—'}</span>}
   ];
   return <div>
     <Panel>
