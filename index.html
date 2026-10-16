@@ -4873,17 +4873,44 @@ function SampleCodePanel({rec}){
   const personList=(ops&&ops.length)?ops.map(cleanName):['王强','刘青','陈杰'];
   const N=Number(rec.numParts)||Number(rec.numSamples)||10;
   const [selOp,setSelOp]=useState(0);
+  const [filter,setFilter]=useState('all');
   const [codes,setCodes]=useState(()=>Array.from({length:N},()=>''));
   const opName=personList[Math.min(selOp,personList.length-1)];
+  // 原型模拟：按录入人顺序给出录入状态（未开始/进行中/已完成）及完成数
+  const statusOf=i=> i%3===0 ? 'done' : (i%3===1?'doing':'todo');
+  const doneCount=i=> statusOf(i)==='done'? N : (statusOf(i)==='doing'? Math.max(1,Math.round(N*0.6)):0);
+  const statusMeta={
+    todo:{label:'未开始',color:'#8c8c8c',bg:'#f5f5f5',bd:'#d9d9d9'},
+    doing:{label:'进行中',color:'#fa8c16',bg:'#fff7e6',bd:'#ffd591'},
+    done:{label:'已完成',color:'#52c41a',bg:'#f6ffed',bd:'#b7eb8f'}
+  };
+  const listItems=personList.map((n,i)=>({n,i})).filter(x=> filter==='all' || statusOf(x.i)===filter);
   const rows=codes.map((c,i)=>({key:i,i,code:c}));
   return <div style={{display:'flex',gap:12,alignItems:'stretch',minHeight:480}}>
     <div style={{width:260,flexShrink:0,display:'flex',flexDirection:'column',border:'1px solid #e3eaf3',borderRadius:6,padding:'8px',background:'#fafcff'}}>
       <div style={{fontSize:13,color:'#666',marginBottom:8}}>录入人</div>
-      {personList.map((n,i)=><div key={n+i} onClick={()=>setSelOp(i)} style={{padding:'8px 10px',marginBottom:6,cursor:'pointer',borderRadius:6,border:'1px solid '+(i===selOp?'#1677ff':'#e3eaf3'),background:i===selOp?'#e6f4ff':'#fff',color:i===selOp?'#1677ff':'#333',fontSize:13}}>{n}</div>)}
+      <Select allowClear size="small" style={{width:'100%',marginBottom:8}} placeholder="按状态筛选" value={filter} onChange={v=>setFilter(v||'all')} options={[
+        {value:'all',label:'全部状态'},
+        {value:'todo',label:'未开始'},
+        {value:'doing',label:'进行中'},
+        {value:'done',label:'已完成'}
+      ]}/>
+      <div style={{flex:1,minHeight:0,overflow:'auto'}}>
+        {listItems.length===0 && <div style={{color:'#999',fontSize:12,textAlign:'center',padding:12}}>无匹配录入人</div>}
+        {listItems.map(({n,i})=>{ const sm=statusMeta[statusOf(i)]; return <div key={n+i} onClick={()=>setSelOp(i)} style={{padding:'8px 10px',marginBottom:6,cursor:'pointer',borderRadius:6,border:'1px solid '+(i===selOp?'#1677ff':'#e3eaf3'),background:i===selOp?'#e6f4ff':'#fff'}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <span style={{fontSize:13,color:i===selOp?'#1677ff':'#333',fontWeight:i===selOp?600:400}}>{n}</span>
+            <span style={{fontSize:11,padding:'1px 6px',borderRadius:3,background:sm.bg,color:sm.color,border:'1px solid '+sm.bd}}>{sm.label}{statusOf(i)==='doing'?(' '+doneCount(i)+'/'+N):''}</span>
+          </div>
+        </div>;})}
+      </div>
     </div>
     <Panel className="entry-panel grr-entry-panel" style={{flex:1,minWidth:0}}>
       <div style={{flex:1,display:'flex',flexDirection:'column'}}>
-        <Table size="small" bordered pagination={{pageSize:10,showTotal:t=>'共 '+t+' 个样本'}} rowKey="key" dataSource={rows} columns={[
+        <Table size="small" bordered rowKey="key" dataSource={rows} pagination={false}
+          scroll={{x:720, y:"calc(100vh - 380px)"}}
+          headerCellStyle={{background:"#ACCDEC"}}
+          columns={[
           {title:'样本序号',width:90,render:(_,r)=><span className="mono">{r.i+1}</span>},
           {title:'样本编号',width:220,render:(_,r)=><Input size="small" value={r.code||''} placeholder="管理员手写编号" onChange={e=>{const n=codes.slice();n[r.i]=e.target.value;setCodes(n);}}/>},
           {title:'录入人',width:140,render:()=><span>{opName}</span>},
