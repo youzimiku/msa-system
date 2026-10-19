@@ -5701,6 +5701,7 @@ function OverviewReportPage(){
     return fb[k]||'—';
   };
   const cols=[
+    {title:'分析类型',width:110,render:(_,r)=><span>{r._kind==='GRR'?'GRR':r._kind==='KAPPA'?'KAPPA':(ANA_CFG[r._kind]?ANA_CFG[r._kind].name:r._kind)}</span>},
     {title:'台账编号',dataIndex:'id',width:115,render:v=><span className="mono">{v}</span>},
     {title:'责任人',width:100,render:(_,r)=><span>{r.analyst||'—'}</span>},
     {title:'人员',width:200,ellipsis:true,render:(_,r)=>{const nm=(r.opsNames||r.operators||r.appNames||[]).map(n=>String(n).split('·').pop());const clean=(r._kind==='GRR'||r._kind==='KAPPA')?nm:nm.filter(n=>!/^(操作员[ABCDE]|检验员[甲乙丙丁戊])$/.test(n));return <span className="tiny">{clean.length?clean.join('、'):'未维护'}</span>;}},
@@ -5723,8 +5724,7 @@ function OverviewReportPage(){
     {title:'分析人',width:100,render:(_,r)=><span>{r.analyst||'—'}</span>},
     {title:'分析时间',width:115,render:(_,r)=><span className="mono">{r.analyzeDate||'—'}</span>},
     {title:'确认人',width:100,render:(_,r)=><span>{r.approver||'—'}</span>},
-    {title:'确认时间',width:115,render:(_,r)=><span className="mono">{r.approveDate||'—'}</span>},
-    {title:'驳回说明',width:170,ellipsis:true,render:(_,r)=><span>{r.rejectReason||'—'}</span>}
+    {title:'确认时间',width:115,render:(_,r)=><span className="mono">{r.approveDate||'—'}</span>}
   ];
   return <div>
     <Card size="small" style={{marginBottom:12}}>
