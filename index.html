@@ -5566,6 +5566,8 @@ function ProjInstPage(){
   const [addOpen,setAddOpen]=useState(false);
   const [newOpen,setNewOpen]=useState(false);
   const [unlink,setUnlink]=useState(null);
+  const [projCode,setProjCode]=useState('');
+  const [prodCode,setProdCode]=useState('');
   const insts=PROJ_INST[sel]||[];
   return <div>
     <Panel>
@@ -5646,9 +5648,10 @@ function ProjInstPage(){
         <Row gutter={12}>
           <Col span={12}><Form.Item label="工厂"><Select placeholder="请选择" options={[{value:'青岛工厂',label:'青岛工厂'},{value:'烟台工厂',label:'烟台工厂'}]}/></Form.Item></Col>
           <Col span={12}><Form.Item label="车间（责任部门）"><Select placeholder="请选择" options={[{value:'动力总成车间',label:'动力总成车间'},{value:'底盘车间',label:'底盘车间'},{value:'车身车间',label:'车身车间'},{value:'电子电气车间',label:'电子电气车间'}]}/></Form.Item></Col>
-          <Col span={12}><Form.Item label="项目编号"><Input placeholder="系统自动生成" disabled/></Form.Item></Col>
-          <Col span={12}><Form.Item label="项目名称"><Input placeholder="请输入项目名称"/></Form.Item></Col>
-          <Col span={24}><Form.Item label="产品（一对一）"><Select placeholder="请选择产品" options={PROJ_PRODUCTS.map(x=>({value:x.code,label:`${x.code}-${x.name}`}))}/></Form.Item></Col>
+          <Col span={12}><Form.Item label="项目编号"><Select placeholder="请选择项目" value={projCode} onChange={setProjCode} options={PROJ_LIST.map(x=>({value:x.code,label:`${x.code}-${x.name}`}))}/></Form.Item></Col>
+          <Col span={12}><Form.Item label="项目名称"><Input readOnly placeholder="选择项目编号后自动带出" value={PROJ_LIST.find(x=>x.code===projCode)?.name||''}/></Form.Item></Col>
+          <Col span={12}><Form.Item label="产品编号"><Select placeholder="请选择产品" value={prodCode} onChange={setProdCode} options={PROJ_PRODUCTS.map(x=>({value:x.code,label:`${x.code}-${x.name}`}))}/></Form.Item></Col>
+          <Col span={12}><Form.Item label="产品名称"><Input readOnly placeholder="选择产品编号后自动带出" value={PROJ_PRODUCTS.find(x=>x.code===prodCode)?.name||''}/></Form.Item></Col>
         </Row>
       </Form>
     </Modal>
