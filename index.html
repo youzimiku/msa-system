@@ -2458,7 +2458,7 @@ function PlanPage(){
     const recs=planRecords(d,r.id).filter(x=>recKindId(x)===kind);
     const concls=recs.map(x=>x.conclusion).filter(c=>c&&c!=='-'&&c!=='待采集');
     const worst= concls.includes('不可接受')? 'fail' : (concls.includes('有条件接受')? 'cond' : (concls.length? 'pass' : ''));
-    const jump=()=>{ const rec=recs[0]; if(rec){ recJump(rec); } else { NavAPI.go(DIM_ENTRY[kind]||'entry_grr'); } };
+    const jump=()=>{ const ids=r.instIds||[r.instId]; const projs=[...new Set(ids.map(id=>INST_PROJ[id]).filter(Boolean))]; OV_PROJ_PRESET=(projs.length===1)?projs[0]:''; NavAPI.go('report_overview'); };
     if(!inScope) return <Tooltip title={label+'：不做（不在本计划范围）'}><NaSvg/></Tooltip>;
     if(!worst) return <Tooltip title={label+'：未做（计划范围内尚未完成分析）'}><span style={{cursor:'pointer'}} onClick={jump}><TodoSvg/></span></Tooltip>;
     return <Tooltip title={label+'：'+(worst==='fail'?'不通过':(worst==='cond'?'有条件接受':'通过'))}><span style={{cursor:'pointer'}} onClick={jump}>{worst==='fail'?<FailSvg/>:(worst==='cond'?<CondSvg/>:<PassSvg/>)}</span></Tooltip>;
@@ -5554,6 +5554,8 @@ const PROJ_INST={
     {no:'JJQ-2024-009',name:'示波器',model:'DS1054',range:'0-500MHz',res:'1mV',type:'共用',dept:'电子电气车间',status:'在用'}
   ]
 };
+const INST_PROJ={}; Object.keys(PROJ_INST||{}).forEach(p=>{(PROJ_INST[p]||[]).forEach(i=>{INST_PROJ[i.no]=p;});});
+let OV_PROJ_PRESET='';
 const PROJ_PRODUCTS=[
   {code:'P001',name:'4G15 发动机'},
   {code:'P002',name:'麦弗逊前悬'},
@@ -5682,8 +5684,7 @@ function OvCell({r}){
 }
 function OverviewReportPage(){
   const d=Store.get();
-  const [proj,setProj]=useState('PRJ-001');
-  const INST_PROJ={}; Object.keys(PROJ_INST||{}).forEach(p=>{(PROJ_INST[p]||[]).forEach(i=>{INST_PROJ[i.no]=p;});});
+  const [proj,setProj]=useState(OV_PROJ_PRESET||'PRJ-001');
   const ALL_LEDGER=[
     ...(d.grr||[]).map(r=>({_kind:'GRR',...r})),
     ...(d.kappa||[]).map(r=>({_kind:'KAPPA',...r})),
