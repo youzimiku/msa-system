@@ -3416,8 +3416,7 @@ function CharPage(){
   const delChar=(r)=>{ Modal.confirm({content:'是否确定删除'+r.id+' '+(r.name||'')+(r.version?'（'+r.version+'）':'')+'？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.characteristics=s.characteristics.filter(x=>!(x.id===r.id&&(x.version||'V1')===(r.version||'V1'))); logAction(s.me.name,'删除被测参数',r.id,'删除被测参数 '+(r.name||'')+'（'+(r.version||'V1')+'）'); }); toast.ok('已删除'); } }); };
   const delStd=(r)=>{ Modal.confirm({content:'是否确定删除'+r.id+' '+(r.name||'')+'？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.standards=s.standards.filter(x=>x.id!==r.id); logAction(s.me.name,'删除检验标准',r.id,'删除检验标准 '+r.id); }); toast.ok('已删除'); } }); };
   const cols=[
-    {title:'操作', width:210, fixed:'left', render:(_,r)=><Space size={0}>
-      <Button size="small" type="link" onClick={()=>{ setSlkw(''); setSltype(undefined); setSlstatus(undefined); setSlq({kw:'',type:undefined,status:undefined}); setStdListFor(r); }}>检验标准</Button>
+    {title:'操作', width:150, fixed:'left', render:(_,r)=><Space size={0}>
       <Button size="small" type="link" onClick={()=>upgradeChar(r)}>升版</Button>
       <Button size="small" type="link" onClick={()=>saveRow(r)}>保存</Button>
       <Button size="small" type="link" danger disabled={charRef(r)} onClick={()=>delChar(r)}>删除</Button>
@@ -5679,15 +5678,54 @@ function OvCell({r}){
   return <div><Tag color={color} style={{marginRight:0}}>{r.verdict}</Tag><div style={{fontSize:11,color:'#888',marginTop:2}}>{r.val}<br/>{r.date}</div></div>;
 }
 function OverviewReportPage(){
+  const d=Store.get();
   const [proj,setProj]=useState('PRJ-001');
-  const [detail,setDetail]=useState(null);
-  const rows=OV_DATA.filter(x=>x.project===proj);
-  const p=PROJ_LIST.find(x=>x.code===proj);
-  const cols=[
-    {title:'量具编号',dataIndex:'no',width:140,fixed:'left',render:v=><Button type="link" size="small" style={{padding:0}} onClick={()=>{}}>{v}</Button>},
-    {title:'量具名称',dataIndex:'name',width:160,fixed:'left'}
+  const INST_PROJ={}; Object.keys(PROJ_INST||{}).forEach(p=>{(PROJ_INST[p]||[]).forEach(i=>{INST_PROJ[i.no]=p;});});
+  const ALL_LEDGER=[
+    ...(d.grr||[]).map(r=>({_kind:'GRR',...r})),
+    ...(d.kappa||[]).map(r=>({_kind:'KAPPA',...r})),
+    ...(d.linear||[]).map(r=>({_kind:'linear',...r})),
+    ...(d.stability||[]).map(r=>({_kind:'stability',...r})),
+    ...(d.cgcgk||[]).map(r=>({_kind:'cgcgk',...r}))
   ];
-  OV_METHODS.forEach(m=>cols.push({title:m.label,dataIndex:m.key,width:160,render:(_,r)=><OvCell r={r.results[m.key]}/>}));
+  const rows=ALL_LEDGER.filter(r=>INST_PROJ[r.instId]===proj);
+  const p=PROJ_LIST.find(x=>x.code===proj);
+  const ovParams=(r,k)=> k==='GRR'? (r.numOps+'人 × '+r.numTrials+'次 × '+r.numParts+'件') : k==='KAPPA'? (r.numApp+'人 × '+r.numSamples+'件') : ANA_CFG[k].params(r);
+  const ovVal=(r,k)=>{
+    const mkey=k.toLowerCase(), hit=OV_DATA.find(x=>x.no===r.instId);
+    if(hit){
+      if(hit.results[mkey]&&hit.results[mkey].val) return hit.results[mkey].val;
+      if(k==='linear'&&hit.results.bias&&hit.results.bias.val) return hit.results.bias.val;
+    }
+    const fb={GRR:'GRR% 15.3%',KAPPA:'Kappa 0.85',linear:'偏倚 0.008mm',stability:'X̄-R 受控',cgcgk:'Cgk 1.67'};
+    return fb[k]||'—';
+  };
+  const cols=[
+    {title:'台账编号',dataIndex:'id',width:115,render:v=><span className="mono">{v}</span>},
+    {title:'责任人',width:100,render:(_,r)=><span>{r.analyst||'—'}</span>},
+    {title:'人员',width:200,ellipsis:true,render:(_,r)=>{const nm=(r.opsNames||r.operators||r.appNames||[]).map(n=>String(n).split('·').pop());const clean=(r._kind==='GRR'||r._kind==='KAPPA')?nm:nm.filter(n=>!/^(操作员[ABCDE]|检验员[甲乙丙丁戊])$/.test(n));return <span className="tiny">{clean.length?clean.join('、'):'未维护'}</span>;}},
+    {title:'样本',width:210,ellipsis:true,render:(_,r)=>{const pt=(r._kind==='linear'||r._kind==='cgcgk')?(r.parts||[]):(r.sampleNames||[]);return pt.length?<span className="tiny">{pt.join('、')}</span>:null;}},
+    {title:'工位',width:130,ellipsis:true,render:(_,r)=>{const st=(r.stations||[]);return <span className="tiny">{st.length?st.join('、'):'—'}</span>;}},
+    {title:'关联计划',dataIndex:'planId',width:110,render:v=><span className="mono">{v||'暂无'}</span>},
+    {title:'器具名称',width:150,ellipsis:true,render:(_,r)=>{const it=d.instruments.find(i=>i.id===r.instId);return <span>{it?it.name:r.instName}</span>;}},
+    {title:'型号',width:110,ellipsis:true,render:(_,r)=>{const it=d.instruments.find(i=>i.id===r.instId);return <span>{it&&it.model?it.model:'暂无'}</span>;}},
+    {title:'工序',width:90,render:(_,r)=>{const it=d.instruments.find(i=>i.id===r.instId);return <span>{it&&it.process?it.process:'暂无'}</span>;}},
+    {title:'被测参数',dataIndex:'object',width:170,ellipsis:true},
+    {title:'版本',width:70,render:(_,r)=><span className="mono">{charVerOf(r)||'—'}</span>},
+    {title:'取样规则',width:170,render:(_,r)=><span>{ovParams(r,r._kind)}</span>},
+    {title:'上限',width:90,render:(_,r)=><span>{r.tolerance&&r.tolerance.has?r.tolerance.usl:'暂无'}</span>},
+    {title:'下限',width:90,render:(_,r)=><span>{r.tolerance&&r.tolerance.has?r.tolerance.lsl:'暂无'}</span>},
+    {title:'标准值',width:100,render:(_,r)=>{const sp=(d.sampleLib||[]).find(s=>s.charDim===r.object);return <span>{sp&&sp.refValue&&sp.refValue!=='待维护'?sp.refValue:'暂无'}</span>;}},
+    {title:'具体结果',width:180,render:(_,r)=><span className="tiny">{ovVal(r,r._kind)}</span>},
+    {title:'判定结果',width:130,render:(_,r)=>{const v=r.conclusion;return v?<VerdictTag v={v}/>:<span style={{color:'#bbb'}}>未分析</span>;}},
+    {title:'创建人',width:100,render:(_,r)=><span>{r.initiator||'—'}</span>},
+    {title:'创建时间',width:115,render:(_,r)=><span className="mono">{r.initiateDate||'—'}</span>},
+    {title:'分析人',width:100,render:(_,r)=><span>{r.analyst||'—'}</span>},
+    {title:'分析时间',width:115,render:(_,r)=><span className="mono">{r.analyzeDate||'—'}</span>},
+    {title:'确认人',width:100,render:(_,r)=><span>{r.approver||'—'}</span>},
+    {title:'确认时间',width:115,render:(_,r)=><span className="mono">{r.approveDate||'—'}</span>},
+    {title:'驳回说明',width:170,ellipsis:true,render:(_,r)=><span>{r.rejectReason||'—'}</span>}
+  ];
   return <div>
     <Card size="small" style={{marginBottom:12}}>
       <Space wrap>
@@ -5699,29 +5737,14 @@ function OverviewReportPage(){
         <Select style={{width:120}} defaultValue="2026-01" options={['2026-01','2026-04','2026-07'].map(v=>({value:v,label:v}))}/>
         <span>至</span>
         <Select style={{width:120}} defaultValue="2026-10" options={['2026-10','2026-12'].map(v=>({value:v,label:v}))}/>
-        <Button type="primary">查询</Button>
-        <Button>重置</Button>
+        <Button type="primary" onClick={()=>message.success('演示：已按当前条件查询')}>查询</Button>
+        <Button onClick={()=>setProj('PRJ-001')}>重置</Button>
         <Button style={{float:'right'}} onClick={()=>message.success('演示：已导出')}>导出</Button>
       </Space>
     </Card>
-    <Card size="small" title={<Space>{p.product} — MSA 分析结果总览<Tag color="blue">{p.code}</Tag></Space>}>
-      <Table size="small" rowKey={(r,i)=>r.no+'_'+i} pagination={false} columns={cols} dataSource={rows} scroll={{x:1200}} onRow={(r)=>({onClick:()=>setDetail(r),style:{cursor:'pointer'}})} summary={()=>{
-        let total=0,pass=0;
-        rows.forEach(r=>OV_METHODS.forEach(m=>{ if(r.results[m.key]){ total++; if(['可接受','受控'].includes(r.results[m.key].verdict)) pass++; } }));
-        return <Table.Summary.Row style={{background:'#fafafa',fontWeight:600}}>
-          <Table.Summary.Cell index={0} colSpan={2}>合计：{rows.length} 台设备，{total} 项分析记录，通过 {pass} 项（通过率 {total?Math.round(pass/total*100):0}%）</Table.Summary.Cell>
-          {OV_METHODS.map((_,i)=><Table.Summary.Cell key={i} index={i+2}/>)}
-        </Table.Summary.Row>;
-      }}/>
-    </Card>
-    <Modal title={detail?<Space>{detail.no} {detail.name} — MSA 分析详情<Tag color="blue">{p.code}</Tag></Space>:'分析详情'} open={!!detail} onCancel={()=>setDetail(null)} footer={[<Button key="close" onClick={()=>setDetail(null)}>关闭</Button>]} width={720}>
-      {detail && <Table size="small" pagination={false} rowKey="key" dataSource={OV_METHODS.map(m=>({key:m.key,method:m.label,res:detail.results[m.key]})).filter(x=>x.res)} columns={[
-        {title:'分析方法',dataIndex:'method',width:120},
-        {title:'结论',dataIndex:['res','verdict'],width:120,render:v=>{const color=v==='可接受'||v==='受控'?'green':(v==='有条件接受'?'orange':'red');return <Tag color={color}>{v}</Tag>;}},
-        {title:'关键指标',dataIndex:['res','val'],width:180},
-        {title:'分析时间',dataIndex:['res','date'],width:120}
-      ]}/>}
-    </Modal>
+    <Panel title={<Space>{p.product} — MSA 分析结果总览<Tag color="blue">{p.code}</Tag></Space>}>
+      <Table rowKey="id" size="middle" dataSource={rows} columns={cols} pagination={false} scroll={{x:3100}}/>
+    </Panel>
   </div>;
 }
 
