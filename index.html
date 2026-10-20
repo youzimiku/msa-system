@@ -415,19 +415,23 @@ function buildSeed(){
     {id:'MSAP-2026-001', name:'数显卡尺 0~150mm · GRR 分析', instId:'JJQ-2024-001', instName:'数显卡尺 0~150mm', cat:'卡尺',
      type:'GRR', method:'均值-极差法(Xbar-R)', standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10},
      object:'轴径 φ50±0.05', feature:'直径', owner:'王强', editor:'李工程师', editorDate:'2026-03-15 09:00:00', planDate:'2026-03-15 17:30:00',
-     trigger:'周期复评', source:'周期任务', status:'已闭环', recordId:'GRR-2026-001', result:'可接受', note:'年度复评，测量系统可接受，归档'},
+     trigger:'周期复评', source:'周期任务', status:'已闭环', recordId:'GRR-2026-001', result:'可接受', note:'年度复评，测量系统可接受，归档',
+     auditStatus:'审核通过', auditStep:4, reviewer:'郑芳', reviewDate:'2026-03-15 16:40', rejectReason:''},
     {id:'MSAP-2026-002', name:'光滑塞规 φ8H7 · KAPPA 分析', instId:'JJQ-2024-008', instName:'光滑塞规 φ8H7', cat:'塞规/环规',
      type:'KAPPA', method:'计数型一致性(KAPPA)', standard:'STD-MSA-003', params:{ops:3, trials:1, parts:30},
      object:'孔径 φ8H7 通/止判定', feature:'通/止判定', owner:'孙丽', editor:'李工程师', editorDate:'2026-04-20 09:00:00', planDate:'2026-04-20 17:00:00',
-     trigger:'周期复评', source:'周期任务', status:'已闭环', recordId:'KPA-2026-001', result:'优秀(可接受)', note:'首期一致性分析，优秀，归档'},
+     trigger:'周期复评', source:'周期任务', status:'已闭环', recordId:'KPA-2026-001', result:'优秀(可接受)', note:'首期一致性分析，优秀，归档',
+     auditStatus:'审核通过', auditStep:4, reviewer:'郑芳', reviewDate:'2026-04-20 16:00', rejectReason:''},
     {id:'MSAP-2026-003', name:'数显扭力扳手 5~50N·m · GRR 分析', instId:'JJQ-2024-007', instName:'数显扭力扳手 5~50N·m', cat:'扭力扳手',
      type:'GRR', method:'方差分析法(ANOVA)', standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10},
      object:'螺栓拧紧力矩 25N·m', feature:'扭矩', owner:'王强', editor:'李工程师', editorDate:'2026-06-10 09:00:00', planDate:'2026-06-10 16:40:00',
-     trigger:'周期复评', source:'周期任务', status:'需整改', recordId:'GRR-2026-002', result:'有条件接受', note:'%GRR 处于有条件区间，纠正措施进行中，复测验证后闭环'},
+     trigger:'周期复评', source:'周期任务', status:'需整改', recordId:'GRR-2026-002', result:'有条件接受', note:'%GRR 处于有条件区间，纠正措施进行中，复测验证后闭环',
+     auditStatus:'审核通过', auditStep:4, reviewer:'郑芳', reviewDate:'2026-06-10 15:20', rejectReason:''},
     {id:'MSAP-2026-004', name:'外径千分尺 0~25mm · GRR 分析', instId:'JJQ-2024-002', instName:'外径千分尺 0~25mm', cat:'千分尺',
      type:'GRR', method:'均值-极差法(Xbar-R)', standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10},
      object:'轴径 φ10±0.02', feature:'直径', owner:'赵磊', editor:'李工程师', editorDate:'2026-08-20 09:00:00', planDate:'2026-09-20 17:00:00',
-     trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'GRR-2026-003', result:'', note:'样本组已就绪（SMP-2026-004），请在 GRR 台账内录入数据'},
+     trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'GRR-2026-003', result:'', note:'样本组已就绪（SMP-2026-004），请在 GRR 台账内录入数据',
+     auditStatus:'待审批', auditStep:2, reviewer:'刘青', reviewDate:'', rejectReason:''},
     {id:'MSAP-2026-005', name:'光滑塞规 φ8H7 · KAPPA 二期复评', instId:'JJQ-2024-008', instName:'光滑塞规 φ8H7', cat:'塞规/环规',
      type:'KAPPA', method:'计数型一致性(KAPPA)', standard:'STD-MSA-003', params:{ops:2, trials:1, parts:30},
      object:'孔径 φ8H7 通/止判定（二期复评）', feature:'通/止判定', owner:'孙丽', editor:'李工程师', editorDate:'2026-08-22 09:00:00', planDate:'2026-09-20 17:00:00',
@@ -439,7 +443,8 @@ function buildSeed(){
     {id:'MSAP-2026-007', name:'数字温度计 · MSA 分析', instId:'JJQ-2024-011', instName:'数字温度计', cat:'温度计',
      type:'', method:'', standard:'', params:{ops:3, trials:3, parts:10},
      object:'烘箱温度 120℃', feature:'温度', owner:'吴芳', editor:'李工程师', editorDate:'2026-08-25 10:00:00', planDate:'2026-10-15 17:00:00',
-     trigger:'周期复评', source:'周期任务', status:'未定型', recordId:'', result:'', note:'待定型'},
+     trigger:'周期复评', source:'周期任务', status:'未定型', recordId:'', result:'', note:'待定型',
+     auditStatus:'待审批', auditStep:1, reviewer:'王强', reviewDate:'', rejectReason:''},
     {id:'MSAP-2026-008', name:'精密压力表 1.6MPa · MSA 分析', instId:'JJQ-2024-005', instName:'精密压力表 1.6MPa', cat:'压力表',
      type:'', method:'', standard:'', params:{ops:3, trials:3, parts:10},
      object:'液压试验压力 1.0MPa', feature:'压力', owner:'周军', editor:'李工程师', editorDate:'2026-08-26 09:00:00', planDate:'2026-09-25 17:00:00',
@@ -447,15 +452,18 @@ function buildSeed(){
     {id:'MSAP-2026-009', name:'数显千分表 0~12.7mm · GRR/稳定性/Cg-Cgk', instId:'JJQ-2024-004', instName:'数显千分表 0~12.7mm', cat:'千分表',
      type:'GRR', method:'均值-极差法(Xbar-R)', methods:['GRR','stability','cgcgk'], standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10},
      object:'轴径 Φ12.5±0.05', feature:'直径', owner:'李工程师', editor:'李工程师', editorDate:'2026-09-08 09:00:00', planDate:'2026-10-15 17:00:00',
-     trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'', result:'', note:'一计划多方法：GRR + 稳定性 + Cg/Cgk（一个计划可触发多个分析任务）'},
+     trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'', result:'', note:'一计划多方法：GRR + 稳定性 + Cg/Cgk（一个计划可触发多个分析任务）',
+     auditStatus:'待审批', auditStep:3, reviewer:'郑芳', reviewDate:'', rejectReason:''},
     {id:'MSAP-2026-010', name:'光滑塞规 φ8H7 · KAPPA 三期复评', instId:'JJQ-2024-008', instName:'光滑塞规 φ8H7', cat:'塞规/环规',
      type:'KAPPA', method:'计数型一致性(KAPPA)', standard:'STD-MSA-003', params:{ops:2, trials:1, parts:30},
      object:'孔径 φ8H7 通/止判定（三期复评）', feature:'通/止判定', owner:'孙丽', editor:'系统自动', editorDate:'2026-09-05 09:00:00', planDate:'2026-10-05 17:00:00',
-     trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'', result:'', note:'由器具组「目视/计数检验组」检验周期自动生成（提前一个月推送待办，2026-10-05 到期）'},
+     trigger:'周期复评', source:'周期任务', status:'待采集', recordId:'', result:'', note:'由器具组「目视/计数检验组」检验周期自动生成（提前一个月推送待办，2026-10-05 到期）',
+     auditStatus:'审核驳回', auditStep:1, reviewer:'王强', reviewDate:'2026-09-06 10:20', rejectReason:'样本数量与抽样规则不符，请调整后重新提交'},
     {id:'MSAP-2026-011', name:'数显千分表 0~12.7mm · GRR 复评（不通过示例）', instId:'JJQ-2024-004', instName:'数显千分表 0~12.7mm', cat:'千分表',
      type:'GRR', method:'均值-极差法(Xbar-R)', standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10},
      object:'轴径 Φ12.5±0.05（复评）', feature:'直径', owner:'赵磊', editor:'李工程师', editorDate:'2026-09-10 09:00:00', planDate:'2026-09-10 16:30:00',
-     trigger:'周期复评', source:'周期任务', status:'需整改', recordId:'GRR-2026-005', result:'不可接受', note:'%GRR>30%，测量系统不可接受，暂停用于产品放行测量'},
+     trigger:'周期复评', source:'周期任务', status:'需整改', recordId:'GRR-2026-005', result:'不可接受', note:'%GRR>30%，测量系统不可接受，暂停用于产品放行测量',
+     auditStatus:'审核通过', auditStep:4, reviewer:'郑芳', reviewDate:'2026-09-12 15:10', rejectReason:''},
     {id:'MSAP-2026-012', name:'光滑塞规 φ8H7 · KAPPA 四期复评（不通过示例）', instId:'JJQ-2024-008', instName:'光滑塞规 φ8H7', cat:'塞规/环规',
      type:'KAPPA', method:'计数型一致性(KAPPA)', standard:'STD-MSA-003', params:{ops:3, trials:3, parts:30},
      object:'孔径 φ8H7 通/止判定（四期复评）', feature:'通/止判定', owner:'孙丽', editor:'李工程师', editorDate:'2026-09-12 09:00:00', planDate:'2026-09-12 16:20:00',
@@ -1552,8 +1560,9 @@ const MENU = [
   {key:'sampling', icon:'∿', label:'抽样方法维护', group:'基础数据'},
   {key:'samplelib', icon:'▣', label:'样本库管理', group:'基础数据'},
   {key:'projinst', icon:'⧉', label:'项目量具关系维护', group:'基础数据'},
-  /* 计划：创建 → 定型 → 自动生成台账 */
+  /* 计划：创建 → 定型 → 审批 → 自动生成台账 */
   {key:'plan', icon:'▤', label:'MSA 计划', group:'MSA 计划'},
+  {key:'audit', icon:'☍', label:'MSA 计划审批', group:'MSA 计划'},
   /* 台账：定型后设置操作人/对象 */
   {key:'entry_grr', icon:'⌗', label:'GRR 台账', group:'台账'},
   {key:'entry_kappa', icon:'⌗', label:'KAPPA 台账', group:'台账'},
@@ -1575,7 +1584,7 @@ const MENU = [
   /* 报表 */
   {key:'report_overview', icon:'◫', label:'总览报表', group:'报表'}
 ];
-const PAGE_TITLE = {'ledger':'计量器具台账','ledger_img':'计量器具台账','instgroup':'器具组维护','plan':'MSA 计划',
+const PAGE_TITLE = {'ledger':'计量器具台账','ledger_img':'计量器具台账','instgroup':'器具组维护','plan':'MSA 计划','audit':'MSA 计划审批',
   'char':'被测参数维护','sampling':'抽样方法维护','samplelib':'样本库管理',
   'entry_grr':'GRR 台账','entry_kappa':'KAPPA 台账','entry_linear':'线性/偏倚台账','entry_stability':'稳定性台账','entry_cgcgk':'Cg/Cgk 台账','data_grr':'GRR 录入数据','data_kappa':'KAPPA 录入数据','data_linear':'线性/偏倚录入数据','data_stability':'稳定性录入数据','data_cgcgk':'Cg/Cgk 录入数据',
   'grr':'GRR 分析结果','kappa':'KAPPA 分析结果','anl_linear':'线性/偏移分析结果','anl_stability':'稳定性分析结果','anl_cgcgk':'Cg/Cgk 分析结果（VDA Type1）',
@@ -1597,6 +1606,10 @@ const PAGE_GUIDE = {
   plan:{label:'MSA 计划', text:'创建 MSA 计划（按器具 / 按人员），计划下自动生成对应台账分析单；创建 MSA 计划弹窗里，分析方法要使用临时表：每次创建的数据使用同一个统领单号，创建时把统领单号传入创建函数，创建函数依据统领单号查询临时表中的分析方法信息，再根据分析方法创建台账。', logic:'创建计划：先选器具（组）/ 人员（组），再选被测参数（自动带出该特性支持的分析方法，需手动勾选后点「确定」加入下方方法列表，同一方法不可重复添加，删除列表行会联动取消勾选，切换器具/参数时清空列表）；人员弹窗仅 支持KAPPA分析方式。维度列状态按计划勾选的方法范围与台账结论判定：不做（未勾选）/ 未做（勾选未分析）/ 通过 / 不通过/有条件接受。生成的年度 MSA 计划要走审核流程',
     ops:'【查询区】\n• 按计划号 / 器具 / 工厂 / 状态筛选；「查询」刷新，「重置」清空。\n\n【按钮板】\n• 「+ 创建 MSA 计划」：弹窗按器具或按人员创建；先选器具（组）/人员（组），再选被测参数，自动带出该特性支持的方法，手动勾选后点「确定」加入下方方法列表，填人数/次数/样本数。\n• 「导入」「导出」：待接入。\n\n【列表操作列】\n• 「追加」：在当前计划上继续添加新分析任务；弹窗与创建一致，但已勾选的器具 / 方法不可取消勾选，只能继续追加。\n• 「查看」「编辑」「删除」：删除二次确认。\n\n【行内编辑】\n• 可编辑：责任人（下拉）、工厂（下拉）。\n• 只读：计划号、被测参数、版本、各方法维度状态标识、创建人、创建时间。\n\n【按钮与字段】\n• 「+ 创建 MSA 计划」「追加」「查看」「编辑」「删除」「导入」「导出」：操作按钮，删除有二次确认。\n• 可编辑字段：责任人（下拉）、工厂（下拉）。\n• 只读字段：计划号、被测参数、版本、各方法维度状态标识、创建人、创建时间。\n\n【保存校验】\n• 创建 / 追加计划时：必须先选被测参数；必须勾选至少一个分析方法并点「确定」加入下方列表。\n• 加入列表后，人数 / 次数 / 样本数必须落在该方法抽样规则允许的范围内（人数上下限、次数上下限、样本数上下限），超出提示并阻止保存。\n• 追加计划：已勾选的器具 / 方法不可取消勾选，只能继续追加。',
     recent:'【近期改动（2026-09-20 16:45起）】\n• 创建弹窗分析方法右侧按钮确定改增加\n• 列表仅责任人可编辑，其他字段只读\n• 详情抽屉去背景/边框，字段分三组（基本信息/抽样规则/执行状态），全纯文字无标签，字段名无冒号，值左对齐\n• 仪器/设备名称改名设备名称', status:true},
+  audit:{label:'MSA 计划审批', text:'周期生成的 MSA 计划走审批流程：编制人（业务计量专员）编制 → 计量室主任批准 → 相关科室会签（生产过程质量 / 工艺）→ 质量部长终批。临时计划、首次计划不审批。',
+    logic:'审批状态四档：待审批 / 审核通过 / 审核驳回 / 不适用（临时任务）。待审批计划按当前节点显示「待室主任批准 / 待科室会签 / 待质量部长终批」。审批动作：通过 / 不通过 + 审批意见，不通过必须填写意见，退回编制人修改后重新提交。',
+    ops:'【查询区】\n• 审批状态 / 任务来源 / 工厂 / 关键词（计划号 / 设备名称 / 量具编号 / 被测参数）；「查询」刷新，「重置」清空。\n\n【按钮区】\n• 「查询」「重置」：列表筛选。\n\n【列表操作列】\n• 「审批」：仅「待审批」状态可点，打开审批弹窗。\n\n【审批弹窗】\n• 顶部展示计划概要（计划号 / 设备 / 量具 / 被测参数 / 项目 / 责任人 / 工厂）。\n• 中部审批流程（编制 → 室主任批准 → 科室会签 → 质量部长终批），已完成节点打勾，当前节点高亮，驳回节点标红。\n• 底部审批操作：通过 / 不通过 单选 + 审批意见；选择「不通过」时意见必填，否则提示并阻止提交。\n\n【按钮与字段】\n• 「审批」「查询」「重置」「确定提交」「取消」：操作按钮。\n• 可编辑字段：审批意见（不通过必填）。\n• 只读字段：计划概要、审批流程节点、审核人、审核时间。\n\n【保存校验】\n• 审批提交前必须选择通过 / 不通过；选择「不通过」时审批意见必填。',
+    recent:'【2026-10-20 新增】\n• 新增 MSA 计划审批页面（周期计划审批流程原型）'},
   data:{label:'数据录入',
     logic:'采用多操作员 × 多样本二维录入：每人只看 / 只改本人数据；录入人仅可录入测量数据，不可改表头与计划信息。',
     ops:'【入口】\n• 从台账列表操作列「数据录入」进入（仅「待采集 / 待分析」状态可点）。\n\n【录入页】\n• 顶部选择要录入的台账记录（下拉，显示台账编号 / 器具 / 状态）。\n• 二维表格：行 = 样本 / 标准件，列 = 测量次数，单元格填测量值。\n• 「保存」保存录入数据；「提交」提交后状态流转。\n\n【按钮与字段】\n• 「数据录入」入口：仅台账状态为「待采集 / 待分析」时可点。\n• 「保存」「提交」：操作按钮。\n• 可编辑字段：本人负责的测量列单元格。\n• 只读字段：表头、计划信息、他人负责的测量列。',
@@ -1745,6 +1758,7 @@ function App(){
     if(page==='ledger_img') return <LedgerImgPage/>;
     if(page==='instgroup') return <InstGroupPage/>;
     if(page==='plan') return <PlanPage/>;
+    if(page==='audit') return <AuditPage/>;
     if(page==='char') return <CharPage/>;
     if(page==='sampling') return <SamplingPage/>;
     if(page==='samplelib') return <SampleLibPage/>;
@@ -2554,6 +2568,146 @@ function PlanActions({r, onDetail, onSave, onAppend}){
     <Button size="small" type="link" danger disabled={!deletable} onClick={()=>deletePlan(r)}>删除</Button>
   </Space>;
 }
+/* ================= MSA 计划审批（周期计划审批流程原型） ================= */
+const AUDIT_NODE_TITLE = ['编制（计量专员）','室主任批准','科室会签','质量部长终批'];
+const AUDIT_NODE_SHORT = ['编制','室主任批准','科室会签','质量部长终批'];
+const AUDIT_STEP_TEXT = {0:'未提交',1:'待室主任批准',2:'待科室会签',3:'待质量部长终批',4:'审批完成'};
+const AUDIT_STEP_REVIEWER = {1:'王强（计量室主任）',2:'刘青（过程质量室）',3:'郑芳（质量部长）'};
+function auditStatusTag(s){
+  if(!s) return <span style={{color:'#999'}}>—</span>;
+  const m={ '审核通过':['green','审核通过'], '审核驳回':['red','审核驳回'], '待审批':['orange','待审批'] }[s] || ['default','不适用'];
+  return <Tag color={m[0]} style={{marginRight:0}}>{m[1]}</Tag>;
+}
+function AuditModal({plan, onClose, onSubmit}){
+  const d = Store.get();
+  const [verdict,setVerdict]=useState('通过');
+  const [reason,setReason]=useState('');
+  const step = plan.auditStep||1;
+  const rejected = plan.auditStatus==='审核驳回';
+  const nodeStatus = (i)=>{
+    if(rejected) return i===1?'error':'wait';
+    if(plan.auditStatus==='审核通过') return 'finish';
+    if(plan.auditStatus!=='待审批') return 'wait';
+    if(i<step) return 'finish';
+    if(i===step) return 'process';
+    return 'wait';
+  };
+  const nodeDesc = (i)=>{
+    if(i===1) return rejected ? ('驳回：'+(plan.rejectReason||'—')) : '计量专员编制完成';
+    if(i===2) return step>=2 ? '王强 · 已批准' : (step===1?'待处理 · 王强':'—');
+    if(i===3) return step>=3 ? '过程质量 / 工艺 · 已会签' : (step===2?'待处理 · 刘青':'—');
+    return step>=4 ? '质量部长 · 已批准' : (step===3?'待处理 · 郑芳':'—');
+  };
+  const submit=()=>{
+    if(verdict==='不通过' && !reason.trim()){ toast.warning('审批不通过时必须填写审批意见'); return; }
+    onSubmit(verdict, reason.trim());
+  };
+  const instNames=(plan.instIds||[plan.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return it?it.name:''; }).filter(Boolean).join('、');
+  const instNos=(plan.instIds||[plan.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return it?it.id:''; }).filter(Boolean).join('、');
+  return <Modal title={'MSA 计划审批 · '+plan.id} width={640} open onCancel={onClose} footer={null}>
+    {rejected && <Alert type="error" showIcon style={{marginBottom:12}} message={'该计划上次审批被驳回：'+(plan.rejectReason||'—')} description="编制人修改后重新提交，需从第一步重新走审批流程。"/>}
+    <Descriptions size="small" column={2} bordered style={{marginBottom:16}}>
+      <Descriptions.Item label="MSA计划号"><span className="mono">{plan.id}</span></Descriptions.Item>
+      <Descriptions.Item label="任务来源">{plan.source==='周期任务'?'周期任务':'临时任务'}</Descriptions.Item>
+      <Descriptions.Item label="设备名称" span={2}>{instNames||'—'}</Descriptions.Item>
+      <Descriptions.Item label="量具编号"><span className="mono">{instNos||'—'}</span></Descriptions.Item>
+      <Descriptions.Item label="被测参数">{plan.object||'—'}</Descriptions.Item>
+      <Descriptions.Item label="项目">{plan.project||'—'}</Descriptions.Item>
+      <Descriptions.Item label="责任人">{plan.analyst||plan.owner||'—'}</Descriptions.Item>
+      <Descriptions.Item label="工厂">{plan.plant||'—'}</Descriptions.Item>
+      <Descriptions.Item label="编制人">{plan.creator||'—'}</Descriptions.Item>
+      <Descriptions.Item label="编制时间"><span className="mono">{plan.createDate||'—'}</span></Descriptions.Item>
+    </Descriptions>
+    <div style={{fontSize:13,color:'#666',marginBottom:8}}>审批流程（周期计划必须审批通过后方可开展分析）</div>
+    <Steps size="small" current={plan.auditStatus==='审核通过'?4:(step-1)} status={rejected?'error':undefined} items={AUDIT_NODE_SHORT.map((t,i)=>({title:t, status:nodeStatus(i+1), description:nodeDesc(i+1)}))} style={{marginBottom:16}}/>
+    <Alert type="info" showIcon style={{marginBottom:16}} message={'当前审批节点：'+(rejected?'（已驳回，待编制人修改后重新提交）':AUDIT_STEP_TEXT[step])} description={rejected?null:'审批人：'+(AUDIT_STEP_REVIEWER[step]||'—')}/>
+    <div style={{fontSize:13,color:'#666',marginBottom:8}}>审批意见</div>
+    <Radio.Group value={verdict} onChange={e=>setVerdict(e.target.value)} style={{marginBottom:10}}>
+      <Radio value="通过">通过</Radio>
+      <Radio value="不通过">不通过</Radio>
+    </Radio.Group>
+    <Input.TextArea rows={3} placeholder={verdict==='不通过'?'请填写驳回原因（必填），退回编制人修改':'可填写审批意见（选填）'} value={reason} onChange={e=>setReason(e.target.value)} style={{marginBottom:16}}/>
+    <div style={{textAlign:'right'}}>
+      <Space>
+        <Button onClick={onClose}>取消</Button>
+        <Button type="primary" onClick={submit}>确定提交</Button>
+      </Space>
+    </div>
+  </Modal>;
+}
+function AuditPage(){
+  const d = Store.get();
+  const [fStatus,setFStatus]=useState(); const [fSource,setFSource]=useState(); const [fPlant,setFPlant]=useState(); const [fkw,setFkw]=useState('');
+  const [qStatus,setQStatus]=useState(); const [qSource,setQSource]=useState(); const [qPlant,setQPlant]=useState(); const [qkw,setQkw]=useState('');
+  const [openPlan,setOpenPlan]=useState(null);
+  const [overrides,setOverrides]=useState({}); // 前端演示：审批提交后的显示覆盖（不落库）
+  const doQuery=()=>{ setQStatus(fStatus); setQSource(fSource); setQPlant(fPlant); setQkw(fkw); };
+  const resetQ=()=>{ setFStatus(); setFSource(); setFPlant(); setFkw(''); setQStatus(); setQSource(); setQPlant(); setQkw(''); };
+  const view=(p,k)=>{ const ov=overrides[p.id]||{}; return ov[k]!==undefined?ov[k]:p[k]; };
+  const rows = d.plans.filter(p=>{
+    const st=view(p,'auditStatus');
+    const src=p.source==='周期任务'?'周期任务':'临时任务';
+    const kwMatch=!qkw||(p.id+' '+(p.instName||'')+' '+(p.instIds||[p.instId]).join(' ')+' '+(p.object||'')).toLowerCase().includes(qkw.toLowerCase());
+    const stMatch=!qStatus||(st||'不适用')===qStatus;
+    const srcMatch=!qSource||src===qSource;
+    const plantMatch=!qPlant||p.plant===qPlant;
+    return kwMatch&&stMatch&&srcMatch&&plantMatch;
+  });
+  const pendingAll=d.plans.filter(p=>view(p,'auditStatus')==='待审批');
+  const instCell=(r,fn)=>(r.instIds||[r.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return <div key={id}>{fn(it)}</div>; });
+  const submitAudit=(verdict,reason)=>{
+    const cur=openPlan;
+    const step=cur.auditStep||1;
+    const reviewerName=(AUDIT_STEP_REVIEWER[step]||'').split('（')[0]||'—';
+    setOverrides(ov=>({...ov,[cur.id]:{
+      auditStatus:verdict==='通过'?'审核通过':'审核驳回',
+      auditStep: verdict==='通过'?4:(step),
+      reviewer: verdict==='通过'?reviewerName:(cur.reviewer||''),
+      reviewDate: verdict==='通过'?NOW:'',
+      rejectReason: verdict==='不通过'?reason:''
+    }}));
+    toast.ok(verdict==='通过'?'审批通过（原型演示，不落库）':'已驳回，退回编制人修改（原型演示，不落库）');
+    setOpenPlan(null);
+  };
+  const cols=[
+    {title:'操作', width:90, fixed:'left', render:(_,r)=>(view(r,'auditStatus')==='待审批'||view(r,'auditStatus')==='审核驳回')? <Button size="small" type="link" onClick={()=>setOpenPlan(r)}>审批</Button> : <span style={{color:'#bbb'}}>—</span>},
+    {title:'MSA计划号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
+    {title:'设备名称', width:170, render:(_,r)=>instCell(r,it=>it?it.name:'')},
+    {title:'量具编号', width:110, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.id}</span>:'')},
+    {title:'被测参数', width:190, ellipsis:true, render:(_,r)=><span>{r.object||'—'}</span>},
+    {title:'任务来源', width:96, render:(_,r)=><Tag color={r.source==='周期任务'?'blue':'default'} style={{marginRight:0}}>{r.source==='周期任务'?'周期任务':'临时任务'}</Tag>},
+    {title:'项目', width:130, render:(_,r)=><span>{r.project||'—'}</span>},
+    {title:'责任人', width:96, render:(_,r)=><span>{r.analyst||r.owner||'—'}</span>},
+    {title:'工厂', width:96, render:(_,r)=><span>{r.plant||'—'}</span>},
+    {title:'审批状态', width:100, render:(_,r)=>auditStatusTag(view(r,'auditStatus'))},
+    {title:'当前审批节点', width:140, render:(_,r)=>{ const st=view(r,'auditStatus'); if(st==='审核通过') return <span>已完成</span>; if(st==='审核驳回') return <span style={{color:'#cf1322'}}>已驳回（退回编制）</span>; if(st==='待审批') return <span>{AUDIT_STEP_TEXT[(view(r,'auditStep')||1)]}</span>; return <span style={{color:'#999'}}>不适用</span>; }},
+    {title:'审核人', width:100, render:(_,r)=><span>{view(r,'reviewer')||'—'}</span>},
+    {title:'审核时间', width:120, render:(_,r)=><span className="mono">{view(r,'reviewDate')||'—'}</span>},
+    {title:'驳回说明', width:180, ellipsis:true, render:(_,r)=><span>{view(r,'rejectReason')||'—'}</span>}
+  ];
+  return <div>
+    <Panel>
+      <Space wrap>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>审批状态</span><Select allowClear style={{width:130}} value={fStatus} options={[{value:'待审批',label:'待审批'},{value:'审核通过',label:'审核通过'},{value:'审核驳回',label:'审核驳回'}]} onChange={setFStatus}/>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>任务来源</span><Select allowClear style={{width:130}} value={fSource} options={[{value:'周期任务',label:'周期任务'},{value:'临时任务',label:'临时任务'}]} onChange={setFSource}/>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:130}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="计划号/设备名称/量具编号/被测参数" style={{width:230}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
+        <span className="tiny">共 {rows.length} 条 ｜ 待审批 {pendingAll.length} 条</span>
+      </Space>
+    </Panel>
+    <Panel>
+      <Space wrap>
+        <Button type="primary" onClick={doQuery}>查询</Button>
+        <Button onClick={resetQ}>重置</Button>
+      </Space>
+    </Panel>
+    <Panel>
+      <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:1860}} pagination={false}/>
+    </Panel>
+    {openPlan && <AuditModal plan={openPlan} onClose={()=>setOpenPlan(null)} onSubmit={submitAudit}/>}
+  </div>;
+}
+
 /* 分计划（取样计划）公共表格：一个 MSA 总计划下按分析方法生成的分计划列表 */
 const ENTRY_MAP={GRR:'entry_grr', KAPPA:'entry_kappa', linear:'entry_linear', stability:'entry_stability', cgcgk:'entry_cgcgk'};
 const subRuleText=(r)=>{ const k=recKindId(r); const P=r.params||{};
