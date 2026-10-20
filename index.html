@@ -917,6 +917,7 @@ function applyFieldDefaults(d){
       measurers:p.measurers||'操作员A·王强 / 操作员B·刘青 / 操作员C·陈杰', observer:p.observer||'李工程师', reason:p.reason||'', improvement:p.improvement||'',
       actualDate:p.actualDate||'', modifier:p.modifier||'—', modifyDate:p.modifyDate||'',
       dept:p.dept||'质量', dataType:p.dataType||(p.type==='KAPPA'?'计数型':'计量型'), // 部门/数据类型（业务口径）
+      creator:p.creator||p.editor||'—', createDate:p.createDate||p.editorDate||'—', // 创建人/创建时间（旧数据按录入信息回填）
       msaMethods:p.msaMethods||(p.type==='KAPPA'?['kappa']:(p.type==='GRR'?['重复性','再现性']:[])), // 勾选的 MSA 方法
       analyst:p.analyst||p.observer||'李工程师', resolution:p.resolution||'', // 责任人（观察员改责任人）/ 分辨力（文本录入，非分析方法）
       opMethod:p.opMethod||'《测量系统分析操作指导书》' // 操作方法
@@ -2614,11 +2615,6 @@ function auditChain(p){
 }
 function chainNodeText(p, step){ const c=auditChain(p); if(!c.length) return '不适用'; if(step>=c.length) return '审批完成'; return c[step-1]?c[step-1].node:'不适用'; }
 function chainReviewer(p, step){ const c=auditChain(p); return c[step-1]?c[step-1].person:'—'; }
-function auditStatusTag(s){
-  if(!s) return <span style={{color:'#999'}}>—</span>;
-  const m={ '审核通过':['green','审核通过'], '审核驳回':['red','审核驳回'], '待审批':['orange','待审批'] }[s] || ['default','不适用'];
-  return <Tag color={m[0]} style={{marginRight:0}}>{m[1]}</Tag>;
-}
 function AuditModal({plan, onClose, onSubmit}){
   const [verdict,setVerdict]=useState('通过');
   const [reason,setReason]=useState('');
@@ -2677,22 +2673,36 @@ function AuditPage(){
     toast.ok(verdict==='通过'?'审批通过（原型演示，不落库）':'已驳回，退回责任人重新发起（原型演示，不落库）');
     setOpenPlan(null);
   };
+  /* 审批页列表 = MSA 计划页字段 + 当前审批节点/审批人；操作列仅留「审批」（待审批可点） */
+  const ANA_MAP={'GRR':'GRR','KAPPA':'KAPPA','linear':'线性/偏倚','stability':'稳定性','cgcgk':'Cg/Cgk','cg/cgk':'Cg/Cgk'};
+  const anaCell=(r)=>{ if(r.methods&&r.methods.length) return r.methods.map(m=>ANA_MAP[String(m).toLowerCase()]||m).join('/'); if(r.type) return ANA_MAP[r.type]||r.type; return '未定型'; };
+  const verCell=(r)=>{ const cid=r.charId||''; const c=cid?(d.characteristics||[]).find(x=>x.id===cid&&x.status==='启用')||(d.characteristics||[]).find(x=>x.id===cid):null; return <span className="mono">{c?(c.version||'V1'):'—'}</span>; };
+  const stdNoCell=(r)=>{ const st=(d.standards||[]).find(x=>x.id===r.standard); return <span className="mono">{st?st.id:'—'}</span>; };
+  const stdCell=(r)=>{ const st=(d.standards||[]).find(x=>x.id===r.standard); return <span>{st?(st.basis||st.name||''):'—'}</span>; };
   const cols=[
     {title:'操作', width:90, fixed:'left', render:(_,r)=>(view(r,'auditStatus')==='待审批')? <Button size="small" type="link" onClick={()=>setOpenPlan(r)}>审批</Button> : <span style={{color:'#bbb'}}>—</span>},
     {title:'MSA计划号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
+    {title:'责任人', width:96, render:(_,r)=><span>{r.analyst||r.owner||'—'}</span>},
+    {title:'计划类型', width:90, render:(_,r)=><span>{r.planType||(r.source==='周期任务'?'月计划':'—')}</span>},
+    {title:'项目', width:130, ellipsis:true, render:(_,r)=><span>{r.project||'—'}</span>},
     {title:'设备名称', width:170, render:(_,r)=>instCell(r,it=>it?it.name:'')},
     {title:'量具编号', width:110, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.id}</span>:'')},
+    {title:'零件号', width:110, render:(_,r)=><span className="mono">{r.partNo||'—'}</span>},
+    {title:'零件名称', width:120, render:(_,r)=><span>{r.partName||'—'}</span>},
     {title:'被测参数', width:190, ellipsis:true, render:(_,r)=><span>{r.object||'—'}</span>},
-    {title:'任务来源', width:96, render:(_,r)=><Tag color={r.source==='周期任务'?'blue':'default'} style={{marginRight:0}}>{r.source==='周期任务'?'周期任务':'临时任务'}</Tag>},
-    {title:'计划类型', width:90, render:(_,r)=><span>{r.planType||(r.source==='周期任务'?'月计划':'—')}</span>},
-    {title:'项目', width:130, render:(_,r)=><span>{r.project||'—'}</span>},
-    {title:'责任人', width:96, render:(_,r)=><span>{r.analyst||r.owner||'—'}</span>},
+    {title:'版本', width:70, render:(_,r)=>verCell(r)},
+    {title:'检验标准号', width:120, render:(_,r)=>stdNoCell(r)},
+    {title:'检验标准', width:200, ellipsis:true, render:(_,r)=>stdCell(r)},
+    {title:'分析方法', width:140, render:(_,r)=><span>{anaCell(r)}</span>},
+    {title:'工序', width:84, render:(_,r)=>instCell(r,it=>it?<span>{it.process||'暂无'}</span>:'')},
+    {title:'分辨力', width:86, render:(_,r)=>instCell(r,it=>it?<span className="mono">{it.res||'暂无'}</span>:'')},
+    {title:'数据类型', width:102, render:(_,r)=><span>{r.dataType||'计量型'}</span>},
+    {title:'部门', width:104, render:(_,r)=><span>{r.dept||'—'}</span>},
     {title:'工厂', width:96, render:(_,r)=><span>{r.plant||'—'}</span>},
-    {title:'审批状态', width:100, render:(_,r)=>auditStatusTag(view(r,'auditStatus'))},
+    {title:'创建人', width:100, render:(_,r)=><span>{r.creator||'—'}</span>},
+    {title:'创建时间', width:115, render:(_,r)=><span className="mono">{r.createDate||'—'}</span>},
     {title:'当前审批节点', width:160, render:(_,r)=>{ const st=view(r,'auditStatus'); if(st==='审核通过') return <span>已完成</span>; if(st==='审核驳回') return <span style={{color:'#cf1322'}}>已驳回（退回责任人，待重新发起）</span>; if(st==='待审批') return <span>{chainNodeText(r, view(r,'auditStep')||1)}</span>; return <span style={{color:'#999'}}>不适用</span>; }},
-    {title:'审核人', width:100, render:(_,r)=>{ const st=view(r,'auditStatus'); return <span>{st==='待审批'?chainReviewer(r, view(r,'auditStep')||1):(view(r,'reviewer')||'—')}</span>; }},
-    {title:'审核时间', width:120, render:(_,r)=><span className="mono">{view(r,'reviewDate')||'—'}</span>},
-    {title:'驳回说明', width:180, ellipsis:true, render:(_,r)=><span>{view(r,'rejectReason')||'—'}</span>}
+    {title:'审批人', width:100, render:(_,r)=>{ const st=view(r,'auditStatus'); return <span>{st==='待审批'?chainReviewer(r, view(r,'auditStep')||1):(view(r,'reviewer')||'—')}</span>; }}
   ];
   return <div>
     <Panel>
@@ -2711,7 +2721,7 @@ function AuditPage(){
       </Space>
     </Panel>
     <Panel>
-      <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:1860}} pagination={false}/>
+      <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:2900}} pagination={false}/>
     </Panel>
     {openPlan && <AuditModal plan={openPlan} onClose={()=>setOpenPlan(null)} onSubmit={submitAudit}/>}
   </div>;
