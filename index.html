@@ -1607,9 +1607,9 @@ const PAGE_GUIDE = {
     ops:'【查询区】\n• 按计划号 / 器具 / 工厂 / 状态筛选；「查询」刷新，「重置」清空。\n\n【按钮板】\n• 「+ 创建 MSA 计划」：弹窗按器具或按人员创建；先选器具（组）/人员（组），再选被测参数，自动带出该特性支持的方法，手动勾选后点「确定」加入下方方法列表，填人数/次数/样本数。\n• 「导入」「导出」：待接入。\n\n【列表操作列】\n• 「追加」：在当前计划上继续添加新分析任务；弹窗与创建一致，但已勾选的器具 / 方法不可取消勾选，只能继续追加。\n• 「查看」「编辑」「删除」：删除二次确认。\n\n【行内编辑】\n• 可编辑：责任人（下拉）、工厂（下拉）。\n• 只读：计划号、被测参数、版本、各方法维度状态标识、创建人、创建时间。\n\n【按钮与字段】\n• 「+ 创建 MSA 计划」「追加」「查看」「编辑」「删除」「导入」「导出」：操作按钮，删除有二次确认。\n• 可编辑字段：责任人（下拉）、工厂（下拉）。\n• 只读字段：计划号、被测参数、版本、各方法维度状态标识、创建人、创建时间。\n\n【保存校验】\n• 创建 / 追加计划时：必须先选被测参数；必须勾选至少一个分析方法并点「确定」加入下方列表。\n• 加入列表后，人数 / 次数 / 样本数必须落在该方法抽样规则允许的范围内（人数上下限、次数上下限、样本数上下限），超出提示并阻止保存。\n• 追加计划：已勾选的器具 / 方法不可取消勾选，只能继续追加。',
     recent:'【近期改动（2026-09-20 16:45起）】\n• 创建弹窗分析方法右侧按钮确定改增加\n• 列表仅责任人可编辑，其他字段只读\n• 详情抽屉去背景/边框，字段分三组（基本信息/抽样规则/执行状态），全纯文字无标签，字段名无冒号，值左对齐\n• 仪器/设备名称改名设备名称', status:true},
   audit:{label:'MSA 计划审批', text:'周期生成的 MSA 计划走审批流程：编制人（业务计量专员）编制 → 计量室主任批准 → 相关科室会签（生产过程质量 / 工艺）→ 质量部长终批。临时计划、首次计划不审批。',
-    logic:'审批状态四档：待审批 / 审核通过 / 审核驳回 / 不适用（临时任务）。待审批计划按当前节点显示「待室主任批准 / 待科室会签 / 待质量部长终批」。审批动作：通过 / 不通过 + 审批意见，不通过必须填写意见，退回编制人修改后重新提交。',
-    ops:'【查询区】\n• 审批状态 / 任务来源 / 工厂 / 关键词（计划号 / 设备名称 / 量具编号 / 被测参数）；「查询」刷新，「重置」清空。\n\n【按钮区】\n• 「查询」「重置」：列表筛选。\n\n【列表操作列】\n• 「审批」：仅「待审批」状态可点，打开审批弹窗。\n\n【审批弹窗】\n• 顶部展示计划概要（计划号 / 设备 / 量具 / 被测参数 / 项目 / 责任人 / 工厂）。\n• 中部审批流程（编制 → 室主任批准 → 科室会签 → 质量部长终批），已完成节点打勾，当前节点高亮，驳回节点标红。\n• 底部审批操作：通过 / 不通过 单选 + 审批意见；选择「不通过」时意见必填，否则提示并阻止提交。\n\n【按钮与字段】\n• 「审批」「查询」「重置」「确定提交」「取消」：操作按钮。\n• 可编辑字段：审批意见（不通过必填）。\n• 只读字段：计划概要、审批流程节点、审核人、审核时间。\n\n【保存校验】\n• 审批提交前必须选择通过 / 不通过；选择「不通过」时审批意见必填。',
-    recent:'【2026-10-20 新增】\n• 新增 MSA 计划审批页面（周期计划审批流程原型）'},
+    logic:'审批状态四档：待审批 / 审核通过 / 审核驳回 / 不适用（临时任务）。页面默认只查看「待审批」数据，也可按「全部 / 已审批」切换。审批动作：通过 / 不通过 + 审批意见，不通过必须填写意见，退回编制人修改后重新提交。',
+    ops:'【查询区】\n• 审批状态：单选按钮组（全部 / 待审批 / 已审批），默认「待审批」；已审批 = 审核通过 + 审核驳回。\n• 任务来源 / 工厂 / 关键词（计划号 / 设备名称 / 量具编号 / 被测参数）；「查询」刷新，「重置」恢复默认（待审批）。\n\n【按钮区】\n• 「查询」「重置」：列表筛选。\n\n【列表操作列】\n• 「审批」：仅「待审批 / 审核驳回」可点，打开审批弹窗。\n\n【审批弹窗】\n• 只展示审批操作：通过 / 不通过 单选 + 审批意见输入框；选择「不通过」时意见必填，否则提示并阻止提交。\n\n【按钮与字段】\n• 「审批」「查询」「重置」「确定提交」「取消」：操作按钮。\n• 可编辑字段：审批意见（不通过必填）。',
+    recent:'【2026-10-20 新增】\n• 新增 MSA 计划审批页面（周期计划审批流程原型）\n【2026-10-20 更新】\n• 审批状态改单选按钮组（全部 / 待审批 / 已审批），默认「待审批」\n• 审批弹窗精简：只保留审批意见（通过 / 不通过 + 意见输入框）'},
   data:{label:'数据录入',
     logic:'采用多操作员 × 多样本二维录入：每人只看 / 只改本人数据；录入人仅可录入测量数据，不可改表头与计划信息。',
     ops:'【入口】\n• 从台账列表操作列「数据录入」进入（仅「待采集 / 待分析」状态可点）。\n\n【录入页】\n• 顶部选择要录入的台账记录（下拉，显示台账编号 / 器具 / 状态）。\n• 二维表格：行 = 样本 / 标准件，列 = 测量次数，单元格填测量值。\n• 「保存」保存录入数据；「提交」提交后状态流转。\n\n【按钮与字段】\n• 「数据录入」入口：仅台账状态为「待采集 / 待分析」时可点。\n• 「保存」「提交」：操作按钮。\n• 可编辑字段：本人负责的测量列单元格。\n• 只读字段：表头、计划信息、他人负责的测量列。',
@@ -2579,48 +2579,13 @@ function auditStatusTag(s){
   return <Tag color={m[0]} style={{marginRight:0}}>{m[1]}</Tag>;
 }
 function AuditModal({plan, onClose, onSubmit}){
-  const d = Store.get();
   const [verdict,setVerdict]=useState('通过');
   const [reason,setReason]=useState('');
-  const step = plan.auditStep||1;
-  const rejected = plan.auditStatus==='审核驳回';
-  const nodeStatus = (i)=>{
-    if(rejected) return i===1?'error':'wait';
-    if(plan.auditStatus==='审核通过') return 'finish';
-    if(plan.auditStatus!=='待审批') return 'wait';
-    if(i<step) return 'finish';
-    if(i===step) return 'process';
-    return 'wait';
-  };
-  const nodeDesc = (i)=>{
-    if(i===1) return rejected ? ('驳回：'+(plan.rejectReason||'—')) : '计量专员编制完成';
-    if(i===2) return step>=2 ? '王强 · 已批准' : (step===1?'待处理 · 王强':'—');
-    if(i===3) return step>=3 ? '过程质量 / 工艺 · 已会签' : (step===2?'待处理 · 刘青':'—');
-    return step>=4 ? '质量部长 · 已批准' : (step===3?'待处理 · 郑芳':'—');
-  };
   const submit=()=>{
     if(verdict==='不通过' && !reason.trim()){ toast.warning('审批不通过时必须填写审批意见'); return; }
     onSubmit(verdict, reason.trim());
   };
-  const instNames=(plan.instIds||[plan.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return it?it.name:''; }).filter(Boolean).join('、');
-  const instNos=(plan.instIds||[plan.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return it?it.id:''; }).filter(Boolean).join('、');
-  return <Modal title={'MSA 计划审批 · '+plan.id} width={640} open onCancel={onClose} footer={null}>
-    {rejected && <Alert type="error" showIcon style={{marginBottom:12}} message={'该计划上次审批被驳回：'+(plan.rejectReason||'—')} description="编制人修改后重新提交，需从第一步重新走审批流程。"/>}
-    <Descriptions size="small" column={2} bordered style={{marginBottom:16}}>
-      <Descriptions.Item label="MSA计划号"><span className="mono">{plan.id}</span></Descriptions.Item>
-      <Descriptions.Item label="任务来源">{plan.source==='周期任务'?'周期任务':'临时任务'}</Descriptions.Item>
-      <Descriptions.Item label="设备名称" span={2}>{instNames||'—'}</Descriptions.Item>
-      <Descriptions.Item label="量具编号"><span className="mono">{instNos||'—'}</span></Descriptions.Item>
-      <Descriptions.Item label="被测参数">{plan.object||'—'}</Descriptions.Item>
-      <Descriptions.Item label="项目">{plan.project||'—'}</Descriptions.Item>
-      <Descriptions.Item label="责任人">{plan.analyst||plan.owner||'—'}</Descriptions.Item>
-      <Descriptions.Item label="工厂">{plan.plant||'—'}</Descriptions.Item>
-      <Descriptions.Item label="编制人">{plan.creator||'—'}</Descriptions.Item>
-      <Descriptions.Item label="编制时间"><span className="mono">{plan.createDate||'—'}</span></Descriptions.Item>
-    </Descriptions>
-    <div style={{fontSize:13,color:'#666',marginBottom:8}}>审批流程（周期计划必须审批通过后方可开展分析）</div>
-    <Steps size="small" current={plan.auditStatus==='审核通过'?4:(step-1)} status={rejected?'error':undefined} items={AUDIT_NODE_SHORT.map((t,i)=>({title:t, status:nodeStatus(i+1), description:nodeDesc(i+1)}))} style={{marginBottom:16}}/>
-    <Alert type="info" showIcon style={{marginBottom:16}} message={'当前审批节点：'+(rejected?'（已驳回，待编制人修改后重新提交）':AUDIT_STEP_TEXT[step])} description={rejected?null:'审批人：'+(AUDIT_STEP_REVIEWER[step]||'—')}/>
+  return <Modal title={'MSA 计划审批 · '+plan.id} width={480} open onCancel={onClose} footer={null}>
     <div style={{fontSize:13,color:'#666',marginBottom:8}}>审批意见</div>
     <Radio.Group value={verdict} onChange={e=>setVerdict(e.target.value)} style={{marginBottom:10}}>
       <Radio value="通过">通过</Radio>
@@ -2637,18 +2602,18 @@ function AuditModal({plan, onClose, onSubmit}){
 }
 function AuditPage(){
   const d = Store.get();
-  const [fStatus,setFStatus]=useState(); const [fSource,setFSource]=useState(); const [fPlant,setFPlant]=useState(); const [fkw,setFkw]=useState('');
-  const [qStatus,setQStatus]=useState(); const [qSource,setQSource]=useState(); const [qPlant,setQPlant]=useState(); const [qkw,setQkw]=useState('');
+  const [fStatus,setFStatus]=useState('待审批'); const [fSource,setFSource]=useState(); const [fPlant,setFPlant]=useState(); const [fkw,setFkw]=useState('');
+  const [qStatus,setQStatus]=useState('待审批'); const [qSource,setQSource]=useState(); const [qPlant,setQPlant]=useState(); const [qkw,setQkw]=useState('');
   const [openPlan,setOpenPlan]=useState(null);
   const [overrides,setOverrides]=useState({}); // 前端演示：审批提交后的显示覆盖（不落库）
   const doQuery=()=>{ setQStatus(fStatus); setQSource(fSource); setQPlant(fPlant); setQkw(fkw); };
-  const resetQ=()=>{ setFStatus(); setFSource(); setFPlant(); setFkw(''); setQStatus(); setQSource(); setQPlant(); setQkw(''); };
+  const resetQ=()=>{ setFStatus('待审批'); setFSource(); setFPlant(); setFkw(''); setQStatus('待审批'); setQSource(); setQPlant(); setQkw(''); };
   const view=(p,k)=>{ const ov=overrides[p.id]||{}; return ov[k]!==undefined?ov[k]:p[k]; };
   const rows = d.plans.filter(p=>{
     const st=view(p,'auditStatus');
     const src=p.source==='周期任务'?'周期任务':'临时任务';
     const kwMatch=!qkw||(p.id+' '+(p.instName||'')+' '+(p.instIds||[p.instId]).join(' ')+' '+(p.object||'')).toLowerCase().includes(qkw.toLowerCase());
-    const stMatch=!qStatus||(st||'不适用')===qStatus;
+    const stMatch = qStatus==='全部' || (qStatus==='待审批'? st==='待审批' : (qStatus==='已审批' && (st==='审核通过'||st==='审核驳回')));
     const srcMatch=!qSource||src===qSource;
     const plantMatch=!qPlant||p.plant===qPlant;
     return kwMatch&&stMatch&&srcMatch&&plantMatch;
@@ -2688,7 +2653,7 @@ function AuditPage(){
   return <div>
     <Panel>
       <Space wrap>
-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>审批状态</span><Select allowClear style={{width:130}} value={fStatus} options={[{value:'待审批',label:'待审批'},{value:'审核通过',label:'审核通过'},{value:'审核驳回',label:'审核驳回'}]} onChange={setFStatus}/>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>审批状态</span><Radio.Group size="small" value={fStatus} onChange={e=>setFStatus(e.target.value)}><Radio value="全部">全部</Radio><Radio value="待审批">待审批</Radio><Radio value="已审批">已审批</Radio></Radio.Group>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>任务来源</span><Select allowClear style={{width:130}} value={fSource} options={[{value:'周期任务',label:'周期任务'},{value:'临时任务',label:'临时任务'}]} onChange={setFSource}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:130}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="计划号/设备名称/量具编号/被测参数" style={{width:230}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
