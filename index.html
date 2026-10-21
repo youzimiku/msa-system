@@ -3823,7 +3823,7 @@ function SamplingPage(){
     .filter(m=>!fQPlant || !m.rule || m.rule.plant===fQPlant)
     .filter(m=>!fQSub || !m.rule || m.rule.subplant===fQSub);
   const mergeCols=[
-    {title:'操作', width:140, fixed:'left', render:(_,r)=><Space size={0}><Button size="small" type="link" onClick={()=>saveMRow(r)}>保存</Button><Button size="small" type="link" onClick={()=>setRuleModal(r)}>规则配置</Button></Space>},
+    {title:'操作', width:140, fixed:'left', render:(_,r)=><Space size={0}><Button size="small" type="link" onClick={()=>saveMRow(r)}>保存</Button><Button size="small" type="link" disabled={!/^(GRR|KAPPA)$/i.test(r.code||'')} onClick={()=>setRuleModal(r)}>规则配置</Button></Space>},
     {title:'工厂', width:110, render:(_,r)=><span style={{color:'#666'}}>{r.rule?r.rule.plant||'—':'—'}</span>},
     {title:'车间', width:100, render:(_,r)=><span style={{color:'#666'}}>{r.rule?r.rule.subplant||'—':'—'}</span>},
     {title:'方法名称', dataIndex:'name', width:230, render:v=><span>{STRIP_PAREN(v)}</span>},
