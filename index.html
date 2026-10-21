@@ -765,8 +765,12 @@ function buildSeed(){
     {id:'JR-017', method:'cgcgk', condition:'6σ/T ≤ 15%', verdict:'可接受', plant:'青岛工厂', subplant:'二分厂', note:'重复性误差占比优秀'},
     {id:'JR-018', method:'cgcgk', condition:'6σ/T ≤ 20%', verdict:'可接受', plant:'青岛工厂', subplant:'二分厂', note:'重复性误差占比可接受'},
     {id:'JR-019', method:'GRR', condition:'NDC ≥ 5 且 %GRR < 10%', verdict:'可接受', plant:'烟台工厂', subplant:'一分厂', note:'烟台工厂 GRR 判定（示例）'},
-    {id:'JR-020', method:'KAPPA', condition:'Kappa > 0.75', verdict:'可接受', plant:'烟台工厂', subplant:'一分厂', note:'烟台工厂 KAPPA 判定（示例）'}
+    {id:'JR-020', method:'KAPPA', condition:'Kappa > 0.75', verdict:'可接受', plant:'烟台工厂', subplant:'一分厂', note:'烟台工厂 KAPPA 判定（示例）'},
+    {id:'JR-021', method:'KAPPA', category:'关键特性', condition:'Kappa ≥ 0.90', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'关键特性（Safety/Critical）：检验员判定与参考值高度一致，Kappa≥0.90 方可接受'},
+    {id:'JR-022', method:'KAPPA', category:'关键特性', condition:'0.40 ≤ Kappa < 0.90', verdict:'有条件接受', plant:'青岛工厂', subplant:'一分厂', note:'关键特性：一致性处于边缘区间，需结合有效性/错误率评估'},
+    {id:'JR-023', method:'KAPPA', category:'关键特性', condition:'Kappa < 0.40', verdict:'不可接受', plant:'青岛工厂', subplant:'一分厂', note:'关键特性：一致性不足，需培训或整改后重新分析'}
   ];
+  judgeRules.forEach(r=>{ if(!r.category) r.category='一般特性'; }); // 默认一般特性；关键特性按方法另维护一套
 
   /* 计算参数（抽样方法维护-「计算参数」页签：参数编号/参数名称/参数值，支持行内增删改） */
   const calParams = [
@@ -853,8 +857,12 @@ function applyFieldDefaults(d){
     {id:'JR-017', method:'cgcgk', condition:'6σ/T ≤ 15%', verdict:'可接受', plant:'青岛工厂', subplant:'二分厂', note:'重复性误差占比优秀'},
     {id:'JR-018', method:'cgcgk', condition:'6σ/T ≤ 20%', verdict:'可接受', plant:'青岛工厂', subplant:'二分厂', note:'重复性误差占比可接受'},
     {id:'JR-019', method:'GRR', condition:'NDC ≥ 5 且 %GRR < 10%', verdict:'可接受', plant:'烟台工厂', subplant:'一分厂', note:'烟台工厂 GRR 判定（示例）'},
-    {id:'JR-020', method:'KAPPA', condition:'Kappa > 0.75', verdict:'可接受', plant:'烟台工厂', subplant:'一分厂', note:'烟台工厂 KAPPA 判定（示例）'}
+    {id:'JR-020', method:'KAPPA', condition:'Kappa > 0.75', verdict:'可接受', plant:'烟台工厂', subplant:'一分厂', note:'烟台工厂 KAPPA 判定（示例）'},
+    {id:'JR-021', method:'KAPPA', category:'关键特性', condition:'Kappa ≥ 0.90', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'关键特性（Safety/Critical）：检验员判定与参考值高度一致，Kappa≥0.90 方可接受'},
+    {id:'JR-022', method:'KAPPA', category:'关键特性', condition:'0.40 ≤ Kappa < 0.90', verdict:'有条件接受', plant:'青岛工厂', subplant:'一分厂', note:'关键特性：一致性处于边缘区间，需结合有效性/错误率评估'},
+    {id:'JR-023', method:'KAPPA', category:'关键特性', condition:'Kappa < 0.40', verdict:'不可接受', plant:'青岛工厂', subplant:'一分厂', note:'关键特性：一致性不足，需培训或整改后重新分析'}
   ];
+  (d.judgeRules||[]).forEach(r=>{ if(!r.category) r.category='一般特性'; }); // 默认一般特性；关键特性按方法另维护一套
   if(!d.calParams.length) d.calParams=[
     {id:'CAL-001', name:'NDC 可区分类别数下限', value:'5'},
     {id:'CAL-002', name:'%GRR 可接受上限(%)', value:'10'},
@@ -3596,7 +3604,7 @@ function CharPage(){
     {title:'被测参数编号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
     {title:'被测参数名称', dataIndex:'name', width:170, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
     {title:'特殊特性', width:176, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" placeholder="选择特殊特性" value={r.specialCharId||undefined} style={{width:166}} options={(d.specialChars||[]).map(s=>({value:s.id,label:s.name}))} onChange={x=>setF(r,'specialCharId',x)}/>},
-    {title:'特性等级', dataIndex:'type', width:110, render:v=><span>{v||'普通'}</span>},
+    {title:'特性分类', dataIndex:'type', width:150, render:(_,r)=><Select size="small" value={r.type||'普通'} style={{width:140}} options={[{value:'SC',label:'关键特性（SC）'},{value:'CC',label:'重要特性（CC）'},{value:'普通',label:'一般特性（普通）'}]} onChange={x=>setF(r,'type',x)}/>},
     {title:'零件号', dataIndex:'partNo', width:110, render:(_,r)=><PartSelect value={r.partNo} width={100} onChange={(no,name)=>{setF(r,'partNo',no); setF(r,'partName',name);}}/>},
     {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><span>{r.partName||'—'}</span>},
     {title:'工序', dataIndex:'processName', width:100, render:(_,r)=><Select size="small" value={r.processName||undefined} style={{width:90}} options={PROCESS_OPT} onChange={x=>setF(r,'processName',x)}/>},
@@ -3645,7 +3653,7 @@ function CharPage(){
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工厂</span><Select allowClear style={{width:140}} options={PLANTS_OPT} value={fPlant} onChange={setFPlant}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="参数编号/参数名称/零件号/零件名称/工序名称" style={{width:220}} value={fkw2} onChange={e=>setFkw2(e.target.value)}/>
-        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>特性等级</span><Select allowClear style={{width:140}} options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]} value={ft2} onChange={setFt2}/>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>特性分类</span><Select allowClear style={{width:160}} options={[{value:'SC',label:'关键特性（SC）'},{value:'CC',label:'重要特性（CC）'},{value:'普通',label:'一般特性（普通）'}]} value={ft2} onChange={setFt2}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>特性类别</span><Select allowClear style={{width:140}} options={[{value:'计量型',label:'计量型'},{value:'计数型',label:'计数型'}]} value={fCat2} onChange={setFCat2}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>工序</span><Select allowClear style={{width:140}} options={[...new Set((d.characteristics||[]).map(r=>r.processName).filter(Boolean))].map(c=>({value:c,label:c}))} value={fProc2} onChange={setFProc2}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fs2||''} onChange={e=>setFs2(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="启用">启用</Radio><Radio value="停用">停用</Radio></Radio.Group>
@@ -3725,7 +3733,7 @@ function CharDetail({rec,onClose,onEdit}){
     <Descriptions column={2} size="small" bordered items={[
       {key:'id',label:'被测参数编号',children:<span className="mono">{rec.id}</span>},
       {key:'name',label:'被测参数名称',children:rec.name},
-      {key:'type',label:'特性等级',children:<Tag color={rec.type==='SC'?'red':rec.type==='CC'?'orange':'default'}>{rec.type}</Tag>},
+      {key:'type',label:'特性分类',children:<Tag color={rec.type==='SC'?'red':rec.type==='CC'?'orange':'default'}>{rec.type==='SC'?'关键特性（SC）':rec.type==='CC'?'重要特性（CC）':'一般特性（普通）'}</Tag>},
       {key:'category',label:'特性类别',children:rec.category},
       {key:'specialChar',label:'特殊特性',children:(()=>{ const s=(d.specialChars||[]).find(x=>x.id===rec.specialCharId); return s? (s.id+' '+s.name) : '—'; })()},
       {key:'partName',label:'零件名称',children:rec.partName||'—'},
@@ -3780,7 +3788,7 @@ function CharModal({value,onClose}){
       <Row gutter={12}>
         <Col span={6}><Form.Item name="id" label="被测参数编号"><Input disabled={revise}/></Form.Item></Col>
         <Col span={12}><Form.Item name="name" label="被测参数名称" rules={[{required:true}]}><Input/></Form.Item></Col>
-        <Col span={6}><Form.Item name="type" label="特性等级" rules={[{required:true}]}><Select options={[{value:'SC',label:'SC'},{value:'CC',label:'CC'},{value:'普通',label:'普通'}]}/></Form.Item></Col>
+        <Col span={6}><Form.Item name="type" label="特性分类" rules={[{required:true}]}><Select options={[{value:'SC',label:'关键特性（SC）'},{value:'CC',label:'重要特性（CC）'},{value:'普通',label:'一般特性（普通）'}]}/></Form.Item></Col>
         <Col span={6}><Form.Item name="partName" label="零件名称"><Input/></Form.Item></Col>
         <Col span={6}><Form.Item name="partNo" label="零件编号"><Input placeholder="如 PN-1001"/></Form.Item></Col>
         <Col span={6}><Form.Item name="processName" label="工序"><Input/></Form.Item></Col>
@@ -3821,7 +3829,7 @@ function SamplingPage(){
   const [selMethod,setSelMethod]=useState();
   const [ruleModal,setRuleModal]=useState(null);
   const addMethodRow=()=>{ const code='M'+(d.anMethods.length+1); mut(s=>{ s.anMethods.unshift({code, name:'', needSample:'是', canMerge:'否', mergeWith:'', defaultType:'计量型', status:'启用', note:''}); s.samplingRules.unshift({id:'SR-0'+(s.samplingRules.length+1), method:code, category:'其他', sampleDefault:10, sampleMin:1, sampleMax:30, opsDefault:3, opsMin:1, opsMax:5, trialsDefault:3, trialsMin:2, trialsMax:5, useOps:true, readingsMin:'', readingsMax:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, note:''}); logAction(s.me.name,'新增分析方法',code,'列表新增空白行'); }); };
-  const addJudgeRow=()=>{ const m=ruleModal||{}; const id='JR-0'+(d.judgeRules.length+1); mut(st=>{ st.judgeRules.unshift({id, method:m.code, condition:'', verdict:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, note:''}); logAction(st.me.name,'新增判断规则',id,'方法 '+m.code); }); };
+  const addJudgeRow=()=>{ const m=ruleModal||{}; const id='JR-0'+(d.judgeRules.length+1); mut(st=>{ st.judgeRules.unshift({id, method:m.code, category:'', condition:'', verdict:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, note:''}); logAction(st.me.name,'新增判断规则',id,'方法 '+m.code); }); };
   const addParamRow=()=>{ const id='CAL-'+(d.calParams.length+1).toString().padStart(3,'0'); mut(s=>{ s.calParams.unshift({id, name:'', value:''}); logAction(s.me.name,'新增计算参数',id,'列表新增空白行'); }); };
   /* 行内字段即时写 store；保存常驻操作列；启用/停用用 Switch */
   const setMF=(r,k,v)=>{ mut(s=>{ const rec=s.anMethods.find(x=>x.code===r.code); if(rec) rec[k]=v; }); };
@@ -3829,7 +3837,7 @@ function SamplingPage(){
   const setJF=(r,k,v)=>{ mut(s=>{ const rec=s.judgeRules.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
   const setCF=(r,k,v)=>{ mut(s=>{ const rec=s.calParams.find(x=>x.id===r.id); if(rec) rec[k]=v; }); };
   const saveMRow=(r)=>{ mut(s=>{ const rec=s.anMethods.find(x=>x.code===r.code); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑分析方法',r.code,'行内编辑 '+r.code+' '+(r.name||'')); }); toast.ok('已保存'); };
-  const saveJRow=(r)=>{ mut(s=>{ const rec=s.judgeRules.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑判断规则',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
+  const saveJRow=(r)=>{ if(!r.category){ toast.warn('请选择特性分类（关键特性/一般特性）'); return; } mut(s=>{ const rec=s.judgeRules.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑判断规则',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
   const saveCRow=(r)=>{ mut(s=>{ const rec=s.calParams.find(x=>x.id===r.id); if(rec){ rec.editor=s.me.name; rec.editorDate=NOW; } logAction(s.me.name,'编辑计算参数',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
   const mRef=(r)=>(d.judgeRules||[]).some(j=>String(j.method).toLowerCase()===String(r.code).toLowerCase());
   const delMRow=(r)=>{ Modal.confirm({content:'是否确定删除'+r.code+' '+(r.name||'')+'？', okText:'删除', okType:'danger', onOk:()=>{ mut(s=>{ s.anMethods=s.anMethods.filter(x=>x.code!==r.code); s.samplingRules=s.samplingRules.filter(x=>String(x.method).toLowerCase()!==String(r.code).toLowerCase()); logAction(s.me.name,'删除分析方法',r.code,'删除 '+(r.name||r.code)); }); toast.ok('已删除'); } }); };
@@ -3905,6 +3913,7 @@ function SamplingPage(){
       <Button size="small" type="link" danger onClick={()=>delJRow(r)}>删除</Button>
     </Space>},
     {title:'规则编号', dataIndex:'id', width:100, render:v=><span className="mono">{v}</span>},
+    {title:'特性分类', width:128, render:(_,r)=><Select size="small" value={r.category||undefined} style={{width:116}} options={[{value:'关键特性',label:'关键特性'},{value:'一般特性',label:'一般特性'}]} onChange={x=>setJF(r,'category',x)} placeholder="必选"/>},
     {title:'判定条件', dataIndex:'condition', width:400, ellipsis:true, render:(_,r)=><Input size="small" value={r.condition||''} onChange={e=>setJF(r,'condition',e.target.value)}/>},
     {title:'判定结论', dataIndex:'verdict', width:140, render:(_,r)=><Select size="small" value={r.verdict||undefined} style={{width:120}} options={[{value:'可接受',label:'可接受'},{value:'有条件接受',label:'有条件接受'},{value:'不可接受',label:'不可接受'}]} onChange={x=>setJF(r,'verdict',x)}/>},
     {title:'说明', dataIndex:'note', width:400, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setJF(r,'note',e.target.value)}/>}
@@ -3946,10 +3955,10 @@ function SamplingPage(){
         </>},
         {key:'judge', label:'判断规则', children:<>
           <div style={{marginBottom:10, padding:8, background:'#f5f5f5', borderRadius:4, fontSize:13, color:'#333'}}>
-            当前方法：<b>{ruleModal?STRIP_PAREN(ruleModal.name):''}</b>　|　工厂：<b>{ruleModal&&ruleModal.rule?ruleModal.rule.plant||'—':'—'}</b>　|　车间：<b>{ruleModal&&ruleModal.rule?ruleModal.rule.subplant||'—':'—'}</b>
+            当前方法：<b>{ruleModal?STRIP_PAREN(ruleModal.name):''}</b>　|　工厂：<b>{ruleModal&&ruleModal.rule?ruleModal.rule.plant||'—':'—'}</b>　|　车间：<b>{ruleModal&&ruleModal.rule?ruleModal.rule.subplant||'—':'—'}</b>　|　同方法按特性分类（关键特性/一般特性）分别维护判定规则，判定时按被测参数特性分类取值
           </div>
           <div style={{marginBottom:8, textAlign:'left'}}><Button type="primary" onClick={addJudgeRow}>新增判断规则</Button></div>
-          <Table rowKey="id" size="small" dataSource={(d.judgeRules||[]).filter(r=>ruleModal && String(r.method).toLowerCase()===String(ruleModal.code).toLowerCase())} scroll={{x:900}} pagination={{pageSize:10, showSizeChanger:true}} columns={judgeCols}/>
+          <Table rowKey="id" size="small" dataSource={(d.judgeRules||[]).filter(r=>ruleModal && String(r.method).toLowerCase()===String(ruleModal.code).toLowerCase())} scroll={{x:1100}} pagination={{pageSize:10, showSizeChanger:true}} columns={judgeCols}/>
         </>}
       ]}/>
     </Modal>
