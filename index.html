@@ -744,31 +744,13 @@ function buildSeed(){
     {id:'WS-05', name:'5号工位', line:'三号线'}
   ];
 
-  /* 抽样判断规则（按分析方法：判定条件→判定结论，供抽样方法维护页「判断规则」页签维护） */
+  /* 抽样判断规则（按分析方法：判定项目→判断符号→计算值/标准值→判定结论，供抽样方法维护页「判断规则」页签维护） */
   const judgeRules = [
-    {id:'JR-001', method:'GRR', condition:'NDC ≥ 5', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'可区分类别数达标，测量系统分辨力与变差可接受'},
-    {id:'JR-002', method:'GRR', condition:'%GRR < 10%', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'测量系统重复性+再现性占比小于 10%，可接受'},
-    {id:'JR-003', method:'GRR', condition:'10% ≤ %GRR ≤ 30%', verdict:'有条件接受', plant:'青岛工厂', subplant:'一分厂', note:'处于有条件区间，需结合过程能力评审后批准'},
-    {id:'JR-004', method:'GRR', condition:'%GRR > 30%', verdict:'不可接受', plant:'青岛工厂', subplant:'一分厂', note:'测量系统不能接受，必须整改后重新分析'},
-    {id:'JR-005', method:'KAPPA', condition:'Kappa > 0.75', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'检验员判定与参考值高度一致，满足要求'},
-    {id:'JR-006', method:'KAPPA', condition:'0.40 ≤ Kappa ≤ 0.75', verdict:'有条件接受', plant:'青岛工厂', subplant:'一分厂', note:'一致性处于边缘区间，需结合有效性/错误率评估'},
-    {id:'JR-007', method:'KAPPA', condition:'Kappa < 0.40', verdict:'不可接受', plant:'青岛工厂', subplant:'一分厂', note:'一致性不足，需培训或整改后重新分析'},
-    {id:'JR-008', method:'linear', condition:'偏倚0水平线完全包围在置信区间内', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'各点平均偏倚均落在置信区间内'},
-    {id:'JR-009', method:'linear', condition:'固定偏倚（常量显著≠0、斜率不显著）', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'量程范围内固定偏倚，可通过纠偏修正'},
-    {id:'JR-010', method:'linear', condition:'线性偏倚（斜率显著≠0）且平均偏倚在区间内', verdict:'有条件接受', plant:'青岛工厂', subplant:'一分厂', note:'可按回归结果对偏倚加以修正'},
-    {id:'JR-011', method:'linear', condition:'斜率不显著且有偏倚点位于区间外不同侧', verdict:'不可接受', plant:'青岛工厂', subplant:'一分厂', note:'测量系统有偏倚且无法修正，不能接受'},
-    {id:'JR-012', method:'stability', condition:'Xbar-R 控制图无出界点', verdict:'可接受', plant:'烟台工厂', subplant:'一分厂', note:'过程稳定，无异常波动'},
-    {id:'JR-013', method:'cgcgk', condition:'Cg ≥ 1.33 且 Cgk ≥ 1.33', verdict:'可接受', plant:'青岛工厂', subplant:'二分厂', note:'量具重复性、偏倚满足要求，能力充足'},
-    {id:'JR-014', method:'cgcgk', condition:'Cg < 1.33', verdict:'不可接受', plant:'青岛工厂', subplant:'二分厂', note:'量具重复性差，需检修/清洁/更换量具或提升装夹稳定性'},
-    {id:'JR-015', method:'cgcgk', condition:'Cg 合格、Cgk < 1.33', verdict:'有条件接受', plant:'青岛工厂', subplant:'二分厂', note:'存在系统性偏倚，需重新校准、修正补偿、核对标准件真值'},
-    {id:'JR-016', method:'cgcgk', condition:'Cgk < 0', verdict:'不可接受', plant:'青岛工厂', subplant:'二分厂', note:'偏倚超出 10% 公差，量具不可使用，立即整改复测'},
-    {id:'JR-017', method:'cgcgk', condition:'6σ/T ≤ 15%', verdict:'可接受', plant:'青岛工厂', subplant:'二分厂', note:'重复性误差占比优秀'},
-    {id:'JR-018', method:'cgcgk', condition:'6σ/T ≤ 20%', verdict:'可接受', plant:'青岛工厂', subplant:'二分厂', note:'重复性误差占比可接受'},
-    {id:'JR-019', method:'GRR', condition:'NDC ≥ 5 且 %GRR < 10%', verdict:'可接受', plant:'烟台工厂', subplant:'一分厂', note:'烟台工厂 GRR 判定（示例）'},
-    {id:'JR-020', method:'KAPPA', condition:'Kappa > 0.75', verdict:'可接受', plant:'烟台工厂', subplant:'一分厂', note:'烟台工厂 KAPPA 判定（示例）'},
-    {id:'JR-021', method:'KAPPA', category:'关键特性', condition:'Kappa ≥ 0.90', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'关键特性（Safety/Critical）：检验员判定与参考值高度一致，Kappa≥0.90 方可接受'},
-    {id:'JR-022', method:'KAPPA', category:'关键特性', condition:'0.40 ≤ Kappa < 0.90', verdict:'有条件接受', plant:'青岛工厂', subplant:'一分厂', note:'关键特性：一致性处于边缘区间，需结合有效性/错误率评估'},
-    {id:'JR-023', method:'KAPPA', category:'关键特性', condition:'Kappa < 0.40', verdict:'不可接受', plant:'青岛工厂', subplant:'一分厂', note:'关键特性：一致性不足，需培训或整改后重新分析'}
+    {id:'JR-001', method:'KAPPA', item:'KAPPA值', op:'≥', calc:'0.75', standard:'', verdict:'良好', plant:'青岛工厂', subplant:'一分厂', note:'检验员判定与参考值高度一致，Kappa≥0.75 为良好'},
+    {id:'JR-002', method:'KAPPA', item:'KAPPA值', op:'≥', calc:'0.40', standard:'0.75', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'一致性处于边缘区间，0.40≤Kappa<0.75 可接受'},
+    {id:'JR-003', method:'KAPPA', item:'KAPPA值', op:'<', calc:'0.40', standard:'', verdict:'不合格', plant:'青岛工厂', subplant:'一分厂', note:'一致性不足，Kappa<0.40 不合格，需培训或整改后重新分析'},
+    {id:'JR-004', method:'KAPPA', category:'关键特性', item:'KAPPA值', op:'≥', calc:'0.90', standard:'', verdict:'良好', plant:'青岛工厂', subplant:'一分厂', note:'关键特性（SC/CC）：Kappa≥0.90 为良好'},
+    {id:'JR-005', method:'KAPPA', category:'关键特性', item:'KAPPA值', op:'<', calc:'0.90', standard:'', verdict:'不合格', plant:'青岛工厂', subplant:'一分厂', note:'关键特性（SC/CC）：Kappa<0.90 不合格，需培训或整改后重新分析'}
   ];
   judgeRules.forEach(r=>{ if(!r.category) r.category='一般特性'; }); // 默认一般特性；关键特性按方法另维护一套
 
@@ -838,29 +820,11 @@ function applyFieldDefaults(d){
   ];
   (d.sampleLib||[]).forEach(o=>{ if(o.verdict===undefined) o.verdict=''; });
   if(!d.judgeRules.length) d.judgeRules=[
-    {id:'JR-001', method:'GRR', condition:'NDC ≥ 5', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'可区分类别数达标，测量系统分辨力与变差可接受'},
-    {id:'JR-002', method:'GRR', condition:'%GRR < 10%', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'测量系统重复性+再现性占比小于 10%，可接受'},
-    {id:'JR-003', method:'GRR', condition:'10% ≤ %GRR ≤ 30%', verdict:'有条件接受', plant:'青岛工厂', subplant:'一分厂', note:'处于有条件区间，需结合过程能力评审后批准'},
-    {id:'JR-004', method:'GRR', condition:'%GRR > 30%', verdict:'不可接受', plant:'青岛工厂', subplant:'一分厂', note:'测量系统不能接受，必须整改后重新分析'},
-    {id:'JR-005', method:'KAPPA', condition:'Kappa > 0.75', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'检验员判定与参考值高度一致，满足要求'},
-    {id:'JR-006', method:'KAPPA', condition:'0.40 ≤ Kappa ≤ 0.75', verdict:'有条件接受', plant:'青岛工厂', subplant:'一分厂', note:'一致性处于边缘区间，需结合有效性/错误率评估'},
-    {id:'JR-007', method:'KAPPA', condition:'Kappa < 0.40', verdict:'不可接受', plant:'青岛工厂', subplant:'一分厂', note:'一致性不足，需培训或整改后重新分析'},
-    {id:'JR-008', method:'linear', condition:'偏倚0水平线完全包围在置信区间内', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'各点平均偏倚均落在置信区间内'},
-    {id:'JR-009', method:'linear', condition:'固定偏倚（常量显著≠0、斜率不显著）', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'量程范围内固定偏倚，可通过纠偏修正'},
-    {id:'JR-010', method:'linear', condition:'线性偏倚（斜率显著≠0）且平均偏倚在区间内', verdict:'有条件接受', plant:'青岛工厂', subplant:'一分厂', note:'可按回归结果对偏倚加以修正'},
-    {id:'JR-011', method:'linear', condition:'斜率不显著且有偏倚点位于区间外不同侧', verdict:'不可接受', plant:'青岛工厂', subplant:'一分厂', note:'测量系统有偏倚且无法修正，不能接受'},
-    {id:'JR-012', method:'stability', condition:'Xbar-R 控制图无出界点', verdict:'可接受', plant:'烟台工厂', subplant:'一分厂', note:'过程稳定，无异常波动'},
-    {id:'JR-013', method:'cgcgk', condition:'Cg ≥ 1.33 且 Cgk ≥ 1.33', verdict:'可接受', plant:'青岛工厂', subplant:'二分厂', note:'量具重复性、偏倚满足要求，能力充足'},
-    {id:'JR-014', method:'cgcgk', condition:'Cg < 1.33', verdict:'不可接受', plant:'青岛工厂', subplant:'二分厂', note:'量具重复性差，需检修/清洁/更换量具或提升装夹稳定性'},
-    {id:'JR-015', method:'cgcgk', condition:'Cg 合格、Cgk < 1.33', verdict:'有条件接受', plant:'青岛工厂', subplant:'二分厂', note:'存在系统性偏倚，需重新校准、修正补偿、核对标准件真值'},
-    {id:'JR-016', method:'cgcgk', condition:'Cgk < 0', verdict:'不可接受', plant:'青岛工厂', subplant:'二分厂', note:'偏倚超出 10% 公差，量具不可使用，立即整改复测'},
-    {id:'JR-017', method:'cgcgk', condition:'6σ/T ≤ 15%', verdict:'可接受', plant:'青岛工厂', subplant:'二分厂', note:'重复性误差占比优秀'},
-    {id:'JR-018', method:'cgcgk', condition:'6σ/T ≤ 20%', verdict:'可接受', plant:'青岛工厂', subplant:'二分厂', note:'重复性误差占比可接受'},
-    {id:'JR-019', method:'GRR', condition:'NDC ≥ 5 且 %GRR < 10%', verdict:'可接受', plant:'烟台工厂', subplant:'一分厂', note:'烟台工厂 GRR 判定（示例）'},
-    {id:'JR-020', method:'KAPPA', condition:'Kappa > 0.75', verdict:'可接受', plant:'烟台工厂', subplant:'一分厂', note:'烟台工厂 KAPPA 判定（示例）'},
-    {id:'JR-021', method:'KAPPA', category:'关键特性', condition:'Kappa ≥ 0.90', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'关键特性（Safety/Critical）：检验员判定与参考值高度一致，Kappa≥0.90 方可接受'},
-    {id:'JR-022', method:'KAPPA', category:'关键特性', condition:'0.40 ≤ Kappa < 0.90', verdict:'有条件接受', plant:'青岛工厂', subplant:'一分厂', note:'关键特性：一致性处于边缘区间，需结合有效性/错误率评估'},
-    {id:'JR-023', method:'KAPPA', category:'关键特性', condition:'Kappa < 0.40', verdict:'不可接受', plant:'青岛工厂', subplant:'一分厂', note:'关键特性：一致性不足，需培训或整改后重新分析'}
+    {id:'JR-001', method:'KAPPA', item:'KAPPA值', op:'≥', calc:'0.75', standard:'', verdict:'良好', plant:'青岛工厂', subplant:'一分厂', note:'检验员判定与参考值高度一致，Kappa≥0.75 为良好'},
+    {id:'JR-002', method:'KAPPA', item:'KAPPA值', op:'≥', calc:'0.40', standard:'0.75', verdict:'可接受', plant:'青岛工厂', subplant:'一分厂', note:'一致性处于边缘区间，0.40≤Kappa<0.75 可接受'},
+    {id:'JR-003', method:'KAPPA', item:'KAPPA值', op:'<', calc:'0.40', standard:'', verdict:'不合格', plant:'青岛工厂', subplant:'一分厂', note:'一致性不足，Kappa<0.40 不合格，需培训或整改后重新分析'},
+    {id:'JR-004', method:'KAPPA', category:'关键特性', item:'KAPPA值', op:'≥', calc:'0.90', standard:'', verdict:'良好', plant:'青岛工厂', subplant:'一分厂', note:'关键特性（SC/CC）：Kappa≥0.90 为良好'},
+    {id:'JR-005', method:'KAPPA', category:'关键特性', item:'KAPPA值', op:'<', calc:'0.90', standard:'', verdict:'不合格', plant:'青岛工厂', subplant:'一分厂', note:'关键特性（SC/CC）：Kappa<0.90 不合格，需培训或整改后重新分析'}
   ];
   (d.judgeRules||[]).forEach(r=>{ if(!r.category) r.category='一般特性'; }); // 默认一般特性；关键特性按方法另维护一套
   if(!d.calParams.length) d.calParams=[
@@ -3608,7 +3572,7 @@ function CharPage(){
     {title:'被测参数编号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
     {title:'被测参数名称', dataIndex:'name', width:170, ellipsis:true, render:(_,r)=><Input size="small" value={r.name||''} onChange={e=>setF(r,'name',e.target.value)}/>},
     {title:'特殊特性', width:176, render:(_,r)=><Select size="small" showSearch optionFilterProp="label" placeholder="选择特殊特性" value={r.specialCharId||undefined} style={{width:166}} options={(d.specialChars||[]).map(s=>({value:s.id,label:s.name}))} onChange={x=>setF(r,'specialCharId',x)}/>},
-    {title:'特性等级', dataIndex:'type', width:150, render:(_,r)=><Select size="small" value={r.type||'普通'} style={{width:140}} options={[{value:'SC',label:'关键特性（SC）'},{value:'CC',label:'重要特性（CC）'},{value:'普通',label:'一般特性'}]} onChange={x=>setF(r,'type',x)}/>},
+    {title:'特性等级', dataIndex:'type', width:150, render:(_,r)=>{ const t=r.type||'普通'; return t==='SC'?<Tag color="red">关键特性（SC）</Tag>:t==='CC'?<Tag color="orange">重要特性（CC）</Tag>:<Tag>一般特性</Tag>; }},
     {title:'零件号', dataIndex:'partNo', width:110, render:(_,r)=><PartSelect value={r.partNo} width={100} onChange={(no,name)=>{setF(r,'partNo',no); setF(r,'partName',name);}}/>},
     {title:'零件名称', dataIndex:'partName', width:120, ellipsis:true, render:(_,r)=><span>{r.partName||'—'}</span>},
     {title:'工序', dataIndex:'processName', width:100, render:(_,r)=><Select size="small" value={r.processName||undefined} style={{width:90}} options={PROCESS_OPT} onChange={x=>setF(r,'processName',x)}/>},
@@ -3833,7 +3797,7 @@ function SamplingPage(){
   const [selMethod,setSelMethod]=useState();
   const [ruleModal,setRuleModal]=useState(null);
   const addMethodRow=()=>{ const code='M'+(d.anMethods.length+1); mut(s=>{ s.anMethods.unshift({code, name:'', needSample:'是', canMerge:'否', mergeWith:'', defaultType:'计量型', status:'启用', note:''}); s.samplingRules.unshift({id:'SR-0'+(s.samplingRules.length+1), method:code, category:'其他', sampleDefault:10, sampleMin:1, sampleMax:30, opsDefault:3, opsMin:1, opsMax:5, trialsDefault:3, trialsMin:2, trialsMax:5, useOps:true, readingsMin:'', readingsMax:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, note:''}); logAction(s.me.name,'新增分析方法',code,'列表新增空白行'); }); };
-  const addJudgeRow=()=>{ const m=ruleModal||{}; const id='JR-0'+(d.judgeRules.length+1); mut(st=>{ st.judgeRules.unshift({id, method:m.code, category:'', condition:'', verdict:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, note:''}); logAction(st.me.name,'新增判断规则',id,'方法 '+m.code); }); };
+  const addJudgeRow=()=>{ const m=ruleModal||{}; const id='JR-0'+(d.judgeRules.length+1); mut(st=>{ st.judgeRules.unshift({id, method:m.code, category:'', item:'', op:'', calc:'', standard:'', verdict:'', plant:PLANTS_OPT[0].value, subplant:SUBPLANTS_OPT[0].value, note:''}); logAction(st.me.name,'新增判断规则',id,'方法 '+m.code); }); };
   const addParamRow=()=>{ const id='CAL-'+(d.calParams.length+1).toString().padStart(3,'0'); mut(s=>{ s.calParams.unshift({id, name:'', value:''}); logAction(s.me.name,'新增计算参数',id,'列表新增空白行'); }); };
   /* 行内字段即时写 store；保存常驻操作列；启用/停用用 Switch */
   const setMF=(r,k,v)=>{ mut(s=>{ const rec=s.anMethods.find(x=>x.code===r.code); if(rec) rec[k]=v; }); };
@@ -3918,8 +3882,11 @@ function SamplingPage(){
     </Space>},
     {title:'规则编号', dataIndex:'id', width:100, render:v=><span className="mono">{v}</span>},
     {title:'特性等级', width:128, render:(_,r)=><Select size="small" value={r.category||undefined} style={{width:116}} options={[{value:'关键特性',label:'关键特性'},{value:'一般特性',label:'一般特性'}]} onChange={x=>setJF(r,'category',x)} placeholder="必选"/>},
-    {title:'判定条件', dataIndex:'condition', width:400, ellipsis:true, render:(_,r)=><Input size="small" value={r.condition||''} onChange={e=>setJF(r,'condition',e.target.value)}/>},
-    {title:'判定结论', dataIndex:'verdict', width:140, render:(_,r)=><Select size="small" value={r.verdict||undefined} style={{width:120}} options={[{value:'可接受',label:'可接受'},{value:'有条件接受',label:'有条件接受'},{value:'不可接受',label:'不可接受'}]} onChange={x=>setJF(r,'verdict',x)}/>},
+    {title:'判定项目', dataIndex:'item', width:150, render:(_,r)=><Select size="small" value={r.item||undefined} style={{width:130}} options={[{value:'一致性百分比',label:'一致性百分比'},{value:'KAPPA值',label:'KAPPA值'},{value:'漏发',label:'漏发'},{value:'错发',label:'错发'}]} onChange={x=>setJF(r,'item',x)} placeholder="必选"/>},
+    {title:'判断符号', dataIndex:'op', width:110, render:(_,r)=><Select size="small" value={r.op||undefined} style={{width:90}} options={[{value:'≥',label:'≥'},{value:'≤',label:'≤'},{value:'>',label:'>'},{value:'<',label:'<'}]} onChange={x=>setJF(r,'op',x)} placeholder="必选"/>},
+    {title:'计算值', dataIndex:'calc', width:120, render:(_,r)=><Input size="small" className="mono" value={r.calc||''} onChange={e=>setJF(r,'calc',e.target.value)}/>},
+    {title:'标准值', dataIndex:'standard', width:120, render:(_,r)=><Input size="small" className="mono" value={r.standard||''} onChange={e=>setJF(r,'standard',e.target.value)}/>},
+    {title:'判定结论', dataIndex:'verdict', width:140, render:(_,r)=><Select size="small" value={r.verdict||undefined} style={{width:120}} options={[{value:'良好',label:'良好'},{value:'可接受',label:'可接受'},{value:'不合格',label:'不合格'}]} onChange={x=>setJF(r,'verdict',x)}/>},
     {title:'说明', dataIndex:'note', width:400, ellipsis:true, render:(_,r)=><Input size="small" value={r.note||''} onChange={e=>setJF(r,'note',e.target.value)}/>}
   ];
   const calCols=[
