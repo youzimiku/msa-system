@@ -2424,6 +2424,7 @@ function PlanPage(){
   const [qStatus,setQStatus]=useState();
   const [fPlant,setFPlant]=useState(); const [fSub,setFSub]=useState(); const [fSource,setFSource]=useState(); const [fYear,setFYear]=useState(); const [fMonth,setFMonth]=useState();
   const [qPlant,setQPlant]=useState(); const [qSub,setQSub]=useState(); const [qSource,setQSource]=useState(); const [qYear,setQYear]=useState(); const [qMonth,setQMonth]=useState();
+  const [selKeys,setSelKeys]=useState([]); // 列表多选框：勾选计划（多选）
   /* 年度审核 / 月度审核（批次发起审批，10-22 会议口径：填年份/月份 + 部门汇总 + 审核说明） */
   const [yearAudit,setYearAudit]=useState(false); const [auditYear,setAuditYear]=useState('次年');
   const [monthAudit,setMonthAudit]=useState(false); const [auditMYear,setAuditMYear]=useState(String(new Date().getFullYear())); const [auditMMonth,setAuditMMonth]=useState(String(new Date().getMonth()+1).padStart(2,'0'));
@@ -2484,6 +2485,8 @@ function PlanPage(){
   const setF=(r,k,v)=>{ mut(s=>{ const p=s.plans.find(x=>x.id===r.id); if(p) p[k]=v; }); };
   const saveRow=(r)=>{ mut(s=>{ const p=s.plans.find(x=>x.id===r.id); if(p){ p.editor=s.me.name; p.editorDate=NOW; } logAction(s.me.name,'编辑MSA计划',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
   const STATUS_BACK={'待开始':['未定型','待采集'],'进行中':['采集中','待分析','分析完成','待确认'],'已完成':['完成','驳回']};
+  /* 列表多选框：多选勾选计划（勾选框保留，供批量操作使用；原型阶段仅展示勾选状态） */
+  const rowSelection={ type:'checkbox', selectedRowKeys: selKeys, onChange:(ks)=>setSelKeys(ks||[]) };
   /* 导出：将当前查询结果导出为 CSV（前端 Blob 下载，UTF-8 BOM 保证 Excel 中文正常） */
   const exportRows=()=>{
     if(!rows.length){ toast.warning('当前没有可导出的计划数据'); return; }
@@ -2576,7 +2579,7 @@ function PlanPage(){
       </Space>
     </Panel>
     <Panel>
-      <Table rowKey="id" size="middle" dataSource={rows} columns={cols} scroll={{x:4880}} pagination={false}/>
+      <Table rowKey="id" size="middle" rowSelection={rowSelection} dataSource={rows} columns={cols} scroll={{x:4880}} pagination={false}/>
     </Panel>
     {batchModal && <BatchPlanModal value={batchModal} onClose={()=>setBatchModal(null)}/>}
     {genModal && <Modal title="生成年计划" width={420} open onCancel={()=>setGenModal(null)} footer={null}>
