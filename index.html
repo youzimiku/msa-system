@@ -2422,7 +2422,7 @@ function PlanPage(){
   const [qStatus,setQStatus]=useState();
   const [fPlant,setFPlant]=useState(); const [fSub,setFSub]=useState(); const [fSource,setFSource]=useState(); const [fYear,setFYear]=useState(); const [fMonth,setFMonth]=useState();
   const [qPlant,setQPlant]=useState(); const [qSub,setQSub]=useState(); const [qSource,setQSource]=useState(); const [qYear,setQYear]=useState(); const [qMonth,setQMonth]=useState();
-  const [selKey,setSelKey]=useState(); // 发起审核：单选勾选计划
+  const [selKeys,setSelKeys]=useState([]); // 发起审核：多选勾选计划
   const doQuery=()=>{ setQkw(fkw); setQType(ftype); setQStatus(fstatus); setQPlant(fPlant); setQSub(fSub); setQSource(fSource); setQYear(fYear); setQMonth(fMonth); };
   const resetQ=()=>{ setFkw('');setFtype();setFstatus();setFPlant();setFSub();setFSource();setFYear();setFMonth(); setQkw('');setQType();setQStatus();setQPlant();setQSub();setQSource();setQYear();setQMonth(); };
   const pyOf=p=>{ const py=p.planYear||(p.planDate?p.planDate.slice(0,4):''); return py; };
@@ -2478,15 +2478,16 @@ function PlanPage(){
   const saveRow=(r)=>{ mut(s=>{ const p=s.plans.find(x=>x.id===r.id); if(p){ p.editor=s.me.name; p.editorDate=NOW; } logAction(s.me.name,'编辑MSA计划',r.id,'行内编辑 '+r.id); }); toast.ok('已保存'); };
   const STATUS_BACK={'待开始':['未定型','待采集'],'进行中':['采集中','待分析','分析完成','待确认'],'已完成':['完成','驳回']};
   /* 发起审核：周期计划被驳回后，由责任人重新发起，审批链从头走起（原型演示，不落库） */
-  const rowSelection={ type:'radio', selectedRowKeys: selKey?[selKey]:[], onChange:(ks)=>{ setSelKey(ks[0]); } };
+  const rowSelection={ type:'checkbox', selectedRowKeys: selKeys, onChange:(ks)=>setSelKeys(ks||[]) };
   const launchAudit=()=>{
-    const p=selKey? d.plans.find(x=>x.id===selKey) : null;
-    if(!p){ toast.warning('请先勾选要发起审核的计划（单选）'); return; }
-    if(p.source!=='周期任务'){ toast.warning('仅周期生成的 MSA 计划需要审批，临时任务无需发起审核'); return; }
-    if(p.auditStatus!=='审核驳回'){ toast.warning('仅「审核驳回」的计划需要重新发起审核'); return; }
-    mut(s=>{ const x=s.plans.find(y=>y.id===p.id); if(x){ x.auditStatus='待审批'; x.auditStep=1; x.reviewer=''; x.reviewDate=''; x.rejectReason=''; } logAction(s.me.name,'发起审核',p.id,'责任人重新发起审批，审批链从头走起'); });
-    setSelKey(undefined);
-    toast.ok('已发起审核：'+p.id+' 重新进入审批流程（待车间主任审批）');
+    const ids=selKeys||[];
+    if(!ids.length){ toast.warning('请先勾选要发起审核的计划（可多选）'); return; }
+    const picks=ids.map(id=>d.plans.find(x=>x.id===id)).filter(Boolean);
+    const invalid=picks.filter(p=>p.source!=='周期任务'||p.auditStatus!=='审核驳回');
+    if(invalid.length){ toast.warning('存在不符合条件的计划：仅「周期任务」且「审核驳回」状态可发起审核'); return; }
+    mut(s=>{ picks.forEach(p=>{ const x=s.plans.find(y=>y.id===p.id); if(x){ x.auditStatus='待审批'; x.auditStep=1; x.reviewer=''; x.reviewDate=''; x.rejectReason=''; } logAction(s.me.name,'发起审核',p.id,'责任人重新发起审批，审批链从头走起'); }); });
+    setSelKeys([]);
+    toast.ok('已发起审核：'+picks.map(p=>p.id).join('、')+' 重新进入审批流程（待车间主任审批）');
   };
   const cols=[
     {title:'操作', width:176, fixed:'left', render:(_,r)=><PlanActions r={r} onDetail={()=>setDetail(r)} onSave={()=>saveRow(r)} onAppend={setAppendPlan}/>},
