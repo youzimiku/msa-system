@@ -2420,11 +2420,15 @@ function PlanPage(){
   const [qkw,setQkw]=useState('');   // 查询生效值
   const [qType,setQType]=useState();
   const [qStatus,setQStatus]=useState();
-  const [fPlant,setFPlant]=useState(); const [fSub,setFSub]=useState(); const [fSource,setFSource]=useState();
-  const [qPlant,setQPlant]=useState(); const [qSub,setQSub]=useState(); const [qSource,setQSource]=useState();
+  const [fPlant,setFPlant]=useState(); const [fSub,setFSub]=useState(); const [fSource,setFSource]=useState(); const [fYear,setFYear]=useState(); const [fMonth,setFMonth]=useState();
+  const [qPlant,setQPlant]=useState(); const [qSub,setQSub]=useState(); const [qSource,setQSource]=useState(); const [qYear,setQYear]=useState(); const [qMonth,setQMonth]=useState();
   const [selKey,setSelKey]=useState(); // 发起审核：单选勾选计划
-  const doQuery=()=>{ setQkw(fkw); setQType(ftype); setQStatus(fstatus); setQPlant(fPlant); setQSub(fSub); setQSource(fSource); };
-  const resetQ=()=>{ setFkw('');setFtype();setFstatus();setFPlant();setFSub();setFSource(); setQkw('');setQType();setQStatus();setQPlant();setQSub();setQSource(); };
+  const doQuery=()=>{ setQkw(fkw); setQType(ftype); setQStatus(fstatus); setQPlant(fPlant); setQSub(fSub); setQSource(fSource); setQYear(fYear); setQMonth(fMonth); };
+  const resetQ=()=>{ setFkw('');setFtype();setFstatus();setFPlant();setFSub();setFSource();setFYear();setFMonth(); setQkw('');setQType();setQStatus();setQPlant();setQSub();setQSource();setQYear();setQMonth(); };
+  const pyOf=p=>{ const py=p.planYear||(p.planDate?p.planDate.slice(0,4):''); return py; };
+  const pmOf=p=>{ const pm=p.planMonth||(p.planDate?p.planDate.slice(5,7):''); return pm; };
+  const yearOpts=[...new Set((d.plans||[]).map(pyOf).filter(Boolean))].sort();
+  const monthOpts=Array.from({length:12},(_,i)=>{ const v=String(i+1).padStart(2,'0'); return {value:v,label:v+'月'}; });
 
   const rows = d.plans.filter(p=>{
     const recs=planRecords(d,p.id);
@@ -2436,7 +2440,9 @@ function PlanPage(){
     const plantMatch = !qPlant || p.plant===qPlant;
     const subMatch = !qSub || p.subplant===qSub;
     const sourceMatch = !qSource || (p.source||'临时任务')===qSource;
-    return kwMatch && typeMatch && statusMatch && plantMatch && subMatch && sourceMatch;
+    const yearMatch = !qYear || pyOf(p)===qYear;
+    const monthMatch = !qMonth || pmOf(p)===qMonth;
+    return kwMatch && typeMatch && statusMatch && plantMatch && subMatch && sourceMatch && yearMatch && monthMatch;
   });
 
   const instCell=(r,fn)=>(r.instIds||[r.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return <div key={id}>{fn(it)}</div>; });
@@ -2487,6 +2493,8 @@ function PlanPage(){
     {title:'MSA计划号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
     {title:'责任人', width:116, render:(_,r)=><Select size="small" value={r.analyst||r.observer||undefined} style={{width:106}} options={ANALYST_OPT} onChange={x=>setF(r,'analyst',x)}/>},
     {title:'任务来源', width:100, render:(_,r)=><span>{r.source==='周期任务'?'周期任务':'临时任务'}</span>},
+    {title:'计划年', width:80, render:(_,r)=><span className="mono">{pyOf(r)||'—'}</span>},
+    {title:'计划月', width:80, render:(_,r)=><span className="mono">{pmOf(r)||'—'}</span>},
     {title:'计划类型', width:90, render:(_,r)=><span>{r.planType||(r.source==='周期任务'?'月计划':'—')}</span>},
     {title:'项目', width:140, render:(_,r)=><Select size="small" allowClear style={{width:130}} value={r.project||undefined} placeholder="选择项目" options={['动力总成项目','底盘项目','车身项目','电子电气项目','内外饰项目'].map(p=>({value:p,label:p}))} onChange={x=>setF(r,'project',x||'')}/>},
     {title:'设备名称', width:160, render:(_,r)=>instCell(r,it=>it?it.name:'')},
@@ -2530,6 +2538,8 @@ function PlanPage(){
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关联类型</span><Select allowClear style={{width:140}} value={ftype} options={[{value:'GRR',label:'GRR'},{value:'KAPPA',label:'KAPPA'},{value:'linear',label:'线性/偏移'},{value:'stability',label:'稳定性'},{value:'cgcgk',label:'Cg/Cgk'},{value:'未定型',label:'未定型'}]} onChange={setFtype}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>任务来源</span><Select allowClear style={{width:140}} value={fSource} options={[{value:'周期任务',label:'周期任务'},{value:'临时任务',label:'临时任务'}]} onChange={setFSource}/>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>计划年</span><Select allowClear style={{width:100}} options={yearOpts.map(y=>({value:y,label:y}))} value={fYear} onChange={setFYear}/>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>计划月</span><Select allowClear style={{width:100}} options={monthOpts} value={fMonth} onChange={setFMonth}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="计划号/器具编号/器具名称/零件号/零件名称" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>状态</span><Radio.Group size="small" value={fstatus||''} onChange={e=>setFstatus(e.target.value||undefined)}><Radio value="">全部</Radio><Radio value="待开始">待开始</Radio><Radio value="进行中">进行中</Radio><Radio value="已完成">已完成</Radio></Radio.Group>
         <span className="tiny">共 {rows.length} 条</span>
