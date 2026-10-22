@@ -2587,7 +2587,7 @@ function PlanPage(){
     {batchModal && <BatchPlanModal value={batchModal} onClose={()=>setBatchModal(null)}/>}
     {genModal && <Modal title="生成年计划" width={420} open onCancel={()=>setGenModal(null)} footer={null}>
       <div style={{fontSize:14,color:'#333',marginBottom:12}}>请选择要生成的年度计划：</div>
-      <Radio.Group value={genYear} onChange={e=>setGenYear(e.target.value)} style={{display:'flex',flexDirection:'column',gap:10}}>
+      <Radio.Group value={genYear} onChange={e=>setGenYear(e.target.value)} style={{display:'flex',flexDirection:'row',gap:16}}>
         <Radio value="次年">生成次年</Radio>
         <Radio value="今年">生成今年</Radio>
       </Radio.Group>
