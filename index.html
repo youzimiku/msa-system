@@ -2410,6 +2410,8 @@ function planStatusView(st){
 function PlanPage(){
   const d = Store.get();
   const [batchModal,setBatchModal]=useState(null);
+  const [genModal,setGenModal]=useState(null); // 生成年计划弹窗（原型演示，不做数据交互）
+  const yNow=new Date().getFullYear();
   const [convert,setConvert]=useState(null); // 详情内定型
   const [detail,setDetail]=useState(null);
   const [edit,setEdit]=useState(null);       // 编辑计划信息
@@ -2575,6 +2577,7 @@ function PlanPage(){
         <Button type="primary" onClick={()=>setBatchModal({mode:'person'})}>创建MSA计划-人员</Button>
         <Button onClick={launchAudit} title="审核驳回的计划由责任人重新发起审批">发起审核</Button>
         <Button onClick={exportRows} title="导出当前查询结果为 CSV">导出</Button>
+        <Button onClick={()=>setGenModal({})} title="生成年度计划（原型演示）">生成年计划</Button>
       </Space>
       </Space>
     </Panel>
@@ -2582,6 +2585,13 @@ function PlanPage(){
       <Table rowKey="id" size="middle" rowSelection={rowSelection} dataSource={rows} columns={cols} scroll={{x:4880}} pagination={false}/>
     </Panel>
     {batchModal && <BatchPlanModal value={batchModal} onClose={()=>setBatchModal(null)}/>}
+    {genModal && <Modal title="生成年计划" width={420} open onCancel={()=>setGenModal(null)} footer={null}>
+      <div style={{fontSize:14,color:'#333',marginBottom:12}}>请选择要生成的年度计划：</div>
+      <Space direction="vertical" style={{width:'100%'}} size={8}>
+        <Button block onClick={()=>{ toast.info('已选择生成今年计划（'+yNow+'，原型演示未实际生成）'); setGenModal(null); }}>生成今年计划（{yNow}）</Button>
+        <Button block onClick={()=>{ toast.info('已选择生成下年计划（'+(yNow+1)+'，原型演示未实际生成）'); setGenModal(null); }}>生成下年计划（{yNow+1}）</Button>
+      </Space>
+    </Modal>}
     {appendPlan && <AppendPlanModal plan={appendPlan} onClose={()=>setAppendPlan(null)}/>}
     {convert && <ConvertModal plan={convert} onClose={()=>setConvert(null)}/>}
     {detail && <PlanDetail plan={detail} onClose={()=>setDetail(null)} onConvert={()=>{ setDetail(null); setConvert(detail); }}/>}
