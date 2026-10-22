@@ -2489,6 +2489,26 @@ function PlanPage(){
     setSelKeys([]);
     toast.ok('已发起审核：'+picks.map(p=>p.id).join('、')+' 重新进入审批流程（待车间主任审批）');
   };
+  /* 导出：将当前查询结果导出为 CSV（前端 Blob 下载，UTF-8 BOM 保证 Excel 中文正常） */
+  const exportRows=()=>{
+    if(!rows.length){ toast.warning('当前没有可导出的计划数据'); return; }
+    const instNameOf=r=>(r.instIds||[r.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return it?it.name:''; }).filter(Boolean).join('/');
+    const head=['MSA计划号','责任人','任务来源','计划年','计划月','计划类型','项目','设备名称','量具编号','零件号','零件名称','被测参数','数据类型','判定结果','状态','部门','工厂','创建人','创建时间','审核状态','审核人','审核时间','计划完成时间','实际完成时间','录入人','录入时间'];
+    const toVal=r=>{
+      const recs=planRecords(d,r.id);
+      const obj=(recs.length?[...new Set(recs.map(x=>x.object).filter(Boolean))].join('、'):(r.object||''));
+      const vd=recs.length?sumVerdict(recs):(r.result&&r.result!=='-'?r.result:'待采集');
+      return [r.id, r.analyst||r.observer||'', r.source==='周期任务'?'周期任务':'临时任务', pyOf(r)||'', pmOf(r)||'', r.planType||(r.source==='周期任务'?'月计划':'—'), r.project||'', instNameOf(r), (r.instIds||[r.instId]).join('/'), r.partNo||'', r.partName||'', obj, r.dataType||'计量型', vd, planStatusView(r.status).text, r.dept||'', r.plant||'', r.creator||'', r.createDate||'', r.auditStatus||'', (r.auditStatus==='待审批'?chainReviewer(r,r.auditStep||1):(r.reviewer||'')), r.reviewDate||'', r.planDate||'', r.actualDate||'', r.editor||'', r.editorDate||''];
+    };
+    const esc=v=>{ const s=String(v==null?'':v); return /[",\r\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
+    const csv=[head, ...rows.map(toVal)].map(arr=>arr.map(esc).join(',')).join('\r\n');
+    const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download='MSA计划_'+new Date().toISOString().slice(0,10)+'.csv';
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); },0);
+    toast.ok('已导出 '+rows.length+' 条计划');
+  };
   const cols=[
     {title:'操作', width:176, fixed:'left', render:(_,r)=><PlanActions r={r} onDetail={()=>setDetail(r)} onSave={()=>saveRow(r)} onAppend={setAppendPlan}/>},
     {title:'MSA计划号', dataIndex:'id', width:130, render:v=><span className="mono">{v}</span>},
@@ -2554,6 +2574,7 @@ function PlanPage(){
         <Button type="primary" onClick={()=>setBatchModal({mode:'inst'})}>创建MSA计划-器具</Button>
         <Button type="primary" onClick={()=>setBatchModal({mode:'person'})}>创建MSA计划-人员</Button>
         <Button onClick={launchAudit} title="审核驳回的计划由责任人重新发起审批">发起审核</Button>
+        <Button onClick={exportRows} title="导出当前查询结果为 CSV">导出</Button>
       </Space>
       </Space>
     </Panel>
