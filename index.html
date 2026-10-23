@@ -1602,7 +1602,7 @@ const PAGE_GUIDE = {
   report_overview:{label:'总览报表', text:'按项目维度展示设备 × 分析方法结果矩阵，支持导出与合计。',
     recent:'【2026-10-16 新增】\n• 新建 MSA 总览报表页面（项目维度设备 × 分析方法结果矩阵 + 导出 + 合计）\n• 点击行弹出设备 MSA 分析详情\n【2026-10-19 更新】\n• 列表改为复制稳定性台账列表形式（去掉操作列），新增「具体结果」「判定结果」两列替代原结论 / 状态字段；保留顶部项目 / 工厂 / 时间筛选\n• 列表最前新增「分析类型」字段，去掉最后一列驳回说明\n• 支持从 MSA 计划页分析方法列点击跳转，并按计划关联的项目自动预选筛选；「不做」状态不可点击'},
   wf_handle:{label:'工作流办理', text:'工作流办理界面原型（布局与现有系统工作流办理页一致）。当前为纯前端展示：顶部「办理 / 返回」操作；「基本信息」区一行固定四列、间距统一，字段与 MSA 计划审批页列表一致（MSA计划号 / 责任人 / 计划年 / 计划月 / 审核类型 / 项目 / 设备名称 / 量具编号 / 零件号 / 零件名称 / 被测参数 / 版本 / 检验标准号 / 检验标准 / 分析方法 / 工序 / 分辨力 / 数据类型 / 部门 / 工厂 / 创建人 / 创建时间 / 当前审批节点 / 审批人，共 24 项，全部只读禁用，右上角「预览」）；底部「选择办理结论」区（办理结论单选 办完 / 退回 + 处理意见多行 + 返回 / 提交）。按钮均为原型演示提示。',
-    recent:'【2026-10-23 新增】\n• 新增「工作流办理」页面（办理待处理流程）：按系统现有工作流办理界面样式复刻（顶部办理/返回、基本信息 4 列网格 + 预览、底部选择办理结论 办完/退回 + 处理意见 + 返回/提交），纯前端展示，无数据交互\n【2026-10-23 更新】\n• 「基本信息」区字段改为 MSA 计划审批页列表字段（24 项，一行固定四列、间距统一，全部只读）\n• 「基本信息」区填充演示数据：取第一条「待审批」计划（无则取第一条计划），按审批页口径带出器具 / 版本 / 检验标准 / 分析方法 / 审批节点与审批人；输入框全部禁用（disabled）\n• 支持从「MSA 计划审批」页「审批」按钮跳转进入：优先展示跳转的那条计划（全局 WfHandlePlanId），未跳转时回退第一条待审批计划\n【2026-10-23 更新】\n• 「基本信息」上方新增「年度审核信息」区：审核说明（演示）、部门汇总明细（部门 / 条数列表）、本次审核覆盖计划清单（计划号 / 被测参数 / 部门 / 工厂，取种子计划前 10 条演示）；下方保留计划信息（24 字段）',},
+    recent:'【2026-10-23 新增】\n• 新增「工作流办理」页面（办理待处理流程）：按系统现有工作流办理界面样式复刻（顶部办理/返回、基本信息 4 列网格 + 预览、底部选择办理结论 办完/退回 + 处理意见 + 返回/提交），纯前端展示，无数据交互\n【2026-10-23 更新】\n• 「基本信息」区字段改为 MSA 计划审批页列表字段（24 项，一行固定四列、间距统一，全部只读）\n• 「基本信息」区填充演示数据：取第一条「待审批」计划（无则取第一条计划），按审批页口径带出器具 / 版本 / 检验标准 / 分析方法 / 审批节点与审批人；输入框全部禁用（disabled）\n• 支持从「MSA 计划审批」页「审批」按钮跳转进入：优先展示跳转的那条计划（全局 WfHandlePlanId），未跳转时回退第一条待审批计划\n【2026-10-23 更新】\n• 「基本信息」上方新增「年度审核信息」区：审核说明（演示）、部门汇总明细（部门 / 条数列表）、本次审核覆盖计划清单（计划号 / 被测参数 / 部门 / 工厂，取种子计划前 10 条演示）；下方保留计划信息（24 字段）\n【2026-10-23 更新】\n• 区块顺序对调：「基本信息」区移到「年度审核信息」区上方（先看当前计划详情，再看本次审核信息）',},
   data:{label:'数据录入',
     logic:'采用多操作员 × 多样本二维录入：每人只看 / 只改本人数据；录入人仅可录入测量数据，不可改表头与计划信息。',
     ops:'【入口】\n• 从台账列表操作列「数据录入」进入（仅「待采集 / 待分析」状态可点）。\n\n【录入页】\n• 顶部选择要录入的台账记录（下拉，显示台账编号 / 器具 / 状态）。\n• 二维表格：行 = 样本 / 标准件，列 = 测量次数，单元格填测量值。\n• 「保存」保存录入数据；「提交」提交后状态流转。\n\n【按钮与字段】\n• 「数据录入」入口：仅台账状态为「待采集 / 待分析」时可点。\n• 「保存」「提交」：操作按钮。\n• 可编辑字段：本人负责的测量列单元格。\n• 只读字段：表头、计划信息、他人负责的测量列。',
@@ -2741,6 +2741,15 @@ function WfHandlePage(){
           <Button onClick={()=>toast.info('演示：返回')}>返回</Button>
         </Space>
       </div>
+      <div style={{border:'1px solid #e8e8e8',borderRadius:4,padding:'12px 14px 2px',marginBottom:16,background:'#ffffff'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+          <span style={{fontSize:14,color:'#333333',fontWeight:600}}>基本信息</span>
+          <Button size="small" onClick={()=>toast.info('演示：预览')}>预览</Button>
+        </div>
+        <Form layout="horizontal" labelCol={{span:8}} wrapperCol={{span:16}}>
+          {gridRows.map((r,i)=><Row gutter={16} key={i}>{r.map(cell)}</Row>)}
+        </Form>
+      </div>
       <div style={{border:'1px solid #e8e8e8',borderRadius:4,padding:'12px 14px',marginBottom:16,background:'#ffffff'}}>
         <div style={{fontSize:14,color:'#333333',fontWeight:600,marginBottom:8}}>年度审核信息</div>
         <div style={{marginBottom:10}}>
@@ -2752,15 +2761,6 @@ function WfHandlePage(){
         <div style={{marginTop:12,marginBottom:8,fontSize:14,color:'#333333'}}>本次审核覆盖计划清单</div>
         <Table size="small" rowKey="id" pagination={false} scroll={{x:520}} columns={[{title:'MSA计划号',dataIndex:'id',key:'id',width:140,render:v=><span className="mono">{v}</span>},{title:'被测参数',dataIndex:'object',key:'object',width:180,ellipsis:true},{title:'部门',dataIndex:'dept',key:'dept',width:120},{title:'工厂',dataIndex:'plant',key:'plant',width:110}]} dataSource={d.plans.slice(0,10)}/>
         <div style={{fontSize:12,color:'#999',marginTop:6}}>演示数据（仅用于查看展示形式，正式实现按实际审核自动统计）</div>
-      </div>
-      <div style={{border:'1px solid #e8e8e8',borderRadius:4,padding:'12px 14px 2px',marginBottom:16,background:'#ffffff'}}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-          <span style={{fontSize:14,color:'#333333',fontWeight:600}}>基本信息</span>
-          <Button size="small" onClick={()=>toast.info('演示：预览')}>预览</Button>
-        </div>
-        <Form layout="horizontal" labelCol={{span:8}} wrapperCol={{span:16}}>
-          {gridRows.map((r,i)=><Row gutter={16} key={i}>{r.map(cell)}</Row>)}
-        </Form>
       </div>
       <div style={{border:'1px solid #e8e8e8',borderRadius:4,padding:'12px 14px 14px',background:'#ffffff'}}>
         <div style={{fontSize:14,color:'#333333',fontWeight:600,marginBottom:8}}>选择办理结论</div>
