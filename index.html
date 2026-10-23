@@ -1593,8 +1593,8 @@ const PAGE_GUIDE = {
   projinst:{label:'项目量具关系维护', text:'维护项目与产品、项目与量具的关联关系：左侧为项目列表（项目号 / 项目名称 / 产品号 / 产品名称 / 创建人 / 创建时间），右侧为所选项目的量具列表（绑定量具，区分专用 / 共用）。',
     recent:'【2026-10-16 新增】\n• 新建项目量具关系维护页面（左项目-产品 / 右项目-量具，专用 / 共用标签）\n• 补「新增项目」「解除关联」弹窗；总览报表点行弹设备 MSA 分析详情（联动）\n• 页面顶部新增查询区（工厂 / 车间）；新增项目弹窗产品改下拉、工厂 / 车间前置；项目信息去边框；添加量具弹窗字段对齐外部列表\n• 查询区新增关键词（占位：项目编号 / 项目名称）、产品下拉、器具下拉；操作按钮独立为按钮区（对齐器具组维护页）；添加量具按钮移入按钮区；量具列表操作列移到最前；去掉项目信息 Descriptions\n• 左侧项目列表改为表格展示（项目号 / 项目名称 / 产品号 / 产品名称 / 创建人 / 创建时间），去卡片式\n• 量具列表去掉状态字段；添加量具改为绑定量具；查询区器具改为量具下拉\n【2026-10-19 更新】\n• 新增项目弹窗：项目编号改下拉框（编号 - 名称），项目名称改只读文本框联动带出；产品下拉拆分为产品编号（下拉）+ 产品名称（只读）\n• 项目编号 / 产品编号下拉选项显示格式统一为「编号 - 名称」'},
   plan:{label:'MSA 计划', text:'创建 MSA 计划（按器具 / 按人员），计划下自动生成对应台账分析单；创建 MSA 计划弹窗里，分析方法要使用临时表：每次创建的数据使用同一个统领单号，创建时把统领单号传入创建函数，创建函数依据统领单号查询临时表中的分析方法信息，再根据分析方法创建台账。', logic:'创建计划：先选器具（组）/ 人员（组），再选被测参数（自动带出该特性支持的分析方法，需手动勾选后点「确定」加入下方方法列表，同一方法不可重复添加，删除列表行会联动取消勾选，切换器具/参数时清空列表）；人员弹窗仅 支持KAPPA分析方式。维度列状态按计划勾选的方法范围与台账结论判定：不做（未勾选）/ 未做（勾选未分析）/ 通过 / 不通过/有条件接受。周期生成的 MSA 计划需要审批：审批链为 车间主任 → 科室主任 → 分管领导（年度审核追加节点），审批人按计划关联的车间 / 部门从组织架构自动取，不单独维护；任一节点不通过即整单驳回，退回责任人修改后重新发起、审批链从头走起（临时任务不审批）。',
-    ops:'【查询区】\n• 按计划号 / 器具 / 工厂 / 状态筛选；「查询」刷新，「重置」清空。\n\n【按钮板】\n• 「+ 创建 MSA 计划」：弹窗按器具或按人员创建；先选器具（组）/人员（组），再选被测参数，自动带出该特性支持的方法，手动勾选后点「确定」加入下方方法列表，填人数/次数/样本数。\n• 「年度审核」：按年度批量发起审核；弹窗先填审核说明，下方部门汇总以表格展示（部门 / 条数，当前为示例数据，正式实现按实际计划自动统计）；确定后提示已发起（原型演示，不落库）。\n• 「月度审核」：按月度批量发起审核；弹窗选审核月份（年 + 月）；发起前需先把计划月份调对，调整后的当月全部计划作为审核明细（审批人 = 科室主任）。\n• 「导入」「导出」：待接入。\n\n【列表操作列】\n• 「追加」：在当前计划上继续添加新分析任务；弹窗与创建一致，但已勾选的器具 / 方法不可取消勾选，只能继续追加。\n• 「查看」「编辑」「删除」：删除二次确认。\n\n【行内编辑】\n• 可编辑：责任人（下拉）、项目（下拉，行内可改）。\n• 只读：计划号、计划类型（月计划 / 年计划）、被测参数、版本、各方法维度状态标识、创建人、创建时间。\n\n【按钮与字段】\n• 「+ 创建 MSA 计划」「年度审核」「月度审核」「追加」「查看」「编辑」「删除」「导入」「导出」：操作按钮，删除有二次确认。\n• 可编辑字段：责任人（下拉）、项目（下拉）。\n• 只读字段：计划号、计划类型、被测参数、版本、各方法维度状态标识、创建人、创建时间、审核人、审核时间。\n\n【保存校验】\n• 创建 / 追加计划时：必须先选被测参数；必须勾选至少一个分析方法并点「确定」加入下方列表。\n• 加入列表后，人数 / 次数 / 样本数必须落在该方法抽样规则允许的范围内（人数上下限、次数上下限、样本数上下限），超出提示并阻止保存。\n• 追加计划：已勾选的器具 / 方法不可取消勾选，只能继续追加。',
-    recent:'【近期改动（2026-09-20 16:45起）】\n• 创建弹窗分析方法右侧按钮确定改增加\n• 列表仅责任人可编辑，其他字段只读\n• 详情抽屉去背景/边框，字段分三组（基本信息/抽样规则/执行状态），全纯文字无标签，字段名无冒号，值左对齐\n• 仪器/设备名称改名设备名称\n【2026-10-16 更新】\n• 列表新增项目列（行内下拉）、创建人/创建时间、审核人/审核时间、驳回说明\n• 计划完成时间 / 录入人字段挪到列表末尾，新增审核状态列\n【2026-10-19 更新】\n• 分析方法各列点击由跳转结果页面改为跳转总览报表，并按当前计划关联的项目自动预选筛选；「不做」状态保持不可点击\n【2026-10-20 更新】\n• 按钮板新增「发起审核」：先单选勾选一条「审核驳回」的周期计划，再点击重新发起审批（置为待审批、审批链从头走起）；临时任务与非驳回计划不可发起\n【2026-10-22 更新】\n• 按钮板新增「年度审核」「月度审核」：按年 / 按月批量发起审核（10-22 会议口径）；年度审核弹窗先填审核说明，下方部门汇总以表格展示（当前为示例数据，正式实现按实际计划统计）；月度审核弹窗仅选月份（年 + 月）（不显示部门汇总与审核说明，会议未要求）；原型演示确定后提示已发起，不落库\n【2026-10-23 更新】\n• 年度审核弹窗点「确定发起」后切换为「审核已发起」界面（弹窗不关闭）：展示刚填的审核说明、部门汇总（部门 / 条数）、审批链（车间主任 → 科室主任 → 分管领导，Steps 标注当前：车间主任审批中），关闭按钮退出；再次打开年度审核弹窗恢复为发起表单', status:true},
+    ops:'【查询区】\n• 按计划号 / 器具 / 工厂 / 项目 / 状态筛选；「查询」刷新，「重置」清空。\n\n【按钮板】\n• 「+ 创建 MSA 计划」：弹窗按器具或按人员创建；先选器具（组）/人员（组），再选被测参数，自动带出该特性支持的方法，手动勾选后点「确定」加入下方方法列表，填人数/次数/样本数；计划填写信息含项目下拉（创建时指定项目）。\n• 「年度审核」：按年度批量发起审核；弹窗先填审核说明，下方部门汇总以表格展示（部门 / 条数，当前为示例数据，正式实现按实际计划自动统计）；确定后提示已发起（原型演示，不落库）。\n• 「月度审核」：按月度批量发起审核；弹窗选审核月份（年 + 月）；发起前需先把计划月份调对，调整后的当月全部计划作为审核明细（审批人 = 科室主任）。\n• 「导入」「导出」：待接入。\n\n【列表操作列】\n• 「追加」：在当前计划上继续添加新分析任务；弹窗与创建一致，但已勾选的器具 / 方法不可取消勾选，只能继续追加。\n• 「查看」「编辑」「删除」：删除二次确认。\n\n【行内编辑】\n• 可编辑：责任人（下拉）、项目（下拉，行内可改）。\n• 只读：计划号、计划类型（月计划 / 年计划）、被测参数、版本、各方法维度状态标识、创建人、创建时间。\n\n【按钮与字段】\n• 「+ 创建 MSA 计划」「年度审核」「月度审核」「追加」「查看」「编辑」「删除」「导入」「导出」：操作按钮，删除有二次确认。\n• 可编辑字段：责任人（下拉）、项目（下拉）。\n• 只读字段：计划号、计划类型、被测参数、版本、各方法维度状态标识、创建人、创建时间、审核人、审核时间。\n\n【保存校验】\n• 创建 / 追加计划时：必须先选被测参数；必须勾选至少一个分析方法并点「确定」加入下方列表。\n• 加入列表后，人数 / 次数 / 样本数必须落在该方法抽样规则允许的范围内（人数上下限、次数上下限、样本数上下限），超出提示并阻止保存。\n• 追加计划：已勾选的器具 / 方法不可取消勾选，只能继续追加。',
+    recent:'【近期改动（2026-09-20 16:45起）】\n• 创建弹窗分析方法右侧按钮确定改增加\n• 列表仅责任人可编辑，其他字段只读\n• 详情抽屉去背景/边框，字段分三组（基本信息/抽样规则/执行状态），全纯文字无标签，字段名无冒号，值左对齐\n• 仪器/设备名称改名设备名称\n【2026-10-16 更新】\n• 列表新增项目列（行内下拉）、创建人/创建时间、审核人/审核时间、驳回说明\n• 计划完成时间 / 录入人字段挪到列表末尾，新增审核状态列\n【2026-10-19 更新】\n• 分析方法各列点击由跳转结果页面改为跳转总览报表，并按当前计划关联的项目自动预选筛选；「不做」状态保持不可点击\n【2026-10-20 更新】\n• 按钮板新增「发起审核」：先单选勾选一条「审核驳回」的周期计划，再点击重新发起审批（置为待审批、审批链从头走起）；临时任务与非驳回计划不可发起\n【2026-10-22 更新】\n• 按钮板新增「年度审核」「月度审核」：按年 / 按月批量发起审核（10-22 会议口径）；年度审核弹窗先填审核说明，下方部门汇总以表格展示（当前为示例数据，正式实现按实际计划统计）；月度审核弹窗仅选月份（年 + 月）（不显示部门汇总与审核说明，会议未要求）；原型演示确定后提示已发起，不落库\n【2026-10-23 更新】\n• 年度审核弹窗点「确定发起」后切换为「审核已发起」界面（弹窗不关闭）：展示刚填的审核说明、部门汇总（部门 / 条数）、审批链（车间主任 → 科室主任 → 分管领导，Steps 标注当前：车间主任审批中），关闭按钮退出；再次打开年度审核弹窗恢复为发起表单\n• 项目字段补齐三处：查询区新增「项目」筛选下拉；创建 / 追加计划弹窗「计划填写信息」新增「项目」字段（创建可选、追加只读带出）；计划详情「基本信息」组新增「项目」展示项', status:true},
   audit:{label:'MSA 计划审批', text:'周期生成的 MSA 计划走审批流程：车间主任 → 科室主任（月度审核终点）→ 分管领导（年度审核追加节点）。审批人按计划关联的车间 / 部门从组织架构自动取（不单独维护）；任一节点不通过即整单驳回退回责任人，责任人修改后重新发起。临时计划、首次计划不审批。',
     logic:'审批状态四档：待审批 / 审核通过 / 审核驳回 / 不适用（临时任务）。页面默认只查看「待审批」数据，也可按「全部 / 已审批」切换。审核类型单选（年度审核 / 月度审核 / 全部），默认「年度审核」；年度审核 = 年计划（审批到分管领导），月度审核 = 月计划（审批到科室主任）。审批链：车间主任 → 科室主任 → 分管领导（年度审核追加节点），审批人按计划关联车间 / 部门从组织架构自动取；任一节点不通过即整单驳回退回责任人，由责任人修改后重新发起、审批链从头走起。',
     ops:'【查询区】\n• 工厂 / 审核类型：单选按钮组（全部 / 年度审核 / 月度审核），默认「年度审核」；年计划 = 年度审核、月计划 = 月度审核。\n• 审批状态：单选按钮组（全部 / 待审批 / 已审批），默认「待审批」；已审批 = 审核通过 + 审核驳回。\n• 任务来源 / 计划年 / 计划月 / 关键词（计划号 / 设备名称 / 量具编号 / 被测参数）；「查询」刷新，「重置」恢复默认（年度审核 + 待审批）。\n\n【审批链】\n• 周期生成的 MSA 计划审批：车间主任 → 科室主任 → 分管领导（年度审核追加节点）；年度审核 = 年计划（审批到分管领导），月度审核 = 月计划（审批到科室主任）。\n• 审批人不写死，按计划关联的车间 / 部门从组织架构自动取（车间主任 / 科室主任 / 分管领导），不单独维护审批人配置。\n• 任一节点不通过即整单驳回，退回责任人（非编制人），责任人修改后重新发起、审批链从头走起。\n\n【列表操作列】\n• 「审批」：仅「待审批」可点，打开审批弹窗；「审核驳回」的计划由责任人修改后重新发起审批，不在此直接审批。\n\n【审批弹窗】\n• 只展示审批操作：通过 / 不通过 单选 + 审批意见多行文本框（选填，不校验必填）。\n\n【按钮与字段】\n• 「审批」「查询」「重置」「确定提交」「取消」：操作按钮。\n• 可编辑字段：审批意见（多行文本框，选填）。',
@@ -2427,16 +2427,16 @@ function PlanPage(){
   const [qkw,setQkw]=useState('');   // 查询生效值
   const [qType,setQType]=useState();
   const [qStatus,setQStatus]=useState();
-  const [fPlant,setFPlant]=useState(); const [fSub,setFSub]=useState(); const [fSource,setFSource]=useState(); const [fYear,setFYear]=useState(); const [fMonth,setFMonth]=useState();
-  const [qPlant,setQPlant]=useState(); const [qSub,setQSub]=useState(); const [qSource,setQSource]=useState(); const [qYear,setQYear]=useState(); const [qMonth,setQMonth]=useState();
+  const [fPlant,setFPlant]=useState(); const [fSub,setFSub]=useState(); const [fSource,setFSource]=useState(); const [fProj,setFProj]=useState(); const [fYear,setFYear]=useState(); const [fMonth,setFMonth]=useState();
+  const [qPlant,setQPlant]=useState(); const [qSub,setQSub]=useState(); const [qSource,setQSource]=useState(); const [qProj,setQProj]=useState(); const [qYear,setQYear]=useState(); const [qMonth,setQMonth]=useState();
   /* 年度审核 / 月度审核（批次发起审批，10-22 会议口径：填年份/月份 + 部门汇总 + 审核说明） */
   const [yearAudit,setYearAudit]=useState(false); const [yearAuditDone,setYearAuditDone]=useState(false);
   const [monthAudit,setMonthAudit]=useState(false); const [auditMYear,setAuditMYear]=useState(String(new Date().getFullYear())); const [auditMMonth,setAuditMMonth]=useState(String(new Date().getMonth()+1).padStart(2,'0'));
   const [auditDesc,setAuditDesc]=useState('');
   const curYearS=String(new Date().getFullYear()); const nextYearS=String(Number(curYearS)+1);
   const deptSum=list=>{ const m={}; list.forEach(p=>{ const k=p.dept||'未分配部门'; m[k]=(m[k]||0)+1; }); return Object.entries(m); };
-  const doQuery=()=>{ setQkw(fkw); setQType(ftype); setQStatus(fstatus); setQPlant(fPlant); setQSub(fSub); setQSource(fSource); setQYear(fYear); setQMonth(fMonth); };
-  const resetQ=()=>{ setFkw('');setFtype();setFstatus();setFPlant();setFSub();setFSource();setFYear();setFMonth(); setQkw('');setQType();setQStatus();setQPlant();setQSub();setQSource();setQYear();setQMonth(); };
+  const doQuery=()=>{ setQkw(fkw); setQType(ftype); setQStatus(fstatus); setQPlant(fPlant); setQSub(fSub); setQSource(fSource); setQProj(fProj); setQYear(fYear); setQMonth(fMonth); };
+  const resetQ=()=>{ setFkw('');setFtype();setFstatus();setFPlant();setFSub();setFSource();setFProj();setFYear();setFMonth(); setQkw('');setQType();setQStatus();setQPlant();setQSub();setQSource();setQProj();setQYear();setQMonth(); };
   const pyOf=p=>{ const py=p.planYear||(p.planDate?p.planDate.slice(0,4):''); return py; };
   const pmOf=p=>{ const pm=p.planMonth||(p.planDate?p.planDate.slice(5,7):''); return pm; };
   const yearOpts=[...new Set((d.plans||[]).map(pyOf).filter(Boolean))].sort();
@@ -2452,9 +2452,10 @@ function PlanPage(){
     const plantMatch = !qPlant || p.plant===qPlant;
     const subMatch = !qSub || p.subplant===qSub;
     const sourceMatch = !qSource || (p.source||'临时任务')===qSource;
+    const projMatch = !qProj || (p.project||'')===qProj;
     const yearMatch = !qYear || pyOf(p)===qYear;
     const monthMatch = !qMonth || pmOf(p)===qMonth;
-    return kwMatch && typeMatch && statusMatch && plantMatch && subMatch && sourceMatch && yearMatch && monthMatch;
+    return kwMatch && typeMatch && statusMatch && plantMatch && subMatch && sourceMatch && projMatch && yearMatch && monthMatch;
   });
 
   const instCell=(r,fn)=>(r.instIds||[r.instId]).map(id=>{ const it=d.instruments.find(i=>i.id===id); return <div key={id}>{fn(it)}</div>; });
@@ -2559,6 +2560,7 @@ function PlanPage(){
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>车间</span><Select allowClear style={{width:140}} options={SUBPLANTS_OPT} value={fSub} onChange={setFSub}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关联类型</span><Select allowClear style={{width:140}} value={ftype} options={[{value:'GRR',label:'GRR'},{value:'KAPPA',label:'KAPPA'},{value:'linear',label:'线性/偏移'},{value:'stability',label:'稳定性'},{value:'cgcgk',label:'Cg/Cgk'},{value:'未定型',label:'未定型'}]} onChange={setFtype}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>任务来源</span><Select allowClear style={{width:140}} value={fSource} options={[{value:'周期任务',label:'周期任务'},{value:'临时任务',label:'临时任务'}]} onChange={setFSource}/>
+        <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>项目</span><Select allowClear style={{width:140}} value={fProj} options={['动力总成项目','底盘项目','车身项目','电子电气项目','内外饰项目'].map(p=>({value:p,label:p}))} onChange={setFProj}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>计划年</span><Select allowClear style={{width:100}} options={yearOpts.map(y=>({value:y,label:y}))} value={fYear} onChange={setFYear}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>计划月</span><Select allowClear style={{width:100}} options={monthOpts} value={fMonth} onChange={setFMonth}/>
         <span style={{marginRight:4,color:'#666666',fontSize:14,whiteSpace:'nowrap'}}>关键词</span><Input allowClear placeholder="计划号/器具编号/器具名称/零件号/零件名称" style={{width:220}} value={fkw} onChange={e=>setFkw(e.target.value)}/>
@@ -2931,7 +2933,7 @@ function BatchPlanModal({value, onClose}){
   const [checked,setChecked]=useState([]);
   const [mCfg,setMCfg]=useState({});
   const setM=(m,patch)=>setMCfg(c=>({...c,[m]:{...(c[m]||{}),...patch}}));
-  const [meta,setMeta]=useState({ qcArea:'质检科', plant:'青岛工厂', subplant:'一分厂', analyst:'', owner:'', resolution:'', dept:'质量' });
+  const [meta,setMeta]=useState({ qcArea:'质检科', plant:'青岛工厂', subplant:'一分厂', analyst:'', owner:'', resolution:'', dept:'质量', project:'' });
   const setMetaK=(k,v)=>setMeta(m=>({...m,[k]:v}));
   const [qualityChar,setQualityChar]=useState('');
   const [methodRows,setMethodRows]=useState([]);
@@ -3072,7 +3074,7 @@ function BatchPlanModal({value, onClose}){
           object:charObj?charObj.name:'', feature:charObj?charObj.type:'', charId:charSel, owner:meta.owner||s.me.name, editor:s.me.name, editorDate:NOW,
           planDate, source:'临时任务', status:'待采集', recordId:'', result:'',
           note:'', partNo:charObj?charObj.partNo:'', partName:charObj?charObj.partName:'', qcArea:meta.qcArea, plant:meta.plant, subplant:meta.subplant, analyst:meta.analyst, resolution:meta.resolution,
-          dept:meta.dept, dataType, msaMethods: acts.reduce((a,x)=>a.concat(msaExcelMap(x)),[]), opMethod:'《测量系统分析操作指导书》' });
+          dept:meta.dept, project:meta.project, dataType, msaMethods: acts.reduce((a,x)=>a.concat(msaExcelMap(x)),[]), opMethod:'《测量系统分析操作指导书》' });
         acts.forEach(an=>{ spawnRecord(s, pid, {type:an, instId:skey, instName:fullName, object:charObj?charObj.name:'', standard:(savedRows.find(r=>r.method===an)||{}).std||'', method:ENUM.taskMethod[an][0], params:mkP(an), feature:charObj?charObj.type:'', charId:charSel, note:''}); });
         syncPlanFromRecord(s,pid);
         logAction(s.me.name,'计划编制',pid,'按被测参数 '+charSel+' 创建 MSA 计划（分析方法：'+acts.map(x=>ANAL_SHORT[x]).join('、')+'）');
@@ -3146,6 +3148,7 @@ function BatchPlanModal({value, onClose}){
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">质量特性</span><Select size="small" style={{width:140}} disabled placeholder="由被测参数带出" options={(d.specialChars||[]).map(s=>({value:s.id,label:s.id+' '+s.name}))} value={qualityChar||undefined} onChange={setQualityChar}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">车间</span><Select size="small" style={{width:140}} options={SUBPLANTS_OPT} value={meta.subplant} onChange={v=>setMetaK('subplant',v)}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">部门</span><Select size="small" style={{width:140}} value={meta.dept} options={ENUM.deptOptions.map(c=>({value:c,label:c}))} onChange={v=>setMetaK('dept',v)}/></Col>
+        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">项目</span><Select size="small" style={{width:140}} placeholder="选择项目" value={meta.project||undefined} options={['动力总成项目','底盘项目','车身项目','电子电气项目','内外饰项目'].map(p=>({value:p,label:p}))} onChange={v=>setMetaK('project',v)}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">计划检期</span><Input size="small" style={{width:140}} value={planDate} onChange={e=>setPlanDate(e.target.value)}/></Col>
       </Row>
     </div>
@@ -3205,7 +3208,7 @@ function AppendPlanModal({plan, onClose}){
     const sd=samplingDef2(m);
     return {method:m, ops:rec&&rec.numOps!=null?rec.numOps:(sd.useOps?sd.ops:undefined), trials:rec&&rec.numTrials!=null?rec.numTrials:sd.trials, parts:rec&&(rec.numParts||rec.numSamples)!=null?(rec.numParts||rec.numSamples):sd.parts, saved:true, locked:true};
   }));
-  const [meta,setMeta]=useState({ qcArea:plan.qcArea||'质检科', plant:plan.plant||'青岛工厂', subplant:plan.subplant||'一分厂', analyst:plan.analyst||'', owner:plan.owner||'', resolution:plan.resolution||'', dept:plan.dept||'质量' });
+  const [meta,setMeta]=useState({ qcArea:plan.qcArea||'质检科', plant:plan.plant||'青岛工厂', subplant:plan.subplant||'一分厂', analyst:plan.analyst||'', owner:plan.owner||'', resolution:plan.resolution||'', dept:plan.dept||'质量', project:plan.project||'' });
   const setMetaK=(k,v)=>setMeta(m=>({...m,[k]:v}));
   const [qualityChar,setQualityChar]=useState(plan.charId? (charObj&&charObj.specialCharId? charObj.specialCharId : '') : '');
   const [planDate,setPlanDate]=useState(plan.planDate||dayjs().add(30,'day').format('YYYY-MM-DD'));
@@ -3345,6 +3348,7 @@ function AppendPlanModal({plan, onClose}){
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">质量特性</span><Select size="small" style={{width:140}} disabled placeholder="由被测参数带出" options={(d.specialChars||[]).map(s=>({value:s.id,label:s.id+' '+s.name}))} value={qualityChar||undefined} onChange={setQualityChar}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">车间</span><Select size="small" style={{width:140}} disabled options={SUBPLANTS_OPT} value={meta.subplant} onChange={()=>{}}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">部门</span><Select size="small" style={{width:140}} disabled value={meta.dept} options={ENUM.deptOptions.map(c=>({value:c,label:c}))} onChange={()=>{}}/></Col>
+        <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">项目</span><Select size="small" style={{width:140}} disabled value={meta.project||undefined} options={['动力总成项目','底盘项目','车身项目','电子电气项目','内外饰项目'].map(p=>({value:p,label:p}))} onChange={()=>{}}/></Col>
         <Col xs={24} sm={12} md={8} lg={4}><span className="flt-label">计划检期</span><Input size="small" style={{width:140}} disabled value={planDate}/></Col>
       </Row>
     </div>
@@ -3481,6 +3485,7 @@ function PlanDetail({plan, onClose, onConvert}){
       item('数据类型', plan.dataType||'计量型'),
       item('操作方法', plan.opMethod||'《测量系统分析操作指导书》'),
       item('部门', plan.dept||'暂无'),
+      item('项目', plan.project||'暂无'),
       item('分厂', plan.subplant||'—')
     ])}
     {grp('抽样规则', [
