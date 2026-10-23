@@ -479,7 +479,25 @@ function buildSeed(){
      type:'KAPPA', method:'计数型一致性(KAPPA)', standard:'STD-MSA-003', params:{ops:3, trials:3, parts:30},
      object:'孔径 φ8H7 通/止判定（四期复评）', feature:'通/止判定', owner:'孙丽', editor:'李工程师', editorDate:'2026-09-12 09:00:00', planDate:'2026-09-12 16:20:00',
      trigger:'顾客审核整改', source:'临时任务', status:'需整改', recordId:'KPA-2026-003', result:'不可接受', note:'误判率过高，测量系统一致性不可接受',
-     dept:'质量部', subplant:'二分厂'}
+     dept:'质量部', subplant:'二分厂'},
+    {id:'MSAP-2027-001', name:'数显卡尺 0~150mm · GRR 年度复评', instId:'JJQ-2024-001', instName:'数显卡尺 0~150mm', cat:'卡尺',
+     type:'GRR', method:'均值-极差法(Xbar-R)', standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10},
+     object:'轴径 φ50±0.05', feature:'直径', owner:'王强', editor:'系统自动', editorDate:'2026-12-01 09:00:00', planDate:'2027-01-15 17:00:00',
+     trigger:'年度复评', source:'周期任务', status:'待开始', recordId:'', result:'', note:'2027 年度复评计划（年度审核演示数据，仅看展示效果）',
+     planType:'年计划', dept:'质量部', subplant:'一分厂', project:'动力总成项目', planYear:'2027', planMonth:'01',
+     auditStatus:'待审批', auditStep:1, reviewer:'王强', reviewDate:'', rejectReason:''},
+    {id:'MSAP-2027-002', name:'外径千分尺 0~25mm · GRR 年度复评', instId:'JJQ-2024-002', instName:'外径千分尺 0~25mm', cat:'千分尺',
+     type:'GRR', method:'均值-极差法(Xbar-R)', standard:'STD-MSA-001', params:{ops:3, trials:3, parts:10},
+     object:'轴径 φ10±0.02', feature:'直径', owner:'赵磊', editor:'系统自动', editorDate:'2026-12-01 09:00:00', planDate:'2027-02-20 17:00:00',
+     trigger:'年度复评', source:'周期任务', status:'待开始', recordId:'', result:'', note:'2027 年度复评计划（年度审核演示数据，仅看展示效果）',
+     planType:'年计划', dept:'工艺部', subplant:'二分厂', project:'底盘项目', planYear:'2027', planMonth:'02',
+     auditStatus:'待审批', auditStep:1, reviewer:'刘青', reviewDate:'', rejectReason:''},
+    {id:'MSAP-2027-003', name:'数显扭力扳手 5~50N·m · KAPPA 年度复评', instId:'JJQ-2024-007', instName:'数显扭力扳手 5~50N·m', cat:'扭力扳手',
+     type:'KAPPA', method:'计数型一致性(KAPPA)', standard:'STD-MSA-003', params:{ops:2, trials:1, parts:30},
+     object:'螺栓拧紧力矩 25N·m 通/止判定', feature:'通/止判定', owner:'孙丽', editor:'系统自动', editorDate:'2026-12-01 09:00:00', planDate:'2027-03-10 17:00:00',
+     trigger:'年度复评', source:'周期任务', status:'待开始', recordId:'', result:'', note:'2027 年度复评计划（年度审核演示数据，仅看展示效果）',
+     planType:'年计划', dept:'生产部', subplant:'一分厂', project:'车身项目', planYear:'2027', planMonth:'03',
+     auditStatus:'待审批', auditStep:1, reviewer:'王强', reviewDate:'', rejectReason:''}
   ];
 
   /* ---------------- 样本管理 ---------------- */
