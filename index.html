@@ -3172,7 +3172,6 @@ function BatchPlanModal({value, onClose}){
             {title:'人数', width:100, render:(_,r)=>{ const sd=samplingDef(r.method); if(!sd.useOps) return <span className="tiny">—</span>; return <InputNumber size="small" min={sd.opsMin} max={sd.opsMax} style={{width:88}} value={r.ops} onChange={v=>setRow(r.method,{ops:v})}/>; }},
             {title:'次数', width:100, render:(_,r)=>{ const sd=samplingDef(r.method); return <InputNumber size="small" min={sd.trialsMin} max={sd.trialsMax} style={{width:88}} value={r.trials} onChange={v=>setRow(r.method,{trials:v})}/>; }},
             {title:'样本数', width:100, render:(_,r)=>{ const sd=samplingDef(r.method); return <InputNumber size="small" min={sd.partsMin} max={sd.partsMax} style={{width:88}} value={r.parts} onChange={v=>setRow(r.method,{parts:v})}/>; }},
-            {title:'组内次数', width:100, render:(_,r)=>{ if(r.method!=='stability') return <span className="tiny">—</span>; return <InputNumber size="small" min={1} max={30} style={{width:88}} value={r.subGroups} onChange={v=>setRow(r.method,{subGroups:v})}/>; }},
           ]}/>
       </>}
     </div>
@@ -3373,7 +3372,6 @@ function AppendPlanModal({plan, onClose}){
           {title:'人数', width:100, render:(_,r)=>{ const sd=samplingDef2(r.method); if(!sd.useOps) return <span className="tiny">—</span>; if(r.locked) return <span>{r.ops!=null?r.ops:'—'}</span>; return <InputNumber size="small" min={sd.opsMin} max={sd.opsMax} style={{width:88}} value={r.ops} onChange={v=>setRow(r.method,{ops:v})}/>; }},
           {title:'次数', width:100, render:(_,r)=>{ const sd=samplingDef2(r.method); if(r.locked) return <span>{r.trials!=null?r.trials:'—'}</span>; return <InputNumber size="small" min={sd.trialsMin} max={sd.trialsMax} style={{width:88}} value={r.trials} onChange={v=>setRow(r.method,{trials:v})}/>; }},
           {title:'样本数', width:100, render:(_,r)=>{ const sd=samplingDef2(r.method); if(r.locked) return <span>{r.parts!=null?r.parts:'—'}</span>; return <InputNumber size="small" min={sd.partsMin} max={sd.partsMax} style={{width:88}} value={r.parts} onChange={v=>setRow(r.method,{parts:v})}/>; }},
-          {title:'组内次数', width:100, render:(_,r)=>{ if(r.method!=='stability') return <span className="tiny">—</span>; if(r.locked) return <span>{r.subGroups!=null?r.subGroups:'—'}</span>; return <InputNumber size="small" min={1} max={30} style={{width:88}} value={r.subGroups} onChange={v=>setRow(r.method,{subGroups:v})}/>; }},
         ]}/>
     </div>
 
